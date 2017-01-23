@@ -1,0 +1,22 @@
+{% extends '::base.html.twig' %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block page_actions %}
+    <div class="btn-group pull-right btn-group-sm">
+        {% if view.allowCreate %}
+            <a href="{{ view.path('create') }}" class="btn btn-success">
+                <i class="fa fa-plus"></i>
+                Hinzufügen
+            </a>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-xs-12">
+            {{ table.renderTable|raw }}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% set i = 0 %}
+{% for block in helper.blocks %}
+
+    {# Zeile #}
+    {% set i = i + 1 %}
+    {% if i == 1 %}
+        <div class="row">
+    {% endif %}
+
+            <div class="col-lg-{% if block.size == 'small' %}6{% else %}12{% endif %} box__{{ block.acronym }}">
+                <div class="box box-primary">
+                    <div class="box-header">
+                        <h3 class="box-title">
+                            {{ block.label }}
+                        </h3>
+                    </div>
+
+                    <div class="box-body">
+                        {% for key, content in block.contents %}
+
+                            {% if content.isTable is defined and content.isTable %}
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <strong>{{ content.label }}:</strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        {{ content.renderTable(whatwedo_table(), data)|raw }}
+                                    </div>
+                                </div>
+                                {% if content.createRoute %}
+                                <div class="row">
+                                    <div class="col-lg-12 text-right">
+                                        {% if content.indexRoute %}
+                                        <a href="{{ path(content.indexRoute, content.createRouteParameters(data)) }}" class="btn btn-primary btn-xs">
+                                            <i class="fa fa-list"></i>
+                                            Alle ansehen
+                                        </a>
+                                        {% endif %}
+                                        {% if content.createRoute %}
+                                        <a href="{{ path(content.createRoute, content.createRouteParameters(data)) }}" class="btn btn-success btn-xs">
+                                            <i class="fa fa-plus"></i>
+                                            Hinzufügen
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% else %}
+
+                                {% set value = content.render(data) %}
+
+                                {% if value is iterable %}
+                                    {% for key, v in value %}
+                                        <div class="row {{ content.viewClass }}">
+                                            <div class="col-lg-4">
+                                                <strong>{{ key }}:</strong>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                {{ helper.linkIt(v, content)|raw }}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="row {{ content.viewClass }}">
+                                        <div class="col-lg-4">
+                                            <strong>{{ content.label }}:</strong>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            {{ helper.linkIt(value, content)|raw }}
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                            {% endif %}
+
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+
+    {# / Zeile #}
+    {% if i == 2 %}
+        {% set i = 0 %}
+        </div>
+    {% endif %}
+{% endfor %}

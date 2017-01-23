@@ -1,0 +1,18 @@
+{% extends '::base.html.twig' %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block page_actions %}
+    <div class="btn-group pull-right btn-group-sm">
+        {% block page_actions_back_to_list %}
+            <a href="{{ view.path('index') }}" class="btn btn-default">
+                <i class="fa fa-list"></i>
+                Übersicht
+            </a>
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block content %}
+    {{ view.renderCreate|raw }}
+{% endblock %}

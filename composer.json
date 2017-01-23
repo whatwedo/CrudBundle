@@ -1,0 +1,33 @@
+{
+    "name": "whatwedo/crud-bundle",
+    "type": "symfony-bundle",
+    "description": "Very simple CRUD operations",
+    "license": "MIT",
+    "homepage": "https://doc.whatwedo.ch/whatwedo/crudbundle",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Ueli Banholzer",
+            "email": "ueli@whatwedo.ch"
+        },
+        {
+            "name": "Felix Imobersteg",
+            "email": "felix@whatwedo.ch"
+        },
+        {
+            "name": "Nicolo Singer",
+            "email": "nicolo@whatwedo.ch"
+        }
+    ],
+    "require": {
+        "php":                      ">=5.6",
+        "symfony/symfony":          "~3.0",
+        "whatwedo/core-bundle":     "^0.1",
+        "whatwedo/table-bundle":    "^0.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "whatwedo\\CrudBundle\\": ""
+        }
+    }
+}

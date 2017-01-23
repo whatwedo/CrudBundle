@@ -1,0 +1,45 @@
+services:
+    # Manager
+    whatwedo_crud.manager.definition:
+        class: whatwedo\CrudBundle\Manager\DefinitionManager
+
+    # Definition
+    whatwedo_crud.definition.abstract_definition:
+        abstract:  true
+        calls:
+            - [setDoctrine, ['@doctrine']]
+            - [setRequestStack, ['@request_stack']]
+            - [setDefinitionView, ['@whatwedo_crud.view.definition_view']]
+
+    # View
+    whatwedo_crud.view.definition_view:
+        class: whatwedo\CrudBundle\View\DefinitionView
+        shared: false
+        arguments:
+            - '@templating'
+            - '@form.factory'
+            - '@router'
+        calls:
+            - [setDefinitionManager, ['@whatwedo_crud.manager.definition']]
+
+    # Route Loader
+    whatwedo_crud.routing.crud_loader:
+        class: whatwedo\CrudBundle\Routing\CrudLoader
+        arguments:
+            - '@whatwedo_crud.manager.definition'
+        tags:
+            - { name: routing.loader }
+
+    # Event Listener
+    whatwedo_crud.event_listener.crud_definition:
+        class: whatwedo\CrudBundle\EventListener\CrudDefinitionListener
+        arguments:
+            - '@whatwedo_crud.manager.definition'
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
+
+    # Twig Extension
+    whatwedo_crud.twig.callable_extension:
+        class: whatwedo\CrudBundle\Twig\CallableExtension
+        tags:
+            - { name: twig.extension }

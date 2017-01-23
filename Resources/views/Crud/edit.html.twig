@@ -1,0 +1,45 @@
+{% extends '::base.html.twig' %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block page_actions %}
+    {% if view.allowDelete(view.data) %}
+    <form data-confirm="delete" action="{{ view.path('delete') }}" method="post">
+    {% endif %}
+        <div class="btn-group pull-right btn-group-sm">
+            {% block page_actions_back_to_list %}
+                <a href="{{ view.path('index') }}" class="btn btn-default">
+                    <i class="fa fa-list"></i>
+                    Übersicht
+                </a>
+            {% endblock %}
+
+            <button class="btn btn-warning" data-toggle="default-crud-save">
+                <i class="fa fa-floppy-o"></i>
+                Speichern
+            </button>
+            {% if view.allowCreate(view.data) %}
+                <a href="{{ view.path('create') }}" class="btn btn-success">
+                    <i class="fa fa-plus"></i>
+                    Hinzufügen
+                </a>
+            {% endif %}
+            <a href="{{ view.path('show') }}" class="btn btn-primary">
+                <i class="fa fa-arrow-right"></i>
+                Ansehen
+            </a>
+            {% if view.allowDelete(view.data) %}
+                <button type="submit" class="btn btn-danger">
+                    <i class="fa fa-trash-o"></i>
+                    Löschen
+                </button>
+            {% endif %}
+        </div>
+    {% if view.allowDelete(view.data) %}
+    </form>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {{ view.renderEdit|raw }}
+{% endblock %}
