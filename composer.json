@@ -25,6 +25,9 @@
         "whatwedo/core-bundle":     "^0.1",
         "whatwedo/table-bundle":    "^0.1"
     },
+    "require-dev": {
+        "phpunit/phpunit": "~4.8|~5.0"
+    },
     "autoload": {
         "psr-4": {
             "whatwedo\\CrudBundle\\": ""
