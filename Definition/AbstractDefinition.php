@@ -272,7 +272,7 @@ abstract class AbstractDefinition implements DefinitionInterface
                 return $column->getLabel();
             }
         }
-        return sprintf('-- NO LABEL -- (%s)', $property);
+        return $property;
     }
 
     /**

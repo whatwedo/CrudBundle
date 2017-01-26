@@ -79,4 +79,11 @@ class DefinitionManager
         return null;
     }
 
+    /**
+     * @return array|DefinitionInterface[]
+     */
+    public function getDefinitions()
+    {
+        return $this->definitions;
+    }
 }
