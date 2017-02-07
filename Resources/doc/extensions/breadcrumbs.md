@@ -83,3 +83,11 @@ class ProductContentDefinition extends AbstractDefinition
 ...
 ```
 Where possible, we inject the entity and the current route, but try to not rely on it.
+
+### Use it outside of Definitions and CrudController
+
+To use the breadcrumbs outside of the definitions, you can use this snippet to get the [`Breadcrumbs`-Class](https://github.com/whiteoctober/BreadcrumbsBundle/blob/master/Model/Breadcrumbs.php)
+
+```php
+$this->get("whatwedo_crud.extension.breadcrumbs")->getBreadcrumbs();
+```
