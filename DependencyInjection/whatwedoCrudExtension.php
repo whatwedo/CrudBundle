@@ -22,6 +22,20 @@ class whatwedoCrudExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        if (isset($config['breadcrumbs'])
+            && isset($config['breadcrumbs']['home_text'])) {
+            $container->setParameter('whatwedo_crud.config.breadcrumbs.home.text', $config['breadcrumbs']['home_text']);
+        } else {
+            $container->setParameter('whatwedo_crud.config.breadcrumbs.home.text', 'Dashboard');
+        }
+
+        if (isset($config['breadcrumbs'])
+            && isset($config['breadcrumbs']['home_route'])) {
+            $container->setParameter('whatwedo_crud.config.breadcrumbs.home.route', $config['breadcrumbs']['home_route']);
+        } else {
+            $container->setParameter('whatwedo_crud.config.breadcrumbs.home.route', false);
+        }
+
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
     }
