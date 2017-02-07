@@ -88,6 +88,7 @@ class BreadcrumbsExtension implements ExtensionInterface
         // add Dashboard Link (needs to be here, because routing is not available in the constructor
         if (!static::$isStartPrepended
             && $this->startText) {
+            static::$isStartPrepended = true;
             if ($this->startRoute) {
                 $this->breadcrumbs->prependRouteItem($this->startText, $this->startRoute);
             } else {
