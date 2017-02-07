@@ -33,21 +33,23 @@ use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\ManyToOne;
-use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
 use whatwedo\CrudBundle\Controller\CrudController;
 use whatwedo\CrudBundle\Enum\RouteEnum;
+use whatwedo\CrudBundle\Extension\BreadcrumbsExtension;
+use whatwedo\CrudBundle\Extension\ExtensionInterface;
 use whatwedo\CrudBundle\View\DefinitionViewInterface;
+use whatwedo\TableBundle\Model\Type\BooleanFilterType;
 use whatwedo\TableBundle\Model\Type\DateFilterType;
 use whatwedo\TableBundle\Model\Type\NumberFilterType;
 use whatwedo\TableBundle\Model\Type\RelationFilterType;
 use whatwedo\TableBundle\Model\Type\TextFilterType;
 use whatwedo\TableBundle\Table\Table;
+use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
@@ -86,6 +88,16 @@ abstract class AbstractDefinition implements DefinitionInterface
     protected $requestStack;
 
     /**
+     * @var Breadcrumbs
+     */
+    protected $breadcrumbs;
+
+    /**
+     * @var ExtensionInterface[]
+     */
+    protected $extensions;
+
+    /**
      * {@inheritdoc}
      */
     public function getTitle($entity = null, $route = null)
@@ -94,13 +106,13 @@ abstract class AbstractDefinition implements DefinitionInterface
             case RouteEnum::INDEX:
                 return 'Übersicht';
             case RouteEnum::SHOW:
-                return 'Ansehen';
+                return $entity;
             case RouteEnum::DELETE:
-                return 'Löschen';
+                return $entity . ' löschen';
             case RouteEnum::EDIT:
-                return 'Bearbeiten';
+                return $entity;
             case RouteEnum::CREATE:
-                return 'Erstellen';
+                return 'Hinzufügen';
         }
 
         return $entity;
@@ -176,6 +188,14 @@ abstract class AbstractDefinition implements DefinitionInterface
     }
 
     /**
+     * @return Breadcrumbs
+     */
+    public function getBreadcrumbs()
+    {
+        return $this->getExtension(BreadcrumbsExtension::class)->getBreadcrumbs();
+    }
+
+    /**
      * @param RequestStack $requestStack
      * @return AbstractDefinition
      */
@@ -219,6 +239,9 @@ abstract class AbstractDefinition implements DefinitionInterface
         return $this->definitionView;
     }
 
+    /**
+     * @param Table $table
+     */
     public function configureTableFilter(Table $table)
     {
         $reader = new AnnotationReader();
@@ -247,6 +270,8 @@ abstract class AbstractDefinition implements DefinitionInterface
                     case 'decimal':
                         $table->addFilter($acronym, $label, new NumberFilterType($accessor));
                         break;
+                    case 'boolean':
+                        $table->addFilter($acronym, $label, new BooleanFilterType($accessor));
                 }
             } else if (!is_null($ormManyToOne)) {
                 $target = $ormManyToOne->targetEntity;
@@ -264,6 +289,12 @@ abstract class AbstractDefinition implements DefinitionInterface
         }
     }
 
+    /**
+     * @param Table $table
+     * @param       $property
+     *
+     * @return string
+     */
     private function getLabelFor(Table $table, $property)
     {
         /** @var \whatwedo\TableBundle\Table\Column $column */
@@ -272,6 +303,7 @@ abstract class AbstractDefinition implements DefinitionInterface
                 return $column->getLabel();
             }
         }
+
         return $property;
     }
 
@@ -299,37 +331,125 @@ abstract class AbstractDefinition implements DefinitionInterface
         return static::getQueryAlias();
     }
 
+    /**
+     * @param null $data
+     *
+     * @return bool
+     */
     public function allowDelete($data = null)
     {
         return self::hasCapability(RouteEnum::DELETE);
     }
 
+    /**
+     * @param null $data
+     *
+     * @return bool
+     */
     public function allowCreate($data = null)
     {
         return self::hasCapability(RouteEnum::CREATE);
     }
 
+    /**
+     * @param null $data
+     *
+     * @return bool
+     */
     public function allowEdit($data = null)
     {
         return self::hasCapability(RouteEnum::EDIT);
     }
 
+    /**
+     * @return array
+     */
     public function getExportAttributes()
     {
         return [];
     }
 
+    /**
+     * @return array
+     */
     public function getExportCallbacks()
     {
         return [];
     }
 
+    /**
+     * @todo add docs
+     */
     public function addAjaxOnChangeListener()
     {
     }
 
+    /**
+     * @todo add docs
+     */
     public function ajaxOnChange(Request $request)
     {
     }
 
+    /**
+     * build breadcrumbs according to route
+     *
+     * @param null|object $entity
+     * @param null|string $route
+     */
+    public function buildBreadcrumbs($entity = null, $route = null)
+    {
+        if (!$this->hasExtension(BreadcrumbsExtension::class)) {
+            return;
+        }
+
+        if (static::hasCapability(RouteEnum::INDEX)) {
+            $this->getBreadcrumbs()->addRouteItem(static::getEntityTitle(), static::getRoutePrefix() . '_' . RouteEnum::INDEX, $this->getIndexBreadcrumbParameters([], $entity));
+        } else {
+            $this->getBreadcrumbs()->addItem(static::getEntityTitle());
+        }
+    }
+
+    /**
+     * overwrite breadcrumbs for Index page
+     * @param array $parameters
+     * @param null  $entity
+     *
+     * @return array
+     */
+    public function getIndexBreadcrumbParameters($parameters = [], $entity = null)
+    {
+        return $parameters;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getExtension($extension)
+    {
+        if (!$this->hasExtension($extension)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Extension %s is not enabled. Please configure it first.',
+                $extension
+            ));
+        }
+
+        return $this->extensions[$extension];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasExtension($extension)
+    {
+        return isset($this->extensions[$extension]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addExtension(ExtensionInterface $extension)
+    {
+        $this->extensions[get_class($extension)] = $extension;
+    }
 }

@@ -50,6 +50,7 @@ use whatwedo\CrudBundle\Normalizer\WhatwedoObjectNormalizer;
 use whatwedo\TableBundle\Table\ActionColumn;
 use whatwedo\TableBundle\Table\Table;
 use Symfony\Component\Serializer\Serializer;
+use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
 
 /**
@@ -101,6 +102,8 @@ class CrudController extends BaseController implements CrudDefinitionController
         $this->definition->configureTableFilter($table);
         $this->checkQueryBuilder($table);
 
+        $this->definition->buildBreadcrumbs(null, RouteEnum::INDEX);
+
         return $this->render($this->getView('index.html.twig'), $this->getIndexParameters([
             'view' => $this->getDefinition()->createView(),
             'table' => $table,
@@ -145,6 +148,8 @@ class CrudController extends BaseController implements CrudDefinitionController
 
         $this->dispatchEvent(CrudEvent::PRE_SHOW_PREFIX, $entity);
 
+        $this->definition->buildBreadcrumbs($entity, RouteEnum::SHOW);
+
         return $this->render($this->getView('show.html.twig'), $this->getShowParameters($entity, [
             'view' => $this->getDefinition()->createView($entity),
             'title' => $this->getDefinition()->getTitle($entity, RouteEnum::SHOW),
@@ -185,6 +190,8 @@ class CrudController extends BaseController implements CrudDefinitionController
                 $this->addFlash('danger', sprintf('Beim Speichern ist ein Fehler aufgetreten. Bitte überprüfe deine Eingaben.'));
             }
         }
+
+        $this->definition->buildBreadcrumbs($entity, RouteEnum::EDIT);
 
         return $this->render($this->getView('edit.html.twig'), $this->getEditParameters($entity, [
             'view' => $view,
@@ -272,6 +279,8 @@ class CrudController extends BaseController implements CrudDefinitionController
                 $this->addFlash('danger', sprintf('Beim Speichern ist ein Fehler aufgetreten. Bitte überprüfe deine Eingaben.'));
             }
         }
+
+        $this->definition->buildBreadcrumbs(null, RouteEnum::CREATE);
 
         return $this->render($this->getView('create.html.twig'), $this->getCreateParameters([
             'view' => $view,

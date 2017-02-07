@@ -29,6 +29,7 @@ namespace whatwedo\CrudBundle\DependencyInjection\Compiler;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
+use whatwedo\CrudBundle\Extension\ExtensionInterface;
 
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
@@ -37,7 +38,7 @@ class DefinitionPass implements CompilerPassInterface
 {
 
     /**
-     * You can modify the container here before it is dumped to PHP code.
+     * this will initialize all Definitions
      *
      * @param ContainerBuilder $container
      */
@@ -47,9 +48,40 @@ class DefinitionPass implements CompilerPassInterface
             return;
         }
 
+        /*
+         * Load Definition Extensions
+         */
+        foreach ($container->findTaggedServiceIds('crud.extension') as $id => $tags) {
+            $definition = $container->getDefinition($id);
+
+            // all extensions must implement ExtensionInExtensionInterfaceterface
+            if (!is_subclass_of($definition->getClass(), ExtensionInterface::class)) {
+                throw new \UnexpectedValueException(sprintf(
+                    'Extensions tagged with crud.extension must implement %s - %s given.',
+                    ExtensionInterface::class,
+                    $definition->getClass()
+                ));
+                continue;
+            }
+
+            // remove extensions from container if their requirements (other bundles) are not fulfilled
+            if (!call_user_func([$definition->getClass(), 'isEnabled'], [$container->getParameter('kernel.bundles')])) {
+                $container->removeDefinition($id);
+            }
+        }
+
+        /*
+         * Load definitions
+         */
         $definition = $container->findDefinition('whatwedo_crud.manager.definition');
 
         foreach ($container->findTaggedServiceIds('crud.definition') as $id => $tags) {
+            // add available extensions to all Definitions
+            foreach ($container->findTaggedServiceIds('crud.extension') as $idExtension => $tagsExtension) {
+                $container->getDefinition($id)->addMethodCall('addExtension', [new Reference($idExtension)]);
+            }
+
+            // add all Defintions to our DefinitionManager
             foreach ($tags as $attributes) {
                 $definition->addMethodCall('addDefinition', [$attributes['alias'], new Reference($id)]);
             }

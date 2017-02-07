@@ -190,3 +190,6 @@ That's all.
 - [Table Configuration](https://doc.whatwedo.ch/whatwedo/tablebundle/table-configuration)
 - [Formatter](formatter.md)
 - [Events](events.md)
+
+### Extensions
+- [Breadcrumbs](extensions/breadcrumbs.md)
