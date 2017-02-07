@@ -33,6 +33,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
+use whatwedo\CrudBundle\Extension\ExtensionInterface;
 use whatwedo\CrudBundle\View\DefinitionViewInterface;
 use whatwedo\TableBundle\Table\Table;
 
@@ -41,6 +42,8 @@ use whatwedo\TableBundle\Table\Table;
  */
 interface DefinitionInterface
 {
+    public static function getEntityTitle();
+
     public static function getAlias();
 
     public static function getRoutePrefix();
@@ -196,4 +199,19 @@ interface DefinitionInterface
     public function addAjaxOnChangeListener();
 
     public function ajaxOnChange(Request $request);
+
+    /**
+     * @param ExtensionInterface $extension
+     */
+    public function addExtension(ExtensionInterface $extension);
+
+    /**
+     * @param string $extension FQDN of extension
+     */
+    public function hasExtension($extension);
+
+    /**
+     * @param string $extension FQDN of extension
+     */
+    public function getExtension($extension);
 }

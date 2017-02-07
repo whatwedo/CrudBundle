@@ -1,7 +1,6 @@
 <?php
-
 /*
- * Copyright (c) 2016, whatwedo GmbH
+ * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,24 +25,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Twig;
+namespace whatwedo\CrudBundle\Extension;
 
-class CallableExtension extends \Twig_Extension
+
+interface ExtensionInterface
 {
-
-    public function getFunctions()
-    {
-        return [
-            new \Twig_SimpleFunction('whatwedo_crud_callable', [$this, 'call'])
-        ];
-    }
-
-    public function call($callable, $value)
-    {
-        if (!is_callable($callable)) {
-            return $value;
-        }
-        return $callable($value);
-    }
-
+    /**
+     * returns true if extension is enabled
+     *
+     * @return bool
+     */
+    public static function isEnabled($enabledBundles);
 }

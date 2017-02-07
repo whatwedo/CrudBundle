@@ -4,6 +4,7 @@
 
 {% block page_actions %}
     <div class="btn-group pull-right btn-group-sm">
+        {% block page_actions_additional %}{% endblock %}
         {% if view.allowCreate %}
             <a href="{{ view.path('create') }}" class="btn btn-success">
                 <i class="fa fa-plus"></i>

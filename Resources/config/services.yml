@@ -43,3 +43,13 @@ services:
         class: whatwedo\CrudBundle\Twig\CallableExtension
         tags:
             - { name: twig.extension }
+
+    # Extensions
+    whatwedo_crud.extension.breadcrumbs:
+        class: whatwedo\CrudBundle\Extension\BreadcrumbsExtension
+        arguments:
+            - '@white_october_breadcrumbs'
+            - '%whatwedo_crud.config.breadcrumbs.home.text%'
+            - '%whatwedo_crud.config.breadcrumbs.home.route%'
+        tags:
+            - { name: crud.extension, alias: breadcrumb }

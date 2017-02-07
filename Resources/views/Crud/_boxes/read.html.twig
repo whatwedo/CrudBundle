@@ -21,7 +21,7 @@
                             {% if content.isTable is defined and content.isTable %}
                                 <div class="row">
                                     <div class="col-lg-12">
-                                        <strong>{{ content.label }}:</strong>
+                                        <strong>{{ content.label }}{% if content.label is not empty %}:{% endif %}</strong>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -65,7 +65,7 @@
                                 {% else %}
                                     <div class="row {{ content.viewClass }}">
                                         <div class="col-lg-4">
-                                            <strong>{{ content.label }}:</strong>
+                                            <strong>{{ content.label }}{% if content.label is not empty %}:{% endif %}</strong>
                                         </div>
                                         <div class="col-lg-8">
                                             {{ helper.linkIt(value, content)|raw }}
