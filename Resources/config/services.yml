@@ -53,3 +53,10 @@ services:
             - '%whatwedo_crud.config.breadcrumbs.home.route%'
         tags:
             - { name: crud.extension, alias: breadcrumb }
+
+    # Form types
+    whatwedo_crud.type.entity_hidden:
+       class: whatwedo\CrudBundle\Form\EntityHiddenType
+       arguments: ["@doctrine.orm.entity_manager"]
+       tags:
+       - { name: form.type, alias: entity_hidden }
