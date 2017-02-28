@@ -38,11 +38,21 @@ use whatwedo\TableBundle\Table\Table;
  */
 class RelationContent extends AbstractContent
 {
+
+    /**
+     * @return bool
+     */
     public function isTable()
     {
         return true;
     }
 
+    /**
+     * @param Table $table
+     * @param $row
+     * @return string
+     * @throws \Exception
+     */
     public function renderTable(Table $table, $row)
     {
         if (is_callable($this->options['table_configuration'])) {
@@ -108,11 +118,18 @@ class RelationContent extends AbstractContent
         return $table->renderTableOnly();
     }
 
+    /**
+     * @param $row
+     * @return string
+     */
     public function render($row)
     {
         return 'call RelationContent::renderTable()';
     }
 
+    /**
+     * @return null|string
+     */
     public function getIndexRoute()
     {
         if (!$this->options['show_index_button']) {
@@ -128,8 +145,15 @@ class RelationContent extends AbstractContent
         return null;
     }
 
+    /**
+     * @return null|string
+     */
     public function getCreateRoute()
     {
+        if (!$this->options['show_create_button']) {
+            return null;
+        }
+
         $capibilities = call_user_func([$this->options['definition'], 'getCapabilities']);
 
         if (in_array(RouteEnum::CREATE, $capibilities)) {
@@ -139,11 +163,18 @@ class RelationContent extends AbstractContent
         return null;
     }
 
+    /**
+     * @return mixed
+     */
     public function isShowInEdit()
     {
         return $this->options['show_in_edit'];
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     public function getCreateRouteParameters($data)
     {
         $parameters = [];
@@ -155,6 +186,10 @@ class RelationContent extends AbstractContent
         return $parameters;
     }
 
+    /**
+     * @param $key
+     * @param $value
+     */
     public function setOption($key, $value)
     {
         if (isset($this->options[$key])) {
@@ -162,6 +197,9 @@ class RelationContent extends AbstractContent
         }
     }
 
+    /**
+     * @param OptionsResolver $resolver
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
@@ -173,6 +211,7 @@ class RelationContent extends AbstractContent
             'route_addition_key' => null,
             'show_in_edit' => true,
             'show_index_button' => false,
+            'show_create_button' => true,
         ]);
     }
 }
