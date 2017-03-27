@@ -60,3 +60,10 @@ services:
        arguments: ["@doctrine.orm.entity_manager"]
        tags:
        - { name: form.type, alias: entity_hidden }
+
+    whatwedo_crud.form_type.ajax_select:
+        class: whatwedo\CrudBundle\Form\Type\AjaxSelectFormType
+        arguments:
+            - "@router"
+        tags:
+            - { name: form.type, alias: ajaxSelect }
