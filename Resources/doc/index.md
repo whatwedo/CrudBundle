@@ -36,6 +36,13 @@ public function registerBundles()
 }
 ```
 
+Thirdly, add our routes to your ```app/config/routing.yml```
+```
+whatwedo_crud_bundle:
+    resource: "@whatwedoCrudBundle/Resources/config/routing.yml"
+    prefix: /
+```
+    
 ## Use the bundle
 
 ### Step 1: Create an entity
