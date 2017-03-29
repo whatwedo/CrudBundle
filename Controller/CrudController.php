@@ -217,6 +217,7 @@ class CrudController extends BaseController implements CrudDefinitionController
         $uri = null;
 
         if ($request->isMethod('get') || $request->isMethod('post')) {
+
             // set preselected entities
             $propertyAccessor = PropertyAccess::createPropertyAccessor();
 
@@ -360,7 +361,10 @@ class CrudController extends BaseController implements CrudDefinitionController
         return $string;
     }
 
-
+    /**
+     * @param Request $request
+     * @return Response
+     */
     public function ajaxAction(Request $request)
     {
         $obj = $this->definition->ajaxOnChange($request);

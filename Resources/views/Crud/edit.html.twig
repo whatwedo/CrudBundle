@@ -8,10 +8,12 @@
     {% endif %}
         <div class="btn-group pull-right btn-group-sm">
             {% block page_actions_back_to_list %}
-                <a href="{{ view.path('index') }}" class="btn btn-default">
-                    <i class="fa fa-list"></i>
-                    Übersicht
-                </a>
+                {% if view.hasCapability('index') %}
+                    <a href="{{ view.path('index') }}" class="btn btn-default">
+                        <i class="fa fa-list"></i>
+                        Übersicht
+                    </a>
+                {% endif %}
             {% endblock %}
 
             <button class="btn btn-warning" data-toggle="default-crud-save">
