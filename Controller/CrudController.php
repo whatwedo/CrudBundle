@@ -424,8 +424,13 @@ class CrudController extends BaseController implements CrudDefinitionController
             ];
         }
 
+        $reflection = new \ReflectionClass(get_class($this->getDefinition()));
+        $allowEdit = $reflection->getMethod('allowEdit')->getClosure($this->getDefinition());
         $table->addColumn('actions', ActionColumn::class, [
             'items' => $actionColumnItems,
+            'showActionColumn' => [
+                sprintf('%s_%s', $this->getDefinition()->getRoutePrefix(), RouteEnum::EDIT) => $allowEdit
+            ]
         ]);
     }
 
