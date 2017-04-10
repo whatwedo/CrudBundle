@@ -29,8 +29,6 @@ namespace whatwedo\CrudBundle\Definition;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -45,6 +43,7 @@ use whatwedo\CrudBundle\Extension\ExtensionInterface;
 use whatwedo\CrudBundle\View\DefinitionViewInterface;
 use whatwedo\TableBundle\Model\Type\BooleanFilterType;
 use whatwedo\TableBundle\Model\Type\DateFilterType;
+use whatwedo\TableBundle\Model\Type\DatetimeFilterType;
 use whatwedo\TableBundle\Model\Type\NumberFilterType;
 use whatwedo\TableBundle\Model\Type\RelationFilterType;
 use whatwedo\TableBundle\Model\Type\TextFilterType;
@@ -262,8 +261,11 @@ abstract class AbstractDefinition implements DefinitionInterface
                     case 'string':
                         $table->addFilter($acronym, $label, new TextFilterType($accessor));
                         break;
-                    case 'datetime':
+                    case 'date':
                         $table->addFilter($acronym, $label, new DateFilterType($accessor));
+                        break;
+                    case 'datetime':
+                        $table->addFilter($acronym, $label, new DatetimeFilterType($accessor));
                         break;
                     case 'integer':
                     case 'float':
