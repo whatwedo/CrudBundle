@@ -99,7 +99,7 @@ class CrudController extends BaseController implements CrudDefinitionController
             ->setQueryBuilder($this->getDefinition()->getQueryBuilder());
 
         $this->configureTable($table);
-        $this->definition->configureTableFilter($table);
+        $this->definition->overrideTableConfiguration($table);
         $this->checkQueryBuilder($table);
 
         $this->definition->buildBreadcrumbs(null, RouteEnum::INDEX);

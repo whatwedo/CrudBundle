@@ -241,7 +241,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @param Table $table
      */
-    public function configureTableFilter(Table $table)
+    public function overrideTableConfiguration(Table $table)
     {
         $reader = new AnnotationReader();
         $reflectionClass = new \ReflectionClass(static::getEntity());

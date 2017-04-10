@@ -194,7 +194,7 @@ interface DefinitionInterface
     /**
      * @param Table $table
      */
-    public function configureTableFilter(Table $table);
+    public function overrideTableConfiguration(Table $table);
 
     public function addAjaxOnChangeListener();
 
