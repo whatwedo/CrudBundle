@@ -82,7 +82,7 @@
                                         {{ content.renderTable(whatwedo_table(), helper.data)|raw }}
                                     </div>
                                 </div>
-                                {% if content.createRoute is defined and content.createRoute %}
+                                {% if content.createRoute is defined and content.createRoute and helper.allowEdit(helper.data) %}
                                     <div class="row">
                                         <div class="col-lg-12 text-right">
                                             <a href="{{ path(content.createRoute, content.createRouteParameters(helper.data)) }}" class="btn btn-success btn-xs">
