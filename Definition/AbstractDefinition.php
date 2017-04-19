@@ -388,9 +388,20 @@ abstract class AbstractDefinition implements DefinitionInterface
 
     /**
      * @todo add docs
+     * @deprecated
      */
     public function ajaxOnChange(Request $request)
     {
+    }
+
+    /**
+     * @todo add docs
+     * @param $data
+     * @return
+     */
+    public function ajaxOnDataChanged($data)
+    {
+        return null;
     }
 
     /**

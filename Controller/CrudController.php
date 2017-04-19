@@ -367,7 +367,15 @@ class CrudController extends BaseController implements CrudDefinitionController
      */
     public function ajaxAction(Request $request)
     {
-        $obj = $this->definition->ajaxOnChange($request);
+        $data = [];
+        foreach ($request->request->get('data') as $pair) {
+            $data[$pair['key']] = $pair['value'];
+        }
+        $obj = $this->definition->ajaxOnDataChanged($data);
+        if (is_null($obj)) {
+            // try deprecated
+            $obj = $this->definition->ajaxOnChange($request);
+        }
         $response = new Response(json_encode($obj));
         $response->headers->set('Content-Type', 'text/json');
         return $response;
