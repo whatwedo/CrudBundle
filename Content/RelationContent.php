@@ -79,7 +79,9 @@ class RelationContent extends AbstractContent
             ];
         }
 
-        if (call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::EDIT)) {
+        $allowEdit = call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::EDIT)
+                    && call_user_func([$this->getOption('definition'), 'allowEdit'], $row);
+        if ($allowEdit) {
             $actionColumnItems[] = [
                 'label' => 'Bearbeiten',
                 'icon' => 'pencil',

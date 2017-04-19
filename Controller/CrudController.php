@@ -28,6 +28,7 @@
 namespace whatwedo\CrudBundle\Controller;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,6 +37,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Serializer\Encoder\CsvEncoder;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
@@ -168,7 +170,10 @@ class CrudController extends BaseController implements CrudDefinitionController
     public function editAction(Request $request)
     {
         $entity = $this->getEntityOr404($request);
-
+        if (!$this->definition->allowEdit($entity)) {
+            $this->addFlash('danger', 'Aktion nicht erlaubt!');
+            return $this->redirectToRoute(get_class($this->definition)::getRoutePrefix() . '_' . RouteEnum::INDEX);
+        }
         $view = $this->getDefinition()->createView($entity);
 
         $form = $view->getForm();
@@ -210,6 +215,10 @@ class CrudController extends BaseController implements CrudDefinitionController
      */
     public function createAction(Request $request)
     {
+        if (!$this->getDefinition()->allowCreate()) {
+            $this->addFlash('danger', 'Aktion ist nicht erlaubt!');
+            return $this->redirectToRoute(get_class($this->definition)::getRoutePrefix() . '_' . RouteEnum::INDEX);
+        }
         $entityName = $this->getDefinition()->getEntity();
         $entity = new $entityName;
 
@@ -301,6 +310,10 @@ class CrudController extends BaseController implements CrudDefinitionController
     public function deleteAction(Request $request)
     {
         $entity = $this->getEntityOr404($request);
+        if (!$this->definition->allowDelete($entity)) {
+            $this->addFlash('danger', 'Aktion nicht erlaubt!');
+            return $this->redirectToRoute(get_class($this->definition)::getRoutePrefix() . '_' . RouteEnum::INDEX);
+        }
         $redirect = $this->getDefinition()->getDeleteRedirect($this->get('router'), $entity);
 
         if (!$this->definition->allowDelete($entity)) {
