@@ -197,6 +197,7 @@ That's all.
 - [Table Configuration](table-configuration.md)
 - [Formatter](formatter.md)
 - [Events](events.md)
+- [Ajax](ajax.md)
 
 ### Extensions
 - [Breadcrumbs](extensions/breadcrumbs.md)
