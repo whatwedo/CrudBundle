@@ -224,6 +224,16 @@ class DefinitionView implements DefinitionViewInterface
                             ], $params)
                     );
                 case RouteEnum::AJAX:
+                    if (!$this->data) {
+                        return $this->router->generate(sprintf('%s_%s', $this->definition->getRoutePrefix(), $route),
+                            $params
+                        );
+                    }
+                    return $this->router->generate(sprintf('%s_%s', $this->definition->getRoutePrefix(), $route),
+                        array_merge([
+                            'id' => $this->data->getId(),
+                        ], $params)
+                    );
                 case RouteEnum::INDEX:
                 case RouteEnum::BATCH:
                 case RouteEnum::CREATE:
