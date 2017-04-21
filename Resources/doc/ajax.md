@@ -62,11 +62,15 @@ soon as the player #1 and #2 are selected we update the winner select field to o
 public function ajaxOnDataChanged($data)
     {
         $playerIds = [];
+        $oldValue = null;
         if (!empty($data['playerOne'])) {
             $playerIds[] = $data['playerOne'];
         }
         if (!empty($data['playerTwo'])) {
             $playerIds[] = $data['playerTwo'];
+        }
+        if (!empty($data['winner'])) {
+            $oldValue = $data['winner'];
         }
         $pRepo = $this->getDoctrine()->getRepository(Player::class);
         $winners = $pRepo
@@ -82,7 +86,7 @@ public function ajaxOnDataChanged($data)
         $obj->data = [
             'winner' => [
                 'values' => $winnerValues,
-                'value' => null
+                'value' => $oldValue
             ]
         ];
         return $obj;
