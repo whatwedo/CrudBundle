@@ -77,6 +77,12 @@ var whatwedo_ajax = {
                                 s = 'selected';
                                 keyValue = '';
                             }
+                            if (key === '-') {
+                                keyValue = '';
+                            }
+                            if (c.value === c.values[key]) {
+                                s = 'selected';
+                            }
                             formEle.append('<option '+ s +' value="' + keyValue + '">' + c.values[key] + '</option>')
                         }
                     }
