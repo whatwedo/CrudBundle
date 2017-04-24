@@ -10,6 +10,7 @@ services:
             - [setDoctrine, ['@doctrine']]
             - [setRequestStack, ['@request_stack']]
             - [setDefinitionView, ['@whatwedo_crud.view.definition_view']]
+            - [setDefinitionManager, ['@whatwedo_crud.manager.definition']]
 
     # View
     whatwedo_crud.view.definition_view:

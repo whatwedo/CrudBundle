@@ -40,6 +40,7 @@ use whatwedo\CrudBundle\Controller\CrudController;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Extension\BreadcrumbsExtension;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
+use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\View\DefinitionViewInterface;
 use whatwedo\TableBundle\Model\Type\BooleanFilterType;
 use whatwedo\TableBundle\Model\Type\DateFilterType;
@@ -95,6 +96,11 @@ abstract class AbstractDefinition implements DefinitionInterface
      * @var ExtensionInterface[]
      */
     protected $extensions;
+
+    /**
+     * @var DefinitionManager
+     */
+    protected $definitionManager;
 
     /**
      * {@inheritdoc}
@@ -206,6 +212,24 @@ abstract class AbstractDefinition implements DefinitionInterface
     }
 
     /**
+     * @return DefinitionManager
+     */
+    public function getDefinitionManager()
+    {
+        return $this->definitionManager;
+    }
+
+    /**
+     * @param DefinitionManager $definitionManager
+     * @return AbstractDefinition
+     */
+    public function setDefinitionManager(DefinitionManager $definitionManager)
+    {
+        $this->definitionManager = $definitionManager;
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getTemplateDirectory()
@@ -227,7 +251,7 @@ abstract class AbstractDefinition implements DefinitionInterface
      */
     public function createView($data = null)
     {
-        $this->builder = new DefinitionBuilder();
+        $this->builder = new DefinitionBuilder($this->definitionManager);
 
         $this->configureView($this->builder, $data);
 

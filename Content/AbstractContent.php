@@ -30,6 +30,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
@@ -45,6 +46,11 @@ abstract class AbstractContent implements ContentInterface
      * @var array block options
      */
     protected $options = [];
+
+    /**
+     * @var DefinitionManager
+     */
+    protected $definitionManager;
 
     /**
      * Block constructor.
@@ -121,5 +127,23 @@ abstract class AbstractContent implements ContentInterface
     public function getOption($key)
     {
         return isset($this->options[$key]) ? $this->options[$key] : null;
+    }
+
+    /**
+     * @return DefinitionManager
+     */
+    public function getDefinitionManager()
+    {
+        return $this->definitionManager;
+    }
+
+    /**
+     * @param DefinitionManager $definitionManager
+     * @return AbstractContent
+     */
+    public function setDefinitionManager(DefinitionManager $definitionManager)
+    {
+        $this->definitionManager = $definitionManager;
+        return $this;
     }
 }

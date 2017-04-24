@@ -29,16 +29,28 @@ namespace whatwedo\CrudBundle\Builder;
 use whatwedo\CrudBundle\Block\Block;
 use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Exception\ElementNotFoundException;
+use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
  */
 class DefinitionBuilder
 {
+
+    /**
+     * @var DefinitionManager
+     */
+    protected $definitionManager;
+
     /**
      * @var array
      */
     protected $definition = [];
+
+    public function __construct(DefinitionManager $definitionManager)
+    {
+        $this->definitionManager = $definitionManager;
+    }
 
     /**
      * adds a new block to the definition
@@ -49,7 +61,7 @@ class DefinitionBuilder
     public function addBlock($acronym, array $options = [])
     {
         $this->definition[$acronym] = new Block($acronym, $options);
-
+        $this->definition[$acronym]->setDefinitionManager($this->definitionManager);
         return $this->definition[$acronym];
     }
 

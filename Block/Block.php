@@ -29,6 +29,7 @@ namespace whatwedo\CrudBundle\Block;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CrudBundle\Content\Content;
 use whatwedo\CrudBundle\Content\ContentInterface;
+use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
@@ -52,6 +53,11 @@ class Block
      * @var array containing content elements
      */
     protected $elements = [];
+
+    /**
+     * @var DefinitionManager
+     */
+    protected $definitionManager;
 
     /**
      * Block constructor.
@@ -108,7 +114,7 @@ class Block
         }
 
         $this->elements[$acronym] = new $type($acronym, $options);
-
+        $this->elements[$acronym]->setDefinitionManager($this->definitionManager);
         return $this;
     }
 
@@ -137,5 +143,23 @@ class Block
             'label' => '',
             'size' => static::BLOCK_SIZE_SMALL,
         ]);
+    }
+
+    /**
+     * @return DefinitionManager
+     */
+    public function getDefinitionManager()
+    {
+        return $this->definitionManager;
+    }
+
+    /**
+     * @param DefinitionManager $definitionManager
+     * @return Block
+     */
+    public function setDefinitionManager(DefinitionManager $definitionManager)
+    {
+        $this->definitionManager = $definitionManager;
+        return $this;
     }
 }

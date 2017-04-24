@@ -79,11 +79,13 @@ class RelationContent extends AbstractContent
             ];
         }
 
-        $definition = $this->getOption('definition');
-        $definition = new $definition();
-        $allowEdit = call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::EDIT)
-                    && $definition->allowEdit($row);
+        $definition = $this->definitionManager->getDefinitionFromClass($this->getOption('definition'));
+        $allowEdit = call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::EDIT);
+        $showActionColumn = [];
         if ($allowEdit) {
+            $reflection = new \ReflectionClass(get_class($definition));
+            $allowEdit = $reflection->getMethod('allowEdit')->getClosure($definition);
+            $showActionColumn[sprintf('%s_%s', call_user_func([$this->getOption('definition'), 'getRoutePrefix']), RouteEnum::EDIT)] = $allowEdit;
             $actionColumnItems[] = [
                 'label' => 'Bearbeiten',
                 'icon' => 'pencil',
@@ -106,6 +108,7 @@ class RelationContent extends AbstractContent
 
         $table->addColumn('actions', ActionColumn::class, [
             'items' => $actionColumnItems,
+            'showActionColumn' => $showActionColumn
         ]);
 
         $data = $this->getContents($row);

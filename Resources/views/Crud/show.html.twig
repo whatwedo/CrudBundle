@@ -16,12 +16,6 @@
                 {% endif %}
             {% endblock %}
             {% block page_actions_additional %}{% endblock %}
-            {% if view.allowCreate(view.data) %}
-                <a href="{{ view.path('create') }}" class="btn btn-success">
-                    <i class="fa fa-plus"></i>
-                    Hinzufügen
-                </a>
-            {% endif %}
             {% if view.allowEdit(view.data) %}
                 <a href="{{ view.path('edit') }}" class="btn btn-warning">
                     <i class="fa fa-pencil"></i>
