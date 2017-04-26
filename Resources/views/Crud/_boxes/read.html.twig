@@ -38,7 +38,7 @@
                                             Alle ansehen
                                         </a>
                                         {% endif %}
-                                        {% if content.createRoute and helper.allowEdit(helper.data) %}
+                                        {% if content.createRoute and content.allowCreate(helper.data) %}
                                         <a href="{{ path(content.createRoute, content.createRouteParameters(data)) }}" class="btn btn-success btn-xs">
                                             <i class="fa fa-plus"></i>
                                             Hinzufügen

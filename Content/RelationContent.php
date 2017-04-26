@@ -193,6 +193,12 @@ class RelationContent extends AbstractContent
         return $parameters;
     }
 
+    public function allowCreate($data = null)
+    {
+        $definition = $this->definitionManager->getDefinitionFromClass($this->options['definition']);
+        return $definition->allowCreate($data);
+    }
+
     /**
      * @param $key
      * @param $value
