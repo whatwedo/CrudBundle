@@ -20,12 +20,6 @@
                 <i class="fa fa-floppy-o"></i>
                 Speichern
             </button>
-            {% if view.allowCreate(view.data) %}
-                <a href="{{ view.path('create') }}" class="btn btn-success">
-                    <i class="fa fa-plus"></i>
-                    Hinzufügen
-                </a>
-            {% endif %}
             <a href="{{ view.path('show') }}" class="btn btn-primary">
                 <i class="fa fa-arrow-right"></i>
                 Ansehen

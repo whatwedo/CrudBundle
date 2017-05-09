@@ -152,7 +152,6 @@ interface DefinitionInterface
      *
      * @param DefinitionBuilder $builder
      * @param $data
-     * @return mixed
      */
     public function configureView(DefinitionBuilder $builder, $data);
 
