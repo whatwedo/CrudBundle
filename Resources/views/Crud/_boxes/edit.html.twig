@@ -71,7 +71,7 @@
                                     {% endif %}
                                 </div>
                             {% endif %}
-                            {% if content.isTable and content.showInEdit %}
+                            {% if content.isTable is defined and content.isTable and content.showInEdit %}
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <strong>{{ content.label }}:</strong>
@@ -91,6 +91,11 @@
                                             </a>
                                         </div>
                                     </div>
+                                {% endif %}
+                            {% endif %}
+                            {% if content.isTwigContent is defined and content.isTwigContent %}
+                                {% if content.showOn('edit') %}
+                                    {% include content.template %}
                                 {% endif %}
                             {% endif %}
                         {% endfor %}

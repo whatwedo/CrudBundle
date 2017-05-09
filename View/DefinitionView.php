@@ -140,12 +140,12 @@ class DefinitionView implements DefinitionViewInterface
     /**
      * {@inheritdoc}
      */
-    public function renderShow()
+    public function renderShow($additionalParameters = [])
     {
-        return $this->templating->render('whatwedoCrudBundle:Crud/_boxes:read.html.twig', [
+        return $this->templating->render('whatwedoCrudBundle:Crud/_boxes:read.html.twig', array_merge([
             'data' => $this->data,
             'helper' => $this,
-        ]);
+        ], $additionalParameters));
     }
 
     /**
@@ -167,23 +167,23 @@ class DefinitionView implements DefinitionViewInterface
     /**
      * {@inheritdoc}
      */
-    public function renderEdit()
+    public function renderEdit($additionalParameters = [])
     {
-        return $this->templating->render('whatwedoCrudBundle:Crud/_boxes:edit.html.twig', [
+        return $this->templating->render('whatwedoCrudBundle:Crud/_boxes:edit.html.twig', array_merge([
             'form' => $this->getForm()->createView(),
             'helper' => $this,
-        ]);
+        ], $additionalParameters));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function renderCreate()
+    public function renderCreate($additionalParameters = [])
     {
-        return $this->templating->render('whatwedoCrudBundle:Crud/_boxes:create.html.twig', [
+        return $this->templating->render('whatwedoCrudBundle:Crud/_boxes:create.html.twig', array_merge([
             'form' => $this->getForm()->createView(),
             'helper' => $this,
-        ]);
+        ], $additionalParameters));
     }
 
     /**

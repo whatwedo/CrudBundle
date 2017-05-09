@@ -47,6 +47,10 @@
                                     </div>
                                 </div>
                                 {% endif %}
+                            {% elseif content.isTwigContent is defined and content.isTwigContent %}
+                                {% if content.showOn('read') %}
+                                    {% include content.template %}
+                                {% endif %}
                             {% else %}
 
                                 {% set value = content.render(data) %}
