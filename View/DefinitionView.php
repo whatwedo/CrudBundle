@@ -30,14 +30,11 @@ namespace whatwedo\CrudBundle\View;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Content\Content;
 use whatwedo\CrudBundle\Content\EditableContentInterface;
-use whatwedo\CrudBundle\Content\RelationContent;
 use whatwedo\CrudBundle\Definition\AbstractDefinition;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\RouteEnum;
@@ -197,16 +194,29 @@ class DefinitionView implements DefinitionViewInterface
         return $this->definition->allowDelete($data);
     }
 
+    /**
+     * @param null $data
+     * @return bool
+     */
     public function allowCreate($data = null)
     {
         return $this->definition->allowCreate($data);
     }
 
+    /**
+     * @param null $data
+     * @return bool
+     */
     public function allowEdit($data = null)
     {
         return $this->definition->allowEdit($data);
     }
 
+    /**
+     * @param $route
+     * @param array $params
+     * @return string
+     */
     public function getPath($route, $params = [])
     {
         if ($this->definition->hasCapability($route)) {
@@ -249,6 +259,9 @@ class DefinitionView implements DefinitionViewInterface
         return 'javascript:alert(\'Definition does not have the capability "' . $route . '".\')';
     }
 
+    /**
+     * @return null|FormInterface
+     */
     public function getForm()
     {
         if ($this->form instanceof FormInterface) {
@@ -275,6 +288,10 @@ class DefinitionView implements DefinitionViewInterface
         return $this->form;
     }
 
+    /**
+     * @param bool $onlylisten
+     * @return string
+     */
     public function getAjaxListen($onlylisten = false)
     {
         $data = $this->definition->addAjaxOnChangeListener();
@@ -298,9 +315,20 @@ class DefinitionView implements DefinitionViewInterface
         return $ret;
     }
 
+    /**
+     * @param $route
+     * @return bool
+     */
     public function hasCapability($route)
     {
         return $this->definition->hasCapability($route);
     }
 
+    /**
+     * @return DefinitionInterface
+     */
+    public function getDefinition()
+    {
+        return $this->definition;
+    }
 }
