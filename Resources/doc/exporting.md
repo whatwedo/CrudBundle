@@ -55,3 +55,25 @@ To override the headers use Export Headers:
         ];
     }
 ```
+
+To override specific Csv Options like delimiter use Export Options:
+```
+    /**
+     * @return array
+     */
+    public function getExportOptions()
+    {
+        return array_merge([
+            'csv' => [
+                'delimiter' => "\t"			<--- use tabs instead of ";" 
+            ]
+        ], parent::getExportOptions());
+    }
+```
+You can override following options (these are also the default values):
+```
+	'delimiter'     => ';',
+	'enclosure'     => '"',
+	'escapeChar'    => '\\',
+	'keySeparator'  => '.'
+```
