@@ -342,7 +342,8 @@ class CrudController extends BaseController implements CrudDefinitionController
         $objNormalizer->setCircularReferenceHandler(function ($obj) {
             return $obj->__toString();
         });
-        $csvEncoder = new WhatwedoCsvEncoder(';');
+        $exportOptions = $this->definition->getExportOptions()['csv'];
+        $csvEncoder = new WhatwedoCsvEncoder($exportOptions['delimiter'], $exportOptions['enclosure'], $exportOptions['escapeChar'], $exportOptions['keySeparator']);
         /** @var Serializer $serializer */
         $serializer = new Serializer([$objNormalizer], [$csvEncoder->setHeaderTransformation($this->definition->getExportHeaders())]);
         $normalized = $serializer->normalize($entities);
