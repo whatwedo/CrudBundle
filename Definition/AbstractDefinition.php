@@ -406,6 +406,14 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @return array
      */
+    public function getExportHeaders()
+    {
+        return [];
+    }
+
+    /**
+     * @return array
+     */
     public function addAjaxOnChangeListener()
     {
         return [];
