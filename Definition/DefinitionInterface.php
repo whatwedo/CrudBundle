@@ -191,6 +191,16 @@ interface DefinitionInterface
     public function getExportCallbacks();
 
     /**
+     * @return array
+     */
+    public function getExportHeaders();
+
+    /**
+     * @return array
+     */
+    public function getExportOptions();
+
+    /**
      * @param Table $table
      */
     public function overrideTableConfiguration(Table $table);

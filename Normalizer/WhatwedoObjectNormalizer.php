@@ -41,6 +41,11 @@ class WhatwedoObjectNormalizer extends ObjectNormalizer
     private $definition;
 
     /**
+     * @var array $customCallbacks
+     */
+    private $customCallbacks = [];
+
+    /**
      * WhatwedoObjectNormalizer constructor.
      * @param DefinitionInterface $definition
      */
@@ -60,4 +65,42 @@ class WhatwedoObjectNormalizer extends ObjectNormalizer
     {
         return $this->definition->getExportAttributes();
     }
+
+    /**
+     * Gets the attribute value.
+     *
+     * @param object      $object
+     * @param string      $attribute
+     * @param string|null $format
+     * @param array       $context
+     *
+     * @return mixed
+     */
+    protected function getAttributeValue($object, $attribute, $format = null, array $context = array())
+    {
+        $attrValue = $this->propertyAccessor->getValue($object, $attribute);
+        if (isset($this->customCallbacks[$attribute])) {
+            $attrValue = call_user_func($this->customCallbacks[$attribute], $attrValue, $object);
+        }
+        return $attrValue;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCustomCallbacks()
+    {
+        return $this->customCallbacks;
+    }
+
+    /**
+     * @param array $customCallbacks
+     * @return WhatwedoObjectNormalizer
+     */
+    public function setCustomCallbacks($customCallbacks)
+    {
+        $this->customCallbacks = $customCallbacks;
+        return $this;
+    }
+
 }

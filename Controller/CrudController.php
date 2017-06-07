@@ -28,31 +28,21 @@
 namespace whatwedo\CrudBundle\Controller;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
-use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Serializer\Encoder\CsvEncoder;
-use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
-use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use whatwedo\CoreBundle\Controller\BaseController;
 use whatwedo\CrudBundle\Content\EditableContentInterface;
-use whatwedo\CrudBundle\Definition\AbstractDefinition;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
+use whatwedo\CrudBundle\Encoder\WhatwedoCsvEncoder;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Event\CrudEvent;
 use whatwedo\CrudBundle\Normalizer\WhatwedoObjectNormalizer;
 use whatwedo\TableBundle\Table\ActionColumn;
 use whatwedo\TableBundle\Table\Table;
 use Symfony\Component\Serializer\Serializer;
-use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
 
 /**
@@ -348,12 +338,14 @@ class CrudController extends BaseController implements CrudDefinitionController
         }
 
         $objNormalizer = new WhatwedoObjectNormalizer($this->definition);
-        $objNormalizer->setCallbacks($this->definition->getExportCallbacks());
+        $objNormalizer->setCustomCallbacks($this->definition->getExportCallbacks());
         $objNormalizer->setCircularReferenceHandler(function ($obj) {
             return $obj->__toString();
         });
+        $exportOptions = $this->definition->getExportOptions()['csv'];
+        $csvEncoder = new WhatwedoCsvEncoder($exportOptions['delimiter'], $exportOptions['enclosure'], $exportOptions['escapeChar'], $exportOptions['keySeparator']);
         /** @var Serializer $serializer */
-        $serializer = new Serializer([$objNormalizer], [new CsvEncoder(';')]);
+        $serializer = new Serializer([$objNormalizer], [$csvEncoder->setHeaderTransformation($this->definition->getExportHeaders())]);
         $normalized = $serializer->normalize($entities);
         $csv = $serializer->encode($normalized, 'csv');
         $csv = static::convertToWindowsCharset($csv);

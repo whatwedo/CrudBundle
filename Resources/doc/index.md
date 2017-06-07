@@ -198,6 +198,7 @@ That's all.
 - [Formatter](formatter.md)
 - [Events](events.md)
 - [Ajax](ajax.md)
+- [Exporting](exporting.md)
 
 ### Extensions
 - [Breadcrumbs](extensions/breadcrumbs.md)
