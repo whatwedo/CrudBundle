@@ -86,7 +86,7 @@
 
 
     {# / Zeile #}
-    {% if i == 2 or loop.length == 1 %}
+    {% if i == 2 or loop.index == loop.length %}
         {% set i = 0 %}
         </div>
     {% endif %}
