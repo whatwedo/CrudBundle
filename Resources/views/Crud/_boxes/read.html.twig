@@ -49,7 +49,7 @@
                                 {% endif %}
                             {% elseif content.isTwigContent is defined and content.isTwigContent %}
                                 {% if content.showOn('read') %}
-                                    {% include content.template %}
+                                    {% include content.template with content.parameters  %}
                                 {% endif %}
                             {% else %}
 

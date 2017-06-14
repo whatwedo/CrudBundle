@@ -56,7 +56,8 @@ class TwigContent extends AbstractContent
     {
         $resolver->setDefaults([
             'template' => null,
-            'show' => self::INCLUDE_CREATE | self::INCLUDE_EDIT | self::INCLUDE_READ
+            'show' => self::INCLUDE_CREATE | self::INCLUDE_EDIT | self::INCLUDE_READ,
+            'parameters' => []
         ]);
     }
 
@@ -73,6 +74,11 @@ class TwigContent extends AbstractContent
             'edit' => self::INCLUDE_EDIT
         ];
         return $this->options['show'] & $showMapping[$show];
+    }
+
+    public function getParameters()
+    {
+        return $this->options['parameters'];
     }
 
     public function getLabel()
