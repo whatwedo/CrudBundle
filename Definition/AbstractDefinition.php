@@ -318,7 +318,7 @@ abstract class AbstractDefinition implements DefinitionInterface
                 $accessor = sprintf('%s.%s', static::getQueryAlias(), $acronym);
                 $joins = [];
                 if (!in_array($acronym, $this->getQueryBuilder()->getAllAliases())) {
-                    $joins = [$acronym => sprintf('%s.%s', static::getQueryAlias(), $acronym)];
+                    $joins = [$acronym => ['leftJoin', sprintf('%s.%s', static::getQueryAlias(), $acronym)]];
                 }
                 $table->addFilter($acronym, $label, new ManyToManyFilterType($accessor, $joins, $this->getQueryBuilder()->getEntityManager(), $ormManyToMany->targetEntity));
             }
