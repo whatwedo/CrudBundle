@@ -30,6 +30,7 @@ namespace whatwedo\CrudBundle\Definition;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,6 +46,7 @@ use whatwedo\CrudBundle\View\DefinitionViewInterface;
 use whatwedo\TableBundle\Model\Type\BooleanFilterType;
 use whatwedo\TableBundle\Model\Type\DateFilterType;
 use whatwedo\TableBundle\Model\Type\DatetimeFilterType;
+use whatwedo\TableBundle\Model\Type\ManyToManyFilterType;
 use whatwedo\TableBundle\Model\Type\NumberFilterType;
 use whatwedo\TableBundle\Model\Type\RelationFilterType;
 use whatwedo\TableBundle\Model\Type\TextFilterType;
@@ -276,6 +278,8 @@ abstract class AbstractDefinition implements DefinitionInterface
             $ormColumn = $reader->getPropertyAnnotation($property, Column::class);
             /** @var ManyToOne $ormManyToOne */
             $ormManyToOne = $reader->getPropertyAnnotation($property, ManyToOne::class);
+            /** @var ManyToMany $ormManyToMany */
+            $ormManyToMany = $reader->getPropertyAnnotation($property, ManyToMany::class);
             $acronym = $property->getName();
             $label = $this->getLabelFor($table, $property->getName());
             $accessor = $acronym;
@@ -305,12 +309,18 @@ abstract class AbstractDefinition implements DefinitionInterface
                     $target = preg_replace('#[a-zA-Z0-9]+$#i', $target, static::getEntity());
                 }
                 $choices = $this->getQueryBuilder()->getEntityManager()->getRepository($target)->findAll();
+                $joins = [];
                 if (!in_array($acronym, $this->getQueryBuilder()->getAllAliases())) {
                     $joins = [$acronym => sprintf('%s.%s', static::getQueryAlias(), $acronym)];
-                } else {
-                    $joins = [];
                 }
                 $table->addFilter($acronym, $label, new RelationFilterType($accessor, $choices, $joins));
+            } else if (!is_null($ormManyToMany)) {
+                $accessor = sprintf('%s.%s', static::getQueryAlias(), $acronym);
+                $joins = [];
+                if (!in_array($acronym, $this->getQueryBuilder()->getAllAliases())) {
+                    $joins = [$acronym => sprintf('%s.%s', static::getQueryAlias(), $acronym)];
+                }
+                $table->addFilter($acronym, $label, new ManyToManyFilterType($accessor, $joins, $this->getQueryBuilder()->getEntityManager(), $ormManyToMany->targetEntity));
             }
         }
     }
