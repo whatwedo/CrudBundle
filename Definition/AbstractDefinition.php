@@ -320,7 +320,11 @@ abstract class AbstractDefinition implements DefinitionInterface
                 if (!in_array($acronym, $this->getQueryBuilder()->getAllAliases())) {
                     $joins = [$acronym => ['leftJoin', sprintf('%s.%s', static::getQueryAlias(), $acronym)]];
                 }
-                $table->addFilter($acronym, $label, new ManyToManyFilterType($accessor, $joins, $this->getQueryBuilder()->getEntityManager(), $ormManyToMany->targetEntity));
+                $target = $ormManyToMany->targetEntity;
+                if (strpos($target, '\\') === false) {
+                    $target = $reflectionClass->getNamespaceName() . '\\' . $target;
+                }
+                $table->addFilter($acronym, $label, new ManyToManyFilterType($accessor, $joins, $this->getQueryBuilder()->getEntityManager(), $target));
             }
         }
     }
