@@ -36,6 +36,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
+use whatwedo\CrudBundle\Block\Block;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
 use whatwedo\CrudBundle\Controller\CrudController;
 use whatwedo\CrudBundle\Enum\RouteEnum;
@@ -103,6 +104,11 @@ abstract class AbstractDefinition implements DefinitionInterface
      * @var DefinitionManager
      */
     protected $definitionManager;
+
+    /**
+     * @var DefinitionBuilder|null $definitionBuilderLabelCache
+     */
+    protected $definitionBuilderLabelCache = null;
 
     /**
      * {@inheritdoc}
@@ -341,6 +347,20 @@ abstract class AbstractDefinition implements DefinitionInterface
         foreach ($table->getColumns() as $column) {
             if ($column->getAcronym() == $property) {
                 return $column->getLabel();
+            }
+        }
+
+        if (is_null($this->definitionBuilderLabelCache)) {
+            $this->definitionBuilderLabelCache = new DefinitionBuilder($this->definitionManager);
+            $this->configureView($this->definitionBuilderLabelCache, null);
+        }
+
+        /** @var Block $block */
+        foreach ($this->definitionBuilderLabelCache->getBlocks() as $block) {
+            foreach ($block->getContents() as $content) {
+                if ($content->getAcronym() == $property && array_key_exists('label', $content->getOptions())) {
+                    return $content->getOption('label');
+                }
             }
         }
 
