@@ -69,7 +69,9 @@
                                 {% else %}
                                     <div class="row {{ content.viewClass }}">
                                         <div class="col-lg-4">
-                                            <strong>{{ content.label }}{% if content.label is not empty %}:{% endif %}</strong>
+                                            <strong>{{ content.label }}{% if content.label is not empty %}:{% endif %}
+                                                {% if content.help is not empty %}&nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="{{ content.help }}"></i>{% endif %}
+                                            </strong>
                                         </div>
                                         <div class="col-lg-8">
                                             {{ helper.linkIt(value, content)|raw }}
