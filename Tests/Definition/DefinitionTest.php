@@ -39,6 +39,14 @@ class DefinitionTest extends WebTestCase
 {
 
     /**
+     * @return array
+     */
+    public function excludeDefinitions()
+    {
+        return [];
+    }
+
+    /**
      *
      */
     public function testIndex()
@@ -49,6 +57,9 @@ class DefinitionTest extends WebTestCase
         $router = $client->getContainer()->get('router');
         foreach ($definitionManager->getDefinitions() as $definition)
         {
+            if (in_array(get_class($definition), $this->excludeDefinitions())) {
+                continue;
+            }
             $routename = $definition::getRoutePrefix() . '_' . RouteEnum::INDEX;
             if (!$definition::hasCapability(RouteEnum::INDEX)) {
                 continue;
@@ -79,6 +90,9 @@ class DefinitionTest extends WebTestCase
         $router = $client->getContainer()->get('router');
         foreach ($definitionManager->getDefinitions() as $definition)
         {
+            if (in_array(get_class($definition), $this->excludeDefinitions())) {
+                continue;
+            }
             $routename = $definition::getRoutePrefix() . '_' . RouteEnum::INDEX;
             if (!$definition::hasCapability(RouteEnum::INDEX)) {
                 continue;
@@ -116,6 +130,9 @@ class DefinitionTest extends WebTestCase
         $router = $client->getContainer()->get('router');
         foreach ($definitionManager->getDefinitions() as $definition)
         {
+            if (in_array(get_class($definition), $this->excludeDefinitions())) {
+                continue;
+            }
             $routename = $definition::getRoutePrefix() . '_' . RouteEnum::CREATE;
             if (!$definition::hasCapability(RouteEnum::CREATE)) {
                 continue;
