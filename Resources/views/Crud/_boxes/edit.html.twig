@@ -42,7 +42,7 @@
                                             {% for attrname, attrvalue in attribute(form, content.acronym).vars.attr %}
                                                 {% if attrname == 'help' %}
                                                     &nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="{{ attrvalue }}"></i>
-                                            {% endif %}
+                                                {% endif %}
                                             {% endfor %}
                                         </label>
                                     {% endif %}
