@@ -181,6 +181,12 @@ interface DefinitionInterface
     public function allowEdit($data = null);
 
     /**
+     * @param $data
+     * @return boolean
+     */
+    public function allowShow($data = null);
+
+    /**
      * @return array
      */
     public function getExportAttributes();

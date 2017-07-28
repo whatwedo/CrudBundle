@@ -20,6 +20,8 @@ services:
             - '@templating'
             - '@form.factory'
             - '@router'
+            - '@security.access_map'
+            - '@security.authorization_checker'
         calls:
             - [setDefinitionManager, ['@whatwedo_crud.manager.definition']]
 

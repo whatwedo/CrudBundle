@@ -422,6 +422,16 @@ abstract class AbstractDefinition implements DefinitionInterface
     }
 
     /**
+     * @param null $data
+     *
+     * @return bool
+     */
+    public function allowShow($data = null)
+    {
+        return self::hasCapability(RouteEnum::SHOW);
+    }
+
+    /**
      * @return array
      */
     public function getExportAttributes()

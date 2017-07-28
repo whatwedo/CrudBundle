@@ -32,6 +32,9 @@ use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
+use Symfony\Component\Security\Http\AccessMap;
 use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Content\Content;
 use whatwedo\CrudBundle\Content\EditableContentInterface;
@@ -85,11 +88,31 @@ class DefinitionView implements DefinitionViewInterface
      */
     protected $definitionManager;
 
-    public function __construct(EngineInterface $templating, FormFactoryInterface $formFactory, Router $router)
+    /**
+     * @var AccessMap $accessMap
+     */
+    protected $accessMap;
+
+    /**
+     * @var AuthorizationChecker $authorizationChecker
+     */
+    protected $authorizationChecker;
+
+    /**
+     * DefinitionView constructor.
+     * @param EngineInterface $templating
+     * @param FormFactoryInterface $formFactory
+     * @param Router $router
+     * @param AccessMap $accessMap
+     * @param AuthorizationChecker $authorizationChecker
+     */
+    public function __construct(EngineInterface $templating, FormFactoryInterface $formFactory, Router $router, AccessMap $accessMap, AuthorizationChecker $authorizationChecker)
     {
         $this->templating = $templating;
         $this->formFactory = $formFactory;
         $this->router = $router;
+        $this->accessMap = $accessMap;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     public function setDefinitionManager(DefinitionManager $definitionManager)
@@ -158,8 +181,18 @@ class DefinitionView implements DefinitionViewInterface
         $entity = $content->getContents($this->data);
         $def = $this->definitionManager->getDefinitionFor($entity);
         if (!is_null($def)) {
-            $path = $this->router->generate($def::getRoutePrefix() . '_' . RouteEnum::SHOW, ['id' => $entity->getId()]);
-            return sprintf('<a href="%s">%s</a>', $path, $value);
+            if ($def->allowShow($entity)) {
+                $path = $this->router->generate($def::getRoutePrefix() . '_' . RouteEnum::SHOW, ['id' => $entity->getId()]);
+                $fakeRequest = Request::create($path, 'GET');
+                list($roles, $channel) = $this->accessMap->getPatterns($fakeRequest);
+                $granted = false;
+                foreach ($roles as $role) {
+                    $granted = $granted || $this->authorizationChecker->isGranted($role);
+                }
+                if ($granted) {
+                    return sprintf('<a href="%s">%s</a>', $path, $value);
+                }
+            }
         }
         return $value;
     }

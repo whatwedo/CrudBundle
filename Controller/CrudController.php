@@ -137,7 +137,9 @@ class CrudController extends BaseController implements CrudDefinitionController
     public function showAction(Request $request)
     {
         $entity = $this->getEntityOr404($request);
-
+        if (!$this->definition->allowShow($entity)) {
+            throw $this->createAccessDeniedException();
+        }
         $this->dispatchEvent(CrudEvent::PRE_SHOW_PREFIX, $entity);
 
         $this->definition->buildBreadcrumbs($entity, RouteEnum::SHOW);
@@ -161,8 +163,7 @@ class CrudController extends BaseController implements CrudDefinitionController
     {
         $entity = $this->getEntityOr404($request);
         if (!$this->definition->allowEdit($entity)) {
-            $this->addFlash('danger', 'Aktion nicht erlaubt!');
-            return $this->redirectToRoute(get_class($this->definition)::getRoutePrefix() . '_' . RouteEnum::INDEX);
+            throw $this->createAccessDeniedException();
         }
         $view = $this->getDefinition()->createView($entity);
 
@@ -206,8 +207,7 @@ class CrudController extends BaseController implements CrudDefinitionController
     public function createAction(Request $request)
     {
         if (!$this->getDefinition()->allowCreate()) {
-            $this->addFlash('danger', 'Aktion ist nicht erlaubt!');
-            return $this->redirectToRoute(get_class($this->definition)::getRoutePrefix() . '_' . RouteEnum::INDEX);
+            throw $this->createAccessDeniedException();
         }
         $entityName = $this->getDefinition()->getEntity();
         $entity = new $entityName;
@@ -301,8 +301,7 @@ class CrudController extends BaseController implements CrudDefinitionController
     {
         $entity = $this->getEntityOr404($request);
         if (!$this->definition->allowDelete($entity)) {
-            $this->addFlash('danger', 'Aktion nicht erlaubt!');
-            return $this->redirectToRoute(get_class($this->definition)::getRoutePrefix() . '_' . RouteEnum::INDEX);
+            throw $this->createAccessDeniedException();
         }
         $redirect = $this->getDefinition()->getDeleteRedirect($this->get('router'), $entity);
 
