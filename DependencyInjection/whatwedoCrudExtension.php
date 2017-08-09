@@ -36,6 +36,10 @@ class whatwedoCrudExtension extends Extension
             $container->setParameter('whatwedo_crud.config.breadcrumbs.home.route', false);
         }
 
+        // Block and Content Tags
+        $container->registerForAutoconfiguration('crud.block');
+        $container->registerForAutoconfiguration('crud.content');
+
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
     }

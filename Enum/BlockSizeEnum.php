@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2016, whatwedo GmbH
+ * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,33 +27,19 @@
 
 namespace whatwedo\CrudBundle\Enum;
 
+
 use whatwedo\CoreBundle\Enum\AbstractSimpleEnum;
 
-/**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
- */
-final class RouteEnum extends AbstractSimpleEnum
+class BlockSizeEnum extends AbstractSimpleEnum
 {
-    const INDEX     = 'index';
-    const SHOW      = 'show';
-    const CREATE    = 'create';
-    const EDIT      = 'edit';
-    const DELETE    = 'delete';
-    const BATCH     = 'batch';
-    const EXPORT    = 'export';
-    const AJAX      = 'ajax';
+    const SMALL = 'small';
+    const LARGE = 'large';
 
     /**
      * @inheritdoc
      */
     protected static $values = [
-        self::INDEX     => 'Übersicht',
-        self::SHOW      => 'Detail',
-        self::CREATE    => 'Erstellen',
-        self::EDIT      => 'Bearbeiten',
-        self::DELETE    => 'Löschen',
-        self::BATCH     => 'Stapelverarbeitung',
-        self::EXPORT    => 'Exportieren',
-        self::AJAX      => 'AJAX',
+        self::SMALL     => 'Klein',
+        self::LARGE     => 'Gross',
     ];
 }

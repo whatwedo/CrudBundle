@@ -180,20 +180,31 @@ class DefinitionView implements DefinitionViewInterface
     {
         $entity = $content->getContents($this->data);
         $def = $this->definitionManager->getDefinitionFor($entity);
+
         if (!is_null($def)) {
             if ($def->allowShow($entity)) {
                 $path = $this->router->generate($def::getRoutePrefix() . '_' . RouteEnum::SHOW, ['id' => $entity->getId()]);
-                $fakeRequest = Request::create($path, 'GET');
-                list($roles, $channel) = $this->accessMap->getPatterns($fakeRequest);
+
                 $granted = false;
-                foreach ($roles as $role) {
-                    $granted = $granted || $this->authorizationChecker->isGranted($role);
+                if (!$this->authorizationChecker->isGranted('IS_AUTHENTICATED_ANONYMOUSLY')) {
+                    // if the user is not authenticated, we link it because a
+                    // login form is shown if the user tries to access the resource
+                    // otherwise there would happens a InsufficientAuthenticationException
+                    $fakeRequest = Request::create($path, 'GET');
+                    list($roles, $channel) = $this->accessMap->getPatterns($fakeRequest);
+                    foreach ($roles as $role) {
+                        $granted = $granted || $this->authorizationChecker->isGranted($role);
+                    }
+                } else {
+                    $granted = true;
                 }
+
                 if ($granted) {
                     return sprintf('<a href="%s">%s</a>', $path, $value);
                 }
             }
         }
+
         return $value;
     }
 
@@ -203,7 +214,7 @@ class DefinitionView implements DefinitionViewInterface
     public function renderEdit($additionalParameters = [])
     {
         return $this->templating->render('whatwedoCrudBundle:Crud/_boxes:edit.html.twig', array_merge([
-            'form' => $this->getForm()->createView(),
+            'form' => $this->getEditForm()->createView(),
             'helper' => $this,
         ], $additionalParameters));
     }
@@ -214,7 +225,7 @@ class DefinitionView implements DefinitionViewInterface
     public function renderCreate($additionalParameters = [])
     {
         return $this->templating->render('whatwedoCrudBundle:Crud/_boxes:create.html.twig', array_merge([
-            'form' => $this->getForm()->createView(),
+            'form' => $this->getCreateForm()->createView(),
             'helper' => $this,
         ], $additionalParameters));
     }
@@ -295,7 +306,7 @@ class DefinitionView implements DefinitionViewInterface
     /**
      * @return null|FormInterface
      */
-    public function getForm()
+    public function getEditForm()
     {
         if ($this->form instanceof FormInterface) {
             return $this->form;
@@ -304,9 +315,52 @@ class DefinitionView implements DefinitionViewInterface
         $builder = $this->formFactory->createBuilder(FormType::class, $this->data, []);
 
         foreach ($this->getBlocks() as $block) {
+            if (!$block->isVisibleOnEdit()) {
+                continue;
+            }
+
             foreach ($block->getContents() as $content) {
-                if ($content instanceof EditableContentInterface
-                    && !$content->isReadOnly()) {
+                if (!$content->isVisibleOnEdit()) {
+                    continue;
+                }
+
+                if ($content instanceof EditableContentInterface) {
+                    $builder->add(
+                        $content->getAcronym(),
+                        $content->getFormType(),
+                        $content->getFormOptions([ 'required' => false ])
+                    );
+                }
+            }
+        }
+
+        $this->form = $builder->getForm();
+
+        return $this->form;
+    }
+
+    /**
+     * @return null|FormInterface
+     */
+    public function getCreateForm()
+    {
+        if ($this->form instanceof FormInterface) {
+            return $this->form;
+        }
+
+        $builder = $this->formFactory->createBuilder(FormType::class, $this->data, []);
+
+        foreach ($this->getBlocks() as $block) {
+            if (!$block->isVisibleOnCreate()) {
+                continue;
+            }
+
+            foreach ($block->getContents() as $content) {
+                if (!$content->isVisibleOnCreate()) {
+                    continue;
+                }
+
+                if ($content instanceof EditableContentInterface) {
                     $builder->add(
                         $content->getAcronym(),
                         $content->getFormType(),

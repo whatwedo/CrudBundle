@@ -38,11 +38,6 @@ interface EditableContentInterface
     public function getFormType();
 
     /**
-     * @return boolean
-     */
-    public function isReadOnly();
-
-    /**
      * @param array $options
      * @return array
      */

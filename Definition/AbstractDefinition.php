@@ -38,19 +38,20 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CrudBundle\Block\Block;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
+use whatwedo\CrudBundle\Manager\BlockManager;
 use whatwedo\CrudBundle\Controller\CrudController;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Extension\BreadcrumbsExtension;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\View\DefinitionViewInterface;
-use whatwedo\TableBundle\Model\Type\BooleanFilterType;
-use whatwedo\TableBundle\Model\Type\DateFilterType;
-use whatwedo\TableBundle\Model\Type\DatetimeFilterType;
-use whatwedo\TableBundle\Model\Type\ManyToManyFilterType;
-use whatwedo\TableBundle\Model\Type\NumberFilterType;
-use whatwedo\TableBundle\Model\Type\RelationFilterType;
-use whatwedo\TableBundle\Model\Type\TextFilterType;
+use whatwedo\TableBundle\Filter\Type\BooleanFilterType;
+use whatwedo\TableBundle\Filter\Type\DateFilterType;
+use whatwedo\TableBundle\Filter\Type\DatetimeFilterType;
+use whatwedo\TableBundle\Filter\Type\ManyToManyFilterType;
+use whatwedo\TableBundle\Filter\Type\NumberFilterType;
+use whatwedo\TableBundle\Filter\Type\RelationFilterType;
+use whatwedo\TableBundle\Filter\Type\TextFilterType;
 use whatwedo\TableBundle\Table\Table;
 use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
@@ -104,6 +105,11 @@ abstract class AbstractDefinition implements DefinitionInterface
      * @var DefinitionManager
      */
     protected $definitionManager;
+
+    /**
+     * @var BlockManager
+     */
+    protected $blockManager;
 
     /**
      * @var DefinitionBuilder|null $definitionBuilderLabelCache
@@ -193,6 +199,22 @@ abstract class AbstractDefinition implements DefinitionInterface
     }
 
     /**
+     * @return BlockManager
+     */
+    public function getBlockManager()
+    {
+        return $this->blockManager;
+    }
+
+    /**
+     * @param BlockManager $blockManager
+     */
+    public function setBlockManager($blockManager)
+    {
+        $this->blockManager = $blockManager;
+    }
+
+    /**
      * @return RequestStack
      */
     public function getRequestStack()
@@ -259,7 +281,7 @@ abstract class AbstractDefinition implements DefinitionInterface
      */
     public function createView($data = null)
     {
-        $this->builder = new DefinitionBuilder($this->definitionManager);
+        $this->builder = new DefinitionBuilder($this->blockManager, $this->definitionManager);
 
         $this->configureView($this->builder, $data);
 
@@ -278,6 +300,7 @@ abstract class AbstractDefinition implements DefinitionInterface
         $reader = new AnnotationReader();
         $reflectionClass = new \ReflectionClass(static::getEntity());
         $properties = $reflectionClass->getProperties();
+
         foreach ($properties as $property)
         {
             /** @var Column $ormColumn */
@@ -314,7 +337,10 @@ abstract class AbstractDefinition implements DefinitionInterface
                 if (strpos($target, '\\') === false) {
                     $target = preg_replace('#[a-zA-Z0-9]+$#i', $target, static::getEntity());
                 }
+
+                // must be lazy-loaded - this isn't useable
                 $choices = $this->getQueryBuilder()->getEntityManager()->getRepository($target)->findAll();
+
                 $joins = [];
                 if (!in_array($acronym, $this->getQueryBuilder()->getAllAliases())) {
                     $joins = [$acronym => sprintf('%s.%s', static::getQueryAlias(), $acronym)];
@@ -351,7 +377,7 @@ abstract class AbstractDefinition implements DefinitionInterface
         }
 
         if (is_null($this->definitionBuilderLabelCache)) {
-            $this->definitionBuilderLabelCache = new DefinitionBuilder($this->definitionManager);
+            $this->definitionBuilderLabelCache = new DefinitionBuilder($this->blockManager, $this->definitionManager);
             $this->configureView($this->definitionBuilderLabelCache, null);
         }
 

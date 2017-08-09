@@ -26,7 +26,9 @@
  */
 
 namespace whatwedo\CrudBundle\Builder;
+
 use whatwedo\CrudBundle\Block\Block;
+use whatwedo\CrudBundle\Manager\BlockManager;
 use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Exception\ElementNotFoundException;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
@@ -43,25 +45,40 @@ class DefinitionBuilder
     protected $definitionManager;
 
     /**
+     * @var BlockManager
+     */
+    protected $blockManager;
+
+    /**
      * @var array
      */
     protected $definition = [];
 
-    public function __construct(DefinitionManager $definitionManager)
+    public function __construct(BlockManager $blockManager, DefinitionManager $definitionManager)
     {
+        $this->blockManager = $blockManager;
         $this->definitionManager = $definitionManager;
     }
 
     /**
      * adds a new block to the definition
      *
-     * @param string $acronym
+     * @param string $acronym unique block acronym
+     * @param array  $options options
+     * @param string $type block type (class name)
+     *
      * @return Block
      */
-    public function addBlock($acronym, array $options = [])
+    public function addBlock($acronym, $type = Block::class, array $options = [])
     {
-        $this->definition[$acronym] = new Block($acronym, $options);
-        $this->definition[$acronym]->setDefinitionManager($this->definitionManager);
+        if ($type === null) {
+            $type = Block::class;
+        }
+
+        $this->definition[$acronym] = $this->blockManager->getBlock($type);
+        $this->definition[$acronym]->setAcronym($acronym);
+        $this->definition[$acronym]->setOptions($options);
+
         return $this->definition[$acronym];
     }
 

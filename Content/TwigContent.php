@@ -31,11 +31,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TwigContent extends AbstractContent
 {
-
-    const INCLUDE_READ      = 1;
-    const INCLUDE_CREATE    = 2;
-    const INCLUDE_EDIT      = 4;
-
     public function isTwigContent()
     {
         return true;
@@ -56,7 +51,6 @@ class TwigContent extends AbstractContent
     {
         $resolver->setDefaults([
             'template' => null,
-            'show' => self::INCLUDE_CREATE | self::INCLUDE_EDIT | self::INCLUDE_READ,
             'parameters' => []
         ]);
     }
@@ -64,16 +58,6 @@ class TwigContent extends AbstractContent
     public function getTemplate()
     {
         return $this->options['template'];
-    }
-
-    public function showOn($show)
-    {
-        $showMapping = [
-            'read' => self::INCLUDE_READ,
-            'create' => self::INCLUDE_CREATE,
-            'edit' => self::INCLUDE_EDIT
-        ];
-        return $this->options['show'] & $showMapping[$show];
     }
 
     public function getParameters()

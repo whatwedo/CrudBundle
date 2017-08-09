@@ -36,10 +36,10 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use whatwedo\CoreBundle\Controller\BaseController;
 use whatwedo\CrudBundle\Content\EditableContentInterface;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
-use whatwedo\CrudBundle\Encoder\WhatwedoCsvEncoder;
+use whatwedo\CrudBundle\Encoder\CsvEncoder;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Event\CrudEvent;
-use whatwedo\CrudBundle\Normalizer\WhatwedoObjectNormalizer;
+use whatwedo\CrudBundle\Normalizer\ObjectNormalizer;
 use whatwedo\TableBundle\Table\ActionColumn;
 use whatwedo\TableBundle\Table\Table;
 use Symfony\Component\Serializer\Serializer;
@@ -92,7 +92,6 @@ class CrudController extends BaseController implements CrudDefinitionController
 
         $this->configureTable($table);
         $this->definition->overrideTableConfiguration($table);
-        $this->checkQueryBuilder($table);
 
         $this->definition->buildBreadcrumbs(null, RouteEnum::INDEX);
 
@@ -101,28 +100,6 @@ class CrudController extends BaseController implements CrudDefinitionController
             'table' => $table,
             'title' => $this->getDefinition()->getTitle(null, RouteEnum::INDEX),
         ]));
-    }
-
-    /**
-     * @param Table $table
-     * @throws \Exception
-     * checks if OrderEventListener can order all columns
-     */
-    protected function checkQueryBuilder(Table $table)
-    {
-        $alias = count($table->getQueryBuilder()->getRootAliases()) > 0 ? $table->getQueryBuilder()->getRootAliases()[0] : '';
-        foreach ($table->getColumns()->toArray() as $column)
-        {
-            if ($column->isSortableColumn() && $column->isSortable()) {
-                $sortExp = strpos($column->getSortExpression(), '.') !== false
-                    ? $column->getSortExpression()
-                    : sprintf('%s.%s', $alias, $column->getSortExpression());
-                if (!in_array(explode('.', $sortExp)[0], $table->getQueryBuilder()->getAllAliases())) {
-                    $notFound = explode('.', $sortExp)[0];
-                    throw new \Exception(sprintf('"%s" is not defined in querybuilder. Please override getQueryBuilder in your definition and add a join. For example: %s%s ->leftJoin(sprintf(\'%%s.%s\', self::getQueryAlias()), \'%s\')', $notFound, PHP_EOL, PHP_EOL, $notFound, $notFound));
-                }
-            }
-        }
     }
 
     protected function getIndexParameters($parameters = [])
@@ -167,7 +144,7 @@ class CrudController extends BaseController implements CrudDefinitionController
         }
         $view = $this->getDefinition()->createView($entity);
 
-        $form = $view->getForm();
+        $form = $view->getEditForm();
 
         $form->handleRequest($request);
 
@@ -252,7 +229,7 @@ class CrudController extends BaseController implements CrudDefinitionController
 
         $this->dispatchEvent(CrudEvent::CREATE_SHOW_PREFIX, $entity);
 
-        $form = $view->getForm();
+        $form = $view->getCreateForm();
 
         $form->handleRequest($request);
 
@@ -336,15 +313,15 @@ class CrudController extends BaseController implements CrudDefinitionController
             return $this->redirectToRoute($this->getDefinition()->getRoutePrefix() . '_' . RouteEnum::INDEX);
         }
 
-        $objNormalizer = new WhatwedoObjectNormalizer($this->definition);
-        $objNormalizer->setCustomCallbacks($this->definition->getExportCallbacks());
-        $objNormalizer->setCircularReferenceHandler(function ($obj) {
+        $objectNormalizer = new ObjectNormalizer($this->definition);
+        $objectNormalizer->setCustomCallbacks($this->definition->getExportCallbacks());
+        $objectNormalizer->setCircularReferenceHandler(function ($obj) {
             return $obj->__toString();
         });
         $exportOptions = $this->definition->getExportOptions()['csv'];
-        $csvEncoder = new WhatwedoCsvEncoder($exportOptions['delimiter'], $exportOptions['enclosure'], $exportOptions['escapeChar'], $exportOptions['keySeparator']);
+        $csvEncoder = new CsvEncoder($exportOptions['delimiter'], $exportOptions['enclosure'], $exportOptions['escapeChar'], $exportOptions['keySeparator']);
         /** @var Serializer $serializer */
-        $serializer = new Serializer([$objNormalizer], [$csvEncoder->setHeaderTransformation($this->definition->getExportHeaders())]);
+        $serializer = new Serializer([$objectNormalizer], [$csvEncoder->setHeaderTransformation($this->definition->getExportHeaders())]);
         $normalized = $serializer->normalize($entities);
         $csv = $serializer->encode($normalized, 'csv');
         $csv = static::convertToWindowsCharset($csv);

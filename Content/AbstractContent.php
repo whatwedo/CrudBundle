@@ -26,17 +26,21 @@
  */
 
 namespace whatwedo\CrudBundle\Content;
+
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use whatwedo\CrudBundle\Manager\DefinitionManager;
+use whatwedo\CrudBundle\Enum\VisibilityEnum;
+use whatwedo\CrudBundle\Traits\VisibilityTrait;
 
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
  */
 abstract class AbstractContent implements ContentInterface
 {
+    use VisibilityTrait;
+
     /**
      * @var string block acronym
      */
@@ -48,23 +52,52 @@ abstract class AbstractContent implements ContentInterface
     protected $options = [];
 
     /**
-     * @var DefinitionManager
-     */
-    protected $definitionManager;
-
-    /**
-     * Block constructor.
-     *
      * @param string $acronym
-     * @param array $options
      */
-    public function __construct($acronym, array $options = [])
+    public function setAcronym($acronym)
     {
         $this->acronym = $acronym;
+    }
 
+    /**
+     * @return string
+     */
+    public function getAcronym()
+    {
+        return $this->acronym;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param array $options
+     */
+    public function setOptions($options)
+    {
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
         $this->options = $resolver->resolve($options);
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'label' => $this->acronym,
+            'callable' => null,
+            'attrs' => [],
+            'visibility' => VisibilityEnum::READ | VisibilityEnum::EDIT | VisibilityEnum::CREATE,
+        ]);
+    }
+
+    public function getOption($key)
+    {
+        return isset($this->options[$key]) ? $this->options[$key] : null;
     }
 
     /**
@@ -96,14 +129,6 @@ abstract class AbstractContent implements ContentInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getAcronym()
-    {
-        return $this->acronym;
-    }
-
-    /**
      * @return string
      */
     public function getLabel()
@@ -111,39 +136,11 @@ abstract class AbstractContent implements ContentInterface
         return $this->options['label'];
     }
 
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-            'label' => $this->acronym,
-            'callable' => null,
-        ]);
-    }
-
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
-    public function getOption($key)
-    {
-        return isset($this->options[$key]) ? $this->options[$key] : null;
-    }
-
     /**
-     * @return DefinitionManager
+     * @return array
      */
-    public function getDefinitionManager()
+    public function getAttrs()
     {
-        return $this->definitionManager;
-    }
-
-    /**
-     * @param DefinitionManager $definitionManager
-     * @return AbstractContent
-     */
-    public function setDefinitionManager(DefinitionManager $definitionManager)
-    {
-        $this->definitionManager = $definitionManager;
-        return $this;
+        return $this->options['attrs'];
     }
 }

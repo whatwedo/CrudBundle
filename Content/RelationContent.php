@@ -27,9 +27,11 @@
 
 namespace whatwedo\CrudBundle\Content;
 use Doctrine\Common\Collections\Collection;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Ldap\Adapter\CollectionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CrudBundle\Enum\RouteEnum;
+use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\TableBundle\Table\ActionColumn;
 use whatwedo\TableBundle\Table\Table;
 
@@ -38,6 +40,20 @@ use whatwedo\TableBundle\Table\Table;
  */
 class RelationContent extends AbstractContent
 {
+    /**
+     * @var DefinitionManager
+     */
+    protected $definitionManager;
+
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
 
     /**
      * @return bool
@@ -79,7 +95,7 @@ class RelationContent extends AbstractContent
             ];
         }
 
-        $definition = $this->definitionManager->getDefinitionFromClass($this->getOption('definition'));
+        $definition = $this->getDefinitionManager()->getDefinitionFromClass($this->getOption('definition'));
         $allowEdit = call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::EDIT);
         $showActionColumn = [];
         if ($allowEdit) {
@@ -195,7 +211,7 @@ class RelationContent extends AbstractContent
 
     public function allowCreate($data = null)
     {
-        $definition = $this->definitionManager->getDefinitionFromClass($this->options['definition']);
+        $definition = $this->getDefinitionManager()->getDefinitionFromClass($this->options['definition']);
         return $definition->allowCreate($data);
     }
 
@@ -208,6 +224,28 @@ class RelationContent extends AbstractContent
         if (isset($this->options[$key])) {
             $this->options[$key] = $value;
         }
+    }
+
+    /**
+     * @return mixed|DefinitionManager
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    public function getDefinitionManager()
+    {
+        if (!$this->definitionManager instanceof DefinitionManager) {
+            return $this->definitionManager = $this->container->get('whatwedo_crud.manager.definition');
+        }
+
+        return $this->definitionManager;
+    }
+
+    /**
+     * @param DefinitionManager $definitionManager
+     */
+    public function setDefinitionManager($definitionManager)
+    {
+        $this->definitionManager = $definitionManager;
     }
 
     /**

@@ -1,3 +1,5 @@
+{% import "whatwedoCrudBundle:Crud:_macros.html.twig" as macros %}
+
 {{ form_start(form, {
     'attr': {
         'class': 'default-crud-form'
@@ -12,7 +14,7 @@
 {% endif %}
 {% set i = 0 %}
 {% set isOpen = false %}
-{% for block in helper.blocks %}
+{% for block in helper.blocks if block.isVisibleOnCreate %}
 
     {# Zeile #}
     {% set i = i + 1 %}
@@ -21,86 +23,110 @@
         <div class="row">
     {% endif %}
 
-            <div class="col-lg-{% if block.size == 'small' %}6{% else %}12{% endif %} box__{{ block.acronym }}">
+    {% if block.attrs.class is not defined %}
+        {% set blockAttrs = block.attrs|merge({ class: '' }) %}
+    {% else %}
+        {% set blockAttrs = block.attrs %}
+    {% endif %}
+
+    {% if block.size == 'small' %}
+        {% set blockAttrs = blockAttrs|merge({
+            class: 'col-lg-6 box_create box_' ~ block.acronym ~ ' ' ~ blockAttrs.class
+        }) %}
+    {% else %}
+        {% set blockAttrs = blockAttrs|merge({
+             class: 'col-lg-12 box_create box_' ~ block.acronym ~ ' ' ~ blockAttrs.class
+        }) %}
+    {% endif %}
+            <div {{ macros.attributes(blockAttrs) }}>
                 <div class="box box-primary">
-                    <div class="box-header">
-                        <h3 class="box-title">
-                            {{ block.label }}
-                        </h3>
-                    </div>
+                    {% if block.label %}
+                        {{ macros.blockHeader(block.label) }}
+                    {% endif %}
 
                     <div class="box-body">
-                        {% for content in block.contents %}
-                            {% if attribute(form, content.acronym) is defined %}
-                                <div class="form-group{% if attribute(form, content.acronym).vars.errors|length %} has-error{% endif %} form-group__{{ content.acronym }}">
-                                    {% if content.label %}
-                                        <label for="{{ attribute(form, content.acronym).vars.id }}">
-                                            {% if attribute(form, content.acronym).vars.errors|length %}
-                                                <i class="fa fa-times-circle-o"></i>
-                                            {% endif %}
-                                            {{ content.label }}:
-                                            {% for attrname, attrvalue in attribute(form, content.acronym).vars.attr %}
-                                                {% if attrname == 'help' %}
-                                                    &nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="{{ attrvalue }}"></i>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </label>
-                                    {% endif %}
-                                    {{ form_widget(attribute(form, content.acronym)) }}
-                                    {% if content.autoFill is not null %}
-                                        {% for autoFill in content.autoFill %}
-                                            <div class="hidden auto-fill">
-                                                <ul data-set-to="{{ autoFill.apply_to }}" data-listen-on="{{ attribute(form, content.acronym).vars.id }}">
-                                                    {% for choice in attribute(form, content.acronym).vars.choices %}
-                                                        {% set value2 = attribute(choice.data, autoFill.property) %}
-                                                        {% if autoFill['transform'] is defined %}
-                                                            <li data-value="{{ choice.value }}" data-value2="{{ whatwedo_crud_callable(autoFill['transform'], value2) }}"></li>
-                                                        {% else %}
-                                                            <li data-value="{{ choice.value }}" data-value2="{{ value2 }}"></li>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                </ul>
-                                            </div>
-                                        {% endfor %}
-                                    {% endif %}
+                        {% for content in block.contents if content.isVisibleOnCreate %}
 
-                                    {% if attribute(form, content.acronym).vars.errors|length %}
-                                        <div class="help-block">
-                                            {{ form_errors(attribute(form, content.acronym)) }}
-                                        </div>
-                                    {% endif %}
-                                </div>
+                            {% if content.attrs.class is not defined %}
+                                {% set contentAttrs = content.attrs|merge({
+                                    class: 'content_create content_' ~ block.acronym
+                                }) %}
                             {% else %}
-                                {% if content.label and content.isTable and content.showInEdit %}
-                                    <label>
-                                        {{ content.label }}:
-                                    </label>
-                                    <i>Diese Felder können nach dem Hinzufügen bearbeitet werden.</i>
-                                {% endif %}
-                                {% if content.isTwigContent is defined and content.isTwigContent %}
-                                    {% if content.showOn('create') %}
-                                        {% include content.template with content.parameters  %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set contentAttrs = content.attrs|merge({
+                                    class: 'content_create content_' ~ block.acronym ~ ' ' ~ content.attrs.class
+                                }) %}
                             {% endif %}
 
+                            <div {{ macros.attributes(contentAttrs) }}>
+                                {% if attribute(form, content.acronym) is defined %}
+                                    <div class="form-group{% if attribute(form, content.acronym).vars.errors|length %} has-error{% endif %} form-group__{{ content.acronym }}">
+                                        {% if content.label %}
+                                            <label for="{{ attribute(form, content.acronym).vars.id }}">
+                                                {% if attribute(form, content.acronym).vars.errors|length %}
+                                                    <i class="fa fa-times-circle-o"></i>
+                                                {% endif %}
+                                                {{ content.label }}:
+                                                {% for attrname, attrvalue in attribute(form, content.acronym).vars.attr %}
+                                                    {% if attrname == 'help' %}
+                                                        &nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="{{ attrvalue }}"></i>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </label>
+                                        {% endif %}
+                                        {{ form_widget(attribute(form, content.acronym)) }}
+                                        {% if content.autoFill is not null %}
+                                            {% for autoFill in content.autoFill %}
+                                                <div class="hidden auto-fill">
+                                                    <ul data-set-to="{{ autoFill.apply_to }}" data-listen-on="{{ attribute(form, content.acronym).vars.id }}">
+                                                        {% for choice in attribute(form, content.acronym).vars.choices %}
+                                                            {% set value2 = attribute(choice.data, autoFill.property) %}
+                                                            {% if autoFill['transform'] is defined %}
+                                                                <li data-value="{{ choice.value }}" data-value2="{{ whatwedo_crud_callable(autoFill['transform'], value2) }}"></li>
+                                                            {% else %}
+                                                                <li data-value="{{ choice.value }}" data-value2="{{ value2 }}"></li>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+
+                                        {% if attribute(form, content.acronym).vars.errors|length %}
+                                            <div class="help-block">
+                                                {{ form_errors(attribute(form, content.acronym)) }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    {% if content.label and content.isTable and content.showInEdit %}
+                                        <label>
+                                            {{ content.label }}:
+                                        </label>
+                                        <i>Diese Felder können nach dem Hinzufügen bearbeitet werden.</i>
+                                    {% endif %}
+                                    {% if content.isTwigContent is defined and content.isTwigContent %}
+                                        {% if content.showOn('create') %}
+                                            {% include content.template with content.parameters  %}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            </div>
                         {% endfor %}
                     </div>
                 </div>
             </div>
 
 
-    {# / Zeile #}
     {% if i == 2 %}
         {% set i = 0 %}
         </div>
-        {% set isOpen = false %}
     {% endif %}
+
 {% endfor %}
 
-    {% if isOpen %}
-        </div>
-    {% endif %}
+{% if i > 0 %}
+    </div>
+{% endif %}
 
 <div class="row">
     <div class="col-lg-12">

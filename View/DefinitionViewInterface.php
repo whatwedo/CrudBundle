@@ -91,11 +91,18 @@ interface DefinitionViewInterface
     public function renderCreate($additionalParameters = []);
 
     /**
+     * returns a create form
+     *
+     * @return FormInterface
+     */
+    public function getCreateForm();
+
+    /**
      * returns an edit form
      *
      * @return FormInterface
      */
-    public function getForm();
+    public function getEditForm();
 
     /**
      * @param $data

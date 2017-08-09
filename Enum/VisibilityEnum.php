@@ -32,28 +32,18 @@ use whatwedo\CoreBundle\Enum\AbstractSimpleEnum;
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
  */
-final class RouteEnum extends AbstractSimpleEnum
+class VisibilityEnum extends AbstractSimpleEnum
 {
-    const INDEX     = 'index';
-    const SHOW      = 'show';
-    const CREATE    = 'create';
-    const EDIT      = 'edit';
-    const DELETE    = 'delete';
-    const BATCH     = 'batch';
-    const EXPORT    = 'export';
-    const AJAX      = 'ajax';
+    const READ      = 1;
+    const CREATE    = 2;
+    const EDIT      = 4;
 
     /**
      * @inheritdoc
      */
     protected static $values = [
-        self::INDEX     => 'Übersicht',
-        self::SHOW      => 'Detail',
+        self::READ      => 'Detail',
         self::CREATE    => 'Erstellen',
         self::EDIT      => 'Bearbeiten',
-        self::DELETE    => 'Löschen',
-        self::BATCH     => 'Stapelverarbeitung',
-        self::EXPORT    => 'Exportieren',
-        self::AJAX      => 'AJAX',
     ];
 }

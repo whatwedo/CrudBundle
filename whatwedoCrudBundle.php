@@ -4,6 +4,8 @@ namespace whatwedo\CrudBundle;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+use whatwedo\CrudBundle\DependencyInjection\Compiler\BlockPass;
+use whatwedo\CrudBundle\DependencyInjection\Compiler\ContentPass;
 use whatwedo\CrudBundle\DependencyInjection\Compiler\DefinitionPass;
 
 class whatwedoCrudBundle extends Bundle
@@ -11,5 +13,7 @@ class whatwedoCrudBundle extends Bundle
     public function build(ContainerBuilder $container)
     {
         $container->addCompilerPass(new DefinitionPass());
+        $container->addCompilerPass(new ContentPass());
+        $container->addCompilerPass(new BlockPass());
     }
 }

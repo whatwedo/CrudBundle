@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2016, whatwedo GmbH
+ * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,35 +25,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Enum;
+namespace whatwedo\CrudBundle\Manager;
 
-use whatwedo\CoreBundle\Enum\AbstractSimpleEnum;
+use whatwedo\CrudBundle\Block\Block;
 
 /**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
+ * Class BlockManager
  */
-final class RouteEnum extends AbstractSimpleEnum
+class BlockManager
 {
-    const INDEX     = 'index';
-    const SHOW      = 'show';
-    const CREATE    = 'create';
-    const EDIT      = 'edit';
-    const DELETE    = 'delete';
-    const BATCH     = 'batch';
-    const EXPORT    = 'export';
-    const AJAX      = 'ajax';
+    protected $blocks = [];
 
     /**
-     * @inheritdoc
+     * @param Block $block
      */
-    protected static $values = [
-        self::INDEX     => 'Übersicht',
-        self::SHOW      => 'Detail',
-        self::CREATE    => 'Erstellen',
-        self::EDIT      => 'Bearbeiten',
-        self::DELETE    => 'Löschen',
-        self::BATCH     => 'Stapelverarbeitung',
-        self::EXPORT    => 'Exportieren',
-        self::AJAX      => 'AJAX',
-    ];
+    public function addBlock(Block $block)
+    {
+        $this->blocks[get_class($block)] = $block;
+    }
+
+    /**
+     * @param string $class
+     *
+     * @return Block|null
+     */
+    public function getBlock($class)
+    {
+        return isset($this->blocks[$class]) ? clone $this->blocks[$class] : new $class();
+    }
 }

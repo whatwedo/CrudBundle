@@ -37,12 +37,6 @@ use whatwedo\CrudBundle\Form\EntityHiddenType;
  */
 class Content extends AbstractContent implements EditableContentInterface
 {
-
-    public function isTable()
-    {
-        return false;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -66,11 +60,6 @@ class Content extends AbstractContent implements EditableContentInterface
     public function getFormType()
     {
         return $this->options['form_type'];
-    }
-
-    public function isReadOnly()
-    {
-        return $this->options['read_only'] ? true : false;
     }
 
     public function getFormOptions($options = [])
@@ -107,14 +96,6 @@ class Content extends AbstractContent implements EditableContentInterface
         }
     }
 
-    public function getViewClass()
-    {
-        if (array_key_exists('class', $this->options['view_options'])) {
-            return $this->options['view_options']['class'];
-        }
-        return '';
-    }
-
     /**
      * @param OptionsResolver $resolver
      */
@@ -123,16 +104,15 @@ class Content extends AbstractContent implements EditableContentInterface
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'accessor_path' => $this->acronym,
-            'callable' => null,
-            'formatter' => DefaultFormatter::class,
-            'read_only' => false,
-            'form_type' => null,
-            'form_options' => [],
-            'help' => null,
-            'preselect_definition' => null,
-            'auto_fill' => null,
-            'view_options' => []
+            'accessor_path' => $this->acronym, // Zugriffsmöglichkeit auf die Daten
+            'callable' => null, // Falls nicht null: anzuzeigender Inhalt (muss string oder Objekt mit __toString sein)
+            'formatter' => DefaultFormatter::class, // Formatierer
+            'form_type' => null, // Formular-Typ (Klasse)
+            'form_options' => [], // Formular-Optionen
+            'help' => null, // Hilfetext
+            'preselect_definition' => null, // Vorausgewählte Entity folgender Definition
+            'auto_fill' => null, // Auto-Fill Wert
+            'attrs' => [], // Attribute auf dem Element
         ]);
     }
 }

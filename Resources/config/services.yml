@@ -3,14 +3,53 @@ services:
     whatwedo_crud.manager.definition:
         class: whatwedo\CrudBundle\Manager\DefinitionManager
 
+    whatwedo_crud.manager.block:
+        class: whatwedo\CrudBundle\Manager\BlockManager
+
+    whatwedo_crud.manager.content:
+        class: whatwedo\CrudBundle\Manager\ContentManager
+
     # Definition
     whatwedo_crud.definition.abstract_definition:
         abstract:  true
         calls:
+            - [setBlockManager, ['@whatwedo_crud.manager.block']]
             - [setDoctrine, ['@doctrine']]
             - [setRequestStack, ['@request_stack']]
             - [setDefinitionView, ['@whatwedo_crud.view.definition_view']]
             - [setDefinitionManager, ['@whatwedo_crud.manager.definition']]
+
+    # Block
+    whatwedo_crud.block.block:
+        class: whatwedo\CrudBundle\Block\Block
+        tags:
+            - crud.block
+        calls:
+            - [setContentManager, ['@whatwedo_crud.manager.content']]
+
+    # Content
+    whatwedo_crud.content.content:
+        class: whatwedo\CrudBundle\Content\Content
+        tags:
+            - crud.content
+        calls:
+
+    whatwedo_crud.content.relation:
+        class: whatwedo\CrudBundle\Content\RelationContent
+        arguments:
+            - '@service_container'
+        tags:
+            - crud.content
+
+    whatwedo_crud.content.table:
+        class: whatwedo\CrudBundle\Content\TableContent
+        tags:
+            - crud.content
+
+    whatwedo_crud.content.twig:
+        class: whatwedo\CrudBundle\Content\TwigContent
+        tags:
+            - crud.content
 
     # View
     whatwedo_crud.view.definition_view:

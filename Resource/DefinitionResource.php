@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2016, whatwedo GmbH
+ * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,35 +25,48 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Enum;
+namespace whatwedo\CrudBundle\Resource;
 
-use whatwedo\CoreBundle\Enum\AbstractSimpleEnum;
+use Symfony\Component\Config\Resource\ResourceInterface;
+use Symfony\Component\Config\Resource\SelfCheckingResourceInterface;
 
-/**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
- */
-final class RouteEnum extends AbstractSimpleEnum
+class DefinitionResource implements ResourceInterface, SelfCheckingResourceInterface
 {
-    const INDEX     = 'index';
-    const SHOW      = 'show';
-    const CREATE    = 'create';
-    const EDIT      = 'edit';
-    const DELETE    = 'delete';
-    const BATCH     = 'batch';
-    const EXPORT    = 'export';
-    const AJAX      = 'ajax';
+    /**
+     * @var string $definitionClass class of definition
+     */
+    protected $definitionClass;
+
+    public function __construct($definitionClass)
+    {
+        $this->definitionClass = $definitionClass;
+    }
 
     /**
      * @inheritdoc
      */
-    protected static $values = [
-        self::INDEX     => 'Übersicht',
-        self::SHOW      => 'Detail',
-        self::CREATE    => 'Erstellen',
-        self::EDIT      => 'Bearbeiten',
-        self::DELETE    => 'Löschen',
-        self::BATCH     => 'Stapelverarbeitung',
-        self::EXPORT    => 'Exportieren',
-        self::AJAX      => 'AJAX',
-    ];
+    public function isFresh($timestamp)
+    {
+        try {
+            $reflectionClass = new \ReflectionClass($this->definitionClass);
+        }
+        catch (\ReflectionException $e) {
+            return false;
+        }
+
+        // has the file *not* been modified? Definitely fresh
+        if (@filemtime($reflectionClass->getFileName()) <= $timestamp) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function __toString()
+    {
+        return call_user_func([$this->definitionClass, 'getAlias']);
+    }
 }
