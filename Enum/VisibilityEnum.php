@@ -34,7 +34,7 @@ use whatwedo\CoreBundle\Enum\AbstractSimpleEnum;
  */
 class VisibilityEnum extends AbstractSimpleEnum
 {
-    const READ      = 1;
+    const SHOW      = 1;
     const CREATE    = 2;
     const EDIT      = 4;
 
@@ -42,7 +42,7 @@ class VisibilityEnum extends AbstractSimpleEnum
      * @inheritdoc
      */
     protected static $values = [
-        self::READ      => 'Detail',
+        self::SHOW      => 'Detail',
         self::CREATE    => 'Erstellen',
         self::EDIT      => 'Bearbeiten',
     ];

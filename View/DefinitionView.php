@@ -165,7 +165,8 @@ class DefinitionView implements DefinitionViewInterface
      */
     public function renderShow($additionalParameters = [])
     {
-        return $this->templating->render('whatwedoCrudBundle:Crud/_boxes:read.html.twig', array_merge([
+        return $this->templating->render(
+            'whatwedoCrudBundle:Crud/_boxes:show.html.twig', array_merge([
             'data' => $this->data,
             'helper' => $this,
         ], $additionalParameters));

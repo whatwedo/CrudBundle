@@ -91,7 +91,7 @@ abstract class AbstractContent implements ContentInterface
             'label' => $this->acronym,
             'callable' => null,
             'attrs' => [],
-            'visibility' => VisibilityEnum::READ | VisibilityEnum::EDIT | VisibilityEnum::CREATE,
+            'visibility' => VisibilityEnum::SHOW | VisibilityEnum::EDIT | VisibilityEnum::CREATE,
         ]);
     }
 

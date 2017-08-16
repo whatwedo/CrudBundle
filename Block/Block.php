@@ -166,7 +166,7 @@ class Block
             'label' => '',
             'attrs' => [],
             'size' => BlockSizeEnum::SMALL,
-            'visibility' => VisibilityEnum::READ | VisibilityEnum::EDIT | VisibilityEnum::CREATE,
+            'visibility' => VisibilityEnum::SHOW | VisibilityEnum::EDIT | VisibilityEnum::CREATE,
         ]);
     }
 

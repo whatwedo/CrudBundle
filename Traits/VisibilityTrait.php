@@ -29,20 +29,34 @@ namespace whatwedo\CrudBundle\Traits;
 
 use whatwedo\CrudBundle\Enum\VisibilityEnum;
 
+/**
+ * Trait VisibilityTrait
+ * @package whatwedo\CrudBundle\Traits
+ */
 trait VisibilityTrait
 {
+
+    /**
+     * @return int
+     */
     public function isVisibleOnEdit()
     {
         return $this->options['visibility'] & VisibilityEnum::EDIT;
     }
 
+    /**
+     * @return int
+     */
     public function isVisibleOnCreate()
     {
         return $this->options['visibility'] & VisibilityEnum::CREATE;
     }
 
-    public function isVisibleOnRead()
+    /**
+     * @return int
+     */
+    public function isVisibleOnShow()
     {
-        return $this->options['visibility'] & VisibilityEnum::READ;
+        return $this->options['visibility'] & VisibilityEnum::SHOW;
     }
 }

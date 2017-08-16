@@ -1,7 +1,7 @@
 {% import "whatwedoCrudBundle:Crud:_macros.html.twig" as macros %}
 
 {% set i = 0 %}
-{% for block in helper.blocks if block.isVisibleOnRead %}
+{% for block in helper.blocks if block.isVisibleOnShow %}
 
     {# Zeile #}
     {% set i = i + 1 %}
@@ -17,11 +17,11 @@
 
     {% if block.size == 'small' %}
         {% set blockAttrs = blockAttrs|merge({
-            class: 'col-lg-6 box_read box_' ~ block.acronym ~ ' ' ~ blockAttrs.class
+            class: 'col-lg-6 box_show box_' ~ block.acronym ~ ' ' ~ blockAttrs.class
         }) %}
     {% else %}
         {% set blockAttrs = blockAttrs|merge({
-            class: 'col-lg-12 box_read box_' ~ block.acronym ~ ' ' ~ blockAttrs.class
+            class: 'col-lg-12 box_show box_' ~ block.acronym ~ ' ' ~ blockAttrs.class
         }) %}
     {% endif %}
             <div {{ macros.attributes(blockAttrs) }}>
@@ -31,15 +31,15 @@
                     {% endif %}
 
                     <div class="box-body">
-                        {% for key, content in block.contents if content.isVisibleOnRead %}
+                        {% for key, content in block.contents if content.isVisibleOnShow %}
 
                             {% if content.attrs.class is not defined %}
                                 {% set contentAttrs = content.attrs|merge({
-                                    class: 'content_read content_' ~ block.acronym
+                                    class: 'content_show content_' ~ block.acronym
                                 }) %}
                             {% else %}
                                 {% set contentAttrs = content.attrs|merge({
-                                    class: 'content_read content_' ~ block.acronym ~ ' ' ~ content.attrs.class
+                                    class: 'content_show content_' ~ block.acronym ~ ' ' ~ content.attrs.class
                                 }) %}
                             {% endif %}
 
