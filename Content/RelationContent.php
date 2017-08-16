@@ -264,7 +264,6 @@ class RelationContent extends AbstractContent
             'show_in_edit' => true,
             'show_index_button' => false,
             'show_create_button' => true,
-            'visibility' => VisibilityEnum::READ | VisibilityEnum::EDIT | VisibilityEnum::CREATE,
         ]);
     }
 }

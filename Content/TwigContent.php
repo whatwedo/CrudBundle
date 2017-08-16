@@ -49,6 +49,8 @@ class TwigContent extends AbstractContent
 
     public function configureOptions(OptionsResolver $resolver)
     {
+        parent::configureOptions($resolver);
+
         $resolver->setDefaults([
             'template' => null,
             'parameters' => []
