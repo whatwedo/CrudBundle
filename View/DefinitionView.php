@@ -359,7 +359,6 @@ class DefinitionView implements DefinitionViewInterface
                 if (!$content->isVisibleOnCreate()) {
                     continue;
                 }
-
                 if ($content instanceof EditableContentInterface) {
                     $builder->add(
                         $content->getAcronym(),

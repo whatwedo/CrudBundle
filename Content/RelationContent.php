@@ -31,6 +31,7 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\Ldap\Adapter\CollectionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CrudBundle\Enum\RouteEnum;
+use whatwedo\CrudBundle\Enum\VisibilityEnum;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\TableBundle\Table\ActionColumn;
 use whatwedo\TableBundle\Table\Table;
@@ -263,6 +264,7 @@ class RelationContent extends AbstractContent
             'show_in_edit' => true,
             'show_index_button' => false,
             'show_create_button' => true,
+            'visibility' => VisibilityEnum::READ | VisibilityEnum::EDIT | VisibilityEnum::CREATE,
         ]);
     }
 }
