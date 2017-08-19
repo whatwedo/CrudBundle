@@ -53,7 +53,7 @@ class TableContent extends AbstractContent
 
         if ($this->getOption('definition')
             && call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::SHOW)) {
-            $table->setRowRoute(sprintf(
+            $table->setShowRoute(sprintf(
                 '%s_%s',
                 call_user_func([$this->getOption('definition'), 'getRoutePrefix']),
                 RouteEnum::SHOW
@@ -87,7 +87,7 @@ class TableContent extends AbstractContent
 
         $table->setResults(array_values($data));
 
-        return $table->renderTableOnly();
+        return $table->renderTable();
     }
 
     public function render($row)

@@ -41,7 +41,7 @@ use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Event\CrudEvent;
 use whatwedo\CrudBundle\Normalizer\ObjectNormalizer;
 use whatwedo\TableBundle\Table\ActionColumn;
-use whatwedo\TableBundle\Table\Table;
+use whatwedo\TableBundle\Table\DoctrineTable;
 use Symfony\Component\Serializer\Serializer;
 
 
@@ -87,8 +87,10 @@ class CrudController extends BaseController implements CrudDefinitionController
      */
     public function indexAction()
     {
-        $table = $this->get('whatwedo_table.table')
-            ->setQueryBuilder($this->getDefinition()->getQueryBuilder());
+        $table = $this->get('whatwedo_table.factory.table')
+            ->createDoctrineTable('index', [
+                'queryBuilder' => $this->getDefinition()->getQueryBuilder()
+            ]);
 
         $this->configureTable($table);
         $this->definition->overrideTableConfiguration($table);
@@ -381,16 +383,21 @@ class CrudController extends BaseController implements CrudDefinitionController
     /**
      * configures list table
      *
-     * @param Table $table
+     * @param DoctrineTable $table
      */
-    protected function configureTable(Table $table)
+    protected function configureTable(DoctrineTable $table)
     {
         $this->getDefinition()->configureTable($table);
+
+        // this is normally the main table of the page, so we're fixing the header
+        $table->setOption('tableAttrs', [
+            'data-fixed-header' => 'data-fixed-header'
+        ]);
 
         $actionColumnItems = [];
 
         if ($this->getDefinition()->hasCapability(RouteEnum::SHOW)) {
-            $table->setRowRoute(sprintf('%s_%s', $this->getDefinition()->getRoutePrefix(), RouteEnum::SHOW));
+            $table->setShowRoute(sprintf('%s_%s', $this->getDefinition()->getRoutePrefix(), RouteEnum::SHOW));
 
             $actionColumnItems[] = [
                 'label' => 'Details',

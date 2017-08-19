@@ -52,7 +52,7 @@ use whatwedo\TableBundle\Filter\Type\ManyToManyFilterType;
 use whatwedo\TableBundle\Filter\Type\NumberFilterType;
 use whatwedo\TableBundle\Filter\Type\RelationFilterType;
 use whatwedo\TableBundle\Filter\Type\TextFilterType;
-use whatwedo\TableBundle\Table\Table;
+use whatwedo\TableBundle\Table\DoctrineTable;
 use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
 /**
@@ -293,9 +293,9 @@ abstract class AbstractDefinition implements DefinitionInterface
     }
 
     /**
-     * @param Table $table
+     * @param DoctrineTable $table
      */
-    public function overrideTableConfiguration(Table $table)
+    public function overrideTableConfiguration(DoctrineTable $table)
     {
         $reader = new AnnotationReader();
         $reflectionClass = new \ReflectionClass(static::getEntity());
@@ -362,12 +362,12 @@ abstract class AbstractDefinition implements DefinitionInterface
     }
 
     /**
-     * @param Table $table
-     * @param       $property
+     * @param DoctrineTable $table
+     * @param               $property
      *
      * @return string
      */
-    private function getLabelFor(Table $table, $property)
+    private function getLabelFor(DoctrineTable $table, $property)
     {
         /** @var \whatwedo\TableBundle\Table\Column $column */
         foreach ($table->getColumns() as $column) {

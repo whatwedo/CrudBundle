@@ -79,7 +79,7 @@ class RelationContent extends AbstractContent
         $actionColumnItems = [];
 
         if (call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::SHOW)) {
-            $table->setRowRoute(sprintf(
+            $table->setShowRoute(sprintf(
                 '%s_%s',
                 call_user_func([$this->getOption('definition'), 'getRoutePrefix']),
                 RouteEnum::SHOW
@@ -139,7 +139,7 @@ class RelationContent extends AbstractContent
 
         $table->setResults(array_values($data));
 
-        return $table->renderTableOnly();
+        return $table->renderTable();
     }
 
     /**

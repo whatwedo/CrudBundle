@@ -35,7 +35,7 @@ use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
 use whatwedo\CrudBundle\View\DefinitionViewInterface;
-use whatwedo\TableBundle\Table\Table;
+use whatwedo\TableBundle\Table\DoctrineTable;
 
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
@@ -120,9 +120,9 @@ interface DefinitionInterface
     /**
      * table configuration
      *
-     * @param Table $table
+     * @param DoctrineTable $table
      */
-    public function configureTable(Table $table);
+    public function configureTable(DoctrineTable $table);
 
     /**
      * check if this definition has specific capability
@@ -207,9 +207,9 @@ interface DefinitionInterface
     public function getExportOptions();
 
     /**
-     * @param Table $table
+     * @param DoctrineTable $table
      */
-    public function overrideTableConfiguration(Table $table);
+    public function overrideTableConfiguration(DoctrineTable $table);
 
     public function addAjaxOnChangeListener();
 
