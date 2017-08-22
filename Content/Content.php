@@ -112,7 +112,7 @@ class Content extends AbstractContent implements EditableContentInterface
             'help' => null, // Hilfetext
             'preselect_definition' => null, // Vorausgewählte Entity folgender Definition
             'auto_fill' => null, // Auto-Fill Wert
-            'attrs' => [], // Attribute auf dem Element
+            'attr' => [], // Attribute auf dem Element
         ]);
     }
 }

@@ -125,7 +125,7 @@ class RelationContent extends AbstractContent
 
         $table->addColumn('actions', ActionColumn::class, [
             'items' => $actionColumnItems,
-            'showActionColumn' => $showActionColumn
+            'show_action_column' => $showActionColumn
         ]);
 
         $data = $this->getContents($row);

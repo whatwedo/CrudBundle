@@ -85,16 +85,23 @@ abstract class AbstractContent implements ContentInterface
         $this->options = $resolver->resolve($options);
     }
 
+    /**
+     * @param OptionsResolver $resolver
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'label' => $this->acronym,
             'callable' => null,
-            'attrs' => [],
+            'attr' => [],
             'visibility' => VisibilityEnum::SHOW | VisibilityEnum::EDIT | VisibilityEnum::CREATE,
         ]);
     }
 
+    /**
+     * @param $key
+     * @return mixed|null
+     */
     public function getOption($key)
     {
         return isset($this->options[$key]) ? $this->options[$key] : null;
@@ -139,8 +146,8 @@ abstract class AbstractContent implements ContentInterface
     /**
      * @return array
      */
-    public function getAttrs()
+    public function getAttr()
     {
-        return $this->options['attrs'];
+        return $this->options['attr'];
     }
 }

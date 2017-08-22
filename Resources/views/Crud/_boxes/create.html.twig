@@ -23,22 +23,22 @@
         <div class="row">
     {% endif %}
 
-    {% if block.attrs.class is not defined %}
-        {% set blockAttrs = block.attrs|merge({ class: '' }) %}
+    {% if block.attr.class is not defined %}
+        {% set blockAttr = block.attr|merge({ class: '' }) %}
     {% else %}
-        {% set blockAttrs = block.attrs %}
+        {% set blockAttr = block.attr %}
     {% endif %}
 
     {% if block.size == 'small' %}
-        {% set blockAttrs = blockAttrs|merge({
-            class: 'col-lg-6 box_create box_' ~ block.acronym ~ ' ' ~ blockAttrs.class
+        {% set blockAttr = blockAttr|merge({
+            class: 'col-lg-6 box_create box_' ~ block.acronym ~ ' ' ~ blockAttr.class
         }) %}
     {% else %}
-        {% set blockAttrs = blockAttrs|merge({
-             class: 'col-lg-12 box_create box_' ~ block.acronym ~ ' ' ~ blockAttrs.class
+        {% set blockAttr = blockAttr|merge({
+             class: 'col-lg-12 box_create box_' ~ block.acronym ~ ' ' ~ blockAttr.class
         }) %}
     {% endif %}
-            <div {{ macros.attributes(blockAttrs) }}>
+            <div {{ macros.attributes(blockAttr) }}>
                 <div class="box box-primary">
                     {% if block.label %}
                         {{ macros.blockHeader(block.label) }}
@@ -47,17 +47,17 @@
                     <div class="box-body">
                         {% for content in block.contents if content.isVisibleOnCreate %}
 
-                            {% if content.attrs.class is not defined %}
-                                {% set contentAttrs = content.attrs|merge({
+                            {% if content.attr.class is not defined %}
+                                {% set contentAttr = content.attr|merge({
                                     class: 'content_create content_' ~ block.acronym
                                 }) %}
                             {% else %}
-                                {% set contentAttrs = content.attrs|merge({
-                                    class: 'content_create content_' ~ block.acronym ~ ' ' ~ content.attrs.class
+                                {% set contentAttr = content.attr|merge({
+                                    class: 'content_create content_' ~ block.acronym ~ ' ' ~ content.attr.class
                                 }) %}
                             {% endif %}
 
-                            <div {{ macros.attributes(contentAttrs) }}>
+                            <div {{ macros.attributes(contentAttr) }}>
                                 {% if attribute(form, content.acronym) is defined %}
                                     <div class="form-group{% if attribute(form, content.acronym).vars.errors|length %} has-error{% endif %} form-group__{{ content.acronym }}">
                                         {% if content.label %}

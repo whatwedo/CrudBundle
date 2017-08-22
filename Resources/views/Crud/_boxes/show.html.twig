@@ -9,22 +9,22 @@
         <div class="row">
     {% endif %}
 
-    {% if block.attrs.class is not defined %}
-        {% set blockAttrs = block.attrs|merge({ class: '' }) %}
+    {% if block.attr.class is not defined %}
+        {% set blockAttr = block.attr|merge({ class: '' }) %}
     {% else %}
-        {% set blockAttrs = block.attrs %}
+        {% set blockAttr = block.attr %}
     {% endif %}
 
     {% if block.size == 'small' %}
-        {% set blockAttrs = blockAttrs|merge({
-            class: 'col-lg-6 box_show box_' ~ block.acronym ~ ' ' ~ blockAttrs.class
+        {% set blockAttr = blockAttr|merge({
+            class: 'col-lg-6 box_show box_' ~ block.acronym ~ ' ' ~ blockAttr.class
         }) %}
     {% else %}
-        {% set blockAttrs = blockAttrs|merge({
-            class: 'col-lg-12 box_show box_' ~ block.acronym ~ ' ' ~ blockAttrs.class
+        {% set blockAttr = blockAttr|merge({
+            class: 'col-lg-12 box_show box_' ~ block.acronym ~ ' ' ~ blockAttr.class
         }) %}
     {% endif %}
-            <div {{ macros.attributes(blockAttrs) }}>
+            <div {{ macros.attributes(blockAttr) }}>
                 <div class="box box-primary">
                     {% if block.label %}
                         {{ macros.blockHeader(block.label) }}
@@ -33,17 +33,17 @@
                     <div class="box-body">
                         {% for key, content in block.contents if content.isVisibleOnShow %}
 
-                            {% if content.attrs.class is not defined %}
-                                {% set contentAttrs = content.attrs|merge({
+                            {% if content.attr.class is not defined %}
+                                {% set contentAttr = content.attr|merge({
                                     class: 'content_show content_' ~ block.acronym
                                 }) %}
                             {% else %}
-                                {% set contentAttrs = content.attrs|merge({
-                                    class: 'content_show content_' ~ block.acronym ~ ' ' ~ content.attrs.class
+                                {% set contentAttr = content.attr|merge({
+                                    class: 'content_show content_' ~ block.acronym ~ ' ' ~ content.attr.class
                                 }) %}
                             {% endif %}
 
-                            <div {{ macros.attributes(contentAttrs) }}>
+                            <div {{ macros.attributes(contentAttr) }}>
                                 {% if content.isTable is defined and content.isTable %}
                                     <div class="row">
                                         <div class="col-lg-12">

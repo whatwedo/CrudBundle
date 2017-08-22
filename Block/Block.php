@@ -107,9 +107,9 @@ class Block
     /**
      * @return array
      */
-    public function getAttrs()
+    public function getAttr()
     {
-        return $this->options['attrs'];
+        return $this->options['attr'];
     }
 
     /**
@@ -164,7 +164,7 @@ class Block
     {
         $resolver->setDefaults([
             'label' => '',
-            'attrs' => [],
+            'attr' => [],
             'size' => BlockSizeEnum::SMALL,
             'visibility' => VisibilityEnum::SHOW | VisibilityEnum::EDIT | VisibilityEnum::CREATE,
         ]);

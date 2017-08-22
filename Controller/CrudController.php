@@ -89,7 +89,7 @@ class CrudController extends BaseController implements CrudDefinitionController
     {
         $table = $this->get('whatwedo_table.factory.table')
             ->createDoctrineTable('index', [
-                'queryBuilder' => $this->getDefinition()->getQueryBuilder()
+                'query_builder' => $this->getDefinition()->getQueryBuilder()
             ]);
 
         $this->configureTable($table);
@@ -390,7 +390,7 @@ class CrudController extends BaseController implements CrudDefinitionController
         $this->getDefinition()->configureTable($table);
 
         // this is normally the main table of the page, so we're fixing the header
-        $table->setOption('tableAttrs', [
+        $table->setOption('table_attr', [
             'data-fixed-header' => 'data-fixed-header'
         ]);
 
@@ -424,7 +424,7 @@ class CrudController extends BaseController implements CrudDefinitionController
         $allowEdit = $reflection->getMethod('allowEdit')->getClosure($this->getDefinition());
         $table->addColumn('actions', ActionColumn::class, [
             'items' => $actionColumnItems,
-            'showActionColumn' => [
+            'show_action_column' => [
                 sprintf('%s_%s', $this->getDefinition()->getRoutePrefix(), RouteEnum::EDIT) => $allowEdit
             ]
         ]);
