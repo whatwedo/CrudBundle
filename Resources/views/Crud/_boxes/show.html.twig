@@ -52,7 +52,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-12">
-                                            {{ content.renderTable(whatwedo_table(key, []), data)|raw }}
+                                            {{ content.renderTable(key, helper.data)|raw }}
                                         </div>
                                     </div>
                                     {% if content.createRoute is defined and content.createRoute %}
@@ -76,7 +76,6 @@
                                 {% elseif content.isTwigContent is defined and content.isTwigContent %}
                                     {% include content.template with content.parameters  %}
                                 {% else %}
-
                                     {% set value = content.render(data) %}
 
                                     {% if value is iterable %}

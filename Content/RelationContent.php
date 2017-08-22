@@ -26,15 +26,17 @@
  */
 
 namespace whatwedo\CrudBundle\Content;
+
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Ldap\Adapter\CollectionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CrudBundle\Enum\RouteEnum;
-use whatwedo\CrudBundle\Enum\VisibilityEnum;
+use whatwedo\CrudBundle\Exception\InvalidDataException;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
+use whatwedo\TableBundle\Factory\TableFactory;
+use whatwedo\TableBundle\Model\SimpleTableData;
 use whatwedo\TableBundle\Table\ActionColumn;
-use whatwedo\TableBundle\Table\Table;
 
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
@@ -65,13 +67,46 @@ class RelationContent extends AbstractContent
     }
 
     /**
-     * @param Table $table
+     * @param $identifier
      * @param $row
+     *
      * @return string
-     * @throws \Exception
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \whatwedo\TableBundle\Exception\DataLoaderNotAvailableException
      */
-    public function renderTable(Table $table, $row)
+    public function renderTable($identifier, $row)
     {
+        $data = $this->getContents($row);
+        if (!$data instanceof Collection) {
+            throw new InvalidDataException('data for RelationContent should be an instance of ' . Collection::class);
+        }
+
+        /** @var TableFactory $tableFactory */
+        $tableFactory = $this->container->get('whatwedo_table.factory.table');
+        $options = $this->options['table_options'];
+        $options['data_loader'] = function($page, $limit) use ($data) {
+            $dataLoader = new SimpleTableData();
+            $dataLoader->setTotalResults(count($data));
+
+            if ($this->options['criteria'] instanceof Criteria) {
+                $criteria = $this->options['criteria'];
+            } else {
+                $criteria = Criteria::create();
+            }
+
+            $criteria
+                ->setMaxResults($limit)
+                ->setFirstResult(($page - 1) * $limit)
+            ;
+
+            $dataLoader->setResults($data->matching($criteria)->toArray());
+
+            return $dataLoader;
+        };
+
+        $table = $tableFactory->createTable($identifier, $options);
+
         if (is_callable($this->options['table_configuration'])) {
             $this->options['table_configuration']($table);
         }
@@ -99,6 +134,7 @@ class RelationContent extends AbstractContent
         $definition = $this->getDefinitionManager()->getDefinitionFromClass($this->getOption('definition'));
         $allowEdit = call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::EDIT);
         $showActionColumn = [];
+
         if ($allowEdit) {
             $reflection = new \ReflectionClass(get_class($definition));
             $allowEdit = $reflection->getMethod('allowEdit')->getClosure($definition);
@@ -128,18 +164,12 @@ class RelationContent extends AbstractContent
             'show_action_column' => $showActionColumn
         ]);
 
-        $data = $this->getContents($row);
-
-        if ($data instanceof Collection) {
-            $data = $data->toArray();
-        }
-        if (is_string($data)){
-            throw new \Exception($data);
-        }
-
-        $table->setResults(array_values($data));
-
         return $table->renderTable();
+    }
+
+    public function getDataLoader()
+    {
+
     }
 
     /**
@@ -210,6 +240,13 @@ class RelationContent extends AbstractContent
         return $parameters;
     }
 
+    /**
+     * @param null $data
+     *
+     * @return bool
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
     public function allowCreate($data = null)
     {
         $definition = $this->getDefinitionManager()->getDefinitionFromClass($this->options['definition']);
@@ -258,6 +295,8 @@ class RelationContent extends AbstractContent
 
         $resolver->setDefaults([
             'accessor_path' => $this->acronym,
+            'table_options' => [],
+            'criteria' => [],
             'table_configuration' => null,
             'definition' => null,
             'route_addition_key' => null,
@@ -265,5 +304,8 @@ class RelationContent extends AbstractContent
             'show_index_button' => false,
             'show_create_button' => true,
         ]);
+
+        $resolver->setAllowedTypes('table_options', ['array']);
+        $resolver->setAllowedTypes('table_configuration', ['callable']);
     }
 }

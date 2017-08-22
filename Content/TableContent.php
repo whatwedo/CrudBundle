@@ -43,7 +43,7 @@ class TableContent extends AbstractContent
         return true;
     }
 
-    public function renderTable(Table $table, $row)
+    public function renderTable($row)
     {
         if (is_callable($this->options['table_configuration'])) {
             $this->options['table_configuration']($table);
