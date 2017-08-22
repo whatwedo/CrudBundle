@@ -57,38 +57,63 @@ class Content extends AbstractContent implements EditableContentInterface
         return (string) $data;
     }
 
+    /**
+     * @return string
+     */
     public function getFormType()
     {
         return $this->options['form_type'];
     }
 
+    /**
+     * @param array $options
+     * @return array
+     */
     public function getFormOptions($options = [])
     {
+        // Override options for the EntityHiddenType and HiddenType
         if (in_array($this->getFormType(), [EntityHiddenType::class, HiddenType::class])) {
             $this->options['label'] = false;
         }
+
+        // Override help option
         if (!is_null($this->getHelp()) && (!isset($this->options['form_options']['attr'])
                 || !isset($this->options['form_options']['attr']['help']))) {
             $this->options['form_options']['attr']['help'] = $this->options['help'];
         }
+
+        // Override label
         return array_merge($options, ['label' => $this->getLabel()], $this->options['form_options']);
     }
 
+    /**
+     * @return string
+     */
     public function getPreselectDefinition()
     {
         return $this->options['preselect_definition'];
     }
 
+    /**
+     * @return string
+     */
     public function getAutoFill()
     {
         return $this->options['auto_fill'];
     }
 
+    /**
+     * @return string
+     */
     public function getHelp()
     {
         return $this->options['help'];
     }
 
+    /**
+     * @param $key
+     * @param $value
+     */
     public function setOption($key, $value)
     {
         if (isset($this->options[$key])) {
