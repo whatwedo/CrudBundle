@@ -30,6 +30,7 @@ namespace whatwedo\CrudBundle\Content;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Psr\Container\ContainerInterface;
+use ReflectionClass;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Exception\InvalidDataException;
@@ -39,7 +40,8 @@ use whatwedo\TableBundle\Model\SimpleTableData;
 use whatwedo\TableBundle\Table\ActionColumn;
 
 /**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
+ * Class RelationContent
+ * @package whatwedo\CrudBundle\Content
  */
 class RelationContent extends AbstractContent
 {
@@ -128,17 +130,11 @@ class RelationContent extends AbstractContent
                     call_user_func([$this->getOption('definition'), 'getRoutePrefix']),
                     RouteEnum::SHOW
                 ),
+                'voter_attribute' => RouteEnum::SHOW,
             ];
         }
 
-        $definition = $this->getDefinitionManager()->getDefinitionFromClass($this->getOption('definition'));
-        $allowEdit = call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::EDIT);
-        $showActionColumn = [];
-
-        if ($allowEdit) {
-            $reflection = new \ReflectionClass(get_class($definition));
-            $allowEdit = $reflection->getMethod('allowEdit')->getClosure($definition);
-            $showActionColumn[sprintf('%s_%s', call_user_func([$this->getOption('definition'), 'getRoutePrefix']), RouteEnum::EDIT)] = $allowEdit;
+        if (call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::EDIT)) {
             $actionColumnItems[] = [
                 'label' => 'Bearbeiten',
                 'icon' => 'pencil',
@@ -148,6 +144,7 @@ class RelationContent extends AbstractContent
                     call_user_func([$this->getOption('definition'), 'getRoutePrefix']),
                     RouteEnum::EDIT
                 ),
+                'voter_attribute' => RouteEnum::EDIT,
             ];
         }
 
@@ -161,15 +158,9 @@ class RelationContent extends AbstractContent
 
         $table->addColumn('actions', ActionColumn::class, [
             'items' => $actionColumnItems,
-            'show_action_column' => $showActionColumn
         ]);
 
         return $table->renderTable();
-    }
-
-    public function getDataLoader()
-    {
-
     }
 
     /**
@@ -218,14 +209,6 @@ class RelationContent extends AbstractContent
     }
 
     /**
-     * @return mixed
-     */
-    public function isShowInEdit()
-    {
-        return $this->options['show_in_edit'];
-    }
-
-    /**
      * @param $data
      * @return array
      */
@@ -241,16 +224,18 @@ class RelationContent extends AbstractContent
     }
 
     /**
-     * @param null $data
-     *
-     * @return bool
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @return object
      */
-    public function allowCreate($data = null)
+    public function getVoterEntity()
     {
         $definition = $this->getDefinitionManager()->getDefinitionFromClass($this->options['definition']);
-        return $definition->allowCreate($data);
+        $entityName = $definition::getEntity();
+        $entityReflector = new ReflectionClass($entityName);
+        if ($entityReflector->isAbstract()) {
+            return null;
+        } else {
+            return $entityReflector->newInstanceWithoutConstructor();
+        }
     }
 
     /**
@@ -300,7 +285,6 @@ class RelationContent extends AbstractContent
             'table_configuration' => null,
             'definition' => null,
             'route_addition_key' => null,
-            'show_in_edit' => true,
             'show_index_button' => false,
             'show_create_button' => true,
         ]);

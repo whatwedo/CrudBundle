@@ -15,7 +15,7 @@
 
 {% set i = 0 %}
 {% set isOpen = false %}
-{% for block in helper.blocks if block.isVisibleOnEdit %}
+{% for block in helper.blocks if block.isVisibleOnEdit and is_granted(block.editVoterAttribute, helper.data) %}
 
     {# Zeile #}
     {% set i = i + 1 %}
@@ -46,7 +46,7 @@
                     {% endif %}
 
                     <div class="box-body">
-                        {% for content in block.contents if content.isVisibleOnEdit %}
+                        {% for key, content in block.contents if content.isVisibleOnEdit and is_granted(content.editVoterAttribute, helper.data) %}
 
                             {% if content.attr.class is not defined %}
                                 {% set contentAttr = content.attr|merge({
@@ -99,7 +99,7 @@
                                         {% endif %}
                                     </div>
                                 {% endif %}
-                                {% if content.isTable is defined and content.isTable and content.showInEdit %}
+                                {% if content.isTable is defined and content.isTable %}
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <strong>{{ content.label }}:</strong>
@@ -110,16 +110,6 @@
                                             {{ content.renderTable(key, helper.data)|raw }}
                                         </div>
                                     </div>
-                                    {% if content.createRoute is defined and content.createRoute and helper.allowEdit(helper.data) %}
-                                        <div class="row">
-                                            <div class="col-lg-12 text-right">
-                                                <a href="{{ path(content.createRoute, content.createRouteParameters(helper.data)) }}" class="btn btn-success btn-xs">
-                                                    <i class="fa fa-plus"></i>
-                                                    Hinzufügen
-                                                </a>
-                                            </div>
-                                        </div>
-                                    {% endif %}
                                 {% endif %}
                                 {% if content.isTwigContent is defined and content.isTwigContent %}
                                     {% include content.template with content.parameters  %}

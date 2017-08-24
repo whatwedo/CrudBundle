@@ -104,9 +104,4 @@ interface DefinitionViewInterface
      */
     public function getEditForm();
 
-    /**
-     * @param $data
-     * @return boolean
-     */
-    public function allowDelete($data = null);
 }

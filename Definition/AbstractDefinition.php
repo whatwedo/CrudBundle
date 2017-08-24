@@ -425,46 +425,6 @@ abstract class AbstractDefinition implements DefinitionInterface
     }
 
     /**
-     * @param null $data
-     *
-     * @return bool
-     */
-    public function allowDelete($data = null)
-    {
-        return self::hasCapability(RouteEnum::DELETE);
-    }
-
-    /**
-     * @param null $data
-     *
-     * @return bool
-     */
-    public function allowCreate($data = null)
-    {
-        return self::hasCapability(RouteEnum::CREATE);
-    }
-
-    /**
-     * @param null $data
-     *
-     * @return bool
-     */
-    public function allowEdit($data = null)
-    {
-        return self::hasCapability(RouteEnum::EDIT);
-    }
-
-    /**
-     * @param null $data
-     *
-     * @return bool
-     */
-    public function allowShow($data = null)
-    {
-        return self::hasCapability(RouteEnum::SHOW);
-    }
-
-    /**
      * @return array
      */
     public function getExportAttributes()

@@ -99,13 +99,21 @@ services:
     # Form types
     whatwedo_crud.type.entity_hidden:
        class: whatwedo\CrudBundle\Form\EntityHiddenType
-       arguments: ["@doctrine.orm.entity_manager"]
+       arguments: ['@doctrine.orm.entity_manager']
        tags:
        - { name: form.type, alias: entity_hidden }
 
     whatwedo_crud.form_type.ajax_select:
         class: whatwedo\CrudBundle\Form\Type\AjaxSelectFormType
         arguments:
-            - "@router"
+            - '@router'
         tags:
             - { name: form.type, alias: ajaxSelect }
+
+    # Voter
+    whatwedo_crud.security.voter.default:
+        class: whatwedo\CrudBundle\Security\Voter\DefaultDefinitionVoter
+        arguments:
+            - '@whatwedo_crud.manager.definition'
+        tags:
+            - security.voter

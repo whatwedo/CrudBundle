@@ -27,14 +27,14 @@
 
 namespace whatwedo\CrudBundle\Content;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Ldap\Adapter\CollectionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\TableBundle\Table\ActionColumn;
 use whatwedo\TableBundle\Table\Table;
 
 /**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
+ * Class TableContent
+ * @package whatwedo\CrudBundle\Content
  */
 class TableContent extends AbstractContent
 {
@@ -43,7 +43,7 @@ class TableContent extends AbstractContent
         return true;
     }
 
-    public function renderTable($row)
+    public function renderTable(Table $table, $row)
     {
         if (is_callable($this->options['table_configuration'])) {
             $this->options['table_configuration']($table);
@@ -90,16 +90,19 @@ class TableContent extends AbstractContent
         return $table->renderTable();
     }
 
+    /**
+     * @param $row
+     * @return string
+     */
     public function render($row)
     {
         return 'call RelationContent::renderTable()';
     }
 
-    public function isShowInEdit()
-    {
-        return $this->options['show_in_edit'];
-    }
-
+    /**
+     * @param $key
+     * @param $value
+     */
     public function setOption($key, $value)
     {
         if (isset($this->options[$key])) {
@@ -107,6 +110,9 @@ class TableContent extends AbstractContent
         }
     }
 
+    /**
+     * @param OptionsResolver $resolver
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
@@ -116,7 +122,6 @@ class TableContent extends AbstractContent
             'table_configuration' => null,
             'definition' => null,
             'route_addition_key' => null,
-            'show_in_edit' => true,
             'show_index_button' => false,
         ]);
     }

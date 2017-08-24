@@ -1,7 +1,7 @@
 {% import "whatwedoCrudBundle:Crud:_macros.html.twig" as macros %}
 
 {% set i = 0 %}
-{% for block in helper.blocks if block.isVisibleOnShow %}
+{% for block in helper.blocks if block.isVisibleOnShow and is_granted(block.showVoterAttribute, helper.data) %}
 
     {# Zeile #}
     {% set i = i + 1 %}
@@ -31,7 +31,7 @@
                     {% endif %}
 
                     <div class="box-body">
-                        {% for key, content in block.contents if content.isVisibleOnShow %}
+                        {% for key, content in block.contents if content.isVisibleOnShow and is_granted(content.showVoterAttribute, helper.data) %}
 
                             {% if content.attr.class is not defined %}
                                 {% set contentAttr = content.attr|merge({
@@ -56,22 +56,22 @@
                                         </div>
                                     </div>
                                     {% if content.createRoute is defined and content.createRoute %}
-                                    <div class="row">
-                                        <div class="col-lg-12 text-right">
-                                            {% if content.indexRoute %}
-                                            <a href="{{ path(content.indexRoute, content.createRouteParameters(data)) }}" class="btn btn-primary btn-xs">
-                                                <i class="fa fa-list"></i>
-                                                Alle ansehen
-                                            </a>
-                                            {% endif %}
-                                            {% if content.createRoute and content.allowCreate(helper.data) %}
-                                            <a href="{{ path(content.createRoute, content.createRouteParameters(data)) }}" class="btn btn-success btn-xs">
-                                                <i class="fa fa-plus"></i>
-                                                Hinzufügen
-                                            </a>
-                                            {% endif %}
+                                        <div class="row">
+                                            <div class="col-lg-12 text-right">
+                                                {% if content.indexRoute %}
+                                                    <a href="{{ path(content.indexRoute, content.createRouteParameters(data)) }}" class="btn btn-primary btn-xs">
+                                                        <i class="fa fa-list"></i>
+                                                        Alle ansehen
+                                                    </a>
+                                                {% endif %}
+                                                {% if content.createRoute and content.voterEntity is defined and content.voterEntity is not null and is_granted('edit', helper.data) and is_granted('create', content.voterEntity) %}
+                                                    <a href="{{ path(content.createRoute, content.createRouteParameters(data)) }}" class="btn btn-success btn-xs">
+                                                        <i class="fa fa-plus"></i>
+                                                        Hinzufügen
+                                                    </a>
+                                                {% endif %}
+                                            </div>
                                         </div>
-                                    </div>
                                     {% endif %}
                                 {% elseif content.isTwigContent is defined and content.isTwigContent %}
                                     {% include content.template with content.parameters  %}

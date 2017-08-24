@@ -31,6 +31,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Enum\VisibilityEnum;
 use whatwedo\CrudBundle\Traits\VisibilityTrait;
 
@@ -95,6 +96,9 @@ abstract class AbstractContent implements ContentInterface
             'callable' => null,
             'attr' => [],
             'visibility' => VisibilityEnum::SHOW | VisibilityEnum::EDIT | VisibilityEnum::CREATE,
+            'show_voter_attribute' => RouteEnum::SHOW,
+            'edit_voter_attribute' => RouteEnum::EDIT,
+            'create_voter_attribute' => RouteEnum::CREATE,
         ]);
     }
 
@@ -149,5 +153,29 @@ abstract class AbstractContent implements ContentInterface
     public function getAttr()
     {
         return $this->options['attr'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getShowVoterAttribute()
+    {
+        return $this->options['show_voter_attribute'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getEditVoterAttribute()
+    {
+        return $this->options['edit_voter_attribute'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getCreateVoterAttribute()
+    {
+        return $this->options['create_voter_attribute'];
     }
 }

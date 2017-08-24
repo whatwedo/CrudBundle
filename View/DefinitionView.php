@@ -183,7 +183,7 @@ class DefinitionView implements DefinitionViewInterface
         $def = $this->definitionManager->getDefinitionFor($entity);
 
         if (!is_null($def)) {
-            if ($def->allowShow($entity)) {
+            if ($this->authorizationChecker->isGranted(RouteEnum::SHOW, $entity)) {
                 $path = $this->router->generate($def::getRoutePrefix() . '_' . RouteEnum::SHOW, ['id' => $entity->getId()]);
 
                 $granted = false;
@@ -229,32 +229,6 @@ class DefinitionView implements DefinitionViewInterface
             'form' => $this->getCreateForm()->createView(),
             'helper' => $this,
         ], $additionalParameters));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function allowDelete($data = null)
-    {
-        return $this->definition->allowDelete($data);
-    }
-
-    /**
-     * @param null $data
-     * @return bool
-     */
-    public function allowCreate($data = null)
-    {
-        return $this->definition->allowCreate($data);
-    }
-
-    /**
-     * @param null $data
-     * @return bool
-     */
-    public function allowEdit($data = null)
-    {
-        return $this->definition->allowEdit($data);
     }
 
     /**

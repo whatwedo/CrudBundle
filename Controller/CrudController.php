@@ -27,6 +27,7 @@
 
 namespace whatwedo\CrudBundle\Controller;
 
+use ReflectionClass;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -87,6 +88,15 @@ class CrudController extends BaseController implements CrudDefinitionController
      */
     public function indexAction()
     {
+        $entityName = $this->getDefinition()->getEntity();
+        $entityReflector = new ReflectionClass($entityName);
+        if ($entityReflector->isAbstract()) {
+            $voterEntity = null;
+        } else {
+            $voterEntity = $entityReflector->newInstanceWithoutConstructor();
+            $this->denyAccessUnlessGranted(RouteEnum::INDEX, $voterEntity);
+        }
+
         $table = $this->get('whatwedo_table.factory.table')
             ->createDoctrineTable('index', [
                 'query_builder' => $this->getDefinition()->getQueryBuilder()
@@ -97,16 +107,12 @@ class CrudController extends BaseController implements CrudDefinitionController
 
         $this->definition->buildBreadcrumbs(null, RouteEnum::INDEX);
 
-        return $this->render($this->getView('index.html.twig'), $this->getIndexParameters([
+        return $this->render($this->getView('index.html.twig'), [
             'view' => $this->getDefinition()->createView(),
             'table' => $table,
             'title' => $this->getDefinition()->getTitle(null, RouteEnum::INDEX),
-        ]));
-    }
-
-    protected function getIndexParameters($parameters = [])
-    {
-        return $parameters;
+            'voter_entity' => $voterEntity,
+        ]);
     }
 
     /**
@@ -116,9 +122,7 @@ class CrudController extends BaseController implements CrudDefinitionController
     public function showAction(Request $request)
     {
         $entity = $this->getEntityOr404($request);
-        if (!$this->definition->allowShow($entity)) {
-            throw $this->createAccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted(RouteEnum::SHOW, $entity);
         $this->dispatchEvent(CrudEvent::PRE_SHOW_PREFIX, $entity);
 
         $this->definition->buildBreadcrumbs($entity, RouteEnum::SHOW);
@@ -141,9 +145,7 @@ class CrudController extends BaseController implements CrudDefinitionController
     public function editAction(Request $request)
     {
         $entity = $this->getEntityOr404($request);
-        if (!$this->definition->allowEdit($entity)) {
-            throw $this->createAccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted(RouteEnum::EDIT, $entity);
         $view = $this->getDefinition()->createView($entity);
 
         $form = $view->getEditForm();
@@ -185,11 +187,9 @@ class CrudController extends BaseController implements CrudDefinitionController
      */
     public function createAction(Request $request)
     {
-        if (!$this->getDefinition()->allowCreate()) {
-            throw $this->createAccessDeniedException();
-        }
         $entityName = $this->getDefinition()->getEntity();
         $entity = new $entityName;
+        $this->denyAccessUnlessGranted(RouteEnum::CREATE, $entity);
 
         $view = $this->getDefinition()->createView($entity);
         $uri = null;
@@ -279,25 +279,19 @@ class CrudController extends BaseController implements CrudDefinitionController
     public function deleteAction(Request $request)
     {
         $entity = $this->getEntityOr404($request);
-        if (!$this->definition->allowDelete($entity)) {
-            throw $this->createAccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted(RouteEnum::DELETE, $entity);
         $redirect = $this->getDefinition()->getDeleteRedirect($this->get('router'), $entity);
 
-        if (!$this->definition->allowDelete($entity)) {
-            $this->addFlash('error', sprintf('Eintrag darf nicht gelöscht werden.'));
-        } else {
-            try {
-                $this->getDoctrine()->getManager()->remove($entity);
-                $this->getDoctrine()->getManager()->flush($entity);
-                $this->addFlash('success', sprintf('Eintrag erfolgreich gelöscht.'));
-            } catch (\Exception $e) {
-                $this->addFlash('error', sprintf('Eintrag konnte nicht gelöscht werden: ' . $e->getMessage()));
-                $this->getLogger()->warning('Error while deleting: ' . $e->getMessage(), [
-                    'entity' => get_class($entity),
-                    'id' => $entity->getId(),
-                ]);
-            }
+        try {
+            $this->getDoctrine()->getManager()->remove($entity);
+            $this->getDoctrine()->getManager()->flush($entity);
+            $this->addFlash('success', sprintf('Eintrag erfolgreich gelöscht.'));
+        } catch (\Exception $e) {
+            $this->addFlash('error', sprintf('Eintrag konnte nicht gelöscht werden: ' . $e->getMessage()));
+            $this->getLogger()->warning('Error while deleting: ' . $e->getMessage(), [
+                'entity' => get_class($entity),
+                'id' => $entity->getId(),
+            ]);
         }
 
         return $redirect;
@@ -309,6 +303,15 @@ class CrudController extends BaseController implements CrudDefinitionController
      */
     public function exportAction(Request $request)
     {
+        $entityName = $this->getDefinition()->getEntity();
+        $entityReflector = new ReflectionClass($entityName);
+        if ($entityReflector->isAbstract()) {
+            $voterEntity = null;
+        } else {
+            $voterEntity = $entityReflector->newInstanceWithoutConstructor();
+            $this->denyAccessUnlessGranted(RouteEnum::EXPORT, $voterEntity);
+        }
+
         $entities = $this->getEntities($request);
         if (!isset($entities[0])) {
             $this->addFlash('warning', 'Nichts zu exportieren');
@@ -350,6 +353,15 @@ class CrudController extends BaseController implements CrudDefinitionController
      */
     public function ajaxAction(Request $request)
     {
+        $entityName = $this->getDefinition()->getEntity();
+        $entityReflector = new ReflectionClass($entityName);
+        if ($entityReflector->isAbstract()) {
+            $voterEntity = null;
+        } else {
+            $voterEntity = $entityReflector->newInstanceWithoutConstructor();
+            $this->denyAccessUnlessGranted(RouteEnum::AJAX, $voterEntity);
+        }
+
         $data = [];
         foreach ($request->request->get('data') as $pair) {
             $data[$pair['key']] = $pair['value'];
@@ -404,6 +416,7 @@ class CrudController extends BaseController implements CrudDefinitionController
                 'icon' => 'arrow-right',
                 'button' => 'primary',
                 'route' => sprintf('%s_%s', $this->getDefinition()->getRoutePrefix(), RouteEnum::SHOW),
+                'voter_attribute' => RouteEnum::SHOW,
             ];
         }
 
@@ -417,16 +430,12 @@ class CrudController extends BaseController implements CrudDefinitionController
                 'icon' => 'pencil',
                 'button' => 'warning',
                 'route' => sprintf('%s_%s', $this->getDefinition()->getRoutePrefix(), RouteEnum::EDIT),
+                'voter_attribute' => RouteEnum::EDIT,
             ];
         }
 
-        $reflection = new \ReflectionClass(get_class($this->getDefinition()));
-        $allowEdit = $reflection->getMethod('allowEdit')->getClosure($this->getDefinition());
         $table->addColumn('actions', ActionColumn::class, [
             'items' => $actionColumnItems,
-            'show_action_column' => [
-                sprintf('%s_%s', $this->getDefinition()->getRoutePrefix(), RouteEnum::EDIT) => $allowEdit
-            ]
         ]);
     }
 

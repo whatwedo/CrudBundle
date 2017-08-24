@@ -30,10 +30,12 @@ namespace whatwedo\CrudBundle\Content;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CoreBundle\Formatter\DefaultFormatter;
+use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Form\EntityHiddenType;
 
 /**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
+ * Class Content
+ * @package whatwedo\CrudBundle\Content
  */
 class Content extends AbstractContent implements EditableContentInterface
 {

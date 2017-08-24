@@ -163,30 +163,6 @@ interface DefinitionInterface
     public function getDeleteRedirect(RouterInterface $router, $entity = null);
 
     /**
-     * @param $data
-     * @return boolean
-     */
-    public function allowDelete($data = null);
-
-    /**
-     * @param $data
-     * @return boolean
-     */
-    public function allowCreate($data = null);
-
-    /**
-     * @param $data
-     * @return boolean
-     */
-    public function allowEdit($data = null);
-
-    /**
-     * @param $data
-     * @return boolean
-     */
-    public function allowShow($data = null);
-
-    /**
      * @return array
      */
     public function getExportAttributes();

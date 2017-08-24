@@ -28,6 +28,7 @@
 namespace whatwedo\CrudBundle\Block;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Enum\VisibilityEnum;
 use whatwedo\CrudBundle\Manager\ContentManager;
 use whatwedo\CrudBundle\Content\Content;
@@ -121,6 +122,30 @@ class Block
     }
 
     /**
+     * @return string
+     */
+    public function getShowVoterAttribute()
+    {
+        return $this->options['show_voter_attribute'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getEditVoterAttribute()
+    {
+        return $this->options['edit_voter_attribute'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getCreateVoterAttribute()
+    {
+        return $this->options['create_voter_attribute'];
+    }
+
+    /**
      * adds a new content to the block
      *
      * @param string $acronym acronym of the block
@@ -167,6 +192,9 @@ class Block
             'attr' => [],
             'size' => BlockSizeEnum::SMALL,
             'visibility' => VisibilityEnum::SHOW | VisibilityEnum::EDIT | VisibilityEnum::CREATE,
+            'show_voter_attribute' => RouteEnum::SHOW,
+            'edit_voter_attribute' => RouteEnum::EDIT,
+            'create_voter_attribute' => RouteEnum::CREATE,
         ]);
     }
 

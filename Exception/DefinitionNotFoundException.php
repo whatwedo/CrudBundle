@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2016, whatwedo GmbH
+ * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,10 +28,10 @@
 namespace whatwedo\CrudBundle\Exception;
 
 /**
- * Class ElementNotFoundException
+ * Class DefinitionNotFoundException
  * @package whatwedo\CrudBundle\Exception
  */
-class ElementNotFoundException extends \Exception
+class DefinitionNotFoundException extends \Exception
 {
 
 }

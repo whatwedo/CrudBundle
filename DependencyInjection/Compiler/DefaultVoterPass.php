@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2016, whatwedo GmbH
+ * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,13 +25,36 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Exception;
+namespace whatwedo\CrudBundle\DependencyInjection\Compiler;
+
+use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Class ElementNotFoundException
- * @package whatwedo\CrudBundle\Exception
+ * Class DefaultVoterPass
+ * @package whatwedo\CrudBundle\DependencyInjection\Compiler
  */
-class ElementNotFoundException extends \Exception
+class DefaultVoterPass implements CompilerPassInterface
 {
 
+    /**
+     * You can modify the container here before it is dumped to PHP code.
+     *
+     * @param ContainerBuilder $container
+     */
+    public function process(ContainerBuilder $container)
+    {
+        // Get DefaultVoter service definition
+        if (!$container->has('whatwedo_crud.security.voter.default')) {
+            return;
+        }
+        $definition = $container->findDefinition('whatwedo_crud.security.voter.default');
+
+        // Get services with security.voter tag
+        $taggedServices = $container->findTaggedServiceIds('security.voter');
+        foreach ($taggedServices as $id => $tags) {
+            $definition->addMethodCall('addVoter', array(new Reference($id)));
+        }
+    }
 }
