@@ -128,7 +128,7 @@ interface DefinitionInterface
      * check if this definition has specific capability
      *
      * @param $string
-     * @return bool
+     * @return bool
      */
     public static function hasCapability($string);
 

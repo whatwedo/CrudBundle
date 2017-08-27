@@ -130,6 +130,7 @@ class RelationContent extends AbstractContent
                     call_user_func([$this->getOption('definition'), 'getRoutePrefix']),
                     RouteEnum::SHOW
                 ),
+                'route_parameters' => [],
                 'voter_attribute' => RouteEnum::SHOW,
             ];
         }
@@ -144,6 +145,7 @@ class RelationContent extends AbstractContent
                     call_user_func([$this->getOption('definition'), 'getRoutePrefix']),
                     RouteEnum::EDIT
                 ),
+                'route_parameters' => [],
                 'voter_attribute' => RouteEnum::EDIT,
             ];
         }

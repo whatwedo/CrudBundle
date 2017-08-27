@@ -416,6 +416,7 @@ class CrudController extends BaseController implements CrudDefinitionController
                 'icon' => 'arrow-right',
                 'button' => 'primary',
                 'route' => sprintf('%s_%s', $this->getDefinition()->getRoutePrefix(), RouteEnum::SHOW),
+                'route_parameters' => [],
                 'voter_attribute' => RouteEnum::SHOW,
             ];
         }
@@ -430,6 +431,7 @@ class CrudController extends BaseController implements CrudDefinitionController
                 'icon' => 'pencil',
                 'button' => 'warning',
                 'route' => sprintf('%s_%s', $this->getDefinition()->getRoutePrefix(), RouteEnum::EDIT),
+                'route_parameters' => [],
                 'voter_attribute' => RouteEnum::EDIT,
             ];
         }
