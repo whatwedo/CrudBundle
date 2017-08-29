@@ -152,7 +152,6 @@ interface DefinitionInterface
      *
      * @param DefinitionBuilder $builder
      * @param $data
-     * @return mixed
      */
     public function configureView(DefinitionBuilder $builder, $data);
 
@@ -182,6 +181,12 @@ interface DefinitionInterface
     public function allowEdit($data = null);
 
     /**
+     * @param $data
+     * @return boolean
+     */
+    public function allowShow($data = null);
+
+    /**
      * @return array
      */
     public function getExportAttributes();
@@ -192,9 +197,19 @@ interface DefinitionInterface
     public function getExportCallbacks();
 
     /**
+     * @return array
+     */
+    public function getExportHeaders();
+
+    /**
+     * @return array
+     */
+    public function getExportOptions();
+
+    /**
      * @param Table $table
      */
-    public function configureTableFilter(Table $table);
+    public function overrideTableConfiguration(Table $table);
 
     public function addAjaxOnChangeListener();
 

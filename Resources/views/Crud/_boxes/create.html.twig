@@ -39,14 +39,14 @@
                                                 <i class="fa fa-times-circle-o"></i>
                                             {% endif %}
                                             {{ content.label }}:
+                                            {% for attrname, attrvalue in attribute(form, content.acronym).vars.attr %}
+                                                {% if attrname == 'help' %}
+                                                    &nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="{{ attrvalue }}"></i>
+                                                {% endif %}
+                                            {% endfor %}
                                         </label>
                                     {% endif %}
                                     {{ form_widget(attribute(form, content.acronym)) }}
-                                    {% for attrname, attrvalue in attribute(form, content.acronym).vars.attr %}
-                                        {% if attrname == 'help' %}
-                                            <span class="help-block">{{ attrvalue }}</span>
-                                        {% endif %}
-                                    {% endfor %}
                                     {% if content.autoFill is not null %}
                                         {% for autoFill in content.autoFill %}
                                             <div class="hidden auto-fill">
@@ -76,6 +76,11 @@
                                         {{ content.label }}:
                                     </label>
                                     <i>Diese Felder können nach dem Hinzufügen bearbeitet werden.</i>
+                                {% endif %}
+                                {% if content.isTwigContent is defined and content.isTwigContent %}
+                                    {% if content.showOn('create') %}
+                                        {% include content.template with content.parameters  %}
+                                    {% endif %}
                                 {% endif %}
                             {% endif %}
 

@@ -38,7 +38,7 @@
                                             Alle ansehen
                                         </a>
                                         {% endif %}
-                                        {% if content.createRoute %}
+                                        {% if content.createRoute and content.allowCreate(helper.data) %}
                                         <a href="{{ path(content.createRoute, content.createRouteParameters(data)) }}" class="btn btn-success btn-xs">
                                             <i class="fa fa-plus"></i>
                                             Hinzufügen
@@ -46,6 +46,10 @@
                                         {% endif %}
                                     </div>
                                 </div>
+                                {% endif %}
+                            {% elseif content.isTwigContent is defined and content.isTwigContent %}
+                                {% if content.showOn('read') %}
+                                    {% include content.template with content.parameters  %}
                                 {% endif %}
                             {% else %}
 
@@ -65,7 +69,9 @@
                                 {% else %}
                                     <div class="row {{ content.viewClass }}">
                                         <div class="col-lg-4">
-                                            <strong>{{ content.label }}{% if content.label is not empty %}:{% endif %}</strong>
+                                            <strong>{{ content.label }}{% if content.label is not empty %}:{% endif %}
+                                                {% if content.help is not empty %}&nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="{{ content.help }}"></i>{% endif %}
+                                            </strong>
                                         </div>
                                         <div class="col-lg-8">
                                             {{ helper.linkIt(value, content)|raw }}
@@ -82,7 +88,7 @@
 
 
     {# / Zeile #}
-    {% if i == 2 %}
+    {% if i == 2 or loop.index == loop.length %}
         {% set i = 0 %}
         </div>
     {% endif %}

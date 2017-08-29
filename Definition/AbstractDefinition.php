@@ -29,22 +29,25 @@ namespace whatwedo\CrudBundle\Definition;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
+use whatwedo\CrudBundle\Block\Block;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
 use whatwedo\CrudBundle\Controller\CrudController;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Extension\BreadcrumbsExtension;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
+use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\View\DefinitionViewInterface;
 use whatwedo\TableBundle\Model\Type\BooleanFilterType;
 use whatwedo\TableBundle\Model\Type\DateFilterType;
+use whatwedo\TableBundle\Model\Type\DatetimeFilterType;
+use whatwedo\TableBundle\Model\Type\ManyToManyFilterType;
 use whatwedo\TableBundle\Model\Type\NumberFilterType;
 use whatwedo\TableBundle\Model\Type\RelationFilterType;
 use whatwedo\TableBundle\Model\Type\TextFilterType;
@@ -96,6 +99,16 @@ abstract class AbstractDefinition implements DefinitionInterface
      * @var ExtensionInterface[]
      */
     protected $extensions;
+
+    /**
+     * @var DefinitionManager
+     */
+    protected $definitionManager;
+
+    /**
+     * @var DefinitionBuilder|null $definitionBuilderLabelCache
+     */
+    protected $definitionBuilderLabelCache = null;
 
     /**
      * {@inheritdoc}
@@ -207,6 +220,24 @@ abstract class AbstractDefinition implements DefinitionInterface
     }
 
     /**
+     * @return DefinitionManager
+     */
+    public function getDefinitionManager()
+    {
+        return $this->definitionManager;
+    }
+
+    /**
+     * @param DefinitionManager $definitionManager
+     * @return AbstractDefinition
+     */
+    public function setDefinitionManager(DefinitionManager $definitionManager)
+    {
+        $this->definitionManager = $definitionManager;
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getTemplateDirectory()
@@ -228,7 +259,7 @@ abstract class AbstractDefinition implements DefinitionInterface
      */
     public function createView($data = null)
     {
-        $this->builder = new DefinitionBuilder();
+        $this->builder = new DefinitionBuilder($this->definitionManager);
 
         $this->configureView($this->builder, $data);
 
@@ -242,7 +273,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @param Table $table
      */
-    public function configureTableFilter(Table $table)
+    public function overrideTableConfiguration(Table $table)
     {
         $reader = new AnnotationReader();
         $reflectionClass = new \ReflectionClass(static::getEntity());
@@ -253,6 +284,8 @@ abstract class AbstractDefinition implements DefinitionInterface
             $ormColumn = $reader->getPropertyAnnotation($property, Column::class);
             /** @var ManyToOne $ormManyToOne */
             $ormManyToOne = $reader->getPropertyAnnotation($property, ManyToOne::class);
+            /** @var ManyToMany $ormManyToMany */
+            $ormManyToMany = $reader->getPropertyAnnotation($property, ManyToMany::class);
             $acronym = $property->getName();
             $label = $this->getLabelFor($table, $property->getName());
             $accessor = $acronym;
@@ -262,8 +295,11 @@ abstract class AbstractDefinition implements DefinitionInterface
                     case 'string':
                         $table->addFilter($acronym, $label, new TextFilterType($accessor));
                         break;
-                    case 'datetime':
+                    case 'date':
                         $table->addFilter($acronym, $label, new DateFilterType($accessor));
+                        break;
+                    case 'datetime':
+                        $table->addFilter($acronym, $label, new DatetimeFilterType($accessor));
                         break;
                     case 'integer':
                     case 'float':
@@ -279,12 +315,22 @@ abstract class AbstractDefinition implements DefinitionInterface
                     $target = preg_replace('#[a-zA-Z0-9]+$#i', $target, static::getEntity());
                 }
                 $choices = $this->getQueryBuilder()->getEntityManager()->getRepository($target)->findAll();
+                $joins = [];
                 if (!in_array($acronym, $this->getQueryBuilder()->getAllAliases())) {
                     $joins = [$acronym => sprintf('%s.%s', static::getQueryAlias(), $acronym)];
-                } else {
-                    $joins = [];
                 }
                 $table->addFilter($acronym, $label, new RelationFilterType($accessor, $choices, $joins));
+            } else if (!is_null($ormManyToMany)) {
+                $accessor = sprintf('%s.%s', static::getQueryAlias(), $acronym);
+                $joins = [];
+                if (!in_array($acronym, $this->getQueryBuilder()->getAllAliases())) {
+                    $joins = [$acronym => ['leftJoin', sprintf('%s.%s', static::getQueryAlias(), $acronym)]];
+                }
+                $target = $ormManyToMany->targetEntity;
+                if (strpos($target, '\\') === false) {
+                    $target = $reflectionClass->getNamespaceName() . '\\' . $target;
+                }
+                $table->addFilter($acronym, $label, new ManyToManyFilterType($accessor, $joins, $this->getQueryBuilder()->getEntityManager(), $target));
             }
         }
     }
@@ -301,6 +347,20 @@ abstract class AbstractDefinition implements DefinitionInterface
         foreach ($table->getColumns() as $column) {
             if ($column->getAcronym() == $property) {
                 return $column->getLabel();
+            }
+        }
+
+        if (is_null($this->definitionBuilderLabelCache)) {
+            $this->definitionBuilderLabelCache = new DefinitionBuilder($this->definitionManager);
+            $this->configureView($this->definitionBuilderLabelCache, null);
+        }
+
+        /** @var Block $block */
+        foreach ($this->definitionBuilderLabelCache->getBlocks() as $block) {
+            foreach ($block->getContents() as $content) {
+                if ($content->getAcronym() == $property && array_key_exists('label', $content->getOptions())) {
+                    return $content->getOption('label');
+                }
             }
         }
 
@@ -362,6 +422,16 @@ abstract class AbstractDefinition implements DefinitionInterface
     }
 
     /**
+     * @param null $data
+     *
+     * @return bool
+     */
+    public function allowShow($data = null)
+    {
+        return self::hasCapability(RouteEnum::SHOW);
+    }
+
+    /**
      * @return array
      */
     public function getExportAttributes()
@@ -378,17 +448,53 @@ abstract class AbstractDefinition implements DefinitionInterface
     }
 
     /**
-     * @todo add docs
+     * @return array
      */
-    public function addAjaxOnChangeListener()
+    public function getExportHeaders()
     {
+        return [];
     }
 
     /**
-     * @todo add docs
+     * @return array
+     */
+    public function getExportOptions()
+    {
+        return [
+            'csv' => [
+                'delimiter'     => ';',
+                'enclosure'     => '"',
+                'escapeChar'    => '\\',
+                'keySeparator'  => '.'
+            ]
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function addAjaxOnChangeListener()
+    {
+        return [];
+    }
+
+    /**
+     * @param Request $request
+     * @return null|\stdClass
+     * @deprecated
      */
     public function ajaxOnChange(Request $request)
     {
+        return null;
+    }
+
+    /**
+     * @param array $data
+     * @return null|\stdClass
+     */
+    public function ajaxOnDataChanged($data)
+    {
+        return null;
     }
 
     /**

@@ -38,11 +38,21 @@ use whatwedo\TableBundle\Table\Table;
  */
 class RelationContent extends AbstractContent
 {
+
+    /**
+     * @return bool
+     */
     public function isTable()
     {
         return true;
     }
 
+    /**
+     * @param Table $table
+     * @param $row
+     * @return string
+     * @throws \Exception
+     */
     public function renderTable(Table $table, $row)
     {
         if (is_callable($this->options['table_configuration'])) {
@@ -69,7 +79,13 @@ class RelationContent extends AbstractContent
             ];
         }
 
-        if (call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::EDIT)) {
+        $definition = $this->definitionManager->getDefinitionFromClass($this->getOption('definition'));
+        $allowEdit = call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::EDIT);
+        $showActionColumn = [];
+        if ($allowEdit) {
+            $reflection = new \ReflectionClass(get_class($definition));
+            $allowEdit = $reflection->getMethod('allowEdit')->getClosure($definition);
+            $showActionColumn[sprintf('%s_%s', call_user_func([$this->getOption('definition'), 'getRoutePrefix']), RouteEnum::EDIT)] = $allowEdit;
             $actionColumnItems[] = [
                 'label' => 'Bearbeiten',
                 'icon' => 'pencil',
@@ -92,6 +108,7 @@ class RelationContent extends AbstractContent
 
         $table->addColumn('actions', ActionColumn::class, [
             'items' => $actionColumnItems,
+            'showActionColumn' => $showActionColumn
         ]);
 
         $data = $this->getContents($row);
@@ -108,11 +125,18 @@ class RelationContent extends AbstractContent
         return $table->renderTableOnly();
     }
 
+    /**
+     * @param $row
+     * @return string
+     */
     public function render($row)
     {
         return 'call RelationContent::renderTable()';
     }
 
+    /**
+     * @return null|string
+     */
     public function getIndexRoute()
     {
         if (!$this->options['show_index_button']) {
@@ -128,8 +152,15 @@ class RelationContent extends AbstractContent
         return null;
     }
 
+    /**
+     * @return null|string
+     */
     public function getCreateRoute()
     {
+        if (!$this->options['show_create_button']) {
+            return null;
+        }
+
         $capibilities = call_user_func([$this->options['definition'], 'getCapabilities']);
 
         if (in_array(RouteEnum::CREATE, $capibilities)) {
@@ -139,11 +170,18 @@ class RelationContent extends AbstractContent
         return null;
     }
 
+    /**
+     * @return mixed
+     */
     public function isShowInEdit()
     {
         return $this->options['show_in_edit'];
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     public function getCreateRouteParameters($data)
     {
         $parameters = [];
@@ -155,6 +193,16 @@ class RelationContent extends AbstractContent
         return $parameters;
     }
 
+    public function allowCreate($data = null)
+    {
+        $definition = $this->definitionManager->getDefinitionFromClass($this->options['definition']);
+        return $definition->allowCreate($data);
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     */
     public function setOption($key, $value)
     {
         if (isset($this->options[$key])) {
@@ -162,6 +210,9 @@ class RelationContent extends AbstractContent
         }
     }
 
+    /**
+     * @param OptionsResolver $resolver
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
@@ -173,6 +224,7 @@ class RelationContent extends AbstractContent
             'route_addition_key' => null,
             'show_in_edit' => true,
             'show_index_button' => false,
+            'show_create_button' => true,
         ]);
     }
 }

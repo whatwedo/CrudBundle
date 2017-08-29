@@ -71,23 +71,24 @@ interface DefinitionViewInterface
 
     /**
      * renders show state
+     * @param $additionalParameters array
      * @return string
      */
-    public function renderShow();
+    public function renderShow($additionalParameters = []);
 
     /**
      * renders edit state
-     *
+     * @param $additionalParameters array
      * @return string
      */
-    public function renderEdit();
+    public function renderEdit($additionalParameters = []);
 
     /**
      * renders create state
-     *
+     * @param $additionalParameters array
      * @return string
      */
-    public function renderCreate();
+    public function renderCreate($additionalParameters = []);
 
     /**
      * returns an edit form

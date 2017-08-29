@@ -8,18 +8,14 @@
     {% endif %}
         <div class="btn-group pull-right btn-group-sm">
             {% block page_actions_back_to_list %}
-                <a href="{{ view.path('index') }}" class="btn btn-default">
-                    <i class="fa fa-list"></i>
-                    Übersicht
-                </a>
+                {% if view.hasCapability('index') %}
+                    <a href="{{ view.path('index') }}" class="btn btn-default">
+                        <i class="fa fa-list"></i>
+                        Übersicht
+                    </a>
+                {% endif %}
             {% endblock %}
             {% block page_actions_additional %}{% endblock %}
-            {% if view.allowCreate(view.data) %}
-                <a href="{{ view.path('create') }}" class="btn btn-success">
-                    <i class="fa fa-plus"></i>
-                    Hinzufügen
-                </a>
-            {% endif %}
             {% if view.allowEdit(view.data) %}
                 <a href="{{ view.path('edit') }}" class="btn btn-warning">
                     <i class="fa fa-pencil"></i>

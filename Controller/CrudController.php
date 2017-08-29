@@ -33,24 +33,16 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
-use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
-use Symfony\Component\Serializer\Encoder\CsvEncoder;
-use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
-use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use whatwedo\CoreBundle\Controller\BaseController;
 use whatwedo\CrudBundle\Content\EditableContentInterface;
-use whatwedo\CrudBundle\Definition\AbstractDefinition;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
+use whatwedo\CrudBundle\Encoder\WhatwedoCsvEncoder;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Event\CrudEvent;
 use whatwedo\CrudBundle\Normalizer\WhatwedoObjectNormalizer;
 use whatwedo\TableBundle\Table\ActionColumn;
 use whatwedo\TableBundle\Table\Table;
 use Symfony\Component\Serializer\Serializer;
-use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
 
 /**
@@ -99,7 +91,7 @@ class CrudController extends BaseController implements CrudDefinitionController
             ->setQueryBuilder($this->getDefinition()->getQueryBuilder());
 
         $this->configureTable($table);
-        $this->definition->configureTableFilter($table);
+        $this->definition->overrideTableConfiguration($table);
         $this->checkQueryBuilder($table);
 
         $this->definition->buildBreadcrumbs(null, RouteEnum::INDEX);
@@ -145,7 +137,9 @@ class CrudController extends BaseController implements CrudDefinitionController
     public function showAction(Request $request)
     {
         $entity = $this->getEntityOr404($request);
-
+        if (!$this->definition->allowShow($entity)) {
+            throw $this->createAccessDeniedException();
+        }
         $this->dispatchEvent(CrudEvent::PRE_SHOW_PREFIX, $entity);
 
         $this->definition->buildBreadcrumbs($entity, RouteEnum::SHOW);
@@ -168,7 +162,9 @@ class CrudController extends BaseController implements CrudDefinitionController
     public function editAction(Request $request)
     {
         $entity = $this->getEntityOr404($request);
-
+        if (!$this->definition->allowEdit($entity)) {
+            throw $this->createAccessDeniedException();
+        }
         $view = $this->getDefinition()->createView($entity);
 
         $form = $view->getForm();
@@ -210,6 +206,9 @@ class CrudController extends BaseController implements CrudDefinitionController
      */
     public function createAction(Request $request)
     {
+        if (!$this->getDefinition()->allowCreate()) {
+            throw $this->createAccessDeniedException();
+        }
         $entityName = $this->getDefinition()->getEntity();
         $entity = new $entityName;
 
@@ -217,6 +216,7 @@ class CrudController extends BaseController implements CrudDefinitionController
         $uri = null;
 
         if ($request->isMethod('get') || $request->isMethod('post')) {
+
             // set preselected entities
             $propertyAccessor = PropertyAccess::createPropertyAccessor();
 
@@ -300,6 +300,9 @@ class CrudController extends BaseController implements CrudDefinitionController
     public function deleteAction(Request $request)
     {
         $entity = $this->getEntityOr404($request);
+        if (!$this->definition->allowDelete($entity)) {
+            throw $this->createAccessDeniedException();
+        }
         $redirect = $this->getDefinition()->getDeleteRedirect($this->get('router'), $entity);
 
         if (!$this->definition->allowDelete($entity)) {
@@ -334,12 +337,14 @@ class CrudController extends BaseController implements CrudDefinitionController
         }
 
         $objNormalizer = new WhatwedoObjectNormalizer($this->definition);
-        $objNormalizer->setCallbacks($this->definition->getExportCallbacks());
+        $objNormalizer->setCustomCallbacks($this->definition->getExportCallbacks());
         $objNormalizer->setCircularReferenceHandler(function ($obj) {
             return $obj->__toString();
         });
+        $exportOptions = $this->definition->getExportOptions()['csv'];
+        $csvEncoder = new WhatwedoCsvEncoder($exportOptions['delimiter'], $exportOptions['enclosure'], $exportOptions['escapeChar'], $exportOptions['keySeparator']);
         /** @var Serializer $serializer */
-        $serializer = new Serializer([$objNormalizer], [new CsvEncoder(';')]);
+        $serializer = new Serializer([$objNormalizer], [$csvEncoder->setHeaderTransformation($this->definition->getExportHeaders())]);
         $normalized = $serializer->normalize($entities);
         $csv = $serializer->encode($normalized, 'csv');
         $csv = static::convertToWindowsCharset($csv);
@@ -360,10 +365,21 @@ class CrudController extends BaseController implements CrudDefinitionController
         return $string;
     }
 
-
+    /**
+     * @param Request $request
+     * @return Response
+     */
     public function ajaxAction(Request $request)
     {
-        $obj = $this->definition->ajaxOnChange($request);
+        $data = [];
+        foreach ($request->request->get('data') as $pair) {
+            $data[$pair['key']] = $pair['value'];
+        }
+        $obj = $this->definition->ajaxOnDataChanged($data);
+        if (is_null($obj)) {
+            // try deprecated
+            $obj = $this->definition->ajaxOnChange($request);
+        }
         $response = new Response(json_encode($obj));
         $response->headers->set('Content-Type', 'text/json');
         return $response;
@@ -420,8 +436,13 @@ class CrudController extends BaseController implements CrudDefinitionController
             ];
         }
 
+        $reflection = new \ReflectionClass(get_class($this->getDefinition()));
+        $allowEdit = $reflection->getMethod('allowEdit')->getClosure($this->getDefinition());
         $table->addColumn('actions', ActionColumn::class, [
             'items' => $actionColumnItems,
+            'showActionColumn' => [
+                sprintf('%s_%s', $this->getDefinition()->getRoutePrefix(), RouteEnum::EDIT) => $allowEdit
+            ]
         ]);
     }
 

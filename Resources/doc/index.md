@@ -194,9 +194,11 @@ That's all.
 ### More resources
 
 - [View Configuration](view-configuration.md)
-- [Table Configuration](https://doc.whatwedo.ch/whatwedo/tablebundle/table-configuration)
+- [Table Configuration](table-configuration.md)
 - [Formatter](formatter.md)
 - [Events](events.md)
+- [Ajax](ajax.md)
+- [Exporting](exporting.md)
 
 ### Extensions
 - [Breadcrumbs](extensions/breadcrumbs.md)

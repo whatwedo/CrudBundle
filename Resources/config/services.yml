@@ -10,6 +10,7 @@ services:
             - [setDoctrine, ['@doctrine']]
             - [setRequestStack, ['@request_stack']]
             - [setDefinitionView, ['@whatwedo_crud.view.definition_view']]
+            - [setDefinitionManager, ['@whatwedo_crud.manager.definition']]
 
     # View
     whatwedo_crud.view.definition_view:
@@ -19,6 +20,8 @@ services:
             - '@templating'
             - '@form.factory'
             - '@router'
+            - '@security.access_map'
+            - '@security.authorization_checker'
         calls:
             - [setDefinitionManager, ['@whatwedo_crud.manager.definition']]
 
@@ -53,3 +56,17 @@ services:
             - '%whatwedo_crud.config.breadcrumbs.home.route%'
         tags:
             - { name: crud.extension, alias: breadcrumb }
+
+    # Form types
+    whatwedo_crud.type.entity_hidden:
+       class: whatwedo\CrudBundle\Form\EntityHiddenType
+       arguments: ["@doctrine.orm.entity_manager"]
+       tags:
+       - { name: form.type, alias: entity_hidden }
+
+    whatwedo_crud.form_type.ajax_select:
+        class: whatwedo\CrudBundle\Form\Type\AjaxSelectFormType
+        arguments:
+            - "@router"
+        tags:
+            - { name: form.type, alias: ajaxSelect }

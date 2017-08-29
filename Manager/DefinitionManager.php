@@ -79,6 +79,16 @@ class DefinitionManager
         return null;
     }
 
+    public function getDefinitionFromClass($class)
+    {
+        foreach ($this->definitions as $definition) {
+            if (get_class($definition) == $class) {
+                return $definition;
+            }
+        }
+        return null;
+    }
+
     /**
      * @return array|DefinitionInterface[]
      */

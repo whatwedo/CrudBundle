@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2016, whatwedo GmbH
+ * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,64 +25,68 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Builder;
-use whatwedo\CrudBundle\Block\Block;
-use whatwedo\CrudBundle\Collection\BlockCollection;
-use whatwedo\CrudBundle\Exception\ElementNotFoundException;
-use whatwedo\CrudBundle\Manager\DefinitionManager;
+namespace whatwedo\CrudBundle\Form;
+
+use Doctrine\ORM\EntityManager;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use whatwedo\CrudBundle\Form\DataTransformer\EntityToIdTransformer;
 
 /**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
+ * Class EntityHiddenType
+ * @package whatwedo\CrudBundle\Form
  */
-class DefinitionBuilder
+class EntityHiddenType extends AbstractType
 {
 
     /**
-     * @var DefinitionManager
+     * @var EntityManager
      */
-    protected $definitionManager;
+    protected $em;
 
     /**
-     * @var array
+     * HiddenEntityType constructor.
+     * @param EntityManager $em
      */
-    protected $definition = [];
-
-    public function __construct(DefinitionManager $definitionManager)
+    public function __construct(EntityManager $em)
     {
-        $this->definitionManager = $definitionManager;
+        $this->em = $em;
     }
 
     /**
-     * adds a new block to the definition
-     *
-     * @param string $acronym
-     * @return Block
+     * @param FormBuilderInterface $builder
+     * @param array $options
      */
-    public function addBlock($acronym, array $options = [])
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $this->definition[$acronym] = new Block($acronym, $options);
-        $this->definition[$acronym]->setDefinitionManager($this->definitionManager);
-        return $this->definition[$acronym];
+        $transformer = new EntityToIdTransformer($this->em, $options['class']);
+        $builder->addModelTransformer($transformer);
     }
 
     /**
-     * returns a formally created block
-     *
-     * @param string $acronym
-     * @return Block
-     * @throws ElementNotFoundException
+     * @param OptionsResolver $resolver
      */
-    public function getBlock($acronym)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        if (!isset($this->definition[$acronym])) {
-            throw new ElementNotFoundException(sprintf('Specified block "%s" not found.', $acronym));
-        }
-
-        return $this->definition[$acronym];
+        $resolver->setRequired(['class'])
+            ->setDefault('invalid_message', 'Das Objekt existiert nicht');
     }
 
-    public function getBlocks()
+    /**
+     * @return string
+     */
+    public function getParent()
     {
-        return new BlockCollection($this->definition);
+        return HiddenType::class;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return 'entity_hidden';
     }
 }

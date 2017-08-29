@@ -27,8 +27,10 @@
 
 namespace whatwedo\CrudBundle\Content;
 
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CoreBundle\Formatter\DefaultFormatter;
+use whatwedo\CrudBundle\Form\EntityHiddenType;
 
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
@@ -73,6 +75,13 @@ class Content extends AbstractContent implements EditableContentInterface
 
     public function getFormOptions($options = [])
     {
+        if (in_array($this->getFormType(), [EntityHiddenType::class, HiddenType::class])) {
+            $this->options['label'] = false;
+        }
+        if (!is_null($this->getHelp()) && (!isset($this->options['form_options']['attr'])
+                || !isset($this->options['form_options']['attr']['help']))) {
+            $this->options['form_options']['attr']['help'] = $this->options['help'];
+        }
         return array_merge($options, ['label' => $this->getLabel()], $this->options['form_options']);
     }
 
@@ -84,6 +93,11 @@ class Content extends AbstractContent implements EditableContentInterface
     public function getAutoFill()
     {
         return $this->options['auto_fill'];
+    }
+
+    public function getHelp()
+    {
+        return $this->options['help'];
     }
 
     public function setOption($key, $value)
@@ -115,6 +129,7 @@ class Content extends AbstractContent implements EditableContentInterface
             'read_only' => false,
             'form_type' => null,
             'form_options' => [],
+            'help' => null,
             'preselect_definition' => null,
             'auto_fill' => null,
             'view_options' => []
