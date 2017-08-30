@@ -45,12 +45,12 @@ use whatwedo\CrudBundle\Extension\BreadcrumbsExtension;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\View\DefinitionViewInterface;
+use whatwedo\TableBundle\Filter\Type\AjaxRelationFilterType;
 use whatwedo\TableBundle\Filter\Type\BooleanFilterType;
 use whatwedo\TableBundle\Filter\Type\DateFilterType;
 use whatwedo\TableBundle\Filter\Type\DatetimeFilterType;
 use whatwedo\TableBundle\Filter\Type\ManyToManyFilterType;
 use whatwedo\TableBundle\Filter\Type\NumberFilterType;
-use whatwedo\TableBundle\Filter\Type\RelationFilterType;
 use whatwedo\TableBundle\Filter\Type\TextFilterType;
 use whatwedo\TableBundle\Table\DoctrineTable;
 use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
@@ -345,14 +345,11 @@ abstract class AbstractDefinition implements DefinitionInterface
                     $target = preg_replace('#[a-zA-Z0-9]+$#i', $target, static::getEntity());
                 }
 
-                // must be lazy-loaded - this isn't useable
-                $choices = $this->getQueryBuilder()->getEntityManager()->getRepository($target)->findAll();
-
                 $joins = [];
                 if (!in_array($acronym, $this->getQueryBuilder()->getAllAliases())) {
                     $joins = [$acronym => sprintf('%s.%s', static::getQueryAlias(), $acronym)];
                 }
-                $table->addFilter($acronym, $label, new RelationFilterType($accessor, $choices, $joins));
+                $table->addFilter($acronym, $label, new AjaxRelationFilterType($accessor, $target, $this->getDoctrine(), $joins));
             } else if (!is_null($ormManyToMany)) {
                 $accessor = sprintf('%s.%s', static::getQueryAlias(), $acronym);
                 $joins = [];
