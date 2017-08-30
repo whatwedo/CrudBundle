@@ -112,6 +112,11 @@ abstract class AbstractDefinition implements DefinitionInterface
     protected $blockManager;
 
     /**
+     * @var array
+     */
+    protected $templates;
+
+    /**
      * @var DefinitionBuilder|null $definitionBuilderLabelCache
      */
     protected $definitionBuilderLabelCache = null;
@@ -222,6 +227,14 @@ abstract class AbstractDefinition implements DefinitionInterface
     }
 
     /**
+     * @param array $templates
+     */
+    public function setTemplates(array $templates)
+    {
+        $this->templates = $templates;
+    }
+
+    /**
      * @return RequestStack
      */
     public function getRequestStack()
@@ -288,13 +301,15 @@ abstract class AbstractDefinition implements DefinitionInterface
      */
     public function createView($data = null)
     {
-        $this->builder = new DefinitionBuilder($this->blockManager, $this->definitionManager);
+        $this->builder = new DefinitionBuilder($this->blockManager, $this->definitionManager, $this->templates);
 
         $this->configureView($this->builder, $data);
 
         $this->definitionView->setDefinition($this);
         $this->definitionView->setData($data);
         $this->definitionView->setBlocks($this->builder->getBlocks());
+        $this->definitionView->setTemplates($this->builder->getTemplates());
+        $this->definitionView->setTemplateParameters($this->builder->getTemplateParameters());
 
         return $this->definitionView;
     }
@@ -381,7 +396,7 @@ abstract class AbstractDefinition implements DefinitionInterface
         }
 
         if (is_null($this->definitionBuilderLabelCache)) {
-            $this->definitionBuilderLabelCache = new DefinitionBuilder($this->blockManager, $this->definitionManager);
+            $this->definitionBuilderLabelCache = new DefinitionBuilder($this->blockManager, $this->definitionManager, $this->templates);
             $this->configureView($this->definitionBuilderLabelCache, null);
         }
 

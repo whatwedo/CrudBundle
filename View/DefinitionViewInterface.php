@@ -104,4 +104,18 @@ interface DefinitionViewInterface
      */
     public function getEditForm();
 
+    /**
+     * sets the boxes templates
+     *
+     * @param array $templates
+     */
+    public function setTemplates(array $templates);
+
+    /**
+     * sets the parameters for additional box parameters
+     *
+     * @param array $templateParameters
+     */
+    public function setTemplateParameters(array $templateParameters);
+
 }

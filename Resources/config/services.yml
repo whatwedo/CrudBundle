@@ -18,6 +18,7 @@ services:
             - [setRequestStack, ['@request_stack']]
             - [setDefinitionView, ['@whatwedo_crud.view.definition_view']]
             - [setDefinitionManager, ['@whatwedo_crud.manager.definition']]
+            - [setTemplates, ['%whatwedo_crud.config.templates%']]
 
     # Block
     whatwedo_crud.block.block:

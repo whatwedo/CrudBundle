@@ -22,6 +22,7 @@ class whatwedoCrudExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        // Breadcrumbs
         if (isset($config['breadcrumbs'])
             && isset($config['breadcrumbs']['home_text'])) {
             $container->setParameter('whatwedo_crud.config.breadcrumbs.home.text', $config['breadcrumbs']['home_text']);
@@ -35,6 +36,17 @@ class whatwedoCrudExtension extends Extension
         } else {
             $container->setParameter('whatwedo_crud.config.breadcrumbs.home.route', false);
         }
+
+        // templates
+        $templates = [
+            'show' => 'whatwedoCrudBundle:Crud/_boxes:show.html.twig',
+            'create' => 'whatwedoCrudBundle:Crud/_boxes:create.html.twig',
+            'edit' => 'whatwedoCrudBundle:Crud/_boxes:edit.html.twig'
+        ];
+        if (isset($config['templates'])) {
+            $templates = $config['templates'];
+        }
+        $container->setParameter('whatwedo_crud.config.templates', $templates);
 
         // Block and Content Tags
         $container->registerForAutoconfiguration('crud.block');

@@ -197,10 +197,6 @@ class RelationContent extends AbstractContent
      */
     public function getCreateRoute()
     {
-        if (!$this->options['show_create_button']) {
-            return null;
-        }
-
         $capibilities = call_user_func([$this->options['definition'], 'getCapabilities']);
 
         if (in_array(RouteEnum::CREATE, $capibilities)) {
@@ -274,6 +270,14 @@ class RelationContent extends AbstractContent
     }
 
     /**
+     * @return string|null
+     */
+    public function getAddVoterAttribute()
+    {
+        return $this->options['add_voter_attribute'];
+    }
+
+    /**
      * @param OptionsResolver $resolver
      */
     public function configureOptions(OptionsResolver $resolver)
@@ -288,7 +292,7 @@ class RelationContent extends AbstractContent
             'definition' => null,
             'route_addition_key' => null,
             'show_index_button' => false,
-            'show_create_button' => true,
+            'add_voter_attribute' => null,
         ]);
 
         $resolver->setAllowedTypes('table_options', ['array']);

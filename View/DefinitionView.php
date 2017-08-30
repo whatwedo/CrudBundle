@@ -99,6 +99,16 @@ class DefinitionView implements DefinitionViewInterface
     protected $authorizationChecker;
 
     /**
+     * @var array $templates
+     */
+    protected $templates;
+
+    /**
+     * @var array $templateParameters
+     */
+    protected $templateParameters;
+
+    /**
      * DefinitionView constructor.
      * @param EngineInterface $templating
      * @param FormFactoryInterface $formFactory
@@ -161,15 +171,31 @@ class DefinitionView implements DefinitionViewInterface
     }
 
     /**
+     * @param array $templates
+     */
+    public function setTemplates(array $templates)
+    {
+        $this->templates = $templates;
+    }
+
+    /**
+     * @param array $templateParameters
+     */
+    public function setTemplateParameters(array $templateParameters)
+    {
+        $this->templateParameters = $templateParameters;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function renderShow($additionalParameters = [])
     {
         return $this->templating->render(
-            'whatwedoCrudBundle:Crud/_boxes:show.html.twig', array_merge([
+            $this->templates['show'], array_merge([
             'data' => $this->data,
             'helper' => $this,
-        ], $additionalParameters));
+        ], $additionalParameters, $this->templateParameters));
     }
 
     /**
@@ -214,10 +240,10 @@ class DefinitionView implements DefinitionViewInterface
      */
     public function renderEdit($additionalParameters = [])
     {
-        return $this->templating->render('whatwedoCrudBundle:Crud/_boxes:edit.html.twig', array_merge([
+        return $this->templating->render($this->templates['edit'], array_merge([
             'form' => $this->getEditForm()->createView(),
             'helper' => $this,
-        ], $additionalParameters));
+        ], $additionalParameters, $this->templateParameters));
     }
 
     /**
@@ -225,10 +251,10 @@ class DefinitionView implements DefinitionViewInterface
      */
     public function renderCreate($additionalParameters = [])
     {
-        return $this->templating->render('whatwedoCrudBundle:Crud/_boxes:create.html.twig', array_merge([
+        return $this->templating->render($this->templates['create'], array_merge([
             'form' => $this->getCreateForm()->createView(),
             'helper' => $this,
-        ], $additionalParameters));
+        ], $additionalParameters, $this->templateParameters));
     }
 
     /**

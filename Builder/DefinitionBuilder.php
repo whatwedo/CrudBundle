@@ -54,10 +54,21 @@ class DefinitionBuilder
      */
     protected $definition = [];
 
-    public function __construct(BlockManager $blockManager, DefinitionManager $definitionManager)
+    /**
+     * @var array
+     */
+    protected $templates;
+
+    /**
+     * @var array
+     */
+    protected $templateParameters = [];
+
+    public function __construct(BlockManager $blockManager, DefinitionManager $definitionManager, array $templates)
     {
         $this->blockManager = $blockManager;
         $this->definitionManager = $definitionManager;
+        $this->templates = $templates;
     }
 
     /**
@@ -96,6 +107,64 @@ class DefinitionBuilder
         }
 
         return $this->definition[$acronym];
+    }
+
+    /**
+     * @param string $template
+     * @return DefinitionBuilder $this
+     */
+    public function setShowTemplate($template)
+    {
+        $this->templates['show'] = $template;
+        return $this;
+    }
+
+    /**
+     * @param string $template
+     * @return DefinitionBuilder $this
+     */
+    public function setEditTemplate($template)
+    {
+        $this->templates['edit'] = $template;
+        return $this;
+    }
+
+    /**
+     * @param string $template
+     * @return DefinitionBuilder $this
+     */
+    public function setCreateTemplate($template)
+    {
+        $this->templates['create'] = $template;
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $value
+     * @return DefinitionBuilder $this
+     */
+    public function addTemplateParameter($name, $value)
+    {
+        $this->templateParameters[$name] = $value;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTemplateParameters(): array
+    {
+        return $this->templateParameters;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getTemplates(): array
+    {
+        return $this->templates;
     }
 
     public function getBlocks()
