@@ -222,18 +222,17 @@ class RelationContent extends AbstractContent
     }
 
     /**
-     * @return object
+     * @return boolean
      */
-    public function getVoterEntity()
+    public function isAddAllowed()
     {
         $definition = $this->getDefinitionManager()->getDefinitionFromClass($this->options['definition']);
         $entityName = $definition::getEntity();
         $entityReflector = new ReflectionClass($entityName);
         if ($entityReflector->isAbstract()) {
-            return null;
-        } else {
-            return $entityReflector->newInstanceWithoutConstructor();
+            return false;
         }
+        return $this->container->get('security.authorization_checker')->isGranted(RouteEnum::CREATE, $entityReflector->newInstanceWithoutConstructor());
     }
 
     /**
@@ -270,7 +269,7 @@ class RelationContent extends AbstractContent
     }
 
     /**
-     * @return string|null
+     * @return string
      */
     public function getAddVoterAttribute()
     {
@@ -292,7 +291,7 @@ class RelationContent extends AbstractContent
             'definition' => null,
             'route_addition_key' => null,
             'show_index_button' => false,
-            'add_voter_attribute' => null,
+            'add_voter_attribute' => RouteEnum::EDIT,
         ]);
 
         $resolver->setAllowedTypes('table_options', ['array']);

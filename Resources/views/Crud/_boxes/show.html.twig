@@ -65,7 +65,7 @@
                                                     </a>
                                                 {% endif %}
                                                 {% block add_button %}
-                                                    {% if content.createRoute and content.voterEntity is defined and content.voterEntity is not null and is_granted('edit', helper.data) and is_granted('create', content.voterEntity) and (content.addVoterAttribute is null or is_granted(content.addVoterAttribute, helper.data)) %}
+                                                    {% if content.createRoute and content.isAddAllowed is defined and content.isAddAllowed and is_granted(content.addVoterAttribute, helper.data) %}
                                                         <a href="{{ path(content.createRoute, content.createRouteParameters(data)) }}" class="btn btn-success btn-xs">
                                                             <i class="fa fa-plus"></i>
                                                             Hinzufügen
