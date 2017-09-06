@@ -28,6 +28,7 @@
 namespace whatwedo\CrudBundle\View;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\ORM\Mapping\Column;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -330,6 +331,10 @@ class DefinitionView implements DefinitionViewInterface
                 if ($property->getName() === $content->getAcronym()) {
                     $notNullAnnotation = $this->annotationReader->getPropertyAnnotation($property, NotNull::class);
                     $notBlankAnnotation = $this->annotationReader->getPropertyAnnotation($property, NotBlank::class);
+                    $columnAnnotation = $this->annotationReader->getPropertyAnnotation($property, Column::class);
+                    if (!is_null($columnAnnotation) && ($columnAnnotation->type === 'boolean' || $columnAnnotation->type === 'bool')) {
+                        return false;
+                    }
                     return !is_null($notNullAnnotation) || !is_null($notBlankAnnotation);
                 }
             }
