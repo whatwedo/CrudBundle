@@ -27,6 +27,7 @@
 
 namespace whatwedo\CrudBundle\View;
 
+use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -35,6 +36,8 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Security\Http\AccessMap;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Content\Content;
 use whatwedo\CrudBundle\Content\EditableContentInterface;
@@ -109,6 +112,16 @@ class DefinitionView implements DefinitionViewInterface
     protected $templateParameters;
 
     /**
+     * @var AnnotationReader $annotationReader
+     */
+    protected $annotationReader;
+
+    /**
+     * @var \ReflectionObject $reflectionObject
+     */
+    protected $reflectionObject;
+
+    /**
      * DefinitionView constructor.
      * @param EngineInterface $templating
      * @param FormFactoryInterface $formFactory
@@ -123,6 +136,7 @@ class DefinitionView implements DefinitionViewInterface
         $this->router = $router;
         $this->accessMap = $accessMap;
         $this->authorizationChecker = $authorizationChecker;
+        $this->annotationReader = new AnnotationReader();
     }
 
     public function setDefinitionManager(DefinitionManager $definitionManager)
@@ -305,6 +319,25 @@ class DefinitionView implements DefinitionViewInterface
     }
 
     /**
+     * @param EditableContentInterface $content
+     * @return boolean
+     */
+    protected function isContentRequired($content)
+    {
+        $reflectionObject = $this->getReflectionObject();
+        if (!is_null($reflectionObject)) {
+            foreach ($reflectionObject->getProperties() as $property) {
+                if ($property->getName() === $content->getAcronym()) {
+                    $notNullAnnotation = $this->annotationReader->getPropertyAnnotation($property, NotNull::class);
+                    $notBlankAnnotation = $this->annotationReader->getPropertyAnnotation($property, NotBlank::class);
+                    return !is_null($notNullAnnotation) || !is_null($notBlankAnnotation);
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * @return null|FormInterface
      */
     public function getEditForm()
@@ -329,7 +362,7 @@ class DefinitionView implements DefinitionViewInterface
                     $builder->add(
                         $content->getAcronym(),
                         $content->getFormType(),
-                        $content->getFormOptions([ 'required' => false ])
+                        $content->getFormOptions([ 'required' => $this->isContentRequired($content) ])
                     );
                 }
             }
@@ -364,7 +397,7 @@ class DefinitionView implements DefinitionViewInterface
                     $builder->add(
                         $content->getAcronym(),
                         $content->getFormType(),
-                        $content->getFormOptions([ 'required' => false ])
+                        $content->getFormOptions([ 'required' => $this->isContentRequired($content) ])
                     );
                 }
             }
@@ -417,5 +450,16 @@ class DefinitionView implements DefinitionViewInterface
     public function getDefinition()
     {
         return $this->definition;
+    }
+
+    /**
+     * @return \ReflectionObject
+     */
+    protected function getReflectionObject()
+    {
+        if (is_null($this->reflectionObject) && $this->data) {
+            $this->reflectionObject = new \ReflectionObject($this->data);
+        }
+        return $this->reflectionObject;
     }
 }
