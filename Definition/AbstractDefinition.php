@@ -45,11 +45,11 @@ use whatwedo\CrudBundle\Extension\BreadcrumbsExtension;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\View\DefinitionViewInterface;
+use whatwedo\TableBundle\Filter\Type\AjaxManyToManyFilterType;
 use whatwedo\TableBundle\Filter\Type\AjaxRelationFilterType;
 use whatwedo\TableBundle\Filter\Type\BooleanFilterType;
 use whatwedo\TableBundle\Filter\Type\DateFilterType;
 use whatwedo\TableBundle\Filter\Type\DatetimeFilterType;
-use whatwedo\TableBundle\Filter\Type\ManyToManyFilterType;
 use whatwedo\TableBundle\Filter\Type\NumberFilterType;
 use whatwedo\TableBundle\Filter\Type\TextFilterType;
 use whatwedo\TableBundle\Table\DoctrineTable;
@@ -375,7 +375,7 @@ abstract class AbstractDefinition implements DefinitionInterface
                 if (strpos($target, '\\') === false) {
                     $target = $reflectionClass->getNamespaceName() . '\\' . $target;
                 }
-                $table->addFilter($acronym, $label, new ManyToManyFilterType($accessor, $joins, $this->getQueryBuilder()->getEntityManager(), $target));
+                $table->addFilter($acronym, $label, new AjaxManyToManyFilterType($accessor, $target, $this->getDoctrine(), $joins));
             }
         }
     }
