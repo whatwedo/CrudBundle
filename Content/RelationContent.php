@@ -31,10 +31,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Exception\InvalidDataException;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
+use whatwedo\TableBundle\Event\CriteriaLoadEvent;
 use whatwedo\TableBundle\Factory\TableFactory;
 use whatwedo\TableBundle\Model\SimpleTableData;
 use whatwedo\TableBundle\Table\ActionColumn;
@@ -112,6 +114,8 @@ class RelationContent extends AbstractContent
         if (is_callable($this->options['table_configuration'])) {
             $this->options['table_configuration']($table);
         }
+
+        $this->container->get('event_dispatcher')->dispatch(CriteriaLoadEvent::PRE_LOAD, new CriteriaLoadEvent($this, $table));
 
         $actionColumnItems = [];
 
@@ -296,5 +300,24 @@ class RelationContent extends AbstractContent
 
         $resolver->setAllowedTypes('table_options', ['array']);
         $resolver->setAllowedTypes('table_configuration', ['callable']);
+    }
+
+    /**
+     * @return Request
+     */
+    public function getRequest()
+    {
+        return $this->container->get('request_stack')->getCurrentRequest();
+    }
+
+    /**
+     * @return Criteria
+     */
+    public function getCriteria()
+    {
+        if (!$this->options['criteria'] instanceof Criteria) {
+            $this->options['criteria'] = Criteria::create();
+        }
+        return $this->options['criteria'];
     }
 }

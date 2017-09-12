@@ -35,42 +35,49 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Router;
 
 /**
- * @author Nicolo Singer <nicolo@whatwedo.ch>
+ * Class EntityAjaxType
+ * @package whatwedo\CrudBundle\Form\Type
  */
-class AjaxSelectFormType extends AbstractType
+class EntityAjaxType extends AbstractType
 {
 
     /**
-     * @var Router $router ;
+     * @var Router $router
      */
     private $router;
 
+    /**
+     * EntityAjaxType constructor.
+     * @param Router $router
+     */
     public function __construct(Router $router)
     {
         $this->router = $router;
     }
 
+    /**
+     * @param FormView $view
+     * @param FormInterface $form
+     * @param array $options
+     */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['attr']['data-ajax-select'] = true;
         $view->vars['attr']['data-ajax-entity'] = $options['data_class'];
         $view->vars['attr']['data-ajax-url'] = $this->router->generate('whatwedo_crud_crud_select_ajax');
-//        $view->vars['attr']['data-query-builder-callback'] = serialize($options['query_builder']);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        parent::configureOptions($resolver);
-//        ("Serialization of 'Closure' is not allowed").
-//        $resolver->setDefault('query_builder', null);
-//        $resolver->setAllowedTypes('query_builder', ['callable', 'null']);
-    }
-
+    /**
+     * @return string
+     */
     public function getParent()
     {
         return ChoiceType::class;
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return 'ajaxSelect';
