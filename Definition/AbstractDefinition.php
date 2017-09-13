@@ -128,7 +128,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     {
         switch ($route) {
             case RouteEnum::INDEX:
-                return 'Übersicht';
+                return static::getEntityTitle();
             case RouteEnum::SHOW:
                 return $entity;
             case RouteEnum::DELETE:
