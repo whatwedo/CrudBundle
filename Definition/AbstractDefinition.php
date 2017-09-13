@@ -28,10 +28,6 @@
 namespace whatwedo\CrudBundle\Definition;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\ManyToMany;
-use Doctrine\ORM\Mapping\ManyToOne;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -45,13 +41,7 @@ use whatwedo\CrudBundle\Extension\BreadcrumbsExtension;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\View\DefinitionViewInterface;
-use whatwedo\TableBundle\Filter\Type\AjaxManyToManyFilterType;
-use whatwedo\TableBundle\Filter\Type\AjaxRelationFilterType;
-use whatwedo\TableBundle\Filter\Type\BooleanFilterType;
-use whatwedo\TableBundle\Filter\Type\DateFilterType;
-use whatwedo\TableBundle\Filter\Type\DatetimeFilterType;
-use whatwedo\TableBundle\Filter\Type\NumberFilterType;
-use whatwedo\TableBundle\Filter\Type\TextFilterType;
+use whatwedo\TableBundle\Extension\FilterExtension;
 use whatwedo\TableBundle\Table\DoctrineTable;
 use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
@@ -319,65 +309,18 @@ abstract class AbstractDefinition implements DefinitionInterface
      */
     public function overrideTableConfiguration(DoctrineTable $table)
     {
-        $reader = new AnnotationReader();
-        $reflectionClass = new \ReflectionClass(static::getEntity());
-        $properties = $reflectionClass->getProperties();
-
-        foreach ($properties as $property)
-        {
-            /** @var Column $ormColumn */
-            $ormColumn = $reader->getPropertyAnnotation($property, Column::class);
-            /** @var ManyToOne $ormManyToOne */
-            $ormManyToOne = $reader->getPropertyAnnotation($property, ManyToOne::class);
-            /** @var ManyToMany $ormManyToMany */
-            $ormManyToMany = $reader->getPropertyAnnotation($property, ManyToMany::class);
-            $acronym = $property->getName();
-            $label = $this->getLabelFor($table, $property->getName());
-            $accessor = $acronym;
-            if (!is_null($ormColumn)) {
-                $accessor = sprintf('%s.%s', static::getQueryAlias(), $acronym);
-                switch ($ormColumn->type){
-                    case 'string':
-                        $table->addFilter($acronym, $label, new TextFilterType($accessor));
-                        break;
-                    case 'date':
-                        $table->addFilter($acronym, $label, new DateFilterType($accessor));
-                        break;
-                    case 'datetime':
-                        $table->addFilter($acronym, $label, new DatetimeFilterType($accessor));
-                        break;
-                    case 'integer':
-                    case 'float':
-                    case 'decimal':
-                        $table->addFilter($acronym, $label, new NumberFilterType($accessor));
-                        break;
-                    case 'boolean':
-                        $table->addFilter($acronym, $label, new BooleanFilterType($accessor));
-                }
-            } else if (!is_null($ormManyToOne)) {
-                $target = $ormManyToOne->targetEntity;
-                if (strpos($target, '\\') === false) {
-                    $target = preg_replace('#[a-zA-Z0-9]+$#i', $target, static::getEntity());
-                }
-
-                $joins = [];
-                if (!in_array($acronym, $this->getQueryBuilder()->getAllAliases())) {
-                    $joins = [$acronym => sprintf('%s.%s', static::getQueryAlias(), $acronym)];
-                }
-                $table->addFilter($acronym, $label, new AjaxRelationFilterType($accessor, $target, $this->getDoctrine(), $joins));
-            } else if (!is_null($ormManyToMany)) {
-                $accessor = sprintf('%s.%s', static::getQueryAlias(), $acronym);
-                $joins = [];
-                if (!in_array($acronym, $this->getQueryBuilder()->getAllAliases())) {
-                    $joins = [$acronym => ['leftJoin', sprintf('%s.%s', static::getQueryAlias(), $acronym)]];
-                }
-                $target = $ormManyToMany->targetEntity;
-                if (strpos($target, '\\') === false) {
-                    $target = $reflectionClass->getNamespaceName() . '\\' . $target;
-                }
-                $table->addFilter($acronym, $label, new AjaxManyToManyFilterType($accessor, $target, $this->getDoctrine(), $joins));
-            }
+        if ($table->hasExtension(FilterExtension::class)) {
+            /** @var FilterExtension $filterExtension */
+            $filterExtension = $table->getExtension(FilterExtension::class);
+            $filterExtension->addFiltersAutomatically(
+                $table,
+                static::getEntity(),
+                static::getQueryAlias(),
+                $this->getQueryBuilder(),
+                [$this, 'getLabelFor']
+            );
         }
+
     }
 
     /**
@@ -386,7 +329,7 @@ abstract class AbstractDefinition implements DefinitionInterface
      *
      * @return string
      */
-    private function getLabelFor(DoctrineTable $table, $property)
+    public function getLabelFor(DoctrineTable $table, $property)
     {
         /** @var \whatwedo\TableBundle\Table\Column $column */
         foreach ($table->getColumns() as $column) {
@@ -408,8 +351,7 @@ abstract class AbstractDefinition implements DefinitionInterface
                 }
             }
         }
-
-        return $property;
+        return ucfirst($property);
     }
 
     /**

@@ -27,11 +27,11 @@
 
 namespace whatwedo\CrudBundle\Form;
 
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Router;
 
 /**
@@ -63,7 +63,7 @@ class EntityAjaxType extends AbstractType
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['attr']['data-ajax-select'] = true;
-        $view->vars['attr']['data-ajax-entity'] = $options['data_class'];
+        $view->vars['attr']['data-ajax-entity'] = $options['class'];
         $view->vars['attr']['data-ajax-url'] = $this->router->generate('whatwedo_crud_crud_select_ajax');
     }
 
@@ -72,7 +72,7 @@ class EntityAjaxType extends AbstractType
      */
     public function getParent()
     {
-        return ChoiceType::class;
+        return EntityType::class;
     }
 
     /**
