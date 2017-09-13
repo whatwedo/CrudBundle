@@ -25,7 +25,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Form\Type;
+namespace whatwedo\CrudBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -36,7 +36,7 @@ use Symfony\Component\Routing\Router;
 
 /**
  * Class EntityAjaxType
- * @package whatwedo\CrudBundle\Form\Type
+ * @package whatwedo\CrudBundle\Form
  */
 class EntityAjaxType extends AbstractType
 {

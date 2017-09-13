@@ -105,7 +105,7 @@ services:
        - { name: form.type, alias: entity_hidden }
 
     whatwedo_crud.form_type.ajax_select:
-        class: whatwedo\CrudBundle\Form\Type\AjaxSelectFormType
+        class: whatwedo\CrudBundle\Form\EntityAjaxType
         arguments:
             - '@router'
         tags:
