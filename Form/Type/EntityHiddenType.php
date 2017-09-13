@@ -25,46 +25,53 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Form;
+namespace whatwedo\CrudBundle\Form\Type;
 
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Routing\Router;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use whatwedo\CrudBundle\Form\DataTransformer\EntityToIdTransformer;
 
 /**
- * Class EntityAjaxType
+ * Class EntityHiddenType
  * @package whatwedo\CrudBundle\Form
  */
-class EntityAjaxType extends AbstractType
+class EntityHiddenType extends AbstractType
 {
 
     /**
-     * @var Router $router
+     * @var EntityManager
      */
-    private $router;
+    protected $em;
 
     /**
-     * EntityAjaxType constructor.
-     * @param Router $router
+     * HiddenEntityType constructor.
+     * @param EntityManager $em
      */
-    public function __construct(Router $router)
+    public function __construct(EntityManager $em)
     {
-        $this->router = $router;
+        $this->em = $em;
     }
 
     /**
-     * @param FormView $view
-     * @param FormInterface $form
+     * @param FormBuilderInterface $builder
      * @param array $options
      */
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $view->vars['attr']['data-ajax-select'] = true;
-        $view->vars['attr']['data-ajax-entity'] = $options['class'];
-        $view->vars['attr']['data-ajax-url'] = $this->router->generate('whatwedo_crud_crud_select_ajax');
+        $transformer = new EntityToIdTransformer($this->em, $options['class']);
+        $builder->addModelTransformer($transformer);
+    }
+
+    /**
+     * @param OptionsResolver $resolver
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setRequired(['class'])
+            ->setDefault('invalid_message', 'Das Objekt existiert nicht');
     }
 
     /**
@@ -72,7 +79,7 @@ class EntityAjaxType extends AbstractType
      */
     public function getParent()
     {
-        return EntityType::class;
+        return HiddenType::class;
     }
 
     /**
@@ -80,7 +87,6 @@ class EntityAjaxType extends AbstractType
      */
     public function getName()
     {
-        return 'ajaxSelect';
+        return 'entity_hidden';
     }
-
 }

@@ -25,53 +25,46 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Form;
+namespace whatwedo\CrudBundle\Form\Type;
 
-use Doctrine\ORM\EntityManager;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use whatwedo\CrudBundle\Form\DataTransformer\EntityToIdTransformer;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Routing\Router;
 
 /**
- * Class EntityHiddenType
+ * Class EntityAjaxType
  * @package whatwedo\CrudBundle\Form
  */
-class EntityHiddenType extends AbstractType
+class EntityAjaxType extends AbstractType
 {
 
     /**
-     * @var EntityManager
+     * @var Router $router
      */
-    protected $em;
+    private $router;
 
     /**
-     * HiddenEntityType constructor.
-     * @param EntityManager $em
+     * EntityAjaxType constructor.
+     * @param Router $router
      */
-    public function __construct(EntityManager $em)
+    public function __construct(Router $router)
     {
-        $this->em = $em;
+        $this->router = $router;
     }
 
     /**
-     * @param FormBuilderInterface $builder
+     * @param FormView $view
+     * @param FormInterface $form
      * @param array $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $transformer = new EntityToIdTransformer($this->em, $options['class']);
-        $builder->addModelTransformer($transformer);
-    }
-
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setRequired(['class'])
-            ->setDefault('invalid_message', 'Das Objekt existiert nicht');
+        $view->vars['attr']['data-ajax-select'] = true;
+        $view->vars['attr']['data-ajax-entity'] = $options['class'];
+        $view->vars['attr']['data-ajax-url'] = $this->router->generate('whatwedo_crud_crud_select_ajax');
     }
 
     /**
@@ -79,7 +72,7 @@ class EntityHiddenType extends AbstractType
      */
     public function getParent()
     {
-        return HiddenType::class;
+        return EntityType::class;
     }
 
     /**
@@ -87,6 +80,7 @@ class EntityHiddenType extends AbstractType
      */
     public function getName()
     {
-        return 'entity_hidden';
+        return 'ajaxSelect';
     }
+
 }

@@ -99,13 +99,13 @@ services:
 
     # Form types
     whatwedo_crud.type.entity_hidden:
-       class: whatwedo\CrudBundle\Form\EntityHiddenType
+       class: whatwedo\CrudBundle\Form\Type\EntityHiddenType
        arguments: ['@doctrine.orm.entity_manager']
        tags:
        - { name: form.type, alias: entity_hidden }
 
     whatwedo_crud.form_type.ajax_select:
-        class: whatwedo\CrudBundle\Form\EntityAjaxType
+        class: whatwedo\CrudBundle\Form\Type\EntityAjaxType
         arguments:
             - '@router'
         tags:

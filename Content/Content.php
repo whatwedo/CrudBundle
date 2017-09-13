@@ -30,8 +30,7 @@ namespace whatwedo\CrudBundle\Content;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CoreBundle\Formatter\DefaultFormatter;
-use whatwedo\CrudBundle\Enum\RouteEnum;
-use whatwedo\CrudBundle\Form\EntityHiddenType;
+use whatwedo\CrudBundle\Form\Type\EntityHiddenType;
 
 /**
  * Class Content
