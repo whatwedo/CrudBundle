@@ -116,7 +116,7 @@
 
 
     {# / Zeile #}
-    {% if i == 2 or loop.index == loop.length or block.size == "large" %}
+    {% if i == 2 or loop.index == keyArr|length or block.size == "large" %}
         {% set i = 0 %}
         </div>
     {% elseif helper.blocks[keyArr[loop.index]] is defined %}
