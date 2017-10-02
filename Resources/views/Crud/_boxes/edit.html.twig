@@ -13,6 +13,7 @@
     </div>
 {% endif %}
 
+{% set keyArr =  helper.blocks|keys %}
 {% set i = 0 %}
 {% set isOpen = false %}
 {% for block in helper.blocks if block.isVisibleOnEdit and is_granted(block.editVoterAttribute, helper.data) %}
@@ -120,18 +121,25 @@
                     </div>
                 </div>
             </div>
-
-
-    {% if i == 2 %}
+    {# / Zeile #}
+    {% if i == 2 or block.size == "large" %}
         {% set i = 0 %}
+        </div>
+        {% set isOpen = false %}
+        {# Falls nächste Zeile Gross #}
+    {% elseif helper.blocks[keyArr[loop.index]] is defined %}
+        {% if helper.blocks[keyArr[loop.index]].size == "large" %}
+            {% set i = 0 %}
+            </div>
+            {% set isOpen = false %}
+        {% endif %}
+    {% endif %}
+{% endfor %}
+
+    {% if i>0 %}
         </div>
     {% endif %}
 
-{% endfor %}
-
-{% if i > 0 %}
-    </div>
-{% endif %}
 
 <div class="row">
     <div class="col-lg-12">

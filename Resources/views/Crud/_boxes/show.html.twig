@@ -1,8 +1,8 @@
 {% import "whatwedoCrudBundle:Crud:_macros.html.twig" as macros %}
 
+{% set keyArr = helper.blocks|keys %}
 {% set i = 0 %}
 {% for block in helper.blocks if block.isVisibleOnShow and is_granted(block.showVoterAttribute, helper.data) %}
-
     {# Zeile #}
     {% set i = i + 1 %}
     {% if i == 1 %}
@@ -114,9 +114,16 @@
             </div>
 
 
-    {% if i == 2 %}
+
+    {# / Zeile #}
+    {% if i == 2 or loop.index == loop.length or block.size == "large" %}
         {% set i = 0 %}
         </div>
+    {% elseif helper.blocks[keyArr[loop.index]] is defined %}
+        {% if helper.blocks[keyArr[loop.index]].size == "large" %}
+            {% set i = 0 %}
+            </div>
+        {% endif %}
     {% endif %}
 
 {% endfor %}
