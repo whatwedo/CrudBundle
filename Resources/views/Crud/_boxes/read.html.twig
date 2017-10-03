@@ -1,4 +1,6 @@
 {% set i = 0 %}
+{% set keyArr = helper.blocks|keys %}
+
 {% for block in helper.blocks %}
 
     {# Zeile #}
@@ -7,89 +9,99 @@
         <div class="row">
     {% endif %}
 
-            <div class="col-lg-{% if block.size == 'small' %}6{% else %}12{% endif %} box__{{ block.acronym }}">
-                <div class="box box-primary">
-                    <div class="box-header">
-                        <h3 class="box-title">
-                            {{ block.label }}
-                        </h3>
-                    </div>
+    <div class="col-lg-{% if block.size == 'small' %}6{% else %}12{% endif %} box__{{ block.acronym }}">
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">
+                    {{ block.label }}
+                </h3>
+            </div>
 
-                    <div class="box-body">
-                        {% for key, content in block.contents %}
+            <div class="box-body">
+                {% for key, content in block.contents %}
 
-                            {% if content.isTable is defined and content.isTable %}
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <strong>{{ content.label }}{% if content.label is not empty %}:{% endif %}</strong>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        {{ content.renderTable(whatwedo_table(), data)|raw }}
-                                    </div>
-                                </div>
-                                {% if content.createRoute is defined and content.createRoute %}
-                                <div class="row">
-                                    <div class="col-lg-12 text-right">
-                                        {% if content.indexRoute %}
-                                        <a href="{{ path(content.indexRoute, content.createRouteParameters(data)) }}" class="btn btn-primary btn-xs">
+                    {% if content.isTable is defined and content.isTable %}
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <strong>{{ content.label }}{% if content.label is not empty %}:{% endif %}</strong>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                {{ content.renderTable(whatwedo_table(), data)|raw }}
+                            </div>
+                        </div>
+                        {% if content.createRoute is defined and content.createRoute %}
+                            <div class="row">
+                                <div class="col-lg-12 text-right">
+                                    {% if content.indexRoute %}
+                                        <a href="{{ path(content.indexRoute, content.createRouteParameters(data)) }}"
+                                           class="btn btn-primary btn-xs">
                                             <i class="fa fa-list"></i>
                                             Alle ansehen
                                         </a>
-                                        {% endif %}
-                                        {% if content.createRoute and content.allowCreate(helper.data) %}
-                                        <a href="{{ path(content.createRoute, content.createRouteParameters(data)) }}" class="btn btn-success btn-xs">
+                                    {% endif %}
+                                    {% if content.createRoute and content.allowCreate(helper.data) %}
+                                        <a href="{{ path(content.createRoute, content.createRouteParameters(data)) }}"
+                                           class="btn btn-success btn-xs">
                                             <i class="fa fa-plus"></i>
                                             Hinzufügen
                                         </a>
-                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% elseif content.isTwigContent is defined and content.isTwigContent %}
+                        {% if content.showOn('read') %}
+                            {% include content.template with content.parameters %}
+                        {% endif %}
+                    {% else %}
+
+                        {% set value = content.render(data) %}
+
+                        {% if value is iterable %}
+                            {% for key, v in value %}
+                                <div class="row {{ content.viewClass }}">
+                                    <div class="col-lg-4">
+                                        <strong>{{ key }}:</strong>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        {{ helper.linkIt(v, content)|raw }}
                                     </div>
                                 </div>
-                                {% endif %}
-                            {% elseif content.isTwigContent is defined and content.isTwigContent %}
-                                {% if content.showOn('read') %}
-                                    {% include content.template with content.parameters  %}
-                                {% endif %}
-                            {% else %}
+                            {% endfor %}
+                        {% else %}
+                            <div class="row {{ content.viewClass }}">
+                                <div class="col-lg-4">
+                                    <strong>{{ content.label }}{% if content.label is not empty %}:{% endif %}
+                                        {% if content.help is not empty %}&nbsp;<i class="fa fa-question-circle"
+                                                                                   data-toggle="tooltip"
+                                                                                   data-placement="right"
+                                                                                   title="{{ content.help }}"></i>{% endif %}
+                                    </strong>
+                                </div>
+                                <div class="col-lg-8">
+                                    {{ helper.linkIt(value, content)|raw }}
+                                </div>
+                            </div>
+                        {% endif %}
 
-                                {% set value = content.render(data) %}
+                    {% endif %}
 
-                                {% if value is iterable %}
-                                    {% for key, v in value %}
-                                        <div class="row {{ content.viewClass }}">
-                                            <div class="col-lg-4">
-                                                <strong>{{ key }}:</strong>
-                                            </div>
-                                            <div class="col-lg-8">
-                                                {{ helper.linkIt(v, content)|raw }}
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                {% else %}
-                                    <div class="row {{ content.viewClass }}">
-                                        <div class="col-lg-4">
-                                            <strong>{{ content.label }}{% if content.label is not empty %}:{% endif %}
-                                                {% if content.help is not empty %}&nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="{{ content.help }}"></i>{% endif %}
-                                            </strong>
-                                        </div>
-                                        <div class="col-lg-8">
-                                            {{ helper.linkIt(value, content)|raw }}
-                                        </div>
-                                    </div>
-                                {% endif %}
-
-                            {% endif %}
-
-                        {% endfor %}
-                    </div>
-                </div>
+                {% endfor %}
             </div>
+        </div>
+    </div>
 
 
     {# / Zeile #}
-    {% if i == 2 or loop.index == loop.length %}
+    {% if i == 2 or loop.index == loop.length or block.size == "large" %}
         {% set i = 0 %}
         </div>
+    {% elseif helper.blocks[keyArr[loop.index]] is defined %}
+        {% if helper.blocks[keyArr[loop.index]].size == "large" %}
+            {% set i = 0 %}
+            </div>
+        {% endif %}
     {% endif %}
 {% endfor %}
