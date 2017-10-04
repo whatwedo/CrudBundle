@@ -329,12 +329,14 @@ abstract class AbstractDefinition implements DefinitionInterface
      *
      * @return string
      */
-    public function getLabelFor(DoctrineTable $table, $property)
+    public function getLabelFor($table, $property)
     {
-        /** @var \whatwedo\TableBundle\Table\Column $column */
-        foreach ($table->getColumns() as $column) {
-            if ($column->getAcronym() == $property) {
-                return $column->getLabel();
+        if ($table instanceof DoctrineTable) {
+            /** @var \whatwedo\TableBundle\Table\Column $column */
+            foreach ($table->getColumns() as $column) {
+                if ($column->getAcronym() == $property) {
+                    return $column->getLabel();
+                }
             }
         }
 
