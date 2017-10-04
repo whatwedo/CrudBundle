@@ -3,6 +3,7 @@
 {% set keyArr = helper.blocks|keys %}
 {% set i = 0 %}
 {% for block in helper.blocks if block.isVisibleOnShow and is_granted(block.showVoterAttribute, helper.data) %}
+
     {# Zeile #}
     {% set i = i + 1 %}
     {% if i == 1 %}

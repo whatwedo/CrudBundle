@@ -125,8 +125,6 @@
     {% if i == 2 or block.size == "large" %}
         {% set i = 0 %}
         </div>
-        {% set isOpen = false %}
-        {# Falls nächste Zeile Gross #}
     {% elseif helper.blocks[keyArr[loop.index]] is defined %}
         {% if helper.blocks[keyArr[loop.index]].size == "large" %}
             {% set i = 0 %}
@@ -136,10 +134,9 @@
     {% endif %}
 {% endfor %}
 
-    {% if i>0 %}
-        </div>
-    {% endif %}
-
+{% if i > 0 %}
+    </div>
+{% endif %}
 
 <div class="row">
     <div class="col-lg-12">
