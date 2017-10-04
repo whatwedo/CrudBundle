@@ -41,6 +41,11 @@ use whatwedo\CrudBundle\Traits\VisibilityTrait;
  */
 class Block
 {
+
+    const BLOCK_SIZE_SMALL = 'small';
+    const BLOCK_SIZE_LARGE = 'large';
+
+
     use VisibilityTrait;
 
     /**
