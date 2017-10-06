@@ -428,16 +428,6 @@ abstract class AbstractDefinition implements DefinitionInterface
     }
 
     /**
-     * @param Request $request
-     * @return null|\stdClass
-     * @deprecated
-     */
-    public function ajaxOnChange(Request $request)
-    {
-        return null;
-    }
-
-    /**
      * @param array $data
      * @return null|\stdClass
      */
