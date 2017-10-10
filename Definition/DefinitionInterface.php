@@ -187,9 +187,16 @@ interface DefinitionInterface
      */
     public function overrideTableConfiguration(DoctrineTable $table);
 
+    /**
+     * @return array
+     */
     public function addAjaxOnChangeListener();
 
-    public function ajaxOnChange(Request $request);
+    /**
+     * @param $data
+     * @return \stdClass
+     */
+    public function ajaxOnDataChanged($data);
 
     /**
      * @param ExtensionInterface $extension

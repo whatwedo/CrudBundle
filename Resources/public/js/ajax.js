@@ -46,6 +46,7 @@ var whatwedo_ajax = {
             }
         });
         var data = {data: vals};
+        _.loading(true);
         $.ajax({
             type: 'POST',
             url: _.callback,
@@ -53,6 +54,9 @@ var whatwedo_ajax = {
             dataType: 'text',
             success: function (respond) {
                 _.process($.parseJSON(respond));
+            },
+            complete: function () {
+                _.loading(false);
             }
         });
     },
@@ -98,6 +102,32 @@ var whatwedo_ajax = {
 
     form: function ($i) {
         return this.formPrefix + this.noListen[$i];
+    },
+
+    loading: function (start) {
+        var _ = this;
+        if (start) {
+            var loader = '<span data-source="wwd-ajax" class="wwd-loading wwd-loading-black form-control-feedback"></span>';
+            $(this.noListen).each(function ($i) {
+                element = $(_.form($i));
+                if (!element.hasClass('wwd-loading-element')) {
+                    element.addClass('wwd-loading-element');
+                    if (element.is('select')) {
+                        $(loader).addClass('wwd-loading-select').insertAfter(element);
+                    } else {
+                        $(loader).insertAfter(element);
+                    }
+                    element.closest('.form-group').addClass('has-feedback');
+                }
+            });
+        } else {
+            $(this.noListen).each(function ($i) {
+                element = $(_.form($i));
+                element.removeClass('wwd-loading-element');
+                element.closest('.form-group').removeClass('has-feedback');
+                $('span[data-source="wwd-ajax"]').remove();
+            });
+        }
     }
 };
 $(document).ready(function () {
