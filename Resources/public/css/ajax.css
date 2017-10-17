@@ -1,4 +1,4 @@
-@-webkit-keyframes spin {
+@-webkit-keyframes wwd-loading-spin {
     0% {
         -webkit-transform: rotate(0deg);
         transform: rotate(0deg);
@@ -8,7 +8,7 @@
         transform: rotate(360deg);
     }
 }
-@keyframes spin {
+@keyframes wwd-loading-spin {
     0% {
         -webkit-transform: rotate(0deg);
         transform: rotate(0deg);
@@ -26,8 +26,8 @@
     height: 14px;
     border: 0.15rem solid rgba(255, 255, 255, 0.2);
     border-top-color: white;
-    -webkit-animation: spin 1s infinite linear;
-    animation: spin 1s infinite linear;
+    -webkit-animation: wwd-loading-spin 1s infinite linear;
+    animation: wwd-loading-spin 1s infinite linear;
 }
 
 .wwd-loading-black {
