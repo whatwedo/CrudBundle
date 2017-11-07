@@ -31,9 +31,10 @@ services:
     # Content
     whatwedo_crud.content.content:
         class: whatwedo\CrudBundle\Content\Content
+        arguments:
+          - '@whatwedo_core.manager.formatter'
         tags:
             - crud.content
-        calls:
 
     whatwedo_crud.content.relation:
         class: whatwedo\CrudBundle\Content\RelationContent

@@ -27,9 +27,12 @@
 
 namespace whatwedo\CrudBundle\Content;
 
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CoreBundle\Formatter\DefaultFormatter;
+use whatwedo\CoreBundle\Formatter\FormatterInterface;
+use whatwedo\CoreBundle\Manager\FormatterManager;
 use whatwedo\CrudBundle\Form\Type\EntityHiddenType;
 
 /**
@@ -38,6 +41,21 @@ use whatwedo\CrudBundle\Form\Type\EntityHiddenType;
  */
 class Content extends AbstractContent implements EditableContentInterface
 {
+
+    /**
+     * @var FormatterManager
+     */
+    protected $formatterManager;
+
+    /**
+     * Content constructor.
+     * @param FormatterManager $formatterManager
+     */
+    public function __construct(FormatterManager $formatterManager)
+    {
+        $this->formatterManager = $formatterManager;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -48,7 +66,8 @@ class Content extends AbstractContent implements EditableContentInterface
         $formatter = $this->options['formatter'];
 
         if (is_string($formatter)) {
-            return (string) call_user_func($formatter . '::getHtml', $data);
+            $formatterObj = $this->formatterManager->getFormatter($formatter);
+            return $formatterObj->getHtml($data);
         }
 
         if (is_callable($formatter)) {
