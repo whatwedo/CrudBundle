@@ -35,6 +35,7 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Security\Http\AccessMap;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -45,6 +46,9 @@ use whatwedo\CrudBundle\Content\EditableContentInterface;
 use whatwedo\CrudBundle\Definition\AbstractDefinition;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\RouteEnum;
+use whatwedo\CrudBundle\Form\Type\EntityAjaxType;
+use whatwedo\CrudBundle\Form\Type\EntityHiddenType;
+use whatwedo\CrudBundle\Form\Type\EntityPreselectType;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 /**
@@ -123,6 +127,11 @@ class DefinitionView implements DefinitionViewInterface
     protected $reflectionObject;
 
     /**
+     * @var Request $request
+     */
+    protected $request;
+
+    /**
      * DefinitionView constructor.
      * @param EngineInterface $templating
      * @param FormFactoryInterface $formFactory
@@ -130,7 +139,7 @@ class DefinitionView implements DefinitionViewInterface
      * @param AccessMap $accessMap
      * @param AuthorizationChecker $authorizationChecker
      */
-    public function __construct(EngineInterface $templating, FormFactoryInterface $formFactory, Router $router, AccessMap $accessMap, AuthorizationChecker $authorizationChecker)
+    public function __construct(EngineInterface $templating, FormFactoryInterface $formFactory, Router $router, AccessMap $accessMap, AuthorizationChecker $authorizationChecker, RequestStack $requestStack)
     {
         $this->templating = $templating;
         $this->formFactory = $formFactory;
@@ -138,6 +147,7 @@ class DefinitionView implements DefinitionViewInterface
         $this->accessMap = $accessMap;
         $this->authorizationChecker = $authorizationChecker;
         $this->annotationReader = new AnnotationReader();
+        $this->request = $requestStack->getCurrentRequest();
     }
 
     public function setDefinitionManager(DefinitionManager $definitionManager)
@@ -343,6 +353,24 @@ class DefinitionView implements DefinitionViewInterface
     }
 
     /**
+     * @param Content $content
+     * @return string
+     */
+    protected function getFormType(Content $content)
+    {
+        $formType = $content->getFormType();
+        if ($formType === EntityPreselectType::class) {
+            if (EntityPreselectType::isValueProvided($this->request, $content->getFormOptions())) {
+                $formType = EntityHiddenType::class;
+            } else {
+                $formType = EntityAjaxType::class;
+            }
+        }
+        $content->setOption('form_type', $formType);
+        return $formType;
+    }
+
+    /**
      * @return null|FormInterface
      */
     public function getEditForm()
@@ -364,9 +392,11 @@ class DefinitionView implements DefinitionViewInterface
                 }
 
                 if ($content instanceof EditableContentInterface) {
+                    $formType = $this->getFormType($content);
+
                     $builder->add(
                         $content->getAcronym(),
-                        $content->getFormType(),
+                        $formType,
                         $content->getFormOptions([ 'required' => $this->isContentRequired($content) ])
                     );
                 }
@@ -399,9 +429,11 @@ class DefinitionView implements DefinitionViewInterface
                     continue;
                 }
                 if ($content instanceof EditableContentInterface) {
+                    $formType = $this->getFormType($content);
+
                     $builder->add(
                         $content->getAcronym(),
-                        $content->getFormType(),
+                        $formType,
                         $content->getFormOptions([ 'required' => $this->isContentRequired($content) ])
                     );
                 }

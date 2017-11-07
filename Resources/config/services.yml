@@ -63,6 +63,7 @@ services:
             - '@router'
             - '@security.access_map'
             - '@security.authorization_checker'
+            - '@request_stack'
         calls:
             - [setDefinitionManager, ['@whatwedo_crud.manager.definition']]
 
