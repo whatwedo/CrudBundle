@@ -119,6 +119,16 @@ class Block
     }
 
     /**
+     * @param string $acronym
+     * @return $this
+     */
+    public function removeContent($acronym)
+    {
+        unset($this->elements[$acronym]);
+        return $this;
+    }
+
+    /**
      * @return array|ContentInterface[]
      */
     public function getContents()

@@ -81,6 +81,16 @@ class DefinitionBuilder
         return $this->definition[$acronym];
     }
 
+    /**
+     * @param string $acronym
+     * @return $this
+     */
+    public function removeBlock($acronym)
+    {
+        unset($this->definition[$acronym]);
+        return $this;
+    }
+
     public function getBlocks()
     {
         return new BlockCollection($this->definition);
