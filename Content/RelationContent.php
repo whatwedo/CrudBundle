@@ -29,10 +29,13 @@ namespace whatwedo\CrudBundle\Content;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Exception\InvalidDataException;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
@@ -56,6 +59,14 @@ class RelationContent extends AbstractContent
      * @var ContainerInterface
      */
     protected $container;
+
+
+    /**
+     * RelationContent constructor.
+     * @param ContainerInterface $container
+     */
+
+    protected $accessorPathDefinitionCacheMap = [];
 
     /**
      * RelationContent constructor.
@@ -114,6 +125,8 @@ class RelationContent extends AbstractContent
         };
 
         $table = $tableFactory->createTable($identifier, $options);
+        $targetDefinition = $this->getDefinitionForAccessorPath($this->getOption('accessor_path'));
+        $targetDefinition->configureTable($table);
 
         if (is_callable($this->options['table_configuration'])) {
             $this->options['table_configuration']($table);
@@ -296,14 +309,37 @@ class RelationContent extends AbstractContent
             'table_options' => [],
             'criteria' => [],
             'table_configuration' => null,
-            'definition' => null,
-            'route_addition_key' => null,
+            'route_addition_key' => $this->definition::getChildRouteAddition(),
             'show_index_button' => false,
             'add_voter_attribute' => RouteEnum::EDIT,
         ]);
 
+        $resolver->setDefault('definition', function (Options $options) {
+            return get_class($this->getDefinitionForAccessorPath($options['accessor_path']));
+        });
+
         $resolver->setAllowedTypes('table_options', ['array']);
-        $resolver->setAllowedTypes('table_configuration', ['callable']);
+        $resolver->setAllowedTypes('table_configuration', ['callable', 'null']);
+    }
+
+    /**
+     * @param string $accessorPath
+     * @return DefinitionInterface
+     */
+    private function getDefinitionForAccessorPath($accessorPath)
+    {
+        if (array_key_exists($accessorPath, $this->accessorPathDefinitionCacheMap)) {
+            return $this->accessorPathDefinitionCacheMap[$accessorPath];
+        }
+        /** @var ClassMetadata $metadata */
+        $metadata = $this->container->get('doctrine')
+            ->getManager()
+            ->getMetadataFactory()
+            ->getMetadataFor($this->definition::getEntity());
+        $propertyClass = $metadata->associationMappings[$accessorPath]['targetEntity'];
+        $targetDefinition = $this->getDefinitionManager()->getDefinitionFromClass($propertyClass);
+        $this->accessorPathDefinitionCacheMap[$accessorPath] = $targetDefinition;
+        return $this->getDefinitionForAccessorPath($accessorPath);
     }
 
     /**

@@ -26,6 +26,7 @@
  */
 
 namespace whatwedo\CrudBundle\Definition;
+
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -35,7 +36,7 @@ use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
 use whatwedo\CrudBundle\View\DefinitionViewInterface;
-use whatwedo\TableBundle\Table\DoctrineTable;
+use whatwedo\TableBundle\Table\Table;
 
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
@@ -120,9 +121,10 @@ interface DefinitionInterface
     /**
      * table configuration
      *
-     * @param DoctrineTable $table
+     * @param Table $table
+     * @return
      */
-    public function configureTable(DoctrineTable $table);
+    public function configureTable(Table $table);
 
     /**
      * check if this definition has specific capability
@@ -183,9 +185,10 @@ interface DefinitionInterface
     public function getExportOptions();
 
     /**
-     * @param DoctrineTable $table
+     * @param Table $table
+     * @return
      */
-    public function overrideTableConfiguration(DoctrineTable $table);
+    public function overrideTableConfiguration(Table $table);
 
     /**
      * @return array
@@ -212,4 +215,12 @@ interface DefinitionInterface
      * @param string $extension FQDN of extension
      */
     public function getExtension($extension);
+
+    /**
+     * @param string $class
+     * @param string $property
+     * @return null|\Symfony\Component\Form\Guess\Guess|\Symfony\Component\Form\Guess\TypeGuess
+     */
+    public function guessType($class, $property);
+
 }

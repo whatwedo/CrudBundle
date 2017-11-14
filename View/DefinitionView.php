@@ -34,6 +34,7 @@ use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
@@ -132,14 +133,21 @@ class DefinitionView implements DefinitionViewInterface
     protected $request;
 
     /**
+     * @var FormRegistry $formRegistry
+     */
+    protected $formRegistry;
+
+    /**
      * DefinitionView constructor.
      * @param EngineInterface $templating
      * @param FormFactoryInterface $formFactory
+     * @param FormRegistry $formRegistry
      * @param Router $router
      * @param AccessMap $accessMap
      * @param AuthorizationChecker $authorizationChecker
+     * @param RequestStack $requestStack
      */
-    public function __construct(EngineInterface $templating, FormFactoryInterface $formFactory, Router $router, AccessMap $accessMap, AuthorizationChecker $authorizationChecker, RequestStack $requestStack)
+    public function __construct(EngineInterface $templating, FormFactoryInterface $formFactory, FormRegistry $formRegistry, Router $router, AccessMap $accessMap, AuthorizationChecker $authorizationChecker, RequestStack $requestStack)
     {
         $this->templating = $templating;
         $this->formFactory = $formFactory;
@@ -148,6 +156,7 @@ class DefinitionView implements DefinitionViewInterface
         $this->authorizationChecker = $authorizationChecker;
         $this->annotationReader = new AnnotationReader();
         $this->request = $requestStack->getCurrentRequest();
+        $this->formRegistry = $formRegistry;
     }
 
     public function setDefinitionManager(DefinitionManager $definitionManager)
@@ -498,5 +507,15 @@ class DefinitionView implements DefinitionViewInterface
             $this->reflectionObject = new \ReflectionObject($this->data);
         }
         return $this->reflectionObject;
+    }
+
+    /**
+     * @param string $class
+     * @param string $property
+     * @return null|\Symfony\Component\Form\Guess\Guess|\Symfony\Component\Form\Guess\TypeGuess
+     */
+    public function guessType($class, $property)
+    {
+        return $this->formRegistry->getTypeGuesser()->guessType($class, $property);
     }
 }

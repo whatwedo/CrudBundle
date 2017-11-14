@@ -60,6 +60,7 @@ services:
         arguments:
             - '@templating'
             - '@form.factory'
+            - '@form.registry'
             - '@router'
             - '@security.access_map'
             - '@security.authorization_checker'

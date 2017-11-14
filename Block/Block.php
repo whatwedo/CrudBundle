@@ -27,7 +27,11 @@
 
 namespace whatwedo\CrudBundle\Block;
 
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Guess\TypeGuess;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use whatwedo\CrudBundle\Content\RelationContent;
+use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Enum\VisibilityEnum;
 use whatwedo\CrudBundle\Manager\ContentManager;
@@ -63,6 +67,11 @@ class Block
      * @var ContentManager
      */
     protected $contentManager;
+
+    /**
+     * @var DefinitionInterface
+     */
+    protected $definition;
 
     /**
      * @param string $acronym
@@ -154,17 +163,49 @@ class Block
      * @param array $options configuration
      * @return $this
      */
-    public function addContent($acronym, $type = Content::class, $options = [])
+    public function addContent($acronym, $type = null, $options = [])
     {
-        if ($type === null) {
-            $type = Content::class;
-        }
+        $type = $this->getType($acronym, $type, $options);
 
         $this->elements[$acronym] = $this->contentManager->getContent($type);
+        $this->elements[$acronym]->setDefinition($this->definition);
         $this->elements[$acronym]->setAcronym($acronym);
         $this->elements[$acronym]->setOptions($options);
 
         return $this;
+    }
+
+    private function getType($acronym, $type = null, $options = [])
+    {
+        if (!is_null($type)) {
+            return $type;
+        }
+        $accessor = isset($options['accessor_path']) ? $options['accessor_path'] : $acronym;
+        $typeGuess = $this->definition->guessType($this->definition::getEntity(), $accessor);
+        $needRelationContent = [
+            EntityType::class
+        ];
+        if (!is_null($typeGuess)
+            && in_array($typeGuess->getType(), $needRelationContent)
+            && $typeGuess->getOptions()['multiple']
+            && $this->optionsCouldBeRelationContent($options)) {
+            return RelationContent::class;
+        } else {
+            return Content::class;
+        }
+    }
+
+    private function optionsCouldBeRelationContent($options = [])
+    {
+        $notAllowedOptions = [
+            'form_options', 'formatter', 'callable', 'form_type', 'help', 'preselect_definition', 'auto_fill', 'attr'
+        ];
+        foreach ($notAllowedOptions as $notAllowedOption) {
+            if (in_array($notAllowedOption, array_keys($options))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -197,6 +238,24 @@ class Block
             'edit_voter_attribute' => RouteEnum::EDIT,
             'create_voter_attribute' => RouteEnum::CREATE,
         ]);
+    }
+
+    /**
+     * @return DefinitionInterface
+     */
+    public function getDefinition()
+    {
+        return $this->definition;
+    }
+
+    /**
+     * @param DefinitionInterface $definition
+     * @return $this
+     */
+    public function setDefinition($definition)
+    {
+        $this->definition = $definition;
+        return $this;
     }
 
     /**

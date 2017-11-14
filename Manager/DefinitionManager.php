@@ -75,6 +75,10 @@ class DefinitionManager
         return null;
     }
 
+    /**
+     * @param $entity
+     * @return mixed|null|DefinitionInterface
+     */
     public function getDefinitionFor($entity)
     {
         if (!is_object($entity)) {
@@ -89,6 +93,10 @@ class DefinitionManager
         return null;
     }
 
+    /**
+     * @param string $class
+     * @return mixed|null|DefinitionInterface
+     */
     public function getDefinitionFromClass($class)
     {
         foreach ($this->definitions as $definition) {

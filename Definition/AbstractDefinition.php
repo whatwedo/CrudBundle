@@ -43,6 +43,7 @@ use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\View\DefinitionViewInterface;
 use whatwedo\TableBundle\Extension\FilterExtension;
 use whatwedo\TableBundle\Table\DoctrineTable;
+use whatwedo\TableBundle\Table\Table;
 use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
 /**
@@ -178,7 +179,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * {@inheritdoc}
      */
-    public function configureTable(DoctrineTable $table)
+    public function configureTable(Table $table)
     {
     }
 
@@ -291,7 +292,7 @@ abstract class AbstractDefinition implements DefinitionInterface
      */
     public function createView($data = null)
     {
-        $this->builder = new DefinitionBuilder($this->blockManager, $this->definitionManager, $this->templates);
+        $this->builder = new DefinitionBuilder($this->blockManager, $this->definitionManager, $this->templates, $this);
 
         $this->configureView($this->builder, $data);
 
@@ -300,14 +301,13 @@ abstract class AbstractDefinition implements DefinitionInterface
         $this->definitionView->setBlocks($this->builder->getBlocks());
         $this->definitionView->setTemplates($this->builder->getTemplates());
         $this->definitionView->setTemplateParameters($this->builder->getTemplateParameters());
-
         return $this->definitionView;
     }
 
     /**
-     * @param DoctrineTable $table
+     * @param Table|DoctrineTable $table
      */
-    public function overrideTableConfiguration(DoctrineTable $table)
+    public function overrideTableConfiguration(Table $table)
     {
         if ($table->hasExtension(FilterExtension::class)) {
             /** @var FilterExtension $filterExtension */
@@ -341,7 +341,7 @@ abstract class AbstractDefinition implements DefinitionInterface
         }
 
         if (is_null($this->definitionBuilderLabelCache)) {
-            $this->definitionBuilderLabelCache = new DefinitionBuilder($this->blockManager, $this->definitionManager, $this->templates);
+            $this->definitionBuilderLabelCache = new DefinitionBuilder($this->blockManager, $this->definitionManager, $this->templates, $this);
             $this->configureView($this->definitionBuilderLabelCache, null);
         }
 
@@ -496,5 +496,13 @@ abstract class AbstractDefinition implements DefinitionInterface
     public function addExtension(ExtensionInterface $extension)
     {
         $this->extensions[get_class($extension)] = $extension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function guessType($class, $property)
+    {
+        return $this->definitionView->guessType($class, $property);
     }
 }
