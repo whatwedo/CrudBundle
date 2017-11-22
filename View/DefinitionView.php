@@ -417,7 +417,15 @@ class DefinitionView implements DefinitionViewInterface
             return $this->form;
         }
 
-        $builder = $this->formFactory->createBuilder(FormType::class, $this->data, []);
+        $options = [];
+        if (!$this->getDefinition()->usesHtml5Validation()) {
+            $options = [
+                'attr' => [
+                    'novalidate' => 'novalidate'
+                ]
+            ];
+        }
+        $builder = $this->formFactory->createBuilder(FormType::class, $this->data, $options);
 
         foreach ($this->getBlocks() as $block) {
             if (!$block->isVisibleOnCreate()) {

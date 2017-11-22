@@ -497,4 +497,13 @@ abstract class AbstractDefinition implements DefinitionInterface
     {
         $this->extensions[get_class($extension)] = $extension;
     }
+
+    /**
+     * @return boolean
+     */
+    public function usesHtml5Validation()
+    {
+        return true;
+    }
+
 }

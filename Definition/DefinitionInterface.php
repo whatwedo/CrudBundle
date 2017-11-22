@@ -212,4 +212,9 @@ interface DefinitionInterface
      * @param string $extension FQDN of extension
      */
     public function getExtension($extension);
+
+    /**
+     * @return boolean
+     */
+    public function usesHtml5Validation();
 }
