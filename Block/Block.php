@@ -181,7 +181,7 @@ class Block
             return $type;
         }
         $accessor = isset($options['accessor_path']) ? $options['accessor_path'] : $acronym;
-        $typeGuess = $this->definition->guessType($this->definition::getEntity(), $accessor);
+        $typeGuess = $this->definition->guessType($this->definition->getEntity(), $accessor);
         $needRelationContent = [
             EntityType::class
         ];

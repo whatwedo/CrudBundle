@@ -27,6 +27,7 @@
 
 namespace whatwedo\CrudBundle\Manager;
 use Doctrine\Common\Util\ClassUtils;
+use whatwedo\CrudBundle\Definition\AbstractInheritanceDefinition;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Exception\ElementNotFoundException;
 
@@ -68,7 +69,7 @@ class DefinitionManager
     public function getDefinitionFromEntityClass($entityclass)
     {
         foreach ($this->definitions as $definition) {
-            if ($definition::getEntity() == $entityclass) {
+            if ($definition->getEntity() == $entityclass) {
                 return $definition;
             }
         }
@@ -84,10 +85,17 @@ class DefinitionManager
         if (!is_object($entity)) {
             return null;
         }
+        $class = ClassUtils::getRealClass(get_class($entity));
         foreach ($this->definitions as $definition)
         {
-            if ($definition::getEntity() == ClassUtils::getRealClass(get_class($entity))) {
-                return $definition;
+            if ($definition instanceof AbstractInheritanceDefinition) {
+                if (in_array($class, $definition->getEntityClasses())) {
+                    return $definition;
+                }
+            } else {
+                if ($definition->getEntity() == $class) {
+                    return $definition;
+                }
             }
         }
         return null;

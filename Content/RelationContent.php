@@ -181,6 +181,7 @@ class RelationContent extends AbstractContent
 
         $table->addColumn('actions', ActionColumn::class, [
             'items' => $actionColumnItems,
+            'extraRouteParameters' => $table->getExtraRouteParameters(),
         ]);
 
         return $table->renderTable();
@@ -248,7 +249,7 @@ class RelationContent extends AbstractContent
     public function isAddAllowed()
     {
         $definition = $this->getDefinitionManager()->getDefinitionFromClass($this->options['definition']);
-        $entityName = $definition::getEntity();
+        $entityName = $definition->getEntity();
         $entityReflector = new ReflectionClass($entityName);
         if ($entityReflector->isAbstract()) {
             return false;
@@ -335,7 +336,7 @@ class RelationContent extends AbstractContent
         $metadata = $this->container->get('doctrine')
             ->getManager()
             ->getMetadataFactory()
-            ->getMetadataFor($this->definition::getEntity());
+            ->getMetadataFor($this->definition->getEntity());
         $propertyClass = $metadata->associationMappings[$accessorPath]['targetEntity'];
         $targetDefinition = $this->getDefinitionManager()->getDefinitionFromClass($propertyClass);
         $this->accessorPathDefinitionCacheMap[$accessorPath] = $targetDefinition;

@@ -20,6 +20,10 @@ services:
             - [setDefinitionManager, ['@whatwedo_crud.manager.definition']]
             - [setTemplates, ['%whatwedo_crud.config.templates%']]
 
+    whatwedo_crud.definition.abstract_inheritance_definition:
+        abstract: true
+        parent: whatwedo_crud.definition.abstract_definition
+
     # Block
     whatwedo_crud.block.block:
         class: whatwedo\CrudBundle\Block\Block

@@ -434,6 +434,7 @@ class CrudController extends BaseController implements CrudDefinitionController
 
         $table->addColumn('actions', ActionColumn::class, [
             'items' => $actionColumnItems,
+            'extraRouteParameters' => $table->getExtraRouteParameters(),
         ]);
     }
 

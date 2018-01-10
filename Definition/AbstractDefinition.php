@@ -119,7 +119,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     {
         switch ($route) {
             case RouteEnum::INDEX:
-                return static::getEntityTitle();
+                return $this->getEntityTitle();
             case RouteEnum::SHOW:
                 return $entity;
             case RouteEnum::DELETE:
@@ -314,8 +314,8 @@ abstract class AbstractDefinition implements DefinitionInterface
             $filterExtension = $table->getExtension(FilterExtension::class);
             $filterExtension->addFiltersAutomatically(
                 $table,
-                static::getEntity(),
-                static::getQueryAlias(),
+                $this->getEntity(),
+                $this->getQueryAlias(),
                 $this->getQueryBuilder(),
                 [$this, 'getLabelFor']
             );
@@ -449,9 +449,9 @@ abstract class AbstractDefinition implements DefinitionInterface
         }
 
         if (static::hasCapability(RouteEnum::INDEX)) {
-            $this->getBreadcrumbs()->addRouteItem(static::getEntityTitle(), static::getRoutePrefix() . '_' . RouteEnum::INDEX, $this->getIndexBreadcrumbParameters([], $entity));
+            $this->getBreadcrumbs()->addRouteItem($this->getEntityTitle(), static::getRoutePrefix() . '_' . RouteEnum::INDEX, $this->getIndexBreadcrumbParameters([], $entity));
         } else {
-            $this->getBreadcrumbs()->addItem(static::getEntityTitle());
+            $this->getBreadcrumbs()->addItem($this->getEntityTitle());
         }
     }
 

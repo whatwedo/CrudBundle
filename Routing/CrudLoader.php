@@ -29,7 +29,8 @@ namespace whatwedo\CrudBundle\Routing;
 use Symfony\Component\Config\Loader\Loader;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
-use whatwedo\CoreBundle\Formatter\CollectionFormatter;
+use whatwedo\CrudBundle\Definition\AbstractDefinition;
+use whatwedo\CrudBundle\Definition\AbstractInheritanceDefinition;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 
@@ -52,7 +53,76 @@ class CrudLoader extends Loader
     {
         $routes = new RouteCollection();
         $definition = $this->definitionManager->getDefinition($resource);
+        if ($definition instanceof AbstractInheritanceDefinition) {
+            $this->addRoutesInheritanceDefinition($definition, $routes, $resource);
+        } elseif ($definition instanceof AbstractDefinition) {
+            $this->addRoutesDefinition($definition, $routes, $resource);
+        }
+        return $routes;
+    }
 
+    private function addRoutesInheritanceDefinition(AbstractInheritanceDefinition $definition, RouteCollection $routes, $resource)
+    {
+        $childClasses = $definition->getEntityClassesQueryMapping();
+        foreach ($definition->getCapabilities() as $capability) {
+            $route = new Route('', [
+                    '_resource' => $resource,
+                    '_controller' => $definition->getController().'::'.$capability.'Action',
+                    'class' => $definition->getAllQuery()
+                ]
+            );
+            $routeName = $definition->getRoutePrefix().'_'.$capability;
+
+            switch ($capability) {
+                case RouteEnum::INDEX:
+                    $route->setPath('/{class}');
+                    $route->setRequirement('class', implode('|', array_merge($childClasses, [$definition->getAllQuery()])));
+                    break;
+                case RouteEnum::SHOW:
+                    $route->setPath('/{class}/{id}');
+                    $route->setRequirement('id', '\d+');
+                    $route->setRequirement('class', implode('|', $childClasses));
+                    break;
+                case RouteEnum::CREATE:
+                    $route->setPath('/{class}/create');
+                    $route->setMethods(['GET', 'POST']);
+                    $route->setRequirement('class', implode('|', $childClasses));
+                    break;
+                case RouteEnum::EDIT:
+                    $route->setPath('/{class}/{id}/edit');
+                    $route->setMethods(['GET', 'POST', 'PUT', 'PATCH']);
+                    $route->setRequirement('id', '\d+');
+                    $route->setRequirement('class', implode('|', $childClasses));
+                    break;
+                case RouteEnum::DELETE:
+                    $route->setPath('/{class}/{id}/delete');
+                    $route->setMethods(['POST']);
+                    $route->setRequirement('id', '\d+');
+                    $route->setRequirement('class', implode('|', $childClasses));
+                    break;
+                case RouteEnum::BATCH:
+                    $route->setPath('/{class}/batch');
+                    $route->setMethods(['POST']);
+                    $route->setRequirement('class', implode('|', array_merge($childClasses, [$definition->getAllQuery()])));
+                    break;
+                case RouteEnum::EXPORT:
+                    $route->setPath('/{class}/export');
+                    $route->setMethods(['GET']);
+                    $route->setRequirement('class', implode('|', array_merge($childClasses, [$definition->getAllQuery()])));
+                    break;
+                case RouteEnum::AJAX:
+                    $route->setPath('/{class}/ajax');
+                    $route->setMethods(['POST']);
+                    $route->setRequirement('class', implode('|', $childClasses));
+                    break;
+            }
+
+            $routes->add($routeName, $route);
+        }
+    }
+
+    private function addRoutesDefinition(AbstractDefinition $definition, RouteCollection $routes, $resource)
+    {
         foreach ($definition->getCapabilities() as $capability) {
             $route = new Route(
                 '/' . $capability,
@@ -101,8 +171,6 @@ class CrudLoader extends Loader
 
             $routes->add($routeName, $route);
         }
-
-        return $routes;
     }
 
     public function supports($resource, $type = null)

@@ -75,6 +75,7 @@ class TableContent extends AbstractContent
         if ($actionColumnItems) {
             $table->addColumn('actions', ActionColumn::class, [
                 'items' => $actionColumnItems,
+                'extraRouteParameters' => $table->getExtraRouteParameters(),
             ]);
         }
 

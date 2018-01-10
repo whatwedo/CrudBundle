@@ -43,7 +43,7 @@ use whatwedo\TableBundle\Table\Table;
  */
 interface DefinitionInterface
 {
-    public static function getEntityTitle();
+    public function getEntityTitle();
 
     public static function getAlias();
 
@@ -95,7 +95,7 @@ interface DefinitionInterface
      *
      * @return string fqdn of the entity
      */
-    public static function getEntity();
+    public function getEntity();
 
     /**
      * Returns the entity repository
@@ -109,7 +109,7 @@ interface DefinitionInterface
      *
      * @return string alias
      */
-    public static function getQueryAlias();
+    public function getQueryAlias();
 
     /**
      * returns a query builder

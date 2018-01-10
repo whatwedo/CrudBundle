@@ -90,7 +90,7 @@ class DefaultDefinitionVoter implements VoterInterface
         // Check if base on definition
         $definition = $this->definitionManager->getDefinitionFor($subject);
         if (is_null($definition)) {
-            return static::ACCESS_ABSTAIN;
+           return static::ACCESS_ABSTAIN;
         }
 
         // Check if another possible voter matches
