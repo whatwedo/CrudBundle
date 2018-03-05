@@ -272,8 +272,10 @@ abstract class AbstractDefinition implements DefinitionInterface
 
     /**
      * @param Table $table
+     * @param array $doNotFetchAll
+     * @throws \Doctrine\Common\Annotations\AnnotationException
      */
-    public function overrideTableConfiguration(Table $table)
+    public function overrideTableConfiguration(Table $table, $doNotFetchAll = [])
     {
         $reader = new AnnotationReader();
         $reflectionClass = new \ReflectionClass(static::getEntity());
@@ -313,6 +315,9 @@ abstract class AbstractDefinition implements DefinitionInterface
                 $target = $ormManyToOne->targetEntity;
                 if (strpos($target, '\\') === false) {
                     $target = preg_replace('#[a-zA-Z0-9]+$#i', $target, static::getEntity());
+                }
+                if (in_array($target, $doNotFetchAll)) {
+                    continue;
                 }
                 $choices = $this->getQueryBuilder()->getEntityManager()->getRepository($target)->findAll();
                 $joins = [];
