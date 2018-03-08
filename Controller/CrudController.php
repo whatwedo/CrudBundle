@@ -373,7 +373,9 @@ class CrudController extends BaseController implements CrudDefinitionController
     {
         $data = [];
         foreach ($request->request->get('data') as $pair) {
-            $data[$pair['key']] = $pair['value'];
+            if (isset($pair['value'])) {
+                $data[$pair['key']] = $pair['value'];
+            }
         }
         $obj = $this->definition->ajaxOnDataChanged($data);
         if (is_null($obj)) {
