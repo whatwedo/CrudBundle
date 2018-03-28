@@ -162,14 +162,6 @@ interface DefinitionInterface
      */
     public function getDeleteRedirect(RouterInterface $router, $entity = null);
 
-
-    /**
-     * @param RouterInterface $router
-     * @param $entity
-     * @return Response
-     */
-    public function getCreateRedirect(RouterInterface $router, $entity = null);
-
     /**
      * @param $data
      * @return boolean

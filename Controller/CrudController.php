@@ -268,19 +268,11 @@ class CrudController extends BaseController implements CrudDefinitionController
 
                 if (is_null($uri)) {
                     $this->addFlash('success', sprintf('Erfolgreich gespeichert.'));
-                    $redirect = $this->getDefinition()->getCreateRedirect($this->get('router'), $entity);
-                    if(!is_null($redirect)){
-                        return $redirect;
-                    }
                     return $this->redirectToRoute($this->getDefinition()->getRoutePrefix() . '_show', [
                         'id' => $entity->getId(),
                     ]);
                 } else {
                     $this->addFlash('success', sprintf('Erfolgreich hinzugefügt.'));
-                    $redirect = $this->getDefinition()->getCreateRedirect($this->get('router'), $entity);
-                    if(!is_null($redirect)){
-                        return $redirect;
-                    }
                     return $this->redirect($uri);
                 }
             } else {

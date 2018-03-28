@@ -383,14 +383,6 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * {@inheritdoc}
      */
-    public function getCreateRedirect(RouterInterface $router, $entity = null)
-    {
-        return null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public static function getRoutePrefix()
     {
         return static::getAlias();
