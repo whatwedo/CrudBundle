@@ -337,7 +337,7 @@ class RelationContent extends AbstractContent
             ->getMetadataFactory()
             ->getMetadataFor($this->definition::getEntity());
         $propertyClass = $metadata->associationMappings[$accessorPath]['targetEntity'];
-        $targetDefinition = $this->getDefinitionManager()->getDefinitionFromClass($propertyClass);
+        $targetDefinition = $this->getDefinitionManager()->getDefinitionFromEntityClass($propertyClass);
         $this->accessorPathDefinitionCacheMap[$accessorPath] = $targetDefinition;
         return $this->getDefinitionForAccessorPath($accessorPath);
     }
