@@ -2,6 +2,7 @@ services:
     # Manager
     whatwedo_crud.manager.definition:
         class: whatwedo\CrudBundle\Manager\DefinitionManager
+        public: true
 
     whatwedo_crud.manager.block:
         class: whatwedo\CrudBundle\Manager\BlockManager
