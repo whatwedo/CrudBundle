@@ -52,21 +52,16 @@ class TableContent extends AbstractContent
         $actionColumnItems = [];
 
         if ($this->getOption('definition')
-            && call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::SHOW)) {
-            $table->setShowRoute(sprintf(
-                '%s_%s',
-                call_user_func([$this->getOption('definition'), 'getRoutePrefix']),
-                RouteEnum::SHOW
-            ));
+            && $this->hasCapability(RouteEnum::SHOW)) {
+
+            $showRoute = $this->getRoute(RouteEnum::SHOW);
+
+            $table->setShowRoute($showRoute);
             $actionColumnItems[] = [
                 'label' => 'Details',
                 'icon' => 'arrow-right',
                 'button' => 'primary',
-                'route' => sprintf(
-                    '%s_%s',
-                    call_user_func([$this->getOption('definition'), 'getRoutePrefix']),
-                    RouteEnum::SHOW
-                ),
+                'route' => $showRoute,
                 'route_parameters' => [],
                 'voter_attribute' => RouteEnum::SHOW,
             ];
@@ -98,7 +93,7 @@ class TableContent extends AbstractContent
      */
     public function render($row)
     {
-        return 'call RelationContent::renderTable()';
+        return 'call TableContent::renderTable()';
     }
 
     /**
@@ -126,5 +121,28 @@ class TableContent extends AbstractContent
             'route_addition_key' => null,
             'show_index_button' => false,
         ]);
+    }
+
+    /**
+     * @param $capability
+     * @return bool
+     */
+    protected function hasCapability($capability): bool
+    {
+        return call_user_func([$this->getOption('definition'), 'hasCapability'], $capability);
+    }
+
+    /**
+     * @param $suffix
+     * @return string
+     */
+    protected function getRoute($suffix): string
+    {
+        return sprintf(
+            '%s_%s',
+            call_user_func([$this->options['definition'], 'getRoutePrefix']),
+            $suffix
+        );
+
     }
 }

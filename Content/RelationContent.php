@@ -49,12 +49,13 @@ use whatwedo\TableBundle\Event\CriteriaLoadEvent;
 use whatwedo\TableBundle\Factory\TableFactory;
 use whatwedo\TableBundle\Model\SimpleTableData;
 use whatwedo\TableBundle\Table\ActionColumn;
+use whatwedo\CrudBundle\Enum\VisibilityEnum;
 
 /**
  * Class RelationContent
  * @package whatwedo\CrudBundle\Content
  */
-class RelationContent extends AbstractContent
+class RelationContent extends TableContent
 {
     protected $tableFactory;
     protected $eventDispatcher;
@@ -79,14 +80,14 @@ class RelationContent extends AbstractContent
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * @return bool
-     */
-    public function isTable()
+    public function renderTable($identifier, $row)
     {
-        return true;
-    }
+        $data = $this->getContents($row);
+        if (!$data instanceof Collection) {
+            throw new InvalidDataException('data for RelationContent should be an instance of ' . Collection::class);
+        }
 
+        $options = $this->options['table_options'];
     /**
      * @param $identifier
      * @param $row
@@ -96,25 +97,11 @@ class RelationContent extends AbstractContent
      * @throws \Psr\Container\NotFoundExceptionInterface
      * @throws \whatwedo\TableBundle\Exception\DataLoaderNotAvailableException
      */
-    public function renderTable($identifier, $row)
-    {
-        $data = $this->getContents($row);
-        if (!$data instanceof Collection) {
-            throw new InvalidDataException('data for RelationContent should be an instance of ' . Collection::class);
-        }
-
-        $options = $this->options['table_options'];
         $options['data_loader'] = function($page, $limit) use ($data) {
             $dataLoader = new SimpleTableData();
             $dataLoader->setTotalResults(count($data));
 
-            if ($this->options['criteria'] instanceof Criteria) {
-                $criteria = $this->options['criteria'];
-            } else {
-                $criteria = Criteria::create();
-            }
-
-            $criteria
+            $criteria = $this->getCriteria()
                 ->setMaxResults($limit)
                 ->setFirstResult(($page - 1) * $limit)
             ;
@@ -136,47 +123,31 @@ class RelationContent extends AbstractContent
 
         $actionColumnItems = [];
 
-        if (call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::SHOW)) {
-            $table->setShowRoute(sprintf(
-                '%s_%s',
-                call_user_func([$this->getOption('definition'), 'getRoutePrefix']),
-                RouteEnum::SHOW
-            ));
+        if ($this->hasCapability(RouteEnum::SHOW)) {
+            $table->setShowRoute($this->getRoute(RouteEnum::SHOW));
             $actionColumnItems[] = [
                 'label' => 'Details',
                 'icon' => 'arrow-right',
                 'button' => 'primary',
-                'route' => sprintf(
-                    '%s_%s',
-                    call_user_func([$this->getOption('definition'), 'getRoutePrefix']),
-                    RouteEnum::SHOW
-                ),
+                'route' => $this->getRoute(RouteEnum::SHOW),
                 'route_parameters' => [],
                 'voter_attribute' => RouteEnum::SHOW,
             ];
         }
 
-        if (call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::EDIT)) {
+        if ($this->hasCapability(RouteEnum::EDIT)) {
             $actionColumnItems[] = [
                 'label' => 'Bearbeiten',
                 'icon' => 'pencil',
                 'button' => 'warning',
-                'route' => sprintf(
-                    '%s_%s',
-                    call_user_func([$this->getOption('definition'), 'getRoutePrefix']),
-                    RouteEnum::EDIT
-                ),
+                'route' => $this->getRoute(RouteEnum::EDIT),
                 'route_parameters' => [],
                 'voter_attribute' => RouteEnum::EDIT,
             ];
         }
 
-        if (call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::EXPORT)) {
-            $table->setExportRoute(sprintf(
-                '%s_%s',
-                call_user_func([$this->getOption('definition'), 'getRoutePrefix']),
-                RouteEnum::EXPORT
-            ));
+        if ($this->hasCapability( RouteEnum::EXPORT)) {
+            $table->setExportRoute($this->getRoute(RouteEnum::EXPORT));
         }
 
         $table->addColumn('actions', ActionColumn::class, [
@@ -204,10 +175,8 @@ class RelationContent extends AbstractContent
             return null;
         }
 
-        $capibilities = call_user_func([$this->options['definition'], 'getCapabilities']);
-
-        if (in_array(RouteEnum::INDEX, $capibilities)) {
-            return call_user_func([$this->options['definition'], 'getRoutePrefix']) . '_index';
+        if ($this->hasCapability(RouteEnum::INDEX)) {
+            return $this->getRoute(RouteEnum::INDEX);
         }
 
         return null;
@@ -218,10 +187,8 @@ class RelationContent extends AbstractContent
      */
     public function getCreateRoute()
     {
-        $capibilities = call_user_func([$this->options['definition'], 'getCapabilities']);
-
-        if (in_array(RouteEnum::CREATE, $capibilities)) {
-            return call_user_func([$this->options['definition'], 'getRoutePrefix']) . '_create';
+        if ($this->hasCapability(RouteEnum::CREATE)) {
+            return $this->getRoute(RouteEnum::CREATE);
         }
 
         return null;
@@ -290,6 +257,7 @@ class RelationContent extends AbstractContent
             'route_addition_key' => $this->definition::getChildRouteAddition(),
             'show_index_button' => false,
             'add_voter_attribute' => RouteEnum::EDIT,
+            'visibility' => VisibilityEnum::SHOW
         ]);
 
         $resolver->setDefault('definition', function (Options $options) {
