@@ -32,9 +32,15 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Exception\InvalidDataException;
@@ -50,21 +56,12 @@ use whatwedo\TableBundle\Table\ActionColumn;
  */
 class RelationContent extends AbstractContent
 {
-    /**
-     * @var DefinitionManager
-     */
+    protected $tableFactory;
+    protected $eventDispatcher;
+    protected $authorizationChecker;
     protected $definitionManager;
-
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-
-    /**
-     * RelationContent constructor.
-     * @param ContainerInterface $container
-     */
+    protected $requestStack;
+    protected $doctrine;
 
     protected $accessorPathDefinitionCacheMap = [];
 
@@ -72,9 +69,14 @@ class RelationContent extends AbstractContent
      * RelationContent constructor.
      * @param ContainerInterface $container
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(TableFactory $tableFactory, EventDispatcherInterface $eventDispatcher, AuthorizationCheckerInterface $authorizationChecker, DefinitionManager $definitionManager, RequestStack $requestStack, RegistryInterface $doctrine)
     {
-        $this->container = $container;
+        $this->tableFactory = $tableFactory;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->authorizationChecker = $authorizationChecker;
+        $this->definitionManager = $definitionManager;
+        $this->requestStack = $requestStack;
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -101,8 +103,6 @@ class RelationContent extends AbstractContent
             throw new InvalidDataException('data for RelationContent should be an instance of ' . Collection::class);
         }
 
-        /** @var TableFactory $tableFactory */
-        $tableFactory = $this->container->get('whatwedo_table.factory.table');
         $options = $this->options['table_options'];
         $options['data_loader'] = function($page, $limit) use ($data) {
             $dataLoader = new SimpleTableData();
@@ -124,7 +124,7 @@ class RelationContent extends AbstractContent
             return $dataLoader;
         };
 
-        $table = $tableFactory->createTable($identifier, $options);
+        $table = $this->tableFactory->createTable($identifier, $options);
         $targetDefinition = $this->getDefinitionForAccessorPath($this->getOption('accessor_path'));
         $targetDefinition->configureTable($table);
 
@@ -132,7 +132,7 @@ class RelationContent extends AbstractContent
             $this->options['table_configuration']($table);
         }
 
-        $this->container->get('event_dispatcher')->dispatch(CriteriaLoadEvent::PRE_LOAD, new CriteriaLoadEvent($this, $table));
+        $this->eventDispatcher->dispatch(CriteriaLoadEvent::PRE_LOAD, new CriteriaLoadEvent($this, $table));
 
         $actionColumnItems = [];
 
@@ -247,13 +247,13 @@ class RelationContent extends AbstractContent
      */
     public function isAddAllowed()
     {
-        $definition = $this->getDefinitionManager()->getDefinitionFromClass($this->options['definition']);
+        $definition = $this->definitionManager->getDefinitionFromClass($this->options['definition']);
         $entityName = $definition::getEntity();
         $entityReflector = new ReflectionClass($entityName);
         if ($entityReflector->isAbstract()) {
             return false;
         }
-        return $this->container->get('security.authorization_checker')->isGranted(RouteEnum::CREATE, $entityReflector->newInstanceWithoutConstructor());
+        return $this->authorizationChecker->isGranted(RouteEnum::CREATE, $entityReflector->newInstanceWithoutConstructor());
     }
 
     /**
@@ -265,28 +265,6 @@ class RelationContent extends AbstractContent
         if (isset($this->options[$key])) {
             $this->options[$key] = $value;
         }
-    }
-
-    /**
-     * @return mixed|DefinitionManager
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     */
-    public function getDefinitionManager()
-    {
-        if (!$this->definitionManager instanceof DefinitionManager) {
-            return $this->definitionManager = $this->container->get('whatwedo_crud.manager.definition');
-        }
-
-        return $this->definitionManager;
-    }
-
-    /**
-     * @param DefinitionManager $definitionManager
-     */
-    public function setDefinitionManager($definitionManager)
-    {
-        $this->definitionManager = $definitionManager;
     }
 
     /**
@@ -332,12 +310,12 @@ class RelationContent extends AbstractContent
             return $this->accessorPathDefinitionCacheMap[$accessorPath];
         }
         /** @var ClassMetadata $metadata */
-        $metadata = $this->container->get('doctrine')
+        $metadata = $this->doctrine
             ->getManager()
             ->getMetadataFactory()
             ->getMetadataFor($this->definition::getEntity());
         $propertyClass = $metadata->associationMappings[$accessorPath]['targetEntity'];
-        $targetDefinition = $this->getDefinitionManager()->getDefinitionFromEntityClass($propertyClass);
+        $targetDefinition = $this->definitionManager->getDefinitionFromEntityClass($propertyClass);
         $this->accessorPathDefinitionCacheMap[$accessorPath] = $targetDefinition;
         return $this->getDefinitionForAccessorPath($accessorPath);
     }
@@ -347,7 +325,7 @@ class RelationContent extends AbstractContent
      */
     public function getRequest()
     {
-        return $this->container->get('request_stack')->getCurrentRequest();
+        return $this->requestStack->getCurrentRequest();
     }
 
     /**
