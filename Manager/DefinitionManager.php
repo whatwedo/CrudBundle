@@ -44,8 +44,10 @@ class DefinitionManager
      * @param $alias
      * @param DefinitionInterface $definition
      */
-    public function addDefinition($alias, DefinitionInterface $definition)
+    public function addDefinition(DefinitionInterface $definition, $alias = null)
     {
+        if($alias == null) $alias = $definition::getAlias();
+
         $this->definitions[$alias] = $definition;
     }
 

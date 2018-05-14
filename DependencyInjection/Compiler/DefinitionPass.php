@@ -81,9 +81,13 @@ class DefinitionPass implements CompilerPassInterface
                 $container->getDefinition($id)->addMethodCall('addExtension', [new Reference($idExtension)]);
             }
 
+            $definition->addMethodCall('addDefinition', [new Reference($id)]);
+
             // add all Defintions to our DefinitionManager
             foreach ($tags as $attributes) {
-                $definition->addMethodCall('addDefinition', [$attributes['alias'], new Reference($id)]);
+                if(array_key_exists('alias', $attributes)) {
+                    $definition->addMethodCall('addDefinition', [$attributes['alias'], new Reference($id)]);
+                }
             }
 
             // create a resource so that the cache is loaded new as soon as a definition is updated
