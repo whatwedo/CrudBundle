@@ -42,7 +42,6 @@ services:
     whatwedo_crud.content.relation:
         class: whatwedo\CrudBundle\Content\RelationContent
         autowire: true
-            - '@service_container'
         tags:
             - crud.content
 
