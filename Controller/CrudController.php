@@ -380,12 +380,12 @@ class CrudController extends BaseController implements CrudDefinitionController
      */
     public function getView($file)
     {
-        if ($this->getTemplating()->exists($this->getDefinition()->getTemplateDirectory() . ':' . $file)) {
-            return $this->getDefinition()->getTemplateDirectory() . ':' . $file;
+        if ($this->getTemplating()->exists($this->getDefinition()->getTemplateDirectory() . '/' . $file)) {
+            return $this->getDefinition()->getTemplateDirectory() . '/' . $file;
         }
 
         // fallback if it does not exist
-        return 'whatwedoCrudBundle:Crud:' . $file;
+        return '@whatwedoCrud/Crud/' . $file;
     }
 
     /**

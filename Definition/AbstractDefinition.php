@@ -275,7 +275,7 @@ abstract class AbstractDefinition implements DefinitionInterface
      */
     public function getTemplateDirectory()
     {
-        return 'whatwedoCrudBundle:Crud';
+        return '@whatwedoCrud/Crud';
     }
 
     /**
