@@ -28,6 +28,7 @@
 namespace whatwedo\CrudBundle\Form\Type;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -40,17 +41,9 @@ use whatwedo\CrudBundle\Form\DataTransformer\EntityToIdTransformer;
  */
 class EntityHiddenType extends AbstractType
 {
-
-    /**
-     * @var EntityManager
-     */
     protected $em;
 
-    /**
-     * HiddenEntityType constructor.
-     * @param EntityManager $em
-     */
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
     }
@@ -80,13 +73,5 @@ class EntityHiddenType extends AbstractType
     public function getParent()
     {
         return HiddenType::class;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'entity_hidden';
     }
 }

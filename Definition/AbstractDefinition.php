@@ -28,6 +28,7 @@
 namespace whatwedo\CrudBundle\Definition;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -63,7 +64,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     const AJAX = 2;
 
     /**
-     * @var Registry
+     * @var RegistryInterface
      */
     protected $doctrine;
 
@@ -195,8 +196,9 @@ abstract class AbstractDefinition implements DefinitionInterface
      * set the doctrine registry
      *
      * @param Registry $registry
+     * @required
      */
-    public function setDoctrine(Registry $registry)
+    public function setDoctrine(RegistryInterface $registry)
     {
         $this->doctrine = $registry;
     }
@@ -211,8 +213,9 @@ abstract class AbstractDefinition implements DefinitionInterface
 
     /**
      * @param BlockManager $blockManager
+     * @required
      */
-    public function setBlockManager($blockManager)
+    public function setBlockManager(BlockManager $blockManager)
     {
         $this->blockManager = $blockManager;
     }
@@ -244,6 +247,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @param RequestStack $requestStack
      * @return AbstractDefinition
+     * @required
      */
     public function setRequestStack(RequestStack $requestStack)
     {
@@ -263,6 +267,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @param DefinitionManager $definitionManager
      * @return AbstractDefinition
+     * @required
      */
     public function setDefinitionManager(DefinitionManager $definitionManager)
     {
@@ -280,6 +285,7 @@ abstract class AbstractDefinition implements DefinitionInterface
 
     /**
      * @param DefinitionViewInterface $definitionView
+     * @required
      */
     public function setDefinitionView(DefinitionViewInterface $definitionView)
     {
@@ -332,7 +338,6 @@ abstract class AbstractDefinition implements DefinitionInterface
     public function getLabelFor($table, $property)
     {
         if ($table instanceof DoctrineTable) {
-            /** @var \whatwedo\TableBundle\Table\Column $column */
             foreach ($table->getColumns() as $column) {
                 if ($column->getAcronym() == $property) {
                     return $column->getLabel();
@@ -345,7 +350,6 @@ abstract class AbstractDefinition implements DefinitionInterface
             $this->configureView($this->definitionBuilderLabelCache, null);
         }
 
-        /** @var Block $block */
         foreach ($this->definitionBuilderLabelCache->getBlocks() as $block) {
             foreach ($block->getContents() as $content) {
                 if ($content->getAcronym() == $property && array_key_exists('label', $content->getOptions())) {
@@ -361,7 +365,7 @@ abstract class AbstractDefinition implements DefinitionInterface
      */
     public function getDeleteRedirect(RouterInterface $router, $entity = null)
     {
-        return new RedirectResponse($router->generate(static::getRoutePrefix() . '_index'));
+        return new RedirectResponse($router->generate(sprintf('%s_%s', static::getRoutePrefix(), RouteEnum::INDEX)));
     }
 
     /**
@@ -449,7 +453,7 @@ abstract class AbstractDefinition implements DefinitionInterface
         }
 
         if (static::hasCapability(RouteEnum::INDEX)) {
-            $this->getBreadcrumbs()->addRouteItem(static::getEntityTitle(), static::getRoutePrefix() . '_' . RouteEnum::INDEX, $this->getIndexBreadcrumbParameters([], $entity));
+            $this->getBreadcrumbs()->addRouteItem(static::getEntityTitle(), sprintf('%s_%s', static::getRoutePrefix(), RouteEnum::INDEX), $this->getIndexBreadcrumbParameters([], $entity));
         } else {
             $this->getBreadcrumbs()->addItem(static::getEntityTitle());
         }

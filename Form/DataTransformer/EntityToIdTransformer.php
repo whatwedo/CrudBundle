@@ -28,33 +28,18 @@
 namespace whatwedo\CrudBundle\Form\DataTransformer;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-/**
- * Class EntityToIdTransformer
- * @package whatwedo\CrudBundle\Form\DataTransformer
- */
 class EntityToIdTransformer implements DataTransformerInterface
 {
-
-    /**
-     * @var EntityManager
-     */
     protected $em;
 
-    /**
-     * @var string
-     */
     protected $class;
 
-    /**
-     * EntityToIdTransformer constructor.
-     * @param EntityManager $em
-     * @param $class
-     */
-    public function __construct(EntityManager $em, $class)
+    public function __construct(EntityManagerInterface $em, string $class)
     {
         $this->em = $em;
         $this->class = $class;

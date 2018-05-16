@@ -51,7 +51,7 @@ class DefinitionBuilder
     protected $blockManager;
 
     /**
-     * @var array
+     * @var Block[]
      */
     protected $blocks = [];
 
@@ -175,6 +175,9 @@ class DefinitionBuilder
         return $this->templates;
     }
 
+    /**
+     * @return BlockCollection|Block[]
+     */
     public function getBlocks()
     {
         return new BlockCollection($this->blocks);

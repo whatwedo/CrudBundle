@@ -35,10 +35,14 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormRegistry;
+use Symfony\Component\Form\FormRegistryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Http\AccessMap;
+use Symfony\Component\Security\Http\AccessMapInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use whatwedo\CrudBundle\Collection\BlockCollection;
@@ -147,7 +151,7 @@ class DefinitionView implements DefinitionViewInterface
      * @param AuthorizationChecker $authorizationChecker
      * @param RequestStack $requestStack
      */
-    public function __construct(EngineInterface $templating, FormFactoryInterface $formFactory, FormRegistry $formRegistry, Router $router, AccessMap $accessMap, AuthorizationChecker $authorizationChecker, RequestStack $requestStack)
+    public function __construct(EngineInterface $templating, FormFactoryInterface $formFactory, FormRegistryInterface $formRegistry, RouterInterface $router, AccessMapInterface $accessMap, AuthorizationCheckerInterface $authorizationChecker, RequestStack $requestStack)
     {
         $this->templating = $templating;
         $this->formFactory = $formFactory;
@@ -159,6 +163,10 @@ class DefinitionView implements DefinitionViewInterface
         $this->formRegistry = $formRegistry;
     }
 
+    /**
+     * @param DefinitionManager $definitionManager
+     * @required
+     */
     public function setDefinitionManager(DefinitionManager $definitionManager)
     {
         $this->definitionManager = $definitionManager;

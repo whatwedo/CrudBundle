@@ -27,7 +27,8 @@
 
 namespace whatwedo\CrudBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use whatwedo\TableBundle\Event\ResultRequestEvent;
@@ -36,8 +37,18 @@ use whatwedo\TableBundle\Event\ResultRequestEvent;
  * Class RelationController
  * @package whatwedo\TableBundle\Controller
  */
-class RelationController extends Controller
+class RelationController extends AbstractController
 {
+    protected $eventDispatcher;
+
+    /**
+     * RelationController constructor.
+     * @param $eventDispatcher
+     */
+    public function __construct(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
 
     /**
      * @param Request $request
@@ -48,7 +59,7 @@ class RelationController extends Controller
         $entity = $request->get('entity', false);
         $term = $request->get('q', false);
         $resultRequestEvent = new ResultRequestEvent($entity, $term);
-        $this->get('event_dispatcher')->dispatch(ResultRequestEvent::RELATION_SET, $resultRequestEvent);
+        $this->eventDispatcher->dispatch(ResultRequestEvent::RELATION_SET, $resultRequestEvent);
         return $resultRequestEvent->getResult();
     }
 

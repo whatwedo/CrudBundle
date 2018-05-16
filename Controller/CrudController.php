@@ -27,20 +27,24 @@
 
 namespace whatwedo\CrudBundle\Controller;
 
+use Psr\Log\LoggerInterface;
 use ReflectionClass;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use whatwedo\CoreBundle\Controller\BaseController;
+use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CrudBundle\Content\EditableContentInterface;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Encoder\CsvEncoder;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Event\CrudEvent;
 use whatwedo\CrudBundle\Normalizer\ObjectNormalizer;
+use whatwedo\TableBundle\Factory\TableFactory;
 use whatwedo\TableBundle\Table\ActionColumn;
 use whatwedo\TableBundle\Table\DoctrineTable;
 use Symfony\Component\Serializer\Serializer;
@@ -49,7 +53,7 @@ use Symfony\Component\Serializer\Serializer;
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
  */
-class CrudController extends BaseController implements CrudDefinitionController
+class CrudController extends AbstractController implements CrudDefinitionController
 {
     protected $twigParametersIndex = [];
     protected $twigParametersShow = [];
@@ -66,9 +70,33 @@ class CrudController extends BaseController implements CrudDefinitionController
     protected $eventDispatcher;
 
     /**
-     * @var RequestStack|null
+     * @var EngineInterface
      */
-    protected $requestStack;
+    protected $templating;
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * @var RouterInterface
+     */
+    protected  $router;
+
+    /**
+     * CrudController constructor.
+     * @param EngineInterface $templating
+     * @param LoggerInterface $logger
+     */
+    public function __construct(EngineInterface $templating, LoggerInterface $logger, EventDispatcherInterface $eventDispatcher, RouterInterface $router)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+        $this->router = $router;
+        $this->templating = $templating;
+        $this->logger = $logger;
+    }
+
 
     public function configureDefinition(DefinitionInterface $definition)
     {
@@ -86,7 +114,7 @@ class CrudController extends BaseController implements CrudDefinitionController
     /**
      * @return Response
      */
-    public function indexAction()
+    public function indexAction(TableFactory $tableFactory)
     {
         $entityName = $this->getDefinition()->getEntity();
         $entityReflector = new ReflectionClass($entityName);
@@ -97,7 +125,7 @@ class CrudController extends BaseController implements CrudDefinitionController
             $this->denyAccessUnlessGranted(RouteEnum::INDEX, $voterEntity);
         }
 
-        $table = $this->get('whatwedo_table.factory.table')
+        $table = $tableFactory
             ->createDoctrineTable('index', [
                 'query_builder' => $this->getDefinition()->getQueryBuilder()
             ]);
@@ -212,7 +240,7 @@ class CrudController extends BaseController implements CrudDefinitionController
                                 ->find($request->query->getInt($queryParameter));
 
                             if (!is_null($value)) {
-                                $uri = $this->get('router')->generate(
+                                $uri = $this->router->generate(
                                     sprintf(
                                         '%s_%s',
                                         call_user_func([$content->getPreselectDefinition(), 'getRoutePrefix']),
@@ -280,7 +308,7 @@ class CrudController extends BaseController implements CrudDefinitionController
     {
         $entity = $this->getEntityOr404($request);
         $this->denyAccessUnlessGranted(RouteEnum::DELETE, $entity);
-        $redirect = $this->getDefinition()->getDeleteRedirect($this->get('router'), $entity);
+        $redirect = $this->getDefinition()->getDeleteRedirect($this->router, $entity);
 
         try {
             $this->getDoctrine()->getManager()->remove($entity);
@@ -288,7 +316,7 @@ class CrudController extends BaseController implements CrudDefinitionController
             $this->addFlash('success', sprintf('Eintrag erfolgreich gelöscht.'));
         } catch (\Exception $e) {
             $this->addFlash('error', sprintf('Eintrag konnte nicht gelöscht werden: ' . $e->getMessage()));
-            $this->getLogger()->warning('Error while deleting: ' . $e->getMessage(), [
+            $this->logger->warning('Error while deleting: ' . $e->getMessage(), [
                 'entity' => get_class($entity),
                 'id' => $entity->getId(),
             ]);
@@ -380,7 +408,7 @@ class CrudController extends BaseController implements CrudDefinitionController
      */
     public function getView($file)
     {
-        if ($this->getTemplating()->exists($this->getDefinition()->getTemplateDirectory() . '/' . $file)) {
+        if ($this->templating->exists($this->getDefinition()->getTemplateDirectory() . '/' . $file)) {
             return $this->getDefinition()->getTemplateDirectory() . '/' . $file;
         }
 
@@ -477,38 +505,14 @@ class CrudController extends BaseController implements CrudDefinitionController
 
     public function dispatchEvent($event, $entity)
     {
-        $this->getEventDispatcher()->dispatch(
+        $this->eventDispatcher->dispatch(
             $event,
             new CrudEvent($entity)
         );
 
-        $this->getEventDispatcher()->dispatch(
+        $this->eventDispatcher->dispatch(
             $event . '.' . $this->getDefinition()->getAlias(),
             new CrudEvent($entity)
         );
-    }
-
-    /**
-     * @return \Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher|EventDispatcherInterface|\Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher
-     */
-    public function getEventDispatcher()
-    {
-        if (!$this->eventDispatcher instanceof EventDispatcherInterface) {
-            $this->eventDispatcher = $this->get('event_dispatcher');
-        }
-
-        return $this->eventDispatcher;
-    }
-
-    /**
-     * @return RequestStack
-     */
-    public function getRequestStack()
-    {
-        if (!$this->requestStack instanceof RequestStack) {
-            $this->requestStack = $this->get('request_stack');
-        }
-
-        return $this->requestStack;
     }
 }

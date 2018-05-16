@@ -45,7 +45,6 @@ use whatwedo\CrudBundle\Traits\VisibilityTrait;
  */
 class Block
 {
-
     use VisibilityTrait;
 
     /**
@@ -241,39 +240,19 @@ class Block
     }
 
     /**
-     * @return DefinitionInterface
+     * @param ContentManager $contentManager
+     * @required
      */
-    public function getDefinition()
+    public function setContentManager(ContentManager $contentManager): void
     {
-        return $this->definition;
+        $this->contentManager = $contentManager;
     }
 
     /**
      * @param DefinitionInterface $definition
-     * @return $this
      */
-    public function setDefinition($definition)
+    public function setDefinition(DefinitionInterface $definition): void
     {
         $this->definition = $definition;
-        return $this;
-    }
-
-    /**
-     * @return ContentManager
-     */
-    public function getContentManager()
-    {
-        return $this->contentManager;
-    }
-
-    /**
-     * @param $contentManager
-     * @return $this
-     */
-    public function setContentManager($contentManager)
-    {
-        $this->contentManager = $contentManager;
-
-        return $this;
     }
 }

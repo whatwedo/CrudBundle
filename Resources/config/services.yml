@@ -1,125 +1,34 @@
 services:
-    # Manager
-    whatwedo\CrudBundle\Manager\DefinitionManager:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
 
-    whatwedo_crud.manager.definition:
-        alias: whatwedo\CrudBundle\Manager\DefinitionManager
-        public: true
+    whatwedo\CrudBundle\:
+        resource: '../../*'
+        exclude: '../../{Normalizer,Definition}'
 
-    whatwedo_crud.manager.block:
-        class: whatwedo\CrudBundle\Manager\BlockManager
-
-    whatwedo_crud.manager.content:
-        class: whatwedo\CrudBundle\Manager\ContentManager
-
-    # Definition
-    whatwedo_crud.definition.abstract_definition:
-        abstract:  true
-        calls:
-            - [setBlockManager, ['@whatwedo_crud.manager.block']]
-            - [setDoctrine, ['@doctrine']]
-            - [setRequestStack, ['@request_stack']]
-            - [setDefinitionView, ['@whatwedo_crud.view.definition_view']]
-            - [setDefinitionManager, ['@whatwedo_crud.manager.definition']]
-            - [setTemplates, ['%whatwedo_crud.config.templates%']]
-
-    # Block
-    whatwedo_crud.block.block:
-        class: whatwedo\CrudBundle\Block\Block
+    whatwedo\CrudBundle\Block\Block:
         tags:
             - crud.block
-        calls:
-            - [setContentManager, ['@whatwedo_crud.manager.content']]
 
-    # Content
-    whatwedo_crud.content.content:
-        class: whatwedo\CrudBundle\Content\Content
-        arguments:
-          - '@whatwedo_core.manager.formatter'
-        tags:
-            - crud.content
-
-    whatwedo_crud.content.relation:
-        class: whatwedo\CrudBundle\Content\RelationContent
-        autowire: true
-        tags:
-            - crud.content
-
-    whatwedo_crud.content.table:
-        class: whatwedo\CrudBundle\Content\TableContent
-        tags:
-            - crud.content
-
-    whatwedo_crud.content.twig:
-        class: whatwedo\CrudBundle\Content\TwigContent
-        tags:
-            - crud.content
-
-    # View
-    whatwedo_crud.view.definition_view:
-        class: whatwedo\CrudBundle\View\DefinitionView
+    whatwedo\CrudBundle\View\DefinitionView:
         shared: false
         arguments:
-            - '@templating'
-            - '@form.factory'
-            - '@form.registry'
-            - '@router'
-            - '@security.access_map'
-            - '@security.authorization_checker'
-            - '@request_stack'
-        calls:
-            - [setDefinitionManager, ['@whatwedo_crud.manager.definition']]
+            $accessMap: '@security.access_map'
 
-    # Route Loader
-    whatwedo_crud.routing.crud_loader:
-        class: whatwedo\CrudBundle\Routing\CrudLoader
-        arguments:
-            - '@whatwedo_crud.manager.definition'
+    whatwedo\CrudBundle\View\DefinitionViewInterface: '@whatwedo\CrudBundle\View\DefinitionView'
+
+    whatwedo\CrudBundle\Routing\CrudLoader:
         tags:
             - { name: routing.loader }
 
-    # Event Listener
-    whatwedo_crud.event_listener.crud_definition:
-        class: whatwedo\CrudBundle\EventListener\CrudDefinitionListener
-        arguments:
-            - '@whatwedo_crud.manager.definition'
+    whatwedo\CrudBundle\EventListener\CrudDefinitionListener:
         tags:
-            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
+            - { name: kernel.event_listener, event: kernel.controller }
 
-    # Twig Extension
-    whatwedo_crud.twig.callable_extension:
-        class: whatwedo\CrudBundle\Twig\CallableExtension
-        tags:
-            - { name: twig.extension }
-
-    # Extensions
-    whatwedo_crud.extension.breadcrumbs:
-        class: whatwedo\CrudBundle\Extension\BreadcrumbsExtension
+    whatwedo\CrudBundle\Extension\BreadcrumbsExtension:
         arguments:
             - '@white_october_breadcrumbs'
             - '%whatwedo_crud.config.breadcrumbs.home.text%'
             - '%whatwedo_crud.config.breadcrumbs.home.route%'
-        tags:
-            - { name: crud.extension, alias: breadcrumb }
-
-    # Form types
-    whatwedo_crud.type.entity_hidden:
-       class: whatwedo\CrudBundle\Form\Type\EntityHiddenType
-       arguments: ['@doctrine.orm.entity_manager']
-       tags:
-       - { name: form.type, alias: entity_hidden }
-
-    whatwedo_crud.form_type.ajax_select:
-        class: whatwedo\CrudBundle\Form\Type\EntityAjaxType
-        arguments:
-            - '@router'
-        tags:
-            - { name: form.type, alias: ajaxSelect }
-
-    # Voter
-    whatwedo_crud.security.voter.default:
-        class: whatwedo\CrudBundle\Security\Voter\DefaultDefinitionVoter
-        arguments:
-            - '@whatwedo_crud.manager.definition'
-        tags:
-            - security.voter

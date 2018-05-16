@@ -33,6 +33,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Router;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class EntityAjaxType
@@ -40,26 +41,13 @@ use Symfony\Component\Routing\Router;
  */
 class EntityAjaxType extends AbstractType
 {
-
-    /**
-     * @var Router $router
-     */
     private $router;
 
-    /**
-     * EntityAjaxType constructor.
-     * @param Router $router
-     */
-    public function __construct(Router $router)
+    public function __construct(RouterInterface $router)
     {
         $this->router = $router;
     }
 
-    /**
-     * @param FormView $view
-     * @param FormInterface $form
-     * @param array $options
-     */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['attr']['data-ajax-select'] = true;
@@ -74,13 +62,4 @@ class EntityAjaxType extends AbstractType
     {
         return EntityType::class;
     }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'ajaxSelect';
-    }
-
 }
