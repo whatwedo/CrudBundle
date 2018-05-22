@@ -277,14 +277,27 @@ class RelationContent extends TableContent
         if (array_key_exists($accessorPath, $this->accessorPathDefinitionCacheMap)) {
             return $this->accessorPathDefinitionCacheMap[$accessorPath];
         }
-        /** @var ClassMetadata $metadata */
-        $metadata = $this->doctrine
+
+        $metadataFactory = $metadata = $this->doctrine
             ->getManager()
-            ->getMetadataFactory()
-            ->getMetadataFor($this->definition::getEntity());
-        $propertyClass = $metadata->associationMappings[$accessorPath]['targetEntity'];
-        $targetDefinition = $this->definitionManager->getDefinitionFromEntityClass($propertyClass);
-        $this->accessorPathDefinitionCacheMap[$accessorPath] = $targetDefinition;
+            ->getMetadataFactory();
+
+        $currentEntity = $this->definition::getEntity();
+
+        // Allow nested relations using dot notation
+        foreach (explode('.', $accessorPath) as $pathPart)
+        {
+            /** @var ClassMetadata $metadata */
+            $metadata = $metadataFactory->getMetadataFor($currentEntity);
+
+            $propertyClass = $metadata->associationMappings[$pathPart]['targetEntity'];
+
+            $currentEntity = $propertyClass;
+
+            $targetDefinition = $this->definitionManager->getDefinitionFromEntityClass($propertyClass);
+            $this->accessorPathDefinitionCacheMap[$accessorPath] = $targetDefinition;
+        }
+
         return $this->getDefinitionForAccessorPath($accessorPath);
     }
 
