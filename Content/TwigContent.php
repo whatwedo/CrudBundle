@@ -55,6 +55,9 @@ class TwigContent extends AbstractContent
             'template' => null,
             'parameters' => []
         ]);
+
+        $resolver->setAllowedTypes('template', 'string');
+        $resolver->setAllowedTypes('parameters', 'array');
     }
 
     public function getTemplate()
