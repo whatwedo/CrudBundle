@@ -11,11 +11,16 @@
     {%- endfor -%}
 {% endmacro attributes %}
 
-{% macro blockHeader(title) %}
+{% macro blockHeader(title, options) %}
     <div class="box-header">
         <h3 class="box-title">
             {{ title }}
         </h3>
+        {% if options.collapsible|default(false) %}
+        <div class="box-tools">
+            <button class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse"><i class="fa fa-{{ options.collapsed|default(false) ? 'plus' : 'minus' }}"></i></button>
+        </div>
+        {% endif %}
     </div>
 {% endmacro %}
 

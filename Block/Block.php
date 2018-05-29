@@ -232,6 +232,8 @@ class Block
             'label' => '',
             'attr' => [],
             'size' => BlockSizeEnum::SMALL,
+            'collapsible' => false,
+            'collapsed' => false,
             'visibility' => VisibilityEnum::SHOW | VisibilityEnum::EDIT | VisibilityEnum::CREATE,
             'show_voter_attribute' => RouteEnum::SHOW,
             'edit_voter_attribute' => RouteEnum::EDIT,
