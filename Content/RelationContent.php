@@ -28,28 +28,27 @@
 namespace whatwedo\CrudBundle\Content;
 
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\RouteEnum;
+use whatwedo\CrudBundle\Enum\VisibilityEnum;
 use whatwedo\CrudBundle\Exception\InvalidDataException;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
-use whatwedo\TableBundle\Event\CriteriaLoadEvent;
 use whatwedo\TableBundle\Factory\TableFactory;
-use whatwedo\TableBundle\Model\SimpleTableData;
 use whatwedo\TableBundle\Table\ActionColumn;
-use whatwedo\CrudBundle\Enum\VisibilityEnum;
+use function array_keys;
+use function array_reduce;
+use function array_reverse;
+use function implode;
 
 /**
  * Class RelationContent
@@ -88,48 +87,58 @@ class RelationContent extends TableContent
         }
 
         $options = $this->options['table_options'];
-    /**
-     * @param $identifier
-     * @param $row
-     *
-     * @return string
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \whatwedo\TableBundle\Exception\DataLoaderNotAvailableException
-     */
-        $options['data_loader'] = function($page, $limit) use ($data) {
-            $dataLoader = new SimpleTableData();
-            $dataLoader->setTotalResults(count($data));
 
-            $criteria = $this->getCriteria()
-                ->setMaxResults($limit)
-                ->setFirstResult(($page - 1) * $limit)
-            ;
+        /*
+         * $row = Lesson
+         */
+        $reverseMapping = $this->getReverseMapping($row);
+        $targetDefinition = $this->getTargetDefinition();
 
-            $dataLoader->setResults($data->matching($criteria)->toArray());
+        $queryBuilder = $targetDefinition->getQueryBuilder();
 
-            return $dataLoader;
-        };
+        $rootAlias = $targetDefinition::getQueryAlias();
+        foreach ($reverseMapping as $field => $value) {
+            /*
+             * person.studentModuleOccasions => person_studentModuleOccasions
+             * person_studentModuleOccasions.occasion => person_studentModuleOccasions_occasion
+             * person_studentModuleOccasions_occasion.lessons => person_studentModuleOccasions_occasion_lessons
+             */
+            $newAlias = $rootAlias . '_' . $field;
 
-        $table = $this->tableFactory->createTable($identifier, $options);
-        $targetDefinition = $this->getDefinitionForAccessorPath($this->getOption('accessor_path'));
+            $queryBuilder->leftJoin($rootAlias . '.' . $field, $newAlias);
+            $queryBuilder->andWhere($newAlias . ' = :' . $newAlias);
+            $queryBuilder->setParameter($newAlias, $value);
+
+            $queryBuilder->addSelect($newAlias);
+
+            $rootAlias = $newAlias;
+        }
+
+        $options['query_builder'] = $queryBuilder;
+
+        if (is_callable($this->options['query_builder_configuration'])) {
+            $this->options['query_builder_configuration']($queryBuilder, $targetDefinition);
+        }
+
+        $table = $this->tableFactory->createDoctrineTable($identifier, $options);
         $targetDefinition->configureTable($table);
+        $targetDefinition->overrideTableConfiguration($table);
 
         if (is_callable($this->options['table_configuration'])) {
             $this->options['table_configuration']($table);
         }
 
-        $this->eventDispatcher->dispatch(CriteriaLoadEvent::PRE_LOAD, new CriteriaLoadEvent($this, $table));
-
         $actionColumnItems = [];
 
         if ($this->hasCapability(RouteEnum::SHOW)) {
-            $table->setShowRoute($this->getRoute(RouteEnum::SHOW));
+            $showRoute = $this->getRoute(RouteEnum::SHOW);
+
+            $table->setShowRoute($showRoute);
             $actionColumnItems[] = [
                 'label' => 'Details',
                 'icon' => 'arrow-right',
                 'button' => 'primary',
-                'route' => $this->getRoute(RouteEnum::SHOW),
+                'route' => $showRoute,
                 'route_parameters' => [],
                 'voter_attribute' => RouteEnum::SHOW,
             ];
@@ -146,7 +155,7 @@ class RelationContent extends TableContent
             ];
         }
 
-        if ($this->hasCapability( RouteEnum::EXPORT)) {
+        if ($this->hasCapability(RouteEnum::EXPORT)) {
             $table->setExportRoute($this->getRoute(RouteEnum::EXPORT));
         }
 
@@ -214,7 +223,7 @@ class RelationContent extends TableContent
      */
     public function isAddAllowed()
     {
-        $definition = $this->definitionManager->getDefinitionFromClass($this->options['definition']);
+        $definition = $this->definitionManager->getDefinitionFromClass($this->getOption('definition'));
         $entityName = $definition::getEntity();
         $entityReflector = new ReflectionClass($entityName);
         if ($entityReflector->isAbstract()) {
@@ -252,7 +261,7 @@ class RelationContent extends TableContent
         $resolver->setDefaults([
             'accessor_path' => $this->acronym,
             'table_options' => [],
-            'criteria' => [],
+            'query_builder_configuration' => null,
             'table_configuration' => null,
             'route_addition_key' => $this->definition::getChildRouteAddition(),
             'show_index_button' => false,
@@ -261,44 +270,91 @@ class RelationContent extends TableContent
         ]);
 
         $resolver->setDefault('definition', function (Options $options) {
-            return get_class($this->getDefinitionForAccessorPath($options['accessor_path']));
+            return get_class($this->getTargetDefinition($options['accessor_path']));
         });
 
         $resolver->setAllowedTypes('table_options', ['array']);
         $resolver->setAllowedTypes('table_configuration', ['callable', 'null']);
+        $resolver->setAllowedTypes('query_builder_configuration', ['callable', 'null']);
     }
 
-    /**
-     * @param string $accessorPath
-     * @return DefinitionInterface
-     */
-    private function getDefinitionForAccessorPath($accessorPath)
+    private function getReverseMapping($row)
     {
-        if (array_key_exists($accessorPath, $this->accessorPathDefinitionCacheMap)) {
-            return $this->accessorPathDefinitionCacheMap[$accessorPath];
+        /*
+         * $accessorPath: 'occasion.students.person'
+         *
+         * [
+         *      'occasion' => [
+         *          'field' => 'lessons',
+         *          'path' => ''
+         *      ],
+         *      'students' => [
+         *          'field' => 'occasion',
+         *          'path' => 'occasion'
+         *      ],
+         *      'person' => [
+         *          'field' => 'studentModuleOccasions',
+         *          'path' => 'occasion.students'
+         *      ]
+         * ]
+         */
+        $stack = [];
+
+        foreach (explode('.', $this->getOption('accessor_path')) as $part) {
+            $targetEntity = empty($stack) ? $this->definition::getEntity() : end($stack)['_mapping']['targetEntity'];
+
+            $mapping = $this->getMetadataFactory()->getMetadataFor($targetEntity)->getAssociationMapping($part);
+
+            $stack[$part] = [
+                '_mapping' => $mapping,
+                'field' => $mapping['mappedBy'] ?: $mapping['inversedBy'],
+                'path' => implode('.', array_keys($stack))
+            ];
         }
 
-        $metadataFactory = $metadata = $this->doctrine
-            ->getManager()
-            ->getMetadataFactory();
-
-        $currentEntity = $this->definition::getEntity();
-
-        // Allow nested relations using dot notation
-        foreach (explode('.', $accessorPath) as $pathPart)
-        {
-            /** @var ClassMetadata $metadata */
-            $metadata = $metadataFactory->getMetadataFor($currentEntity);
-
-            $propertyClass = $metadata->associationMappings[$pathPart]['targetEntity'];
-
-            $currentEntity = $propertyClass;
-
-            $targetDefinition = $this->definitionManager->getDefinitionFromEntityClass($propertyClass);
-            $this->accessorPathDefinitionCacheMap[$accessorPath] = $targetDefinition;
+        /*
+         * [
+         *      'studentModuleOccasions' => ModuleOccasionStudent[],
+         *      'occasion' => ModuleOccasion,
+         *      'lessons' => Lesson
+         * ]
+         */
+        $reverse = [];
+        foreach (array_reverse($stack) as $entry) {
+            $reverse[$entry['field']] = $entry['path'] ? PropertyAccess::createPropertyAccessor()->getValue($row, $entry['path']) : $row;
         }
 
-        return $this->getDefinitionForAccessorPath($accessorPath);
+        return $reverse;
+    }
+
+    private function getTargetDefinition($accessorPath = null)
+    {
+        $metadataFactory = $this->getMetadataFactory();
+
+        $associations = explode('.', $accessorPath ?: $this->getOption('accessor_path'));
+
+        /*
+         * 1:
+         * $className = 'Entity\Lesson'
+         * $association = 'occasion'
+         *
+         * 2:
+         * $className = 'Entity\ModuleOccasion'
+         * $association = 'students'
+         *
+         * 3:
+         * $className = 'Entity\ModuleOccasionStudent'
+         * $association = 'person'
+         *
+         * $target = 'Entity\Person'
+         *
+         * => PersonDefinition
+         */
+        $target = array_reduce($associations, function (string $className, string $association) use ($metadataFactory) {
+            return $metadataFactory->getMetadataFor($className)->getAssociationTargetClass($association);
+        }, $this->definition::getEntity());
+
+        return $this->definitionManager->getDefinitionFromEntityClass($target);
     }
 
     /**
@@ -310,13 +366,12 @@ class RelationContent extends TableContent
     }
 
     /**
-     * @return Criteria
+     * @return \Doctrine\Common\Persistence\Mapping\ClassMetadataFactory|ClassMetadataFactory
      */
-    public function getCriteria()
+    private function getMetadataFactory()
     {
-        if (!$this->options['criteria'] instanceof Criteria) {
-            $this->options['criteria'] = Criteria::create();
-        }
-        return $this->options['criteria'];
+        return $this->doctrine
+            ->getManager()
+            ->getMetadataFactory();
     }
 }
