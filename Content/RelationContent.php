@@ -106,7 +106,14 @@ class RelationContent extends TableContent
             $newAlias = $rootAlias . '_' . $field;
 
             $queryBuilder->leftJoin($rootAlias . '.' . $field, $newAlias);
-            $queryBuilder->andWhere($newAlias . ' = :' . $newAlias);
+
+            if($value instanceof Collection) {
+                $queryBuilder->andWhere($newAlias . ' IN (:' . $newAlias.')');
+            }
+            else {
+                $queryBuilder->andWhere($newAlias . ' = :' . $newAlias);
+            }
+
             $queryBuilder->setParameter($newAlias, $value);
 
             $queryBuilder->addSelect($newAlias);
