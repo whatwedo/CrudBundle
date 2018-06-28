@@ -340,7 +340,9 @@ abstract class AbstractDefinition implements DefinitionInterface
         if ($table instanceof DoctrineTable) {
             foreach ($table->getColumns() as $column) {
                 if ($column->getAcronym() == $property) {
-                    return $column->getLabel() ?: ucfirst($property);
+                    $label = $column->getLabel();
+                    if($label) return $label;
+                    else break;
                 }
             }
         }
@@ -352,11 +354,14 @@ abstract class AbstractDefinition implements DefinitionInterface
 
         foreach ($this->definitionBuilderLabelCache->getBlocks() as $block) {
             foreach ($block->getContents() as $content) {
-                if ($content->getAcronym() == $property && array_key_exists('label', $content->getOptions())) {
-                    return $content->getOption('label') ?: ucfirst($property);
+                if ($content->getAcronym() == $property) {
+                    $label = $content->getOption('label');
+                    if($label) return $label;
+                    else break;
                 }
             }
         }
+
         return ucfirst($property);
     }
 
