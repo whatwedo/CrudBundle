@@ -316,17 +316,11 @@ abstract class AbstractDefinition implements DefinitionInterface
     public function overrideTableConfiguration(Table $table)
     {
         if ($table->hasExtension(FilterExtension::class)) {
-            /** @var FilterExtension $filterExtension */
-            $filterExtension = $table->getExtension(FilterExtension::class);
-            $filterExtension->addFiltersAutomatically(
-                $table,
-                static::getEntity(),
-                static::getQueryAlias(),
-                $this->getQueryBuilder(),
-                [$this, 'getLabelFor']
-            );
+            $table->getFilterExtension()
+                ->addFiltersAutomatically(
+                    $table, [$this, 'getLabelFor']
+                );
         }
-
     }
 
     /**
