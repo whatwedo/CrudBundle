@@ -92,7 +92,7 @@ class RelationContent extends TableContent
          * $row = Lesson
          */
         $reverseMapping = $this->getReverseMapping($row);
-        $targetDefinition = $this->getTargetDefinition();
+        $targetDefinition = $this->definitionManager->getDefinitionFromClass($this->getOption('definition'));
 
         $queryBuilder = $targetDefinition->getQueryBuilder();
 
