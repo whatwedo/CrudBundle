@@ -27,13 +27,17 @@
 
 namespace whatwedo\CrudBundle\Form\Type;
 
+use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Routing\Router;
+use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
+use whatwedo\CrudBundle\Form\ChoiceLoader\AjaxDoctrineChoiceLoader;
 
 /**
  * Class EntityAjaxType
@@ -55,11 +59,49 @@ class EntityAjaxType extends AbstractType
         $view->vars['attr']['data-ajax-url'] = $this->router->generate('whatwedo_crud_crud_select_ajax');
     }
 
-    /**
-     * @return string
-     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder->addEventListener
+        (
+            FormEvents::POST_SET_DATA,
+            [$options['choice_loader'], 'onFormPostSetData']
+        );
+
+        $builder->addEventListener
+        (
+            FormEvents::POST_SUBMIT,
+            [$options['choice_loader'], 'onFormPostSetData']
+        );
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        /**
+         * @see EntityType::configureOptions()
+         */
+        $resolver->setDefault('choice_loader', function (Options $options) {
+            if (null === $options['choices']) {
+                if (null !== $options['query_builder']) {
+                    $entityLoader = new ORMQueryBuilderLoader($options['query_builder']);
+                } else {
+                    $queryBuilder = $options['em']->getRepository($options['class'])->createQueryBuilder('e');
+                    $entityLoader = new ORMQueryBuilderLoader($queryBuilder);
+                }
+
+                return new AjaxDoctrineChoiceLoader(
+                    $options['em'],
+                    $options['class'],
+                    $options['id_reader'],
+                    $entityLoader
+                );
+            }
+        });
+    }
+
     public function getParent()
     {
         return EntityType::class;
     }
+
+
 }
