@@ -27,6 +27,7 @@
 
 namespace whatwedo\CrudBundle\Form\Type;
 
+use Symfony\Bridge\Doctrine\Form\ChoiceList\DoctrineChoiceLoader;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -76,24 +77,9 @@ class EntityAjaxType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        /**
-         * @see EntityType::configureOptions()
-         */
-        $resolver->setDefault('choice_loader', function (Options $options) {
-            if (null === $options['choices']) {
-                if (null !== $options['query_builder']) {
-                    $entityLoader = new ORMQueryBuilderLoader($options['query_builder']);
-                } else {
-                    $queryBuilder = $options['em']->getRepository($options['class'])->createQueryBuilder('e');
-                    $entityLoader = new ORMQueryBuilderLoader($queryBuilder);
-                }
-
-                return new AjaxDoctrineChoiceLoader(
-                    $options['em'],
-                    $options['class'],
-                    $options['id_reader'],
-                    $entityLoader
-                );
+        $resolver->setDefault('choice_loader', function (Options $options, DoctrineChoiceLoader $doctrineChoiceLoader) {
+            if ($doctrineChoiceLoader) {
+                return new AjaxDoctrineChoiceLoader($doctrineChoiceLoader);
             }
         });
     }
