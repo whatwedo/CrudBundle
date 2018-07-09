@@ -48,6 +48,7 @@ use Symfony\Component\Validator\Constraints\NotNull;
 use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Content\Content;
 use whatwedo\CrudBundle\Content\EditableContentInterface;
+use whatwedo\CrudBundle\Content\RelationContent;
 use whatwedo\CrudBundle\Definition\AbstractDefinition;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\RouteEnum;
@@ -370,10 +371,10 @@ class DefinitionView implements DefinitionViewInterface
     }
 
     /**
-     * @param Content $content
+     * @param Content|RelationContent $content
      * @return string
      */
-    protected function getFormType(Content $content)
+    protected function getFormType(EditableContentInterface $content)
     {
         $formType = $content->getFormType();
         if ($formType === EntityPreselectType::class) {

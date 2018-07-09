@@ -33,6 +33,7 @@ use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\Options;
@@ -40,8 +41,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use whatwedo\CrudBundle\Enum\RouteEnum;
-use whatwedo\CrudBundle\Enum\VisibilityEnum;
 use whatwedo\CrudBundle\Exception\InvalidDataException;
+use whatwedo\CrudBundle\Form\Type\EntityAjaxType;
+use whatwedo\CrudBundle\Form\Type\EntityHiddenType;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\TableBundle\Factory\TableFactory;
 use whatwedo\TableBundle\Table\ActionColumn;
@@ -54,7 +56,7 @@ use function implode;
  * Class RelationContent
  * @package whatwedo\CrudBundle\Content
  */
-class RelationContent extends TableContent
+class RelationContent extends TableContent implements EditableContentInterface
 {
     protected $tableFactory;
     protected $eventDispatcher;
@@ -268,19 +270,25 @@ class RelationContent extends TableContent
         $resolver->setDefaults([
             'accessor_path' => $this->acronym,
             'table_options' => [],
+            'form_type' => EntityAjaxType::class,
+            'form_options' => [],
             'query_builder_configuration' => null,
             'table_configuration' => null,
             'route_addition_key' => $this->definition::getChildRouteAddition(),
             'show_index_button' => false,
-            'add_voter_attribute' => RouteEnum::EDIT,
-            'visibility' => VisibilityEnum::SHOW
+            'add_voter_attribute' => RouteEnum::EDIT
         ]);
 
         $resolver->setDefault('definition', function (Options $options) {
             return get_class($this->getTargetDefinition($options['accessor_path']));
         });
 
+        $resolver->setDefault('class', function (Options $options) {
+            return $this->getTargetDefinition($options['accessor_path'])::getEntity();
+        });
+
         $resolver->setAllowedTypes('table_options', ['array']);
+        $resolver->setAllowedTypes('form_options', ['array']);
         $resolver->setAllowedTypes('table_configuration', ['callable', 'null']);
         $resolver->setAllowedTypes('query_builder_configuration', ['callable', 'null']);
     }
@@ -380,5 +388,34 @@ class RelationContent extends TableContent
         return $this->doctrine
             ->getManager()
             ->getMetadataFactory();
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormType()
+    {
+        return $this->getOption('form_type');
+    }
+
+    /**
+     * @param array $options
+     * @return array
+     */
+    public function getFormOptions($options = [])
+    {
+        if (in_array($this->getFormType(), [EntityHiddenType::class, HiddenType::class])) {
+            $this->options['label'] = false;
+        }
+        return array_merge($options, ['label' => $this->getLabel(), 'multiple' => true, 'class' => $this->getOption('class')], $this->options['form_options']);
+    }
+
+    /**
+     * Definiton der Vorselektion
+     * @return string
+     */
+    public function getPreselectDefinition()
+    {
+        return $this->getOption('definition');
     }
 }
