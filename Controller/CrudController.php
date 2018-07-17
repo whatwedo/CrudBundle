@@ -491,10 +491,10 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $ids = $request->query->get('ids');
         if (count($ids) > 0) {
             if ($ids[0] == -1) {
-                return $this->getDefinition()->getRepository()->findAll();
+                return $this->definition->getQueryBuilder()->getQuery()->getResult();
             } else {
-                return $this->getDefinition()->getRepository()->createQueryBuilder('xx')
-                    ->where('xx.id in (:ids)')
+                return $this->definition->getQueryBuilder()
+                    ->where($this->definition::getQueryAlias().'.id in (:ids)')
                     ->setParameter('ids', $ids)
                     ->getQuery()->getResult();
             }
