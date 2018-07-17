@@ -488,7 +488,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
     protected function getEntities(Request $request)
     {
-        $ids = $request->query->get('ids');
+        $ids = $request->query->get('ids', []);
         if (count($ids) > 0) {
             if ($ids[0] == -1) {
                 return $this->definition->getQueryBuilder()->getQuery()->getResult();
