@@ -400,12 +400,12 @@ class DefinitionView implements DefinitionViewInterface
         $builder = $this->formFactory->createBuilder(FormType::class, $this->data, []);
 
         foreach ($this->getBlocks() as $block) {
-            if (!$block->isVisibleOnEdit()) {
+            if (!$block->isVisibleOnEdit() || !$this->authorizationChecker->isGranted($block->getEditVoterAttribute(), $this->data)) {
                 continue;
             }
 
             foreach ($block->getContents() as $content) {
-                if (!$content->isVisibleOnEdit()) {
+                if (!$content->isVisibleOnEdit() || !$this->authorizationChecker->isGranted($content->getEditVoterAttribute(), $this->data)) {
                     continue;
                 }
 

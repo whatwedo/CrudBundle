@@ -19,7 +19,7 @@
 {% for block in helper.blocks if block.isVisibleOnEdit and is_granted(block.editVoterAttribute, helper.data) %}
 
     {% set hasVisibleContent = false %}
-    {% for key, content in block.contents if content.isVisibleOnEdit %}
+    {% for key, content in block.contents if content.isVisibleOnEdit and is_granted(content.editVoterAttribute, helper.data) %}
         {% set hasVisibleContent = true %}
     {% endfor %}
 
@@ -106,7 +106,7 @@
                                             </div>
                                         {% endif %}
                                     </div>
-                                {% elseif content.isTable is defined and content.isTable %}
+                                {% elseif content.isTable|default(false) %}
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <strong>{{ content.label }}:</strong>
@@ -117,8 +117,7 @@
                                             {{ content.renderTable(key, helper.data)|raw }}
                                         </div>
                                     </div>
-                                {% endif %}
-                                {% if content.isTwigContent is defined and content.isTwigContent %}
+                                {% elseif content.isTwigContent|default(false) %}
                                     {% include content.template with content.parameters  %}
                                 {% endif %}
                             </div>
