@@ -31,6 +31,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\TableBundle\Event\ResultRequestEvent;
 
 /**
@@ -40,14 +41,19 @@ use whatwedo\TableBundle\Event\ResultRequestEvent;
 class RelationController extends AbstractController
 {
     protected $eventDispatcher;
+    /**
+     * @var DefinitionManager
+     */
+    private $definitionManager;
 
     /**
      * RelationController constructor.
      * @param $eventDispatcher
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    public function __construct(EventDispatcherInterface $eventDispatcher, DefinitionManager $definitionManager)
     {
         $this->eventDispatcher = $eventDispatcher;
+        $this->definitionManager = $definitionManager;
     }
 
     /**
@@ -59,6 +65,12 @@ class RelationController extends AbstractController
         $entity = $request->get('entity', false);
         $term = $request->get('q', false);
         $resultRequestEvent = new ResultRequestEvent($entity, $term);
+
+        if (($definition = $this->definitionManager->getDefinitionFromClass($entity)) || ($definition = $this->definitionManager->getDefinitionFromEntityClass($entity))) {
+            $resultRequestEvent->setEntity($definition::getEntity());
+            $resultRequestEvent->setQueryBuilder($definition->getQueryBuilder());
+        }
+
         $this->eventDispatcher->dispatch(ResultRequestEvent::RELATION_SET, $resultRequestEvent);
         return $resultRequestEvent->getResult();
     }

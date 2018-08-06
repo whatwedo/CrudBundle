@@ -56,7 +56,8 @@ class EntityAjaxType extends AbstractType
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['attr']['data-ajax-select'] = true;
-        $view->vars['attr']['data-ajax-entity'] = $options['class'];
+        // prefer definition over entity class for ajax search (uses definition querybuilder for results)
+        $view->vars['attr']['data-ajax-entity'] = $options['definition'] ?: $options['class'];
         $view->vars['attr']['data-ajax-url'] = $this->router->generate('whatwedo_crud_crud_select_ajax');
     }
 
@@ -82,6 +83,8 @@ class EntityAjaxType extends AbstractType
                 return new AjaxDoctrineChoiceLoader($doctrineChoiceLoader);
             }
         });
+
+        $resolver->setDefault('definition', null);
     }
 
     public function getParent()
