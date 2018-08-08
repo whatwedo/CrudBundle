@@ -28,6 +28,7 @@
 namespace whatwedo\CrudBundle\Definition;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Common\Util\ClassUtils;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -507,5 +508,10 @@ abstract class AbstractDefinition implements DefinitionInterface
     public function guessType($class, $property)
     {
         return $this->definitionView->guessType($class, $property);
+    }
+
+    public static function supports($entity): bool
+    {
+        return static::getEntity() == ClassUtils::getClass($entity);
     }
 }

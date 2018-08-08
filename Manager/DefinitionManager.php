@@ -79,7 +79,7 @@ class DefinitionManager
 
     /**
      * @param $entity
-     * @return mixed|null|DefinitionInterface
+     * @return null|DefinitionInterface
      */
     public function getDefinitionFor($entity)
     {
@@ -88,7 +88,7 @@ class DefinitionManager
         }
         foreach ($this->definitions as $definition)
         {
-            if ($definition::getEntity() == ClassUtils::getRealClass(get_class($entity))) {
+            if ($definition::supports($entity)) {
                 return $definition;
             }
         }
@@ -97,7 +97,7 @@ class DefinitionManager
 
     /**
      * @param string $class
-     * @return mixed|null|DefinitionInterface
+     * @return null|DefinitionInterface
      */
     public function getDefinitionFromClass($class)
     {

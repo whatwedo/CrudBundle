@@ -43,6 +43,8 @@ use whatwedo\TableBundle\Table\Table;
  */
 interface DefinitionInterface
 {
+    public static function supports($entity): bool;
+
     public static function getEntityTitle();
 
     public static function getAlias();
