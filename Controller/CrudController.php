@@ -494,7 +494,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
                 return $this->definition->getQueryBuilder()->getQuery()->getResult();
             } else {
                 return $this->definition->getQueryBuilder()
-                    ->where($this->definition::getQueryAlias().'.id in (:ids)')
+                    ->andWhere($this->definition::getQueryAlias().'.id in (:ids)')
                     ->setParameter('ids', $ids)
                     ->getQuery()->getResult();
             }
