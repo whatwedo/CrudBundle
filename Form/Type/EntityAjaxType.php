@@ -85,6 +85,9 @@ class EntityAjaxType extends AbstractType
         });
 
         $resolver->setDefault('definition', null);
+        $resolver->setDefault('class', function(Options $options, ?string $className) {
+            return $className ?: $options['definition']::getEntity();
+        });
     }
 
     public function getParent()
