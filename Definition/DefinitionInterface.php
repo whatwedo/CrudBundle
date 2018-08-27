@@ -34,6 +34,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
+use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
 use whatwedo\CrudBundle\View\DefinitionViewInterface;
 use whatwedo\TableBundle\Table\Table;
@@ -50,6 +51,13 @@ interface DefinitionInterface
     public static function getAlias();
 
     public static function getRoutePrefix();
+
+    /**
+     * @param string $route
+     * @see RouteEnum
+     * @return string
+     */
+    public static function getRouteName(string $route);
 
     /**
      * @param null|object $entity

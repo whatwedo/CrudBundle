@@ -194,7 +194,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
                 $this->addFlash('success', sprintf('Erfolgreich gespeichert.'));
 
-                return $this->redirectToRoute($this->getDefinition()->getRoutePrefix() . '_show', [
+                return $this->redirectToRoute($this->getDefinition()::getRouteName(RouteEnum::SHOW), [
                     'id' => $entity->getId(),
                 ]);
             } else {
@@ -281,7 +281,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
                 if (is_null($uri)) {
                     $this->addFlash('success', sprintf('Erfolgreich gespeichert.'));
-                    return $this->redirectToRoute($this->getDefinition()->getRoutePrefix() . '_show', [
+                    return $this->redirectToRoute($this->getDefinition()::getRouteName(RouteEnum::SHOW), [
                         'id' => $entity->getId(),
                     ]);
                 } else {
@@ -349,7 +349,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $entities = $this->getEntities($request);
         if (!isset($entities[0])) {
             $this->addFlash('warning', 'Nichts zu exportieren');
-            return $this->redirectToRoute($this->getDefinition()->getRoutePrefix() . '_' . RouteEnum::INDEX);
+            return $this->redirectToRoute($this->getDefinition()::getRouteName(RouteEnum::INDEX));
         }
 
         $objectNormalizer = new ObjectNormalizer($this->definition);
@@ -432,7 +432,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
                 'label' => 'Details',
                 'icon' => 'arrow-right',
                 'button' => 'primary',
-                'route' => sprintf('%s_%s', $targetDefinition::getRoutePrefix(), RouteEnum::SHOW),
+                'route' => $targetDefinition::getRouteName(RouteEnum::SHOW),
                 'route_parameters' => [],
                 'voter_attribute' => RouteEnum::SHOW,
             ];
@@ -443,7 +443,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
                 'label' => 'Bearbeiten',
                 'icon' => 'pencil',
                 'button' => 'warning',
-                'route' => sprintf('%s_%s', $targetDefinition::getRoutePrefix(), RouteEnum::SHOW),
+                'route' => $targetDefinition::getRouteName(RouteEnum::EDIT),
                 'route_parameters' => [],
                 'voter_attribute' => RouteEnum::EDIT,
             ];
@@ -463,12 +463,12 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
         if ($this->getDefinition()->hasCapability(RouteEnum::SHOW)) {
             // TODO: support dynamic show route per row
-            $table->setShowRoute(sprintf('%s_%s', $this->getDefinition()->getRoutePrefix(), RouteEnum::SHOW));
+            $table->setShowRoute($this->getDefinition()::getRouteName(RouteEnum::SHOW));
         }
 
         if ($this->getDefinition()->hasCapability(RouteEnum::EXPORT)) {
             // TODO: support dynamic export route per row
-            $table->setExportRoute(sprintf('%s_%s', $this->getDefinition()->getRoutePrefix(), RouteEnum::EXPORT));
+            $table->setExportRoute($this->getDefinition()::getRouteName(RouteEnum::EXPORT));
         }
 
         // this is normally the main table of the page, so we're fixing the header

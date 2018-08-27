@@ -253,7 +253,7 @@ class DefinitionView implements DefinitionViewInterface
 
         if (!is_null($def)) {
             if ($this->authorizationChecker->isGranted(RouteEnum::SHOW, $entity)) {
-                $path = $this->router->generate($def::getRoutePrefix() . '_' . RouteEnum::SHOW, ['id' => $entity->getId()]);
+                $path = $this->router->generate($def::getRouteName(RouteEnum::SHOW), ['id' => $entity->getId()]);
 
                 $granted = false;
                 if (!$this->authorizationChecker->isGranted('IS_AUTHENTICATED_ANONYMOUSLY')) {
@@ -316,18 +316,18 @@ class DefinitionView implements DefinitionViewInterface
                         return 'javascript:alert(\'can\\\'t generate route "' . $route . '" without data\')';
                     }
 
-                    return $this->router->generate(sprintf('%s_%s', $this->definition->getRoutePrefix(), $route),
+                    return $this->router->generate($this->definition::getRouteName($route),
                         array_merge([
                             'id' => $this->data->getId(),
                             ], $params)
                     );
                 case RouteEnum::AJAX:
                     if (!$this->data) {
-                        return $this->router->generate(sprintf('%s_%s', $this->definition->getRoutePrefix(), $route),
+                        return $this->router->generate($this->definition::getRouteName($route),
                             $params
                         );
                     }
-                    return $this->router->generate(sprintf('%s_%s', $this->definition->getRoutePrefix(), $route),
+                    return $this->router->generate($this->definition::getRouteName($route),
                         array_merge([
                             'id' => $this->data->getId(),
                         ], $params)
@@ -335,7 +335,7 @@ class DefinitionView implements DefinitionViewInterface
                 case RouteEnum::INDEX:
                 case RouteEnum::BATCH:
                 case RouteEnum::CREATE:
-                    return $this->router->generate(sprintf('%s_%s', $this->definition->getRoutePrefix(), $route),
+                    return $this->router->generate($this->definition::getRouteName($route),
                         $params
                     );
 
