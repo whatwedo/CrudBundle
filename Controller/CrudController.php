@@ -116,14 +116,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      */
     public function indexAction(TableFactory $tableFactory)
     {
-        $entityName = $this->getDefinition()->getEntity();
-        $entityReflector = new ReflectionClass($entityName);
-        if ($entityReflector->isAbstract()) {
-            $voterEntity = null;
-        } else {
-            $voterEntity = $entityReflector->newInstanceWithoutConstructor();
-            $this->denyAccessUnlessGranted(RouteEnum::INDEX, $voterEntity);
-        }
+        $this->denyAccessUnlessGranted(RouteEnum::INDEX, $this->getDefinition());
 
         $table = $tableFactory
             ->createDoctrineTable('index', [
@@ -139,7 +132,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
             'view' => $this->getDefinition()->createView(),
             'table' => $table,
             'title' => $this->getDefinition()->getTitle(null, RouteEnum::INDEX),
-            'voter_entity' => $voterEntity,
+            'voter_entity' => $this->getDefinition(),
         ]);
     }
 
