@@ -43,6 +43,7 @@ use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Encoder\CsvEncoder;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Event\CrudEvent;
+use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\Normalizer\ObjectNormalizer;
 use whatwedo\TableBundle\Factory\TableFactory;
 use whatwedo\TableBundle\Table\ActionColumn;
@@ -83,18 +84,23 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      * @var RouterInterface
      */
     protected  $router;
+    /**
+     * @var DefinitionManager
+     */
+    private $definitionManager;
 
     /**
      * CrudController constructor.
      * @param EngineInterface $templating
      * @param LoggerInterface $logger
      */
-    public function __construct(EngineInterface $templating, LoggerInterface $logger, EventDispatcherInterface $eventDispatcher, RouterInterface $router)
+    public function __construct(EngineInterface $templating, LoggerInterface $logger, EventDispatcherInterface $eventDispatcher, RouterInterface $router, DefinitionManager $definitionManager)
     {
         $this->eventDispatcher = $eventDispatcher;
         $this->router = $router;
         $this->templating = $templating;
         $this->logger = $logger;
+        $this->definitionManager = $definitionManager;
     }
 
 
@@ -409,6 +415,36 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         return '@whatwedoCrud/Crud/' . $file;
     }
 
+    public function getActionColumnItems($row) {
+        $targetDefinition = $this->definitionManager->getDefinitionFor($row);
+
+        $actionColumnItems = [];
+
+        if ($targetDefinition->hasCapability(RouteEnum::SHOW)) {
+            $actionColumnItems[] = [
+                'label' => 'Details',
+                'icon' => 'arrow-right',
+                'button' => 'primary',
+                'route' => sprintf('%s_%s', $targetDefinition::getRoutePrefix(), RouteEnum::SHOW),
+                'route_parameters' => [],
+                'voter_attribute' => RouteEnum::SHOW,
+            ];
+        }
+
+        if ($targetDefinition->hasCapability(RouteEnum::EDIT)) {
+            $actionColumnItems[] = [
+                'label' => 'Bearbeiten',
+                'icon' => 'pencil',
+                'button' => 'warning',
+                'route' => sprintf('%s_%s', $targetDefinition::getRoutePrefix(), RouteEnum::SHOW),
+                'route_parameters' => [],
+                'voter_attribute' => RouteEnum::EDIT,
+            ];
+        }
+
+        return $actionColumnItems;
+    }
+
     /**
      * configures list table
      *
@@ -418,43 +454,23 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     {
         $this->getDefinition()->configureTable($table);
 
+        if ($this->getDefinition()->hasCapability(RouteEnum::SHOW)) {
+            // TODO: support dynamic show route per row
+            $table->setShowRoute(sprintf('%s_%s', $this->getDefinition()->getRoutePrefix(), RouteEnum::SHOW));
+        }
+
+        if ($this->getDefinition()->hasCapability(RouteEnum::EXPORT)) {
+            // TODO: support dynamic export route per row
+            $table->setExportRoute(sprintf('%s_%s', $this->getDefinition()->getRoutePrefix(), RouteEnum::EXPORT));
+        }
+
         // this is normally the main table of the page, so we're fixing the header
         $table->setOption('table_attr', [
             'data-fixed-header' => 'data-fixed-header'
         ]);
 
-        $actionColumnItems = [];
-
-        if ($this->getDefinition()->hasCapability(RouteEnum::SHOW)) {
-            $table->setShowRoute(sprintf('%s_%s', $this->getDefinition()->getRoutePrefix(), RouteEnum::SHOW));
-
-            $actionColumnItems[] = [
-                'label' => 'Details',
-                'icon' => 'arrow-right',
-                'button' => 'primary',
-                'route' => sprintf('%s_%s', $this->getDefinition()->getRoutePrefix(), RouteEnum::SHOW),
-                'route_parameters' => [],
-                'voter_attribute' => RouteEnum::SHOW,
-            ];
-        }
-
-        if ($this->getDefinition()->hasCapability(RouteEnum::EXPORT)) {
-            $table->setExportRoute(sprintf('%s_%s', $this->getDefinition()->getRoutePrefix(), RouteEnum::EXPORT));
-        }
-
-        if ($this->getDefinition()->hasCapability(RouteEnum::EDIT)) {
-            $actionColumnItems[] = [
-                'label' => 'Bearbeiten',
-                'icon' => 'pencil',
-                'button' => 'warning',
-                'route' => sprintf('%s_%s', $this->getDefinition()->getRoutePrefix(), RouteEnum::EDIT),
-                'route_parameters' => [],
-                'voter_attribute' => RouteEnum::EDIT,
-            ];
-        }
-
         $table->addColumn('actions', ActionColumn::class, [
-            'items' => $actionColumnItems,
+            'items' => [$this, 'getActionColumnItems'],
         ]);
     }
 
