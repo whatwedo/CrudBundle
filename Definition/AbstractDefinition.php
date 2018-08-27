@@ -193,6 +193,25 @@ abstract class AbstractDefinition implements DefinitionInterface
         return $this->doctrine;
     }
 
+    public static function getAlias()
+    {
+        return str_replace(
+            ['\\', '_definition', '_bundle'],
+            ['_', '', ''],
+            strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', static::class))
+        );
+    }
+
+    /**
+     * returns the query alias to be used
+     *
+     * @return string alias
+     */
+    public static function getQueryAlias()
+    {
+        return static::getAlias();
+    }
+
     /**
      * set the doctrine registry
      *
