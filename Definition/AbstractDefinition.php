@@ -188,7 +188,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * {@inheritdoc}
      */
-    public function getDoctrine()
+    protected function getDoctrine()
     {
         return $this->doctrine;
     }

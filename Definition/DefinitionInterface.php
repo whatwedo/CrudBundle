@@ -86,13 +86,6 @@ interface DefinitionInterface
     public static function getController();
 
     /**
-     * gets doctrine registry
-     *
-     * @return Registry
-     */
-    public function getDoctrine();
-
-    /**
      * returns the fqdn of the entity
      *
      * @return string fqdn of the entity
