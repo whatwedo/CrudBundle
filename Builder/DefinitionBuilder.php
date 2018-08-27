@@ -102,7 +102,7 @@ class DefinitionBuilder
     }
 
     /**
-     * returns a formally created block
+     * returns a formerly created block
      *
      * @param string $acronym
      * @return Block
@@ -115,6 +115,21 @@ class DefinitionBuilder
         }
 
         return $this->blocks[$acronym];
+    }
+
+    /**
+     * removes a formerly created block
+     *
+     * @param string $acronym
+     * @throws ElementNotFoundException
+     */
+    public function removeBlock($acronym)
+    {
+        if (!isset($this->blocks[$acronym])) {
+            throw new ElementNotFoundException(sprintf('Specified block "%s" not found.', $acronym));
+        }
+
+        unset($this->blocks[$acronym]);
     }
 
     /**
