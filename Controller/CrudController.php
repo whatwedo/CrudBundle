@@ -90,19 +90,24 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      * @var DefinitionManager
      */
     private $definitionManager;
+    /**
+     * @var TableFactory
+     */
+    private $tableFactory;
 
     /**
      * CrudController constructor.
      * @param EngineInterface $templating
      * @param LoggerInterface $logger
      */
-    public function __construct(EngineInterface $templating, LoggerInterface $logger, EventDispatcherInterface $eventDispatcher, RouterInterface $router, DefinitionManager $definitionManager)
+    public function __construct(EngineInterface $templating, LoggerInterface $logger, EventDispatcherInterface $eventDispatcher, RouterInterface $router, DefinitionManager $definitionManager, TableFactory $tableFactory)
     {
         $this->eventDispatcher = $eventDispatcher;
         $this->router = $router;
         $this->templating = $templating;
         $this->logger = $logger;
         $this->definitionManager = $definitionManager;
+        $this->tableFactory = $tableFactory;
     }
 
 
@@ -122,11 +127,11 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     /**
      * @return Response
      */
-    public function indexAction(TableFactory $tableFactory)
+    public function indexAction(Request $request)
     {
         $this->denyAccessUnlessGranted(RouteEnum::INDEX, $this->getDefinition());
 
-        $table = $tableFactory
+        $table = $this->tableFactory
             ->createDoctrineTable('index', [
                 'query_builder' => $this->getDefinition()->getQueryBuilder()
             ]);
