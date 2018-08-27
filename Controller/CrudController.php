@@ -237,7 +237,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
                 foreach ($block->getContents() as $content) {
                     if ($content instanceof EditableContentInterface
                         && $content->getPreselectDefinition()) {
-                        $queryParameter = call_user_func([$content->getPreselectDefinition(), 'getChildRouteAddition']);
+                        $queryParameter = call_user_func([$content->getPreselectDefinition(), 'getAlias']);
 
                         if ($queryParameter
                             && $request->query->has($queryParameter)) {

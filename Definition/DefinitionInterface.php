@@ -59,11 +59,6 @@ interface DefinitionInterface
     public function getTitle($entity = null, $route = null);
 
     /**
-     * @return string
-     */
-    public static function getChildRouteAddition();
-
-    /**
      * returns capabilities of this definition
      *
      * Available Options:

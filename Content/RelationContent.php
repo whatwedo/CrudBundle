@@ -274,7 +274,7 @@ class RelationContent extends TableContent implements EditableContentInterface
             'form_options' => [],
             'query_builder_configuration' => null,
             'table_configuration' => null,
-            'route_addition_key' => $this->definition::getChildRouteAddition(),
+            'route_addition_key' => $this->definition::getAlias(),
             'show_index_button' => false,
             'add_voter_attribute' => RouteEnum::EDIT
         ]);
