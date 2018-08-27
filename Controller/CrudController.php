@@ -27,6 +27,8 @@
 
 namespace whatwedo\CrudBundle\Controller;
 
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -483,16 +485,22 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      */
     protected function getEntityOr404(Request $request)
     {
-        $entity = $this->getDefinition()->getRepository()->find($request->attributes->getInt('id'));
+        $qb = $this->getDefinition()->getQueryBuilder();
 
-        if (!$entity) {
+        $idColumn = $qb->getEntityManager()->getClassMetadata($this->getDefinition()::getEntity())->identifier[0];
+
+        try {
+            return $qb
+                ->andWhere($this->getDefinition()::getQueryAlias().'.'.$idColumn . ' = :id')
+                ->setParameter('id', $request->attributes->getInt('id'))
+                ->getQuery()
+                ->getSingleResult();
+        } catch (NoResultException|NonUniqueResultException $e) {
             throw new NotFoundHttpException(sprintf(
                 'Der gewünschte Datensatz existiert in %s nicht.',
                 $this->getDefinition()->getEntity()
             ));
         }
-
-        return $entity;
     }
 
     protected function getEntities(Request $request)

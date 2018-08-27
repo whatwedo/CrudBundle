@@ -165,7 +165,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * {@inheritdoc}
      */
-    public function getRepository()
+    protected function getRepository()
     {
         return $this->getDoctrine()->getRepository($this->getEntity());
     }

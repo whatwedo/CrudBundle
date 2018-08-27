@@ -100,13 +100,6 @@ interface DefinitionInterface
     public static function getEntity();
 
     /**
-     * Returns the entity repository
-     *
-     * @return EntityRepository repository
-     */
-    public function getRepository();
-
-    /**
      * returns the query alias to be used
      *
      * @return string alias
