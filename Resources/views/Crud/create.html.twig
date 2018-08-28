@@ -8,7 +8,7 @@
             {% if view.hasCapability('index') %}
                 <a href="{{ view.path('index') }}" class="btn btn-default">
                     <i class="fa fa-list"></i>
-                    Übersicht
+                    {{ 'whatwedo_crud.index'|trans }}
                 </a>
             {% endif %}
         {% endblock %}
