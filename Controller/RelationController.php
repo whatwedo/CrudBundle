@@ -66,7 +66,8 @@ class RelationController extends AbstractController
         $term = $request->get('q', false);
         $resultRequestEvent = new ResultRequestEvent($entity, $term);
 
-        if (($definition = $this->definitionManager->getDefinitionFromClass($entity)) || ($definition = $this->definitionManager->getDefinitionFromEntityClass($entity))) {
+        $definition = $this->definitionManager->getDefinitionFromClass($entity) ?: $this->definitionManager->getDefinitionFromEntityClass($entity);
+        if ($definition) {
             $resultRequestEvent->setEntity($definition::getEntity());
             $resultRequestEvent->setQueryBuilder($definition->getQueryBuilder());
         }
