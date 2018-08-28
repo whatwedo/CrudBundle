@@ -337,14 +337,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      */
     public function exportAction(Request $request)
     {
-        $entityName = $this->getDefinition()->getEntity();
-        $entityReflector = new ReflectionClass($entityName);
-        if ($entityReflector->isAbstract()) {
-            $voterEntity = null;
-        } else {
-            $voterEntity = $entityReflector->newInstanceWithoutConstructor();
-            $this->denyAccessUnlessGranted(RouteEnum::EXPORT, $voterEntity);
-        }
+        $this->denyAccessUnlessGranted(RouteEnum::EXPORT, $this->getDefinition());
 
         $entities = $this->getEntities($request);
         if (!isset($entities[0])) {
@@ -387,14 +380,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      */
     public function ajaxAction(Request $request)
     {
-        $entityName = $this->getDefinition()->getEntity();
-        $entityReflector = new ReflectionClass($entityName);
-        if ($entityReflector->isAbstract()) {
-            $voterEntity = null;
-        } else {
-            $voterEntity = $entityReflector->newInstanceWithoutConstructor();
-            $this->denyAccessUnlessGranted(RouteEnum::AJAX, $voterEntity);
-        }
+        $this->denyAccessUnlessGranted(RouteEnum::AJAX, $this->getDefinition());
 
         $data = [];
         foreach ($request->request->get('data') as $pair) {
