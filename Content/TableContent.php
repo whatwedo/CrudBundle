@@ -138,11 +138,6 @@ class TableContent extends AbstractContent
      */
     protected function getRoute($suffix): string
     {
-        return sprintf(
-            '%s_%s',
-            call_user_func([$this->options['definition'], 'getRoutePrefix']),
-            $suffix
-        );
-
+        return call_user_func([$this->options['definition'], 'getRouteName'], $suffix);
     }
 }

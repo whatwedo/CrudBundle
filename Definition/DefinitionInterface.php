@@ -50,8 +50,6 @@ interface DefinitionInterface
 
     public static function getAlias();
 
-    public static function getRoutePrefix();
-
     /**
      * @param string $route
      * @see RouteEnum

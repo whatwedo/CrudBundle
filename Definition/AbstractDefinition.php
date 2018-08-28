@@ -384,13 +384,13 @@ abstract class AbstractDefinition implements DefinitionInterface
      */
     public function getDeleteRedirect(RouterInterface $router, $entity = null)
     {
-        return new RedirectResponse($router->generate(sprintf('%s_%s', static::getRoutePrefix(), RouteEnum::INDEX)));
+        return new RedirectResponse($router->generate(static::getRouteName(RouteEnum::INDEX)));
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function getRoutePrefix()
+    protected static function getRoutePrefix()
     {
         return static::getAlias();
     }
@@ -485,7 +485,7 @@ abstract class AbstractDefinition implements DefinitionInterface
         }
 
         if (static::hasCapability(RouteEnum::INDEX)) {
-            $this->getBreadcrumbs()->addRouteItem(static::getEntityTitle(), sprintf('%s_%s', static::getRoutePrefix(), RouteEnum::INDEX), $this->getIndexBreadcrumbParameters([], $entity));
+            $this->getBreadcrumbs()->addRouteItem(static::getEntityTitle(), static::getRouteName(RouteEnum::INDEX), $this->getIndexBreadcrumbParameters([], $entity));
         } else {
             $this->getBreadcrumbs()->addItem(static::getEntityTitle());
         }
