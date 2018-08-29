@@ -342,7 +342,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     {
         $this->denyAccessUnlessGranted(RouteEnum::EXPORT, $this->getDefinition());
 
-        $entities = $this->getEntities($request);
+        $entities = $this->getExportEntities();
         if (!$entities) {
             $this->addFlash('warning', 'Nichts zu exportieren');
             return $this->redirectToRoute($this->getDefinition()::getRouteName(RouteEnum::INDEX));
@@ -493,21 +493,20 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         }
     }
 
-    protected function getEntities(Request $request)
+    protected function getExportEntities()
     {
-        $ids = $request->query->get('ids');
-        if(!$ids) return null;
+        $table = $this->tableFactory
+            ->createDoctrineTable('index', [
+                'query_builder' => $this->getDefinition()->getQueryBuilder()
+            ]);
 
-        $queryBuilder = $this->getDefinition()->getQueryBuilder();
+        // to respect column sort order
+        $this->getDefinition()->configureTable($table);
+        $this->getDefinition()->overrideTableConfiguration($table);
 
-        if ($ids[0] == -1) {
-            return $queryBuilder->getQuery()->getResult();
-        } else {
-            return $queryBuilder
-                ->andWhere($this->getIdentifierColumn() . ' IN (:ids)')
-                ->setParameter('ids', $ids)
-                ->getQuery()->getResult();
-        }
+        $table->loadData();
+
+        return $table->getResults();
     }
 
     public function dispatchEvent($event, $entity)
