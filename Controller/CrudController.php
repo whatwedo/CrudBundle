@@ -440,6 +440,12 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         return $actionColumnItems;
     }
 
+    public function getShowRoute($row) {
+        $targetDefinition = $this->definitionManager->getDefinitionFor($row);
+
+        return $targetDefinition::getRouteName(RouteEnum::SHOW);
+    }
+
     /**
      * configures list table
      *
@@ -450,8 +456,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $this->getDefinition()->configureTable($table);
 
         if ($this->getDefinition()->hasCapability(RouteEnum::SHOW)) {
-            // TODO: support dynamic show route per row (clickable rows)
-            $table->setShowRoute($this->getDefinition()::getRouteName(RouteEnum::SHOW));
+            $table->setShowRoute([$this, 'getShowRoute']);
         }
 
         if ($this->getDefinition()->hasCapability(RouteEnum::EXPORT)) {
