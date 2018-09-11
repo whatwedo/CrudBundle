@@ -248,10 +248,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
                             if (!is_null($value)) {
                                 $uri = $this->router->generate(
-                                    sprintf(
-                                        '%s_%s',
-                                        call_user_func([$content->getPreselectDefinition(), 'getRoutePrefix']),
-                                        RouteEnum::SHOW),
+                                        call_user_func([$content->getPreselectDefinition(), 'getRouteName'], RouteEnum::SHOW),
                                     ['id' => $value->getId()]);
                             }
                             if (!$propertyAccessor->getValue($entity, $content->getOption('accessor_path'))
