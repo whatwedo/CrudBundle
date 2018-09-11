@@ -69,7 +69,7 @@
                                                     </a>
                                                 {% endif %}
                                                 {% block add_button %}
-                                                    {% if content.createRoute and content.isAddAllowed is defined and content.isAddAllowed and is_granted(content.addVoterAttribute, helper.data) %}
+                                                    {% if content.createRoute and content.isAddAllowed|default %}
                                                         <a href="{{ path(content.createRoute, content.createRouteParameters(data)) }}" class="btn btn-success btn-xs">
                                                             <i class="fa fa-plus"></i>
                                                             Hinzufügen

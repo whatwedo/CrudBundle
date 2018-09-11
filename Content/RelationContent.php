@@ -233,12 +233,8 @@ class RelationContent extends TableContent implements EditableContentInterface
     public function isAddAllowed()
     {
         $definition = $this->definitionManager->getDefinitionFromClass($this->getOption('definition'));
-        $entityName = $definition::getEntity();
-        $entityReflector = new ReflectionClass($entityName);
-        if ($entityReflector->isAbstract()) {
-            return false;
-        }
-        return $this->authorizationChecker->isGranted(RouteEnum::CREATE, $entityReflector->newInstanceWithoutConstructor());
+
+        return $this->authorizationChecker->isGranted(RouteEnum::CREATE, $definition);
     }
 
     /**
