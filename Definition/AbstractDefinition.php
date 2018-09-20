@@ -544,6 +544,6 @@ abstract class AbstractDefinition implements DefinitionInterface
 
     public static function supports($entity): bool
     {
-        return static::getEntity() == ClassUtils::getClass($entity);
+        return is_a(ClassUtils::getClass($entity), static::getEntity(), true);
     }
 }
