@@ -25,55 +25,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Form\Type;
+namespace whatwedo\CrudBundle\Manager;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Routing\Router;
+use whatwedo\CrudBundle\Block\Block;
 
 /**
- * @author Nicolo Singer <nicolo@whatwedo.ch>
+ * Class BlockManager
  */
-class AjaxSelectFormType extends AbstractType
+class BlockManager
 {
+    protected $blocks = [];
 
     /**
-     * @var Router $router ;
+     * @param Block $block
      */
-    private $router;
-
-    public function __construct(Router $router)
+    public function addBlock(Block $block)
     {
-        $this->router = $router;
+        $this->blocks[get_class($block)] = $block;
     }
 
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    /**
+     * @param string $class
+     *
+     * @return Block|null
+     */
+    public function getBlock($class)
     {
-        $view->vars['attr']['data-ajax-select'] = true;
-        $view->vars['attr']['data-ajax-entity'] = $options['data_class'];
-        $view->vars['attr']['data-ajax-url'] = $this->router->generate('whatwedo_crud_crud_select_ajax');
-//        $view->vars['attr']['data-query-builder-callback'] = serialize($options['query_builder']);
+        return isset($this->blocks[$class]) ? clone $this->blocks[$class] : new $class();
     }
-
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        parent::configureOptions($resolver);
-//        ("Serialization of 'Closure' is not allowed").
-//        $resolver->setDefault('query_builder', null);
-//        $resolver->setAllowedTypes('query_builder', ['callable', 'null']);
-    }
-
-    public function getParent()
-    {
-        return ChoiceType::class;
-    }
-
-    public function getName()
-    {
-        return 'ajaxSelect';
-    }
-
 }

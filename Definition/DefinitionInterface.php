@@ -35,7 +35,7 @@ use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
 use whatwedo\CrudBundle\View\DefinitionViewInterface;
-use whatwedo\TableBundle\Table\Table;
+use whatwedo\TableBundle\Table\DoctrineTable;
 
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
@@ -120,15 +120,15 @@ interface DefinitionInterface
     /**
      * table configuration
      *
-     * @param Table $table
+     * @param DoctrineTable $table
      */
-    public function configureTable(Table $table);
+    public function configureTable(DoctrineTable $table);
 
     /**
      * check if this definition has specific capability
      *
      * @param $string
-     * @return bool
+     * @return bool
      */
     public static function hasCapability($string);
 
@@ -171,30 +171,6 @@ interface DefinitionInterface
     public function getCreateRedirect(RouterInterface $router, $entity = null);
 
     /**
-     * @param $data
-     * @return boolean
-     */
-    public function allowDelete($data = null);
-
-    /**
-     * @param $data
-     * @return boolean
-     */
-    public function allowCreate($data = null);
-
-    /**
-     * @param $data
-     * @return boolean
-     */
-    public function allowEdit($data = null);
-
-    /**
-     * @param $data
-     * @return boolean
-     */
-    public function allowShow($data = null);
-
-    /**
      * @return array
      */
     public function getExportAttributes();
@@ -215,13 +191,20 @@ interface DefinitionInterface
     public function getExportOptions();
 
     /**
-     * @param Table $table
+     * @param DoctrineTable $table
      */
-    public function overrideTableConfiguration(Table $table);
+    public function overrideTableConfiguration(DoctrineTable $table);
 
+    /**
+     * @return array
+     */
     public function addAjaxOnChangeListener();
 
-    public function ajaxOnChange(Request $request);
+    /**
+     * @param $data
+     * @return \stdClass
+     */
+    public function ajaxOnDataChanged($data);
 
     /**
      * @param ExtensionInterface $extension
@@ -237,4 +220,9 @@ interface DefinitionInterface
      * @param string $extension FQDN of extension
      */
     public function getExtension($extension);
+
+    /**
+     * @return boolean
+     */
+    public function usesHtml5Validation();
 }

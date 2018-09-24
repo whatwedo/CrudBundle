@@ -28,30 +28,21 @@
 namespace whatwedo\CrudBundle\Definition;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\ManyToMany;
-use Doctrine\ORM\Mapping\ManyToOne;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CrudBundle\Block\Block;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
+use whatwedo\CrudBundle\Manager\BlockManager;
 use whatwedo\CrudBundle\Controller\CrudController;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Extension\BreadcrumbsExtension;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\View\DefinitionViewInterface;
-use whatwedo\TableBundle\Model\Type\BooleanFilterType;
-use whatwedo\TableBundle\Model\Type\DateFilterType;
-use whatwedo\TableBundle\Model\Type\DatetimeFilterType;
-use whatwedo\TableBundle\Model\Type\ManyToManyFilterType;
-use whatwedo\TableBundle\Model\Type\NumberFilterType;
-use whatwedo\TableBundle\Model\Type\RelationFilterType;
-use whatwedo\TableBundle\Model\Type\TextFilterType;
-use whatwedo\TableBundle\Table\Table;
+use whatwedo\TableBundle\Extension\FilterExtension;
+use whatwedo\TableBundle\Table\DoctrineTable;
 use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
 /**
@@ -106,6 +97,16 @@ abstract class AbstractDefinition implements DefinitionInterface
     protected $definitionManager;
 
     /**
+     * @var BlockManager
+     */
+    protected $blockManager;
+
+    /**
+     * @var array
+     */
+    protected $templates;
+
+    /**
      * @var DefinitionBuilder|null $definitionBuilderLabelCache
      */
     protected $definitionBuilderLabelCache = null;
@@ -117,7 +118,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     {
         switch ($route) {
             case RouteEnum::INDEX:
-                return 'Übersicht';
+                return static::getEntityTitle();
             case RouteEnum::SHOW:
                 return $entity;
             case RouteEnum::DELETE:
@@ -177,6 +178,13 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * {@inheritdoc}
      */
+    public function configureTable(DoctrineTable $table)
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getDoctrine()
     {
         return $this->doctrine;
@@ -190,6 +198,30 @@ abstract class AbstractDefinition implements DefinitionInterface
     public function setDoctrine(Registry $registry)
     {
         $this->doctrine = $registry;
+    }
+
+    /**
+     * @return BlockManager
+     */
+    public function getBlockManager()
+    {
+        return $this->blockManager;
+    }
+
+    /**
+     * @param BlockManager $blockManager
+     */
+    public function setBlockManager($blockManager)
+    {
+        $this->blockManager = $blockManager;
+    }
+
+    /**
+     * @param array $templates
+     */
+    public function setTemplates(array $templates)
+    {
+        $this->templates = $templates;
     }
 
     /**
@@ -259,104 +291,57 @@ abstract class AbstractDefinition implements DefinitionInterface
      */
     public function createView($data = null)
     {
-        $this->builder = new DefinitionBuilder($this->definitionManager);
+        $this->builder = new DefinitionBuilder($this->blockManager, $this->definitionManager, $this->templates);
 
         $this->configureView($this->builder, $data);
 
         $this->definitionView->setDefinition($this);
         $this->definitionView->setData($data);
         $this->definitionView->setBlocks($this->builder->getBlocks());
+        $this->definitionView->setTemplates($this->builder->getTemplates());
+        $this->definitionView->setTemplateParameters($this->builder->getTemplateParameters());
 
         return $this->definitionView;
     }
 
     /**
-     * @param Table $table
-     * @param array $doNotFetchAll
-     * @throws \Doctrine\Common\Annotations\AnnotationException
+     * @param DoctrineTable $table
      */
-    public function overrideTableConfiguration(Table $table, $doNotFetchAll = [])
+    public function overrideTableConfiguration(DoctrineTable $table)
     {
-        $reader = new AnnotationReader();
-        $reflectionClass = new \ReflectionClass(static::getEntity());
-        $properties = $reflectionClass->getProperties();
-        foreach ($properties as $property)
-        {
-            /** @var Column $ormColumn */
-            $ormColumn = $reader->getPropertyAnnotation($property, Column::class);
-            /** @var ManyToOne $ormManyToOne */
-            $ormManyToOne = $reader->getPropertyAnnotation($property, ManyToOne::class);
-            /** @var ManyToMany $ormManyToMany */
-            $ormManyToMany = $reader->getPropertyAnnotation($property, ManyToMany::class);
-            $acronym = $property->getName();
-            $label = $this->getLabelFor($table, $property->getName());
-            $accessor = $acronym;
-            if (!is_null($ormColumn)) {
-                $accessor = sprintf('%s.%s', static::getQueryAlias(), $acronym);
-                switch ($ormColumn->type){
-                    case 'string':
-                        $table->addFilter($acronym, $label, new TextFilterType($accessor));
-                        break;
-                    case 'date':
-                        $table->addFilter($acronym, $label, new DateFilterType($accessor));
-                        break;
-                    case 'datetime':
-                        $table->addFilter($acronym, $label, new DatetimeFilterType($accessor));
-                        break;
-                    case 'integer':
-                    case 'float':
-                    case 'decimal':
-                        $table->addFilter($acronym, $label, new NumberFilterType($accessor));
-                        break;
-                    case 'boolean':
-                        $table->addFilter($acronym, $label, new BooleanFilterType($accessor));
-                }
-            } else if (!is_null($ormManyToOne)) {
-                $target = $ormManyToOne->targetEntity;
-                if (strpos($target, '\\') === false) {
-                    $target = preg_replace('#[a-zA-Z0-9]+$#i', $target, static::getEntity());
-                }
-                if (in_array($target, $doNotFetchAll)) {
-                    continue;
-                }
-                $choices = $this->getQueryBuilder()->getEntityManager()->getRepository($target)->findAll();
-                $joins = [];
-                if (!in_array($acronym, $this->getQueryBuilder()->getAllAliases())) {
-                    $joins = [$acronym => sprintf('%s.%s', static::getQueryAlias(), $acronym)];
-                }
-                $table->addFilter($acronym, $label, new RelationFilterType($accessor, $choices, $joins));
-            } else if (!is_null($ormManyToMany)) {
-                $accessor = sprintf('%s.%s', static::getQueryAlias(), $acronym);
-                $joins = [];
-                if (!in_array($acronym, $this->getQueryBuilder()->getAllAliases())) {
-                    $joins = [$acronym => ['leftJoin', sprintf('%s.%s', static::getQueryAlias(), $acronym)]];
-                }
-                $target = $ormManyToMany->targetEntity;
-                if (strpos($target, '\\') === false) {
-                    $target = $reflectionClass->getNamespaceName() . '\\' . $target;
-                }
-                $table->addFilter($acronym, $label, new ManyToManyFilterType($accessor, $joins, $this->getQueryBuilder()->getEntityManager(), $target));
-            }
+        if ($table->hasExtension(FilterExtension::class)) {
+            /** @var FilterExtension $filterExtension */
+            $filterExtension = $table->getExtension(FilterExtension::class);
+            $filterExtension->addFiltersAutomatically(
+                $table,
+                static::getEntity(),
+                static::getQueryAlias(),
+                $this->getQueryBuilder(),
+                [$this, 'getLabelFor']
+            );
         }
+
     }
 
     /**
-     * @param Table $table
-     * @param       $property
+     * @param DoctrineTable $table
+     * @param               $property
      *
      * @return string
      */
-    private function getLabelFor(Table $table, $property)
+    public function getLabelFor($table, $property)
     {
-        /** @var \whatwedo\TableBundle\Table\Column $column */
-        foreach ($table->getColumns() as $column) {
-            if ($column->getAcronym() == $property) {
-                return $column->getLabel();
+        if ($table instanceof DoctrineTable) {
+            /** @var \whatwedo\TableBundle\Table\Column $column */
+            foreach ($table->getColumns() as $column) {
+                if ($column->getAcronym() == $property) {
+                    return $column->getLabel();
+                }
             }
         }
 
         if (is_null($this->definitionBuilderLabelCache)) {
-            $this->definitionBuilderLabelCache = new DefinitionBuilder($this->definitionManager);
+            $this->definitionBuilderLabelCache = new DefinitionBuilder($this->blockManager, $this->definitionManager, $this->templates);
             $this->configureView($this->definitionBuilderLabelCache, null);
         }
 
@@ -368,8 +353,7 @@ abstract class AbstractDefinition implements DefinitionInterface
                 }
             }
         }
-
-        return $property;
+        return ucfirst($property);
     }
 
     /**
@@ -378,14 +362,6 @@ abstract class AbstractDefinition implements DefinitionInterface
     public function getDeleteRedirect(RouterInterface $router, $entity = null)
     {
         return new RedirectResponse($router->generate(static::getRoutePrefix() . '_index'));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCreateRedirect(RouterInterface $router, $entity = null)
-    {
-        return null;
     }
 
     /**
@@ -402,46 +378,6 @@ abstract class AbstractDefinition implements DefinitionInterface
     public static function getChildRouteAddition()
     {
         return static::getQueryAlias();
-    }
-
-    /**
-     * @param null $data
-     *
-     * @return bool
-     */
-    public function allowDelete($data = null)
-    {
-        return self::hasCapability(RouteEnum::DELETE);
-    }
-
-    /**
-     * @param null $data
-     *
-     * @return bool
-     */
-    public function allowCreate($data = null)
-    {
-        return self::hasCapability(RouteEnum::CREATE);
-    }
-
-    /**
-     * @param null $data
-     *
-     * @return bool
-     */
-    public function allowEdit($data = null)
-    {
-        return self::hasCapability(RouteEnum::EDIT);
-    }
-
-    /**
-     * @param null $data
-     *
-     * @return bool
-     */
-    public function allowShow($data = null)
-    {
-        return self::hasCapability(RouteEnum::SHOW);
     }
 
     /**
@@ -489,16 +425,6 @@ abstract class AbstractDefinition implements DefinitionInterface
     public function addAjaxOnChangeListener()
     {
         return [];
-    }
-
-    /**
-     * @param Request $request
-     * @return null|\stdClass
-     * @deprecated
-     */
-    public function ajaxOnChange(Request $request)
-    {
-        return null;
     }
 
     /**
@@ -571,4 +497,13 @@ abstract class AbstractDefinition implements DefinitionInterface
     {
         $this->extensions[get_class($extension)] = $extension;
     }
+
+    /**
+     * @return boolean
+     */
+    public function usesHtml5Validation()
+    {
+        return true;
+    }
+
 }

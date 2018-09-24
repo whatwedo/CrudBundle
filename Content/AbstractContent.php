@@ -26,17 +26,22 @@
  */
 
 namespace whatwedo\CrudBundle\Content;
+
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use whatwedo\CrudBundle\Manager\DefinitionManager;
+use whatwedo\CrudBundle\Enum\RouteEnum;
+use whatwedo\CrudBundle\Enum\VisibilityEnum;
+use whatwedo\CrudBundle\Traits\VisibilityTrait;
 
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
  */
 abstract class AbstractContent implements ContentInterface
 {
+    use VisibilityTrait;
+
     /**
      * @var string block acronym
      */
@@ -48,23 +53,62 @@ abstract class AbstractContent implements ContentInterface
     protected $options = [];
 
     /**
-     * @var DefinitionManager
-     */
-    protected $definitionManager;
-
-    /**
-     * Block constructor.
-     *
      * @param string $acronym
-     * @param array $options
      */
-    public function __construct($acronym, array $options = [])
+    public function setAcronym($acronym)
     {
         $this->acronym = $acronym;
+    }
 
+    /**
+     * @return string
+     */
+    public function getAcronym()
+    {
+        return $this->acronym;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param array $options
+     */
+    public function setOptions($options)
+    {
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
         $this->options = $resolver->resolve($options);
+    }
+
+    /**
+     * @param OptionsResolver $resolver
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'label' => $this->acronym,
+            'callable' => null,
+            'attr' => [],
+            'visibility' => VisibilityEnum::SHOW | VisibilityEnum::EDIT | VisibilityEnum::CREATE,
+            'show_voter_attribute' => RouteEnum::SHOW,
+            'edit_voter_attribute' => RouteEnum::EDIT,
+            'create_voter_attribute' => RouteEnum::CREATE,
+        ]);
+    }
+
+    /**
+     * @param $key
+     * @return mixed|null
+     */
+    public function getOption($key)
+    {
+        return isset($this->options[$key]) ? $this->options[$key] : null;
     }
 
     /**
@@ -96,14 +140,6 @@ abstract class AbstractContent implements ContentInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getAcronym()
-    {
-        return $this->acronym;
-    }
-
-    /**
      * @return string
      */
     public function getLabel()
@@ -111,39 +147,35 @@ abstract class AbstractContent implements ContentInterface
         return $this->options['label'];
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    /**
+     * @return array
+     */
+    public function getAttr()
     {
-        $resolver->setDefaults([
-            'label' => $this->acronym,
-            'callable' => null,
-        ]);
-    }
-
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
-    public function getOption($key)
-    {
-        return isset($this->options[$key]) ? $this->options[$key] : null;
+        return $this->options['attr'];
     }
 
     /**
-     * @return DefinitionManager
+     * @return string
      */
-    public function getDefinitionManager()
+    public function getShowVoterAttribute()
     {
-        return $this->definitionManager;
+        return $this->options['show_voter_attribute'];
     }
 
     /**
-     * @param DefinitionManager $definitionManager
-     * @return AbstractContent
+     * @return string
      */
-    public function setDefinitionManager(DefinitionManager $definitionManager)
+    public function getEditVoterAttribute()
     {
-        $this->definitionManager = $definitionManager;
-        return $this;
+        return $this->options['edit_voter_attribute'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getCreateVoterAttribute()
+    {
+        return $this->options['create_voter_attribute'];
     }
 }

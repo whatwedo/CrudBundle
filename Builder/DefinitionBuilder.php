@@ -26,7 +26,9 @@
  */
 
 namespace whatwedo\CrudBundle\Builder;
+
 use whatwedo\CrudBundle\Block\Block;
+use whatwedo\CrudBundle\Manager\BlockManager;
 use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Exception\ElementNotFoundException;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
@@ -43,25 +45,51 @@ class DefinitionBuilder
     protected $definitionManager;
 
     /**
+     * @var BlockManager
+     */
+    protected $blockManager;
+
+    /**
      * @var array
      */
     protected $definition = [];
 
-    public function __construct(DefinitionManager $definitionManager)
+    /**
+     * @var array
+     */
+    protected $templates;
+
+    /**
+     * @var array
+     */
+    protected $templateParameters = [];
+
+    public function __construct(BlockManager $blockManager, DefinitionManager $definitionManager, array $templates)
     {
+        $this->blockManager = $blockManager;
         $this->definitionManager = $definitionManager;
+        $this->templates = $templates;
     }
 
     /**
      * adds a new block to the definition
      *
-     * @param string $acronym
+     * @param string $acronym unique block acronym
+     * @param array  $options options
+     * @param string $type block type (class name)
+     *
      * @return Block
      */
-    public function addBlock($acronym, array $options = [])
+    public function addBlock($acronym, $type = Block::class, array $options = [])
     {
-        $this->definition[$acronym] = new Block($acronym, $options);
-        $this->definition[$acronym]->setDefinitionManager($this->definitionManager);
+        if ($type === null) {
+            $type = Block::class;
+        }
+
+        $this->definition[$acronym] = $this->blockManager->getBlock($type);
+        $this->definition[$acronym]->setAcronym($acronym);
+        $this->definition[$acronym]->setOptions($options);
+
         return $this->definition[$acronym];
     }
 
@@ -82,13 +110,61 @@ class DefinitionBuilder
     }
 
     /**
-     * @param string $acronym
-     * @return $this
+     * @param string $template
+     * @return DefinitionBuilder $this
      */
-    public function removeBlock($acronym)
+    public function setShowTemplate($template)
     {
-        unset($this->definition[$acronym]);
+        $this->templates['show'] = $template;
         return $this;
+    }
+
+    /**
+     * @param string $template
+     * @return DefinitionBuilder $this
+     */
+    public function setEditTemplate($template)
+    {
+        $this->templates['edit'] = $template;
+        return $this;
+    }
+
+    /**
+     * @param string $template
+     * @return DefinitionBuilder $this
+     */
+    public function setCreateTemplate($template)
+    {
+        $this->templates['create'] = $template;
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $value
+     * @return DefinitionBuilder $this
+     */
+    public function addTemplateParameter($name, $value)
+    {
+        $this->templateParameters[$name] = $value;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTemplateParameters(): array
+    {
+        return $this->templateParameters;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getTemplates(): array
+    {
+        return $this->templates;
     }
 
     public function getBlocks()

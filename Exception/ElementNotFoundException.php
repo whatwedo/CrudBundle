@@ -28,7 +28,8 @@
 namespace whatwedo\CrudBundle\Exception;
 
 /**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
+ * Class ElementNotFoundException
+ * @package whatwedo\CrudBundle\Exception
  */
 class ElementNotFoundException extends \Exception
 {

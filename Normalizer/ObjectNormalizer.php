@@ -27,13 +27,13 @@
 
 namespace whatwedo\CrudBundle\Normalizer;
 
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer as BaseObjectNormalizer;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 
 /**
  * @author Nicolo Singer <nicolo@whatwedo.ch>
  */
-class WhatwedoObjectNormalizer extends ObjectNormalizer
+class ObjectNormalizer extends BaseObjectNormalizer
 {
     /**
      * @var DefinitionInterface $definition
@@ -95,11 +95,13 @@ class WhatwedoObjectNormalizer extends ObjectNormalizer
 
     /**
      * @param array $customCallbacks
-     * @return WhatwedoObjectNormalizer
+     *
+     * @return ObjectNormalizer
      */
     public function setCustomCallbacks($customCallbacks)
     {
         $this->customCallbacks = $customCallbacks;
+
         return $this;
     }
 

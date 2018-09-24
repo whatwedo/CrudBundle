@@ -25,35 +25,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Enum;
-
-use whatwedo\CoreBundle\Enum\AbstractSimpleEnum;
+namespace whatwedo\CrudBundle\Exception;
 
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
  */
-final class RouteEnum extends AbstractSimpleEnum
-{
-    const INDEX     = 'index';
-    const SHOW      = 'show';
-    const CREATE    = 'create';
-    const EDIT      = 'edit';
-    const DELETE    = 'delete';
-    const BATCH     = 'batch';
-    const EXPORT    = 'export';
-    const AJAX      = 'ajax';
-
-    /**
-     * @inheritdoc
-     */
-    protected static $values = [
-        self::INDEX     => 'Übersicht',
-        self::SHOW      => 'Detail',
-        self::CREATE    => 'Erstellen',
-        self::EDIT      => 'Bearbeiten',
-        self::DELETE    => 'Löschen',
-        self::BATCH     => 'Stapelverarbeitung',
-        self::EXPORT    => 'Exportieren',
-        self::AJAX      => 'AJAX',
-    ];
-}
+class InvalidDataException extends \InvalidArgumentException { }

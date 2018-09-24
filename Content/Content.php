@@ -27,20 +27,33 @@
 
 namespace whatwedo\CrudBundle\Content;
 
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CoreBundle\Formatter\DefaultFormatter;
-use whatwedo\CrudBundle\Form\EntityHiddenType;
+use whatwedo\CoreBundle\Formatter\FormatterInterface;
+use whatwedo\CoreBundle\Manager\FormatterManager;
+use whatwedo\CrudBundle\Form\Type\EntityHiddenType;
 
 /**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
+ * Class Content
+ * @package whatwedo\CrudBundle\Content
  */
 class Content extends AbstractContent implements EditableContentInterface
 {
 
-    public function isTable()
+    /**
+     * @var FormatterManager
+     */
+    protected $formatterManager;
+
+    /**
+     * Content constructor.
+     * @param FormatterManager $formatterManager
+     */
+    public function __construct(FormatterManager $formatterManager)
     {
-        return false;
+        $this->formatterManager = $formatterManager;
     }
 
     /**
@@ -53,7 +66,8 @@ class Content extends AbstractContent implements EditableContentInterface
         $formatter = $this->options['formatter'];
 
         if (is_string($formatter)) {
-            return (string) call_user_func($formatter . '::getHtml', $data);
+            $formatterObj = $this->formatterManager->getFormatter($formatter);
+            return $formatterObj->getHtml($data);
         }
 
         if (is_callable($formatter)) {
@@ -63,56 +77,68 @@ class Content extends AbstractContent implements EditableContentInterface
         return (string) $data;
     }
 
+    /**
+     * @return string
+     */
     public function getFormType()
     {
         return $this->options['form_type'];
     }
 
-    public function isReadOnly()
-    {
-        return $this->options['read_only'] ? true : false;
-    }
-
+    /**
+     * @param array $options
+     * @return array
+     */
     public function getFormOptions($options = [])
     {
+        // Override options for the EntityHiddenType and HiddenType
         if (in_array($this->getFormType(), [EntityHiddenType::class, HiddenType::class])) {
             $this->options['label'] = false;
         }
+
+        // Override help option
         if (!is_null($this->getHelp()) && (!isset($this->options['form_options']['attr'])
                 || !isset($this->options['form_options']['attr']['help']))) {
             $this->options['form_options']['attr']['help'] = $this->options['help'];
         }
+
+        // Override label
         return array_merge($options, ['label' => $this->getLabel()], $this->options['form_options']);
     }
 
+    /**
+     * @return string
+     */
     public function getPreselectDefinition()
     {
         return $this->options['preselect_definition'];
     }
 
+    /**
+     * @return string
+     */
     public function getAutoFill()
     {
         return $this->options['auto_fill'];
     }
 
+    /**
+     * @return string
+     */
     public function getHelp()
     {
         return $this->options['help'];
     }
 
+    /**
+     * @param $key
+     * @param $value
+     */
     public function setOption($key, $value)
     {
         if (isset($this->options[$key])) {
             $this->options[$key] = $value;
         }
-    }
-
-    public function getViewClass()
-    {
-        if (array_key_exists('class', $this->options['view_options'])) {
-            return $this->options['view_options']['class'];
-        }
-        return '';
     }
 
     /**
@@ -123,16 +149,15 @@ class Content extends AbstractContent implements EditableContentInterface
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'accessor_path' => $this->acronym,
-            'callable' => null,
-            'formatter' => DefaultFormatter::class,
-            'read_only' => false,
-            'form_type' => null,
-            'form_options' => [],
-            'help' => null,
-            'preselect_definition' => null,
-            'auto_fill' => null,
-            'view_options' => []
+            'accessor_path' => $this->acronym, // Zugriffsmöglichkeit auf die Daten
+            'callable' => null, // Falls nicht null: anzuzeigender Inhalt (muss string oder Objekt mit __toString sein)
+            'formatter' => DefaultFormatter::class, // Formatierer
+            'form_type' => null, // Formular-Typ (Klasse)
+            'form_options' => [], // Formular-Optionen
+            'help' => null, // Hilfetext
+            'preselect_definition' => null, // Vorausgewählte Entity folgender Definition
+            'auto_fill' => null, // Auto-Fill Wert
+            'attr' => [], // Attribute auf dem Element
         ]);
     }
 }

@@ -65,6 +65,16 @@ class DefinitionManager
         return $this->definitions[$alias];
     }
 
+    public function getDefinitionFromEntityClass($entityclass)
+    {
+        foreach ($this->definitions as $definition) {
+            if ($definition::getEntity() == $entityclass) {
+                return $definition;
+            }
+        }
+        return null;
+    }
+
     public function getDefinitionFor($entity)
     {
         if (!is_object($entity)) {

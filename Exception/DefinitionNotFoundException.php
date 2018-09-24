@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2016, whatwedo GmbH
+ * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,35 +25,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Enum;
-
-use whatwedo\CoreBundle\Enum\AbstractSimpleEnum;
+namespace whatwedo\CrudBundle\Exception;
 
 /**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
+ * Class DefinitionNotFoundException
+ * @package whatwedo\CrudBundle\Exception
  */
-final class RouteEnum extends AbstractSimpleEnum
+class DefinitionNotFoundException extends \Exception
 {
-    const INDEX     = 'index';
-    const SHOW      = 'show';
-    const CREATE    = 'create';
-    const EDIT      = 'edit';
-    const DELETE    = 'delete';
-    const BATCH     = 'batch';
-    const EXPORT    = 'export';
-    const AJAX      = 'ajax';
 
-    /**
-     * @inheritdoc
-     */
-    protected static $values = [
-        self::INDEX     => 'Übersicht',
-        self::SHOW      => 'Detail',
-        self::CREATE    => 'Erstellen',
-        self::EDIT      => 'Bearbeiten',
-        self::DELETE    => 'Löschen',
-        self::BATCH     => 'Stapelverarbeitung',
-        self::EXPORT    => 'Exportieren',
-        self::AJAX      => 'AJAX',
-    ];
 }

@@ -3,7 +3,7 @@
 {% block page_title %}{{ title }}{% endblock %}
 
 {% block page_actions %}
-    {% if view.allowDelete(view.data) %}
+    {% if is_granted('delete', view.data) %}
         <form data-confirm="delete" action="{{ view.path('delete') }}" method="post">
     {% endif %}
         <div class="btn-group pull-right btn-group-sm">
@@ -16,20 +16,20 @@
                 {% endif %}
             {% endblock %}
             {% block page_actions_additional %}{% endblock %}
-            {% if view.allowEdit(view.data) %}
+            {% if is_granted('edit', view.data) %}
                 <a href="{{ view.path('edit') }}" class="btn btn-warning">
                     <i class="fa fa-pencil"></i>
                     Bearbeiten
                 </a>
             {% endif %}
-            {% if view.allowDelete(view.data) %}
-            <button type="submit" class="btn btn-danger" onclick="return confirm('\'{{ title }}\' wirklich löschen?')">
-                <i class="fa fa-trash-o"></i>
-                Löschen
-            </button>
+            {% if is_granted('delete', view.data) %}
+                <button type="submit" class="btn btn-danger" onclick="return confirm('\'{{ title }}\' wirklich löschen?')">
+                    <i class="fa fa-trash-o"></i>
+                    Löschen
+                </button>
             {% endif %}
         </div>
-    {% if view.allowDelete(view.data) %}
+    {% if is_granted('delete', view.data) %}
         </form>
     {% endif %}
 {% endblock %}
