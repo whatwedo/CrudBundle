@@ -1,4 +1,4 @@
-{% import "whatwedoCrudBundle:Crud:_macros.html.twig" as macros %}
+{% import "@whatwedoCrud/Crud/_macros.html.twig" as macros %}
 
 {{ form_start(form, {
     'attr': {
@@ -74,7 +74,7 @@
                                             </label>
                                         {% endif %}
                                         {{ form_widget(attribute(form, content.acronym)) }}
-                                        {% if content.autoFill is not null %}
+                                        {% if content.autoFill|default(false) %}
                                             {% for autoFill in content.autoFill %}
                                                 <div class="hidden auto-fill">
                                                     <ul data-set-to="{{ autoFill.apply_to }}" data-listen-on="{{ attribute(form, content.acronym).vars.id }}">

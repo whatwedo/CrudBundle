@@ -118,4 +118,11 @@ interface DefinitionViewInterface
      */
     public function setTemplateParameters(array $templateParameters);
 
+    /**
+     * @param string $class
+     * @param string $property
+     * @return null|\Symfony\Component\Form\Guess\Guess|\Symfony\Component\Form\Guess\TypeGuess
+     */
+    public function guessType($class, $property);
+
 }

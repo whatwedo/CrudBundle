@@ -61,7 +61,7 @@ class CrudLoader extends Loader
                     '_controller' => $definition->getController() . '::' . $capability . 'Action',
                 ]
             );
-            $routeName = $definition->getRoutePrefix() . '_' . $capability;
+            $routeName = $definition::getRouteName($capability);
 
             switch ($capability) {
                 case RouteEnum::INDEX:

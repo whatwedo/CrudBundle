@@ -6,6 +6,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
+use whatwedo\CrudBundle\Content\ContentInterface;
+use whatwedo\CrudBundle\Definition\DefinitionInterface;
+use whatwedo\CrudBundle\Extension\ExtensionInterface;
 
 /**
  * This is the class that loads and manages your bundle configuration.
@@ -39,18 +42,18 @@ class whatwedoCrudExtension extends Extension
 
         // templates
         $templates = [
-            'show' => 'whatwedoCrudBundle:Crud/_boxes:show.html.twig',
-            'create' => 'whatwedoCrudBundle:Crud/_boxes:create.html.twig',
-            'edit' => 'whatwedoCrudBundle:Crud/_boxes:edit.html.twig'
+            'show' => '@whatwedoCrud/Crud/_boxes/show.html.twig',
+            'create' => '@whatwedoCrud/Crud/_boxes/create.html.twig',
+            'edit' => '@whatwedoCrud/Crud/_boxes/edit.html.twig'
         ];
         if (isset($config['templates'])) {
             $templates = $config['templates'];
         }
         $container->setParameter('whatwedo_crud.config.templates', $templates);
 
-        // Block and Content Tags
-        $container->registerForAutoconfiguration('crud.block');
-        $container->registerForAutoconfiguration('crud.content');
+        $container->registerForAutoconfiguration(ContentInterface::class)->addTag('crud.content');
+        $container->registerForAutoconfiguration(ExtensionInterface::class)->addTag('crud.extension');
+        $container->registerForAutoconfiguration(DefinitionInterface::class)->addTag('crud.definition');
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');

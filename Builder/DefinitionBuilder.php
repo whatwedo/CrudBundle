@@ -28,6 +28,7 @@
 namespace whatwedo\CrudBundle\Builder;
 
 use whatwedo\CrudBundle\Block\Block;
+use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Manager\BlockManager;
 use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Exception\ElementNotFoundException;
@@ -50,9 +51,14 @@ class DefinitionBuilder
     protected $blockManager;
 
     /**
-     * @var array
+     * @var Block[]
      */
-    protected $definition = [];
+    protected $blocks = [];
+
+    /**
+     * @var DefinitionInterface $definition
+     */
+    protected $definition;
 
     /**
      * @var array
@@ -64,11 +70,12 @@ class DefinitionBuilder
      */
     protected $templateParameters = [];
 
-    public function __construct(BlockManager $blockManager, DefinitionManager $definitionManager, array $templates)
+    public function __construct(BlockManager $blockManager, DefinitionManager $definitionManager, array $templates, DefinitionInterface $definition)
     {
         $this->blockManager = $blockManager;
         $this->definitionManager = $definitionManager;
         $this->templates = $templates;
+        $this->definition = $definition;
     }
 
     /**
@@ -86,15 +93,16 @@ class DefinitionBuilder
             $type = Block::class;
         }
 
-        $this->definition[$acronym] = $this->blockManager->getBlock($type);
-        $this->definition[$acronym]->setAcronym($acronym);
-        $this->definition[$acronym]->setOptions($options);
+        $this->blocks[$acronym] = $this->blockManager->getBlock($type);
+        $this->blocks[$acronym]->setDefinition($this->definition);
+        $this->blocks[$acronym]->setAcronym($acronym);
+        $this->blocks[$acronym]->setOptions($options);
 
-        return $this->definition[$acronym];
+        return $this->blocks[$acronym];
     }
 
     /**
-     * returns a formally created block
+     * returns a formerly created block
      *
      * @param string $acronym
      * @return Block
@@ -102,11 +110,26 @@ class DefinitionBuilder
      */
     public function getBlock($acronym)
     {
-        if (!isset($this->definition[$acronym])) {
+        if (!isset($this->blocks[$acronym])) {
             throw new ElementNotFoundException(sprintf('Specified block "%s" not found.', $acronym));
         }
 
-        return $this->definition[$acronym];
+        return $this->blocks[$acronym];
+    }
+
+    /**
+     * removes a formerly created block
+     *
+     * @param string $acronym
+     * @throws ElementNotFoundException
+     */
+    public function removeBlock($acronym)
+    {
+        if (!isset($this->blocks[$acronym])) {
+            throw new ElementNotFoundException(sprintf('Specified block "%s" not found.', $acronym));
+        }
+
+        unset($this->blocks[$acronym]);
     }
 
     /**
@@ -167,8 +190,19 @@ class DefinitionBuilder
         return $this->templates;
     }
 
+    /**
+     * @return BlockCollection|Block[]
+     */
     public function getBlocks()
     {
-        return new BlockCollection($this->definition);
+        return new BlockCollection($this->blocks);
+    }
+
+    /**
+     * @return DefinitionInterface
+     */
+    public function getDefinition()
+    {
+        return $this->definition;
     }
 }

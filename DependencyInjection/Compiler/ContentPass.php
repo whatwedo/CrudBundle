@@ -44,11 +44,11 @@ class ContentPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->has('whatwedo_crud.manager.content')) {
+        if (!$container->has('whatwedo\CrudBundle\Manager\ContentManager')) {
             return;
         }
 
-        $definition = $container->findDefinition('whatwedo_crud.manager.content');
+        $definition = $container->findDefinition('whatwedo\CrudBundle\Manager\ContentManager');
 
         $taggedServices = $container->findTaggedServiceIds('crud.content');
         foreach ($taggedServices as $id => $tags) {

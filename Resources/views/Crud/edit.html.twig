@@ -1,4 +1,4 @@
-{% extends '::base.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block page_title %}{{ title }}{% endblock %}
 
@@ -11,7 +11,7 @@
                 {% if view.hasCapability('index') %}
                     <a href="{{ view.path('index') }}" class="btn btn-default">
                         <i class="fa fa-list"></i>
-                        Übersicht
+                        {{ 'whatwedo_crud.index'|trans }}
                     </a>
                 {% endif %}
             {% endblock %}
@@ -22,12 +22,12 @@
             </button>
             <a href="{{ view.path('show') }}" class="btn btn-primary">
                 <i class="fa fa-arrow-right"></i>
-                Ansehen
+                {{ 'whatwedo_crud.view'|trans }}
             </a>
             {% if is_granted('delete', view.data) %}
                 <button type="submit" class="btn btn-danger">
                     <i class="fa fa-trash-o"></i>
-                    Löschen
+                    {{ 'whatwedo_crud.delete'|trans }}
                 </button>
             {% endif %}
         </div>

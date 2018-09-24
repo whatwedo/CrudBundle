@@ -1,0 +1,6 @@
+whatwedo_crud:
+    add: Hinzufügen
+    index: Übersicht
+    edit: Bearbeiten
+    delete: Löschen
+    view: Ansehen

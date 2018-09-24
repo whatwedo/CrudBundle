@@ -44,11 +44,11 @@ class BlockPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->has('whatwedo_crud.manager.block')) {
+        if (!$container->has('whatwedo\CrudBundle\Manager\BlockManager')) {
             return;
         }
 
-        $definition = $container->findDefinition('whatwedo_crud.manager.block');
+        $definition = $container->findDefinition('whatwedo\CrudBundle\Manager\BlockManager');
 
         $taggedServices = $container->findTaggedServiceIds('crud.block');
 

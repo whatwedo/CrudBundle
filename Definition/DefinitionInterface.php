@@ -26,6 +26,7 @@
  */
 
 namespace whatwedo\CrudBundle\Definition;
+
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -33,20 +34,28 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
+use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
 use whatwedo\CrudBundle\View\DefinitionViewInterface;
-use whatwedo\TableBundle\Table\DoctrineTable;
+use whatwedo\TableBundle\Table\Table;
 
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
  */
 interface DefinitionInterface
 {
+    public static function supports($entity): bool;
+
     public static function getEntityTitle();
 
     public static function getAlias();
 
-    public static function getRoutePrefix();
+    /**
+     * @param string $route
+     * @see RouteEnum
+     * @return string
+     */
+    public static function getRouteName(string $route);
 
     /**
      * @param null|object $entity
@@ -54,11 +63,6 @@ interface DefinitionInterface
      * @return string
      */
     public function getTitle($entity = null, $route = null);
-
-    /**
-     * @return string
-     */
-    public static function getChildRouteAddition();
 
     /**
      * returns capabilities of this definition
@@ -83,25 +87,11 @@ interface DefinitionInterface
     public static function getController();
 
     /**
-     * gets doctrine registry
-     *
-     * @return Registry
-     */
-    public function getDoctrine();
-
-    /**
      * returns the fqdn of the entity
      *
      * @return string fqdn of the entity
      */
     public static function getEntity();
-
-    /**
-     * Returns the entity repository
-     *
-     * @return EntityRepository repository
-     */
-    public function getRepository();
 
     /**
      * returns the query alias to be used
@@ -120,9 +110,10 @@ interface DefinitionInterface
     /**
      * table configuration
      *
-     * @param DoctrineTable $table
+     * @param Table $table
+     * @return
      */
-    public function configureTable(DoctrineTable $table);
+    public function configureTable(Table $table);
 
     /**
      * check if this definition has specific capability
@@ -162,14 +153,6 @@ interface DefinitionInterface
      */
     public function getDeleteRedirect(RouterInterface $router, $entity = null);
 
-
-    /**
-     * @param RouterInterface $router
-     * @param $entity
-     * @return Response
-     */
-    public function getCreateRedirect(RouterInterface $router, $entity = null);
-
     /**
      * @return array
      */
@@ -191,9 +174,10 @@ interface DefinitionInterface
     public function getExportOptions();
 
     /**
-     * @param DoctrineTable $table
+     * @param Table $table
+     * @return
      */
-    public function overrideTableConfiguration(DoctrineTable $table);
+    public function overrideTableConfiguration(Table $table);
 
     /**
      * @return array
@@ -222,7 +206,10 @@ interface DefinitionInterface
     public function getExtension($extension);
 
     /**
-     * @return boolean
+     * @param string $class
+     * @param string $property
+     * @return null|\Symfony\Component\Form\Guess\Guess|\Symfony\Component\Form\Guess\TypeGuess
      */
-    public function usesHtml5Validation();
+    public function guessType($class, $property);
+
 }

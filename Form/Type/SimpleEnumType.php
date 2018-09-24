@@ -27,51 +27,49 @@
 
 namespace whatwedo\CrudBundle\Form\Type;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use whatwedo\CrudBundle\Form\DataTransformer\EntityToIdTransformer;
+use whatwedo\CoreBundle\Enum\AbstractSimpleEnum;
 
 /**
- * Class EntityHiddenType
+ * Class SimpleEnumType
  * @package whatwedo\CrudBundle\Form
  */
-class EntityHiddenType extends AbstractType
+class SimpleEnumType extends AbstractType
 {
-    protected $em;
-
-    public function __construct(EntityManagerInterface $em)
-    {
-        $this->em = $em;
-    }
-
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        $transformer = new EntityToIdTransformer($this->em, $options['class']);
-        $builder->addModelTransformer($transformer);
-    }
-
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setRequired(['class'])
-            ->setDefault('invalid_message', 'Das Objekt existiert nicht');
+        $resolver->setDefault('choices', function (Options $options) {
+            /** @var AbstractSimpleEnum|string $enumClass */
+            $enumClass = $options['class'];
+
+            if(!is_subclass_of($enumClass, AbstractSimpleEnum::class))
+            {
+                throw new \InvalidArgumentException(sprintf('Option \'class\' needs to be subclass of %s', AbstractSimpleEnum::class));
+            }
+
+            if(!$options['choice_values']) return $enumClass::getFormValues();
+
+            $choices = [];
+            foreach($options['choice_values'] as $choiceValue) {
+                $choices[$enumClass::getRepresentation($choiceValue)] = $choiceValue;
+            }
+
+            return $choices;
+        });
+
+        $resolver->setRequired('class');
+        $resolver->setDefault('choice_values', null);
+        $resolver->setAllowedTypes('choice_values', ['array', 'null']);
+        $resolver->setAllowedTypes('class', ['string']);
     }
 
-    /**
-     * @return string
-     */
     public function getParent()
     {
-        return HiddenType::class;
+        return ChoiceType::class;
     }
+
+
 }

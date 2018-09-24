@@ -1,4 +1,4 @@
-{% import "whatwedoCrudBundle:Crud:_macros.html.twig" as macros %}
+{% import "@whatwedoCrud/Crud/_macros.html.twig" as macros %}
 
 {{ form_start(form, {
     'attr': {
@@ -17,6 +17,13 @@
 {% set i = 0 %}
 {% set isOpen = false %}
 {% for block in helper.blocks if block.isVisibleOnEdit and is_granted(block.editVoterAttribute, helper.data) %}
+
+    {% set hasVisibleContent = false %}
+    {% for key, content in block.contents if content.isVisibleOnEdit and is_granted(content.editVoterAttribute, helper.data) %}
+        {% set hasVisibleContent = true %}
+    {% endfor %}
+
+    {% if hasVisibleContent %}
 
     {# Zeile #}
     {% set i = i + 1 %}
@@ -76,7 +83,7 @@
                                             </label>
                                         {% endif %}
                                         {{ form_widget(attribute(form, content.acronym)) }}
-                                        {% if content.autoFill is not null %}
+                                        {% if content.autoFill|default(false) %}
                                             {% for autoFill in content.autoFill %}
                                                 <div class="hidden auto-fill">
                                                     <ul data-set-to="{{ autoFill.apply_to }}" data-listen-on="{{ attribute(form, content.acronym).vars.id }}">
@@ -99,8 +106,7 @@
                                             </div>
                                         {% endif %}
                                     </div>
-                                {% endif %}
-                                {% if content.isTable is defined and content.isTable %}
+                                {% elseif content.isTable|default(false) %}
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <strong>{{ content.label }}:</strong>
@@ -111,8 +117,7 @@
                                             {{ content.renderTable(key, helper.data)|raw }}
                                         </div>
                                     </div>
-                                {% endif %}
-                                {% if content.isTwigContent is defined and content.isTwigContent %}
+                                {% elseif content.isTwigContent|default(false) %}
                                     {% include content.template with content.parameters  %}
                                 {% endif %}
                             </div>
@@ -131,6 +136,8 @@
             </div>
             {% set isOpen = false %}
         {% endif %}
+    {% endif %}
+
     {% endif %}
 {% endfor %}
 

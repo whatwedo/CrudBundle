@@ -28,6 +28,8 @@
 namespace whatwedo\CrudBundle\Definition;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Common\Util\ClassUtils;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -43,6 +45,7 @@ use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\View\DefinitionViewInterface;
 use whatwedo\TableBundle\Extension\FilterExtension;
 use whatwedo\TableBundle\Table\DoctrineTable;
+use whatwedo\TableBundle\Table\Table;
 use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
 /**
@@ -62,7 +65,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     const AJAX = 2;
 
     /**
-     * @var Registry
+     * @var RegistryInterface
      */
     protected $doctrine;
 
@@ -162,7 +165,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * {@inheritdoc}
      */
-    public function getRepository()
+    protected function getRepository()
     {
         return $this->getDoctrine()->getRepository($this->getEntity());
     }
@@ -178,24 +181,44 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * {@inheritdoc}
      */
-    public function configureTable(DoctrineTable $table)
+    public function configureTable(Table $table)
     {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getDoctrine()
+    protected function getDoctrine()
     {
         return $this->doctrine;
+    }
+
+    public static function getAlias()
+    {
+        return str_replace(
+            ['\\', '_definition', '_bundle'],
+            ['_', '', ''],
+            strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', static::class))
+        );
+    }
+
+    /**
+     * returns the query alias to be used
+     *
+     * @return string alias
+     */
+    public static function getQueryAlias()
+    {
+        return static::getAlias();
     }
 
     /**
      * set the doctrine registry
      *
      * @param Registry $registry
+     * @required
      */
-    public function setDoctrine(Registry $registry)
+    public function setDoctrine(RegistryInterface $registry)
     {
         $this->doctrine = $registry;
     }
@@ -210,8 +233,9 @@ abstract class AbstractDefinition implements DefinitionInterface
 
     /**
      * @param BlockManager $blockManager
+     * @required
      */
-    public function setBlockManager($blockManager)
+    public function setBlockManager(BlockManager $blockManager)
     {
         $this->blockManager = $blockManager;
     }
@@ -243,6 +267,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @param RequestStack $requestStack
      * @return AbstractDefinition
+     * @required
      */
     public function setRequestStack(RequestStack $requestStack)
     {
@@ -262,6 +287,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @param DefinitionManager $definitionManager
      * @return AbstractDefinition
+     * @required
      */
     public function setDefinitionManager(DefinitionManager $definitionManager)
     {
@@ -274,11 +300,12 @@ abstract class AbstractDefinition implements DefinitionInterface
      */
     public function getTemplateDirectory()
     {
-        return 'whatwedoCrudBundle:Crud';
+        return '@whatwedoCrud/Crud';
     }
 
     /**
      * @param DefinitionViewInterface $definitionView
+     * @required
      */
     public function setDefinitionView(DefinitionViewInterface $definitionView)
     {
@@ -291,7 +318,7 @@ abstract class AbstractDefinition implements DefinitionInterface
      */
     public function createView($data = null)
     {
-        $this->builder = new DefinitionBuilder($this->blockManager, $this->definitionManager, $this->templates);
+        $this->builder = new DefinitionBuilder($this->blockManager, $this->definitionManager, $this->templates, $this);
 
         $this->configureView($this->builder, $data);
 
@@ -300,27 +327,20 @@ abstract class AbstractDefinition implements DefinitionInterface
         $this->definitionView->setBlocks($this->builder->getBlocks());
         $this->definitionView->setTemplates($this->builder->getTemplates());
         $this->definitionView->setTemplateParameters($this->builder->getTemplateParameters());
-
         return $this->definitionView;
     }
 
     /**
-     * @param DoctrineTable $table
+     * @param Table|DoctrineTable $table
      */
-    public function overrideTableConfiguration(DoctrineTable $table)
+    public function overrideTableConfiguration(Table $table)
     {
         if ($table->hasExtension(FilterExtension::class)) {
-            /** @var FilterExtension $filterExtension */
-            $filterExtension = $table->getExtension(FilterExtension::class);
-            $filterExtension->addFiltersAutomatically(
-                $table,
-                static::getEntity(),
-                static::getQueryAlias(),
-                $this->getQueryBuilder(),
-                [$this, 'getLabelFor']
-            );
+            $table->getFilterExtension()
+                ->addFiltersAutomatically(
+                    $table, [$this, 'getLabelFor']
+                );
         }
-
     }
 
     /**
@@ -332,27 +352,30 @@ abstract class AbstractDefinition implements DefinitionInterface
     public function getLabelFor($table, $property)
     {
         if ($table instanceof DoctrineTable) {
-            /** @var \whatwedo\TableBundle\Table\Column $column */
             foreach ($table->getColumns() as $column) {
                 if ($column->getAcronym() == $property) {
-                    return $column->getLabel();
+                    $label = $column->getLabel();
+                    if($label) return $label;
+                    else break;
                 }
             }
         }
 
         if (is_null($this->definitionBuilderLabelCache)) {
-            $this->definitionBuilderLabelCache = new DefinitionBuilder($this->blockManager, $this->definitionManager, $this->templates);
+            $this->definitionBuilderLabelCache = new DefinitionBuilder($this->blockManager, $this->definitionManager, $this->templates, $this);
             $this->configureView($this->definitionBuilderLabelCache, null);
         }
 
-        /** @var Block $block */
         foreach ($this->definitionBuilderLabelCache->getBlocks() as $block) {
             foreach ($block->getContents() as $content) {
-                if ($content->getAcronym() == $property && array_key_exists('label', $content->getOptions())) {
-                    return $content->getOption('label');
+                if ($content->getAcronym() == $property) {
+                    $label = $content->getOption('label');
+                    if($label) return $label;
+                    else break;
                 }
             }
         }
+
         return ucfirst($property);
     }
 
@@ -361,16 +384,29 @@ abstract class AbstractDefinition implements DefinitionInterface
      */
     public function getDeleteRedirect(RouterInterface $router, $entity = null)
     {
-        return new RedirectResponse($router->generate(static::getRoutePrefix() . '_index'));
+        return new RedirectResponse($router->generate(static::getRouteName(RouteEnum::INDEX)));
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function getRoutePrefix()
+    protected static function getRoutePrefix()
     {
         return static::getAlias();
     }
+
+    /**
+     * @param string $route
+     * @see RouteEnum
+     * @return string
+     */
+    public static function getRouteName(string $route)
+    {
+        if(!RouteEnum::has($route)) throw new \InvalidArgumentException("Invalid route specified. Only RouteEnum values are supported.");
+
+        return sprintf('%s_%s', static::getRoutePrefix(), $route);
+    }
+
 
     /**
      * @return string
@@ -449,7 +485,7 @@ abstract class AbstractDefinition implements DefinitionInterface
         }
 
         if (static::hasCapability(RouteEnum::INDEX)) {
-            $this->getBreadcrumbs()->addRouteItem(static::getEntityTitle(), static::getRoutePrefix() . '_' . RouteEnum::INDEX, $this->getIndexBreadcrumbParameters([], $entity));
+            $this->getBreadcrumbs()->addRouteItem(static::getEntityTitle(), static::getRouteName(RouteEnum::INDEX), $this->getIndexBreadcrumbParameters([], $entity));
         } else {
             $this->getBreadcrumbs()->addItem(static::getEntityTitle());
         }
@@ -499,11 +535,15 @@ abstract class AbstractDefinition implements DefinitionInterface
     }
 
     /**
-     * @return boolean
+     * {@inheritdoc}
      */
-    public function usesHtml5Validation()
+    public function guessType($class, $property)
     {
-        return true;
+        return $this->definitionView->guessType($class, $property);
     }
 
+    public static function supports($entity): bool
+    {
+        return is_a(ClassUtils::getClass($entity), static::getEntity(), true);
+    }
 }

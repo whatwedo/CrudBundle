@@ -1,4 +1,4 @@
-{% import "whatwedoCrudBundle:Crud:_macros.html.twig" as macros %}
+{% import "@whatwedoCrud/Crud/_macros.html.twig" as macros %}
 
 {% set keyArr = helper.blocks|keys %}
 {% set i = 0 %}
@@ -26,12 +26,12 @@
         }) %}
     {% endif %}
             <div {{ macros.attributes(blockAttr) }}>
-                <div class="box box-primary">
+                <div class="box box-primary{{ block.options.collapsed|default(false) ? ' collapsed-box' }}">
                     {% if block.label %}
-                        {{ macros.blockHeader(block.label) }}
+                        {{ macros.blockHeader(block.label, block.options) }}
                     {% endif %}
 
-                    <div class="box-body">
+                    <div class="box-body"{{ block.options.collapsed|default(false) ? ' style="display: none;"' }}>
                         {% for key, content in block.contents if content.isVisibleOnShow and is_granted(content.showVoterAttribute, helper.data) %}
 
                             {% if content.attr.class is not defined %}
@@ -46,11 +46,13 @@
 
                             <div {{ macros.attributes(contentAttr) }}>
                                 {% if content.isTable is defined and content.isTable %}
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <strong>{{ content.label }}{% if content.label is not empty %}:{% endif %}</strong>
+                                    {% if content.label is not empty %}
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <strong>{{ content.label }}:</strong>
+                                            </div>
                                         </div>
-                                    </div>
+                                    {% endif %}
                                     <div class="row">
                                         <div class="col-lg-12">
                                             {{ content.renderTable(key, helper.data)|raw }}
@@ -67,7 +69,7 @@
                                                     </a>
                                                 {% endif %}
                                                 {% block add_button %}
-                                                    {% if content.createRoute and content.isAddAllowed is defined and content.isAddAllowed and is_granted(content.addVoterAttribute, helper.data) %}
+                                                    {% if content.createRoute and content.isAddAllowed|default %}
                                                         <a href="{{ path(content.createRoute, content.createRouteParameters(data)) }}" class="btn btn-success btn-xs">
                                                             <i class="fa fa-plus"></i>
                                                             Hinzufügen

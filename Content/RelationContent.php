@@ -28,61 +28,59 @@
 namespace whatwedo\CrudBundle\Content;
 
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Exception\InvalidDataException;
+use whatwedo\CrudBundle\Form\Type\EntityAjaxType;
+use whatwedo\CrudBundle\Form\Type\EntityHiddenType;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
-use whatwedo\TableBundle\Event\CriteriaLoadEvent;
 use whatwedo\TableBundle\Factory\TableFactory;
-use whatwedo\TableBundle\Model\SimpleTableData;
 use whatwedo\TableBundle\Table\ActionColumn;
+use function array_keys;
+use function array_reduce;
+use function array_reverse;
+use function implode;
 
 /**
  * Class RelationContent
  * @package whatwedo\CrudBundle\Content
  */
-class RelationContent extends AbstractContent
+class RelationContent extends TableContent implements EditableContentInterface
 {
-    /**
-     * @var DefinitionManager
-     */
+    protected $tableFactory;
+    protected $eventDispatcher;
+    protected $authorizationChecker;
     protected $definitionManager;
+    protected $requestStack;
+    protected $doctrine;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected $accessorPathDefinitionCacheMap = [];
 
     /**
      * RelationContent constructor.
      * @param ContainerInterface $container
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(TableFactory $tableFactory, EventDispatcherInterface $eventDispatcher, AuthorizationCheckerInterface $authorizationChecker, DefinitionManager $definitionManager, RequestStack $requestStack, RegistryInterface $doctrine)
     {
-        $this->container = $container;
+        $this->tableFactory = $tableFactory;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->authorizationChecker = $authorizationChecker;
+        $this->definitionManager = $definitionManager;
+        $this->requestStack = $requestStack;
+        $this->doctrine = $doctrine;
     }
 
-    /**
-     * @return bool
-     */
-    public function isTable()
-    {
-        return true;
-    }
-
-    /**
-     * @param $identifier
-     * @param $row
-     *
-     * @return string
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \whatwedo\TableBundle\Exception\DataLoaderNotAvailableException
-     */
     public function renderTable($identifier, $row)
     {
         $data = $this->getContents($row);
@@ -90,80 +88,84 @@ class RelationContent extends AbstractContent
             throw new InvalidDataException('data for RelationContent should be an instance of ' . Collection::class);
         }
 
-        /** @var TableFactory $tableFactory */
-        $tableFactory = $this->container->get('whatwedo_table.factory.table');
         $options = $this->options['table_options'];
-        $options['data_loader'] = function($page, $limit) use ($data) {
-            $dataLoader = new SimpleTableData();
-            $dataLoader->setTotalResults(count($data));
 
-            if ($this->options['criteria'] instanceof Criteria) {
-                $criteria = $this->options['criteria'];
-            } else {
-                $criteria = Criteria::create();
+        /*
+         * $row = Lesson
+         */
+        $reverseMapping = $this->getReverseMapping($row);
+        $targetDefinition = $this->definitionManager->getDefinitionFromClass($this->getOption('definition'));
+
+        $queryBuilder = $targetDefinition->getQueryBuilder();
+
+        $rootAlias = $targetDefinition::getQueryAlias();
+        foreach ($reverseMapping as $field => $value) {
+            /*
+             * person.studentModuleOccasions => person_studentModuleOccasions
+             * person_studentModuleOccasions.occasion => person_studentModuleOccasions_occasion
+             * person_studentModuleOccasions_occasion.lessons => person_studentModuleOccasions_occasion_lessons
+             */
+            $newAlias = $rootAlias . '_' . $field;
+
+            $queryBuilder->leftJoin($rootAlias . '.' . $field, $newAlias);
+
+            if($value instanceof Collection) {
+                $queryBuilder->andWhere($newAlias . ' IN (:' . $newAlias.')');
+            }
+            else {
+                $queryBuilder->andWhere($newAlias . ' = :' . $newAlias);
             }
 
-            $criteria
-                ->setMaxResults($limit)
-                ->setFirstResult(($page - 1) * $limit)
-            ;
+            $queryBuilder->setParameter($newAlias, $value);
 
-            $dataLoader->setResults($data->matching($criteria)->toArray());
+            $queryBuilder->addSelect($newAlias);
 
-            return $dataLoader;
-        };
+            $rootAlias = $newAlias;
+        }
 
-        $table = $tableFactory->createTable($identifier, $options);
+        $options['query_builder'] = $queryBuilder;
+
+        if (is_callable($this->options['query_builder_configuration'])) {
+            $this->options['query_builder_configuration']($queryBuilder, $targetDefinition);
+        }
+
+        $table = $this->tableFactory->createDoctrineTable($identifier, $options);
+        $targetDefinition->configureTable($table);
+        $targetDefinition->overrideTableConfiguration($table);
 
         if (is_callable($this->options['table_configuration'])) {
             $this->options['table_configuration']($table);
         }
 
-        $this->container->get('event_dispatcher')->dispatch(CriteriaLoadEvent::PRE_LOAD, new CriteriaLoadEvent($this, $table));
-
         $actionColumnItems = [];
 
-        if (call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::SHOW)) {
-            $table->setShowRoute(sprintf(
-                '%s_%s',
-                call_user_func([$this->getOption('definition'), 'getRoutePrefix']),
-                RouteEnum::SHOW
-            ));
+        if ($this->hasCapability(RouteEnum::SHOW)) {
+            $showRoute = $this->getRoute(RouteEnum::SHOW);
+
+            $table->setShowRoute($showRoute);
             $actionColumnItems[] = [
                 'label' => 'Details',
                 'icon' => 'arrow-right',
                 'button' => 'primary',
-                'route' => sprintf(
-                    '%s_%s',
-                    call_user_func([$this->getOption('definition'), 'getRoutePrefix']),
-                    RouteEnum::SHOW
-                ),
+                'route' => $showRoute,
                 'route_parameters' => [],
                 'voter_attribute' => RouteEnum::SHOW,
             ];
         }
 
-        if (call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::EDIT)) {
+        if ($this->hasCapability(RouteEnum::EDIT)) {
             $actionColumnItems[] = [
                 'label' => 'Bearbeiten',
                 'icon' => 'pencil',
                 'button' => 'warning',
-                'route' => sprintf(
-                    '%s_%s',
-                    call_user_func([$this->getOption('definition'), 'getRoutePrefix']),
-                    RouteEnum::EDIT
-                ),
+                'route' => $this->getRoute(RouteEnum::EDIT),
                 'route_parameters' => [],
                 'voter_attribute' => RouteEnum::EDIT,
             ];
         }
 
-        if (call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::EXPORT)) {
-            $table->setExportRoute(sprintf(
-                '%s_%s',
-                call_user_func([$this->getOption('definition'), 'getRoutePrefix']),
-                RouteEnum::EXPORT
-            ));
+        if ($this->hasCapability(RouteEnum::EXPORT)) {
+            $table->setExportRoute($this->getRoute(RouteEnum::EXPORT));
         }
 
         $table->addColumn('actions', ActionColumn::class, [
@@ -191,10 +193,8 @@ class RelationContent extends AbstractContent
             return null;
         }
 
-        $capibilities = call_user_func([$this->options['definition'], 'getCapabilities']);
-
-        if (in_array(RouteEnum::INDEX, $capibilities)) {
-            return call_user_func([$this->options['definition'], 'getRoutePrefix']) . '_index';
+        if ($this->hasCapability(RouteEnum::INDEX)) {
+            return $this->getRoute(RouteEnum::INDEX);
         }
 
         return null;
@@ -205,10 +205,8 @@ class RelationContent extends AbstractContent
      */
     public function getCreateRoute()
     {
-        $capibilities = call_user_func([$this->options['definition'], 'getCapabilities']);
-
-        if (in_array(RouteEnum::CREATE, $capibilities)) {
-            return call_user_func([$this->options['definition'], 'getRoutePrefix']) . '_create';
+        if ($this->hasCapability(RouteEnum::CREATE)) {
+            return $this->getRoute(RouteEnum::CREATE);
         }
 
         return null;
@@ -234,13 +232,9 @@ class RelationContent extends AbstractContent
      */
     public function isAddAllowed()
     {
-        $definition = $this->getDefinitionManager()->getDefinitionFromClass($this->options['definition']);
-        $entityName = $definition::getEntity();
-        $entityReflector = new ReflectionClass($entityName);
-        if ($entityReflector->isAbstract()) {
-            return false;
-        }
-        return $this->container->get('security.authorization_checker')->isGranted(RouteEnum::CREATE, $entityReflector->newInstanceWithoutConstructor());
+        $definition = $this->definitionManager->getDefinitionFromClass($this->getOption('definition'));
+
+        return $this->authorizationChecker->isGranted(RouteEnum::CREATE, $definition);
     }
 
     /**
@@ -252,28 +246,6 @@ class RelationContent extends AbstractContent
         if (isset($this->options[$key])) {
             $this->options[$key] = $value;
         }
-    }
-
-    /**
-     * @return mixed|DefinitionManager
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     */
-    public function getDefinitionManager()
-    {
-        if (!$this->definitionManager instanceof DefinitionManager) {
-            return $this->definitionManager = $this->container->get('whatwedo_crud.manager.definition');
-        }
-
-        return $this->definitionManager;
-    }
-
-    /**
-     * @param DefinitionManager $definitionManager
-     */
-    public function setDefinitionManager($definitionManager)
-    {
-        $this->definitionManager = $definitionManager;
     }
 
     /**
@@ -294,16 +266,106 @@ class RelationContent extends AbstractContent
         $resolver->setDefaults([
             'accessor_path' => $this->acronym,
             'table_options' => [],
-            'criteria' => [],
+            'form_type' => EntityAjaxType::class,
+            'form_options' => [],
+            'query_builder_configuration' => null,
             'table_configuration' => null,
-            'definition' => null,
-            'route_addition_key' => null,
+            'route_addition_key' => $this->definition::getAlias(),
             'show_index_button' => false,
-            'add_voter_attribute' => RouteEnum::EDIT,
+            'add_voter_attribute' => RouteEnum::EDIT
         ]);
 
+        $resolver->setDefault('definition', function (Options $options) {
+            return get_class($this->getTargetDefinition($options['accessor_path']));
+        });
+
+        $resolver->setDefault('class', function (Options $options) {
+            return $this->getTargetDefinition($options['accessor_path'])::getEntity();
+        });
+
         $resolver->setAllowedTypes('table_options', ['array']);
-        $resolver->setAllowedTypes('table_configuration', ['callable']);
+        $resolver->setAllowedTypes('form_options', ['array']);
+        $resolver->setAllowedTypes('table_configuration', ['callable', 'null']);
+        $resolver->setAllowedTypes('query_builder_configuration', ['callable', 'null']);
+    }
+
+    private function getReverseMapping($row)
+    {
+        /*
+         * $accessorPath: 'occasion.students.person'
+         *
+         * [
+         *      'occasion' => [
+         *          'field' => 'lessons',
+         *          'path' => ''
+         *      ],
+         *      'students' => [
+         *          'field' => 'occasion',
+         *          'path' => 'occasion'
+         *      ],
+         *      'person' => [
+         *          'field' => 'studentModuleOccasions',
+         *          'path' => 'occasion.students'
+         *      ]
+         * ]
+         */
+        $stack = [];
+
+        foreach (explode('.', $this->getOption('accessor_path')) as $part) {
+            $targetEntity = empty($stack) ? $this->definition::getEntity() : end($stack)['_mapping']['targetEntity'];
+
+            $mapping = $this->getMetadataFactory()->getMetadataFor($targetEntity)->getAssociationMapping($part);
+
+            $stack[$part] = [
+                '_mapping' => $mapping,
+                'field' => $mapping['mappedBy'] ?: $mapping['inversedBy'],
+                'path' => implode('.', array_keys($stack))
+            ];
+        }
+
+        /*
+         * [
+         *      'studentModuleOccasions' => ModuleOccasionStudent[],
+         *      'occasion' => ModuleOccasion,
+         *      'lessons' => Lesson
+         * ]
+         */
+        $reverse = [];
+        foreach (array_reverse($stack) as $entry) {
+            $reverse[$entry['field']] = $entry['path'] ? PropertyAccess::createPropertyAccessor()->getValue($row, $entry['path']) : $row;
+        }
+
+        return $reverse;
+    }
+
+    private function getTargetDefinition($accessorPath = null)
+    {
+        $metadataFactory = $this->getMetadataFactory();
+
+        $associations = explode('.', $accessorPath ?: $this->getOption('accessor_path'));
+
+        /*
+         * 1:
+         * $className = 'Entity\Lesson'
+         * $association = 'occasion'
+         *
+         * 2:
+         * $className = 'Entity\ModuleOccasion'
+         * $association = 'students'
+         *
+         * 3:
+         * $className = 'Entity\ModuleOccasionStudent'
+         * $association = 'person'
+         *
+         * $target = 'Entity\Person'
+         *
+         * => PersonDefinition
+         */
+        $target = array_reduce($associations, function (string $className, string $association) use ($metadataFactory) {
+            return $metadataFactory->getMetadataFor($className)->getAssociationTargetClass($association);
+        }, $this->definition::getEntity());
+
+        return $this->definitionManager->getDefinitionFromEntityClass($target);
     }
 
     /**
@@ -311,17 +373,45 @@ class RelationContent extends AbstractContent
      */
     public function getRequest()
     {
-        return $this->container->get('request_stack')->getCurrentRequest();
+        return $this->requestStack->getCurrentRequest();
     }
 
     /**
-     * @return Criteria
+     * @return \Doctrine\Common\Persistence\Mapping\ClassMetadataFactory|ClassMetadataFactory
      */
-    public function getCriteria()
+    private function getMetadataFactory()
     {
-        if (!$this->options['criteria'] instanceof Criteria) {
-            $this->options['criteria'] = Criteria::create();
+        return $this->doctrine
+            ->getManager()
+            ->getMetadataFactory();
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormType()
+    {
+        return $this->getOption('form_type');
+    }
+
+    /**
+     * @param array $options
+     * @return array
+     */
+    public function getFormOptions($options = [])
+    {
+        if (in_array($this->getFormType(), [EntityHiddenType::class, HiddenType::class])) {
+            $this->options['label'] = false;
         }
-        return $this->options['criteria'];
+        return array_merge($options, ['label' => $this->getLabel(), 'multiple' => true, 'class' => $this->getOption('class')], $this->options['form_options']);
+    }
+
+    /**
+     * Definiton der Vorselektion
+     * @return string
+     */
+    public function getPreselectDefinition()
+    {
+        return $this->getOption('definition');
     }
 }

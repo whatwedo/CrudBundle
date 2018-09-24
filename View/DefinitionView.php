@@ -34,15 +34,21 @@ use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormRegistry;
+use Symfony\Component\Form\FormRegistryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Http\AccessMap;
+use Symfony\Component\Security\Http\AccessMapInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Content\Content;
 use whatwedo\CrudBundle\Content\EditableContentInterface;
+use whatwedo\CrudBundle\Content\RelationContent;
 use whatwedo\CrudBundle\Definition\AbstractDefinition;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\RouteEnum;
@@ -132,14 +138,21 @@ class DefinitionView implements DefinitionViewInterface
     protected $request;
 
     /**
+     * @var FormRegistry $formRegistry
+     */
+    protected $formRegistry;
+
+    /**
      * DefinitionView constructor.
      * @param EngineInterface $templating
      * @param FormFactoryInterface $formFactory
+     * @param FormRegistry $formRegistry
      * @param Router $router
      * @param AccessMap $accessMap
      * @param AuthorizationChecker $authorizationChecker
+     * @param RequestStack $requestStack
      */
-    public function __construct(EngineInterface $templating, FormFactoryInterface $formFactory, Router $router, AccessMap $accessMap, AuthorizationChecker $authorizationChecker, RequestStack $requestStack)
+    public function __construct(EngineInterface $templating, FormFactoryInterface $formFactory, FormRegistryInterface $formRegistry, RouterInterface $router, AccessMapInterface $accessMap, AuthorizationCheckerInterface $authorizationChecker, RequestStack $requestStack)
     {
         $this->templating = $templating;
         $this->formFactory = $formFactory;
@@ -148,8 +161,13 @@ class DefinitionView implements DefinitionViewInterface
         $this->authorizationChecker = $authorizationChecker;
         $this->annotationReader = new AnnotationReader();
         $this->request = $requestStack->getCurrentRequest();
+        $this->formRegistry = $formRegistry;
     }
 
+    /**
+     * @param DefinitionManager $definitionManager
+     * @required
+     */
     public function setDefinitionManager(DefinitionManager $definitionManager)
     {
         $this->definitionManager = $definitionManager;
@@ -235,7 +253,7 @@ class DefinitionView implements DefinitionViewInterface
 
         if (!is_null($def)) {
             if ($this->authorizationChecker->isGranted(RouteEnum::SHOW, $entity)) {
-                $path = $this->router->generate($def::getRoutePrefix() . '_' . RouteEnum::SHOW, ['id' => $entity->getId()]);
+                $path = $this->router->generate($def::getRouteName(RouteEnum::SHOW), ['id' => $entity->getId()]);
 
                 $granted = false;
                 if (!$this->authorizationChecker->isGranted('IS_AUTHENTICATED_ANONYMOUSLY')) {
@@ -298,18 +316,18 @@ class DefinitionView implements DefinitionViewInterface
                         return 'javascript:alert(\'can\\\'t generate route "' . $route . '" without data\')';
                     }
 
-                    return $this->router->generate(sprintf('%s_%s', $this->definition->getRoutePrefix(), $route),
+                    return $this->router->generate($this->definition::getRouteName($route),
                         array_merge([
                             'id' => $this->data->getId(),
                             ], $params)
                     );
                 case RouteEnum::AJAX:
                     if (!$this->data) {
-                        return $this->router->generate(sprintf('%s_%s', $this->definition->getRoutePrefix(), $route),
+                        return $this->router->generate($this->definition::getRouteName($route),
                             $params
                         );
                     }
-                    return $this->router->generate(sprintf('%s_%s', $this->definition->getRoutePrefix(), $route),
+                    return $this->router->generate($this->definition::getRouteName($route),
                         array_merge([
                             'id' => $this->data->getId(),
                         ], $params)
@@ -317,7 +335,7 @@ class DefinitionView implements DefinitionViewInterface
                 case RouteEnum::INDEX:
                 case RouteEnum::BATCH:
                 case RouteEnum::CREATE:
-                    return $this->router->generate(sprintf('%s_%s', $this->definition->getRoutePrefix(), $route),
+                    return $this->router->generate($this->definition::getRouteName($route),
                         $params
                     );
 
@@ -353,10 +371,10 @@ class DefinitionView implements DefinitionViewInterface
     }
 
     /**
-     * @param Content $content
+     * @param Content|RelationContent $content
      * @return string
      */
-    protected function getFormType(Content $content)
+    protected function getFormType(EditableContentInterface $content)
     {
         $formType = $content->getFormType();
         if ($formType === EntityPreselectType::class) {
@@ -382,12 +400,12 @@ class DefinitionView implements DefinitionViewInterface
         $builder = $this->formFactory->createBuilder(FormType::class, $this->data, []);
 
         foreach ($this->getBlocks() as $block) {
-            if (!$block->isVisibleOnEdit()) {
+            if (!$block->isVisibleOnEdit() || !$this->authorizationChecker->isGranted($block->getEditVoterAttribute(), $this->data)) {
                 continue;
             }
 
             foreach ($block->getContents() as $content) {
-                if (!$content->isVisibleOnEdit()) {
+                if (!$content->isVisibleOnEdit() || !$this->authorizationChecker->isGranted($content->getEditVoterAttribute(), $this->data)) {
                     continue;
                 }
 
@@ -506,5 +524,15 @@ class DefinitionView implements DefinitionViewInterface
             $this->reflectionObject = new \ReflectionObject($this->data);
         }
         return $this->reflectionObject;
+    }
+
+    /**
+     * @param string $class
+     * @param string $property
+     * @return null|\Symfony\Component\Form\Guess\Guess|\Symfony\Component\Form\Guess\TypeGuess
+     */
+    public function guessType($class, $property)
+    {
+        return $this->formRegistry->getTypeGuesser()->guessType($class, $property);
     }
 }

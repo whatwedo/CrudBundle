@@ -27,36 +27,43 @@
 
 namespace whatwedo\CrudBundle\Controller;
 
-use ReflectionClass;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Psr\Log\LoggerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use whatwedo\CoreBundle\Controller\BaseController;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Serializer\Serializer;
 use whatwedo\CrudBundle\Content\EditableContentInterface;
+use whatwedo\CrudBundle\Definition\AbstractDefinition;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Encoder\CsvEncoder;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Event\CrudEvent;
+use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\Normalizer\ObjectNormalizer;
+use whatwedo\CrudBundle\View\DefinitionViewInterface;
+use whatwedo\TableBundle\Factory\TableFactory;
 use whatwedo\TableBundle\Table\ActionColumn;
 use whatwedo\TableBundle\Table\DoctrineTable;
-use Symfony\Component\Serializer\Serializer;
 
 
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
  */
-class CrudController extends BaseController implements CrudDefinitionController
+class CrudController extends AbstractController implements CrudDefinitionController
 {
     protected $twigParametersIndex = [];
     protected $twigParametersShow = [];
     protected $twigParametersEdit = [];
 
     /**
-     * @var DefinitionInterface
+     * @var DefinitionInterface|AbstractDefinition
      */
     protected $definition;
 
@@ -66,9 +73,42 @@ class CrudController extends BaseController implements CrudDefinitionController
     protected $eventDispatcher;
 
     /**
-     * @var RequestStack|null
+     * @var EngineInterface
      */
-    protected $requestStack;
+    protected $templating;
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * @var RouterInterface
+     */
+    protected  $router;
+    /**
+     * @var DefinitionManager
+     */
+    private $definitionManager;
+    /**
+     * @var TableFactory
+     */
+    private $tableFactory;
+
+    /**
+     * CrudController constructor.
+     * @param EngineInterface $templating
+     * @param LoggerInterface $logger
+     */
+    public function __construct(EngineInterface $templating, LoggerInterface $logger, EventDispatcherInterface $eventDispatcher, RouterInterface $router, DefinitionManager $definitionManager, TableFactory $tableFactory)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+        $this->router = $router;
+        $this->templating = $templating;
+        $this->logger = $logger;
+        $this->definitionManager = $definitionManager;
+        $this->tableFactory = $tableFactory;
+    }
 
     public function configureDefinition(DefinitionInterface $definition)
     {
@@ -86,24 +126,16 @@ class CrudController extends BaseController implements CrudDefinitionController
     /**
      * @return Response
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
-        $entityName = $this->getDefinition()->getEntity();
-        $entityReflector = new ReflectionClass($entityName);
-        if ($entityReflector->isAbstract()) {
-            $voterEntity = null;
-        } else {
-            $voterEntity = $entityReflector->newInstanceWithoutConstructor();
-            $this->denyAccessUnlessGranted(RouteEnum::INDEX, $voterEntity);
-        }
+        $this->denyAccessUnlessGranted(RouteEnum::INDEX, $this->getDefinition());
 
-        $table = $this->get('whatwedo_table.factory.table')
+        $table = $this->tableFactory
             ->createDoctrineTable('index', [
                 'query_builder' => $this->getDefinition()->getQueryBuilder()
             ]);
 
         $this->configureTable($table);
-        $this->definition->overrideTableConfiguration($table);
 
         $this->definition->buildBreadcrumbs(null, RouteEnum::INDEX);
 
@@ -111,7 +143,7 @@ class CrudController extends BaseController implements CrudDefinitionController
             'view' => $this->getDefinition()->createView(),
             'table' => $table,
             'title' => $this->getDefinition()->getTitle(null, RouteEnum::INDEX),
-            'voter_entity' => $voterEntity,
+            'voter_entity' => $this->getDefinition(),
         ]);
     }
 
@@ -123,6 +155,7 @@ class CrudController extends BaseController implements CrudDefinitionController
     {
         $entity = $this->getEntityOr404($request);
         $this->denyAccessUnlessGranted(RouteEnum::SHOW, $entity);
+
         $this->dispatchEvent(CrudEvent::PRE_SHOW_PREFIX, $entity);
 
         $this->definition->buildBreadcrumbs($entity, RouteEnum::SHOW);
@@ -146,6 +179,7 @@ class CrudController extends BaseController implements CrudDefinitionController
     {
         $entity = $this->getEntityOr404($request);
         $this->denyAccessUnlessGranted(RouteEnum::EDIT, $entity);
+
         $view = $this->getDefinition()->createView($entity);
 
         $form = $view->getEditForm();
@@ -160,7 +194,7 @@ class CrudController extends BaseController implements CrudDefinitionController
 
                 $this->addFlash('success', sprintf('Erfolgreich gespeichert.'));
 
-                return $this->redirectToRoute($this->getDefinition()->getRoutePrefix() . '_show', [
+                return $this->redirectToRoute($this->getDefinition()::getRouteName(RouteEnum::SHOW), [
                     'id' => $entity->getId(),
                 ]);
             } else {
@@ -187,9 +221,10 @@ class CrudController extends BaseController implements CrudDefinitionController
      */
     public function createAction(Request $request)
     {
-        $entityName = $this->getDefinition()->getEntity();
-        $entity = new $entityName;
-        $this->denyAccessUnlessGranted(RouteEnum::CREATE, $entity);
+        $this->denyAccessUnlessGranted(RouteEnum::CREATE, $this->getDefinition());
+
+        $className = $this->getDefinition()->getEntity();
+        $entity = new $className;
 
         $view = $this->getDefinition()->createView($entity);
         $uri = null;
@@ -203,7 +238,7 @@ class CrudController extends BaseController implements CrudDefinitionController
                 foreach ($block->getContents() as $content) {
                     if ($content instanceof EditableContentInterface
                         && $content->getPreselectDefinition()) {
-                        $queryParameter = call_user_func([$content->getPreselectDefinition(), 'getChildRouteAddition']);
+                        $queryParameter = call_user_func([$content->getPreselectDefinition(), 'getAlias']);
 
                         if ($queryParameter
                             && $request->query->has($queryParameter)) {
@@ -212,11 +247,8 @@ class CrudController extends BaseController implements CrudDefinitionController
                                 ->find($request->query->getInt($queryParameter));
 
                             if (!is_null($value)) {
-                                $uri = $this->get('router')->generate(
-                                    sprintf(
-                                        '%s_%s',
-                                        call_user_func([$content->getPreselectDefinition(), 'getRoutePrefix']),
-                                        RouteEnum::SHOW),
+                                $uri = $this->router->generate(
+                                        call_user_func([$content->getPreselectDefinition(), 'getRouteName'], RouteEnum::SHOW),
                                     ['id' => $value->getId()]);
                             }
                             if (!$propertyAccessor->getValue($entity, $content->getOption('accessor_path'))
@@ -240,30 +272,25 @@ class CrudController extends BaseController implements CrudDefinitionController
             if ($form->isValid()) {
                 $this->dispatchEvent(CrudEvent::POST_VALIDATE_PREFIX, $entity);
                 $this->dispatchEvent(CrudEvent::PRE_CREATE_PREFIX, $entity);
-                $this->getDoctrine()->getManager()->persist($entity);
-                $this->getDoctrine()->getManager()->flush();
+
+                $objectManager = $this->getDoctrine()->getManager();
+                $objectManager->persist($entity);
+                $objectManager->flush();
+
                 $this->dispatchEvent(CrudEvent::POST_CREATE_PREFIX, $entity);
 
+                $this->addFlash('success', sprintf('Erfolgreich gespeichert.'));
 
-                if (is_null($uri)) {
-                    $this->addFlash('success', sprintf('Erfolgreich gespeichert.'));
-                    $redirect = $this->getDefinition()->getCreateRedirect($this->get('router'), $entity);
-                    if(!is_null($redirect)){
-                        return $redirect;
-                    }
-                    return $this->redirectToRoute($this->getDefinition()->getRoutePrefix() . '_show', [
+                if(isset($redirectPath) && $redirectPath) {
+                    return $this->redirect($redirectPath);
+                }
+                else {
+                    return $this->redirectToRoute($this->getDefinition()::getRouteName(RouteEnum::SHOW), [
                         'id' => $entity->getId(),
                     ]);
-                } else {
-                    $this->addFlash('success', sprintf('Erfolgreich hinzugefügt.'));
-                    $redirect = $this->getDefinition()->getCreateRedirect($this->get('router'), $entity);
-                    if(!is_null($redirect)){
-                        return $redirect;
-                    }
-                    return $this->redirect($uri);
                 }
             } else {
-                $this->addFlash('danger', sprintf('Beim Speichern ist ein Fehler aufgetreten. Bitte überprüfe deine Eingaben.'));
+                $this->addFlash('danger', 'Beim Speichern ist ein Fehler aufgetreten. Bitte überprüfe deine Eingaben.');
             }
         }
 
@@ -288,21 +315,22 @@ class CrudController extends BaseController implements CrudDefinitionController
     {
         $entity = $this->getEntityOr404($request);
         $this->denyAccessUnlessGranted(RouteEnum::DELETE, $entity);
-        $redirect = $this->getDefinition()->getDeleteRedirect($this->get('router'), $entity);
 
         try {
             $this->getDoctrine()->getManager()->remove($entity);
+            $this->dispatchEvent(CrudEvent::PRE_DELETE_PREFIX, $entity);
             $this->getDoctrine()->getManager()->flush($entity);
-            $this->addFlash('success', sprintf('Eintrag erfolgreich gelöscht.'));
+            $this->dispatchEvent(CrudEvent::POST_DELETE_PREFIX, $entity);
+            $this->addFlash('success', 'Eintrag erfolgreich gelöscht.');
         } catch (\Exception $e) {
             $this->addFlash('error', sprintf('Eintrag konnte nicht gelöscht werden: ' . $e->getMessage()));
-            $this->getLogger()->warning('Error while deleting: ' . $e->getMessage(), [
+            $this->logger->warning('Error while deleting: ' . $e->getMessage(), [
                 'entity' => get_class($entity),
                 'id' => $entity->getId(),
             ]);
         }
 
-        return $redirect;
+        return $this->getDefinition()->getDeleteRedirect($this->router, $entity);
     }
 
     /**
@@ -311,19 +339,12 @@ class CrudController extends BaseController implements CrudDefinitionController
      */
     public function exportAction(Request $request)
     {
-        $entityName = $this->getDefinition()->getEntity();
-        $entityReflector = new ReflectionClass($entityName);
-        if ($entityReflector->isAbstract()) {
-            $voterEntity = null;
-        } else {
-            $voterEntity = $entityReflector->newInstanceWithoutConstructor();
-            $this->denyAccessUnlessGranted(RouteEnum::EXPORT, $voterEntity);
-        }
+        $this->denyAccessUnlessGranted(RouteEnum::EXPORT, $this->getDefinition());
 
-        $entities = $this->getEntities($request);
-        if (!isset($entities[0])) {
+        $entities = $this->getExportEntities();
+        if (!$entities) {
             $this->addFlash('warning', 'Nichts zu exportieren');
-            return $this->redirectToRoute($this->getDefinition()->getRoutePrefix() . '_' . RouteEnum::INDEX);
+            return $this->redirectToRoute($this->getDefinition()::getRouteName(RouteEnum::INDEX));
         }
 
         $objectNormalizer = new ObjectNormalizer($this->definition);
@@ -361,20 +382,11 @@ class CrudController extends BaseController implements CrudDefinitionController
      */
     public function ajaxAction(Request $request)
     {
-        $entityName = $this->getDefinition()->getEntity();
-        $entityReflector = new ReflectionClass($entityName);
-        if ($entityReflector->isAbstract()) {
-            $voterEntity = null;
-        } else {
-            $voterEntity = $entityReflector->newInstanceWithoutConstructor();
-            $this->denyAccessUnlessGranted(RouteEnum::AJAX, $voterEntity);
-        }
+        $this->denyAccessUnlessGranted(RouteEnum::AJAX, $this->getDefinition());
 
         $data = [];
         foreach ($request->request->get('data') as $pair) {
-            if (isset($pair['value'])) {
-                $data[$pair['key']] = $pair['value'];
-            }
+            $data[$pair['key']] = $pair['value'];
         }
         $obj = $this->definition->ajaxOnDataChanged($data);
         $response = new Response(json_encode($obj));
@@ -390,12 +402,47 @@ class CrudController extends BaseController implements CrudDefinitionController
      */
     public function getView($file)
     {
-        if ($this->getTemplating()->exists($this->getDefinition()->getTemplateDirectory() . ':' . $file)) {
-            return $this->getDefinition()->getTemplateDirectory() . ':' . $file;
+        if ($this->templating->exists($this->getDefinition()->getTemplateDirectory() . '/' . $file)) {
+            return $this->getDefinition()->getTemplateDirectory() . '/' . $file;
         }
 
-        // fallback if it does not exist
-        return 'whatwedoCrudBundle:Crud:' . $file;
+        return '@whatwedoCrud/Crud/' . $file;
+    }
+
+    public function getActionColumnItems($row) {
+        $targetDefinition = $this->definitionManager->getDefinitionFor($row);
+
+        $actionColumnItems = [];
+
+        if ($targetDefinition->hasCapability(RouteEnum::SHOW)) {
+            $actionColumnItems[] = [
+                'label' => 'Details',
+                'icon' => 'arrow-right',
+                'button' => 'primary',
+                'route' => $targetDefinition::getRouteName(RouteEnum::SHOW),
+                'route_parameters' => [],
+                'voter_attribute' => RouteEnum::SHOW,
+            ];
+        }
+
+        if ($targetDefinition->hasCapability(RouteEnum::EDIT)) {
+            $actionColumnItems[] = [
+                'label' => 'Bearbeiten',
+                'icon' => 'pencil',
+                'button' => 'warning',
+                'route' => $targetDefinition::getRouteName(RouteEnum::EDIT),
+                'route_parameters' => [],
+                'voter_attribute' => RouteEnum::EDIT,
+            ];
+        }
+
+        return $actionColumnItems;
+    }
+
+    public function getShowRoute($row) {
+        $targetDefinition = $this->definitionManager->getDefinitionFor($row);
+
+        return $targetDefinition::getRouteName(RouteEnum::SHOW);
     }
 
     /**
@@ -407,44 +454,24 @@ class CrudController extends BaseController implements CrudDefinitionController
     {
         $this->getDefinition()->configureTable($table);
 
-        // this is normally the main table of the page, so we're fixing the header
-        $table->setOption('table_attr', [
-            'data-fixed-header' => 'data-fixed-header'
-        ]);
-
-        $actionColumnItems = [];
-
         if ($this->getDefinition()->hasCapability(RouteEnum::SHOW)) {
-            $table->setShowRoute(sprintf('%s_%s', $this->getDefinition()->getRoutePrefix(), RouteEnum::SHOW));
-
-            $actionColumnItems[] = [
-                'label' => 'Details',
-                'icon' => 'arrow-right',
-                'button' => 'primary',
-                'route' => sprintf('%s_%s', $this->getDefinition()->getRoutePrefix(), RouteEnum::SHOW),
-                'route_parameters' => [],
-                'voter_attribute' => RouteEnum::SHOW,
-            ];
+            $table->setShowRoute([$this, 'getShowRoute']);
         }
 
         if ($this->getDefinition()->hasCapability(RouteEnum::EXPORT)) {
-            $table->setExportRoute(sprintf('%s_%s', $this->getDefinition()->getRoutePrefix(), RouteEnum::EXPORT));
+            $table->setExportRoute($this->getDefinition()::getRouteName(RouteEnum::EXPORT));
         }
 
-        if ($this->getDefinition()->hasCapability(RouteEnum::EDIT)) {
-            $actionColumnItems[] = [
-                'label' => 'Bearbeiten',
-                'icon' => 'pencil',
-                'button' => 'warning',
-                'route' => sprintf('%s_%s', $this->getDefinition()->getRoutePrefix(), RouteEnum::EDIT),
-                'route_parameters' => [],
-                'voter_attribute' => RouteEnum::EDIT,
-            ];
-        }
+        // this is normally the main table of the page, so we're fixing the header
+        $table->setOption('table_attr', [
+            'data-fixed-header' => true
+        ]);
 
         $table->addColumn('actions', ActionColumn::class, [
-            'items' => $actionColumnItems,
+            'items' => [$this, 'getActionColumnItems'],
         ]);
+
+        $this->getDefinition()->overrideTableConfiguration($table);
     }
 
     /**
@@ -456,69 +483,54 @@ class CrudController extends BaseController implements CrudDefinitionController
      */
     protected function getEntityOr404(Request $request)
     {
-        $entity = $this->getDefinition()->getRepository()->find($request->attributes->getInt('id'));
-
-        if (!$entity) {
+        try {
+            return $this->getDefinition()->getQueryBuilder()
+                ->andWhere($this->getIdentifierColumn() . ' = :id')
+                ->setParameter('id', $request->attributes->getInt('id'))
+                ->getQuery()
+                ->getSingleResult();
+        } catch (NoResultException|NonUniqueResultException $e) {
             throw new NotFoundHttpException(sprintf(
                 'Der gewünschte Datensatz existiert in %s nicht.',
                 $this->getDefinition()->getEntity()
             ));
         }
-
-        return $entity;
     }
 
-    protected function getEntities(Request $request)
+    protected function getExportEntities()
     {
-        $ids = $request->query->get('ids');
-        if (count($ids) > 0) {
-            if ($ids[0] == -1) {
-                return $this->getDefinition()->getRepository()->findAll();
-            } else {
-                return $this->getDefinition()->getRepository()->createQueryBuilder('xx')
-                    ->where('xx.id in (:ids)')
-                    ->setParameter('ids', $ids)
-                    ->getQuery()->getResult();
-            }
-        } else {
-            return [];
-        }
+        $table = $this->tableFactory
+            ->createDoctrineTable('index', [
+                'query_builder' => $this->getDefinition()->getQueryBuilder()
+            ]);
+
+        // to respect column sort order
+        $this->getDefinition()->configureTable($table);
+        $this->getDefinition()->overrideTableConfiguration($table);
+
+        $table->loadData();
+
+        return $table->getResults();
     }
 
     public function dispatchEvent($event, $entity)
     {
-        $this->getEventDispatcher()->dispatch(
+        $this->eventDispatcher->dispatch(
             $event,
             new CrudEvent($entity)
         );
 
-        $this->getEventDispatcher()->dispatch(
-            $event . '.' . $this->getDefinition()->getAlias(),
+        $this->eventDispatcher->dispatch(
+            $event . '.' . $this->getDefinition()::getAlias(),
             new CrudEvent($entity)
         );
     }
 
-    /**
-     * @return \Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher|EventDispatcherInterface|\Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher
-     */
-    public function getEventDispatcher()
+    protected function getIdentifierColumn()
     {
-        if (!$this->eventDispatcher instanceof EventDispatcherInterface) {
-            $this->eventDispatcher = $this->get('event_dispatcher');
-        }
-
-        return $this->eventDispatcher;
-    }
-
-    /**
-     * @return RequestStack
-     */
-    public function getRequestStack()
-    {
-        if (!$this->requestStack instanceof RequestStack) {
-            $this->requestStack = $this->get('request_stack');
-        }
-
-        return $this->requestStack;
+        return sprintf('%s.%s',
+            $this->getDefinition()::getQueryAlias(),
+            $this->getDefinition()->getQueryBuilder()->getEntityManager()->getClassMetadata($this->getDefinition()::getEntity())->identifier[0]
+        );
     }
 }
