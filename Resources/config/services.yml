@@ -3,14 +3,55 @@ services:
     whatwedo_crud.manager.definition:
         class: whatwedo\CrudBundle\Manager\DefinitionManager
 
+    whatwedo_crud.manager.block:
+        class: whatwedo\CrudBundle\Manager\BlockManager
+
+    whatwedo_crud.manager.content:
+        class: whatwedo\CrudBundle\Manager\ContentManager
+
     # Definition
     whatwedo_crud.definition.abstract_definition:
         abstract:  true
         calls:
+            - [setBlockManager, ['@whatwedo_crud.manager.block']]
             - [setDoctrine, ['@doctrine']]
             - [setRequestStack, ['@request_stack']]
             - [setDefinitionView, ['@whatwedo_crud.view.definition_view']]
             - [setDefinitionManager, ['@whatwedo_crud.manager.definition']]
+            - [setTemplates, ['%whatwedo_crud.config.templates%']]
+
+    # Block
+    whatwedo_crud.block.block:
+        class: whatwedo\CrudBundle\Block\Block
+        tags:
+            - crud.block
+        calls:
+            - [setContentManager, ['@whatwedo_crud.manager.content']]
+
+    # Content
+    whatwedo_crud.content.content:
+        class: whatwedo\CrudBundle\Content\Content
+        arguments:
+          - '@whatwedo_core.manager.formatter'
+        tags:
+            - crud.content
+
+    whatwedo_crud.content.relation:
+        class: whatwedo\CrudBundle\Content\RelationContent
+        arguments:
+            - '@service_container'
+        tags:
+            - crud.content
+
+    whatwedo_crud.content.table:
+        class: whatwedo\CrudBundle\Content\TableContent
+        tags:
+            - crud.content
+
+    whatwedo_crud.content.twig:
+        class: whatwedo\CrudBundle\Content\TwigContent
+        tags:
+            - crud.content
 
     # View
     whatwedo_crud.view.definition_view:
@@ -22,6 +63,7 @@ services:
             - '@router'
             - '@security.access_map'
             - '@security.authorization_checker'
+            - '@request_stack'
         calls:
             - [setDefinitionManager, ['@whatwedo_crud.manager.definition']]
 
@@ -59,14 +101,22 @@ services:
 
     # Form types
     whatwedo_crud.type.entity_hidden:
-       class: whatwedo\CrudBundle\Form\EntityHiddenType
-       arguments: ["@doctrine.orm.entity_manager"]
+       class: whatwedo\CrudBundle\Form\Type\EntityHiddenType
+       arguments: ['@doctrine.orm.entity_manager']
        tags:
        - { name: form.type, alias: entity_hidden }
 
     whatwedo_crud.form_type.ajax_select:
-        class: whatwedo\CrudBundle\Form\Type\AjaxSelectFormType
+        class: whatwedo\CrudBundle\Form\Type\EntityAjaxType
         arguments:
-            - "@router"
+            - '@router'
         tags:
             - { name: form.type, alias: ajaxSelect }
+
+    # Voter
+    whatwedo_crud.security.voter.default:
+        class: whatwedo\CrudBundle\Security\Voter\DefaultDefinitionVoter
+        arguments:
+            - '@whatwedo_crud.manager.definition'
+        tags:
+            - security.voter

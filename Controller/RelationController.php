@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2016, whatwedo GmbH
+ * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,35 +25,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Enum;
+namespace whatwedo\CrudBundle\Controller;
 
-use whatwedo\CoreBundle\Enum\AbstractSimpleEnum;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use whatwedo\TableBundle\Event\ResultRequestEvent;
 
 /**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
+ * Class RelationController
+ * @package whatwedo\TableBundle\Controller
  */
-final class RouteEnum extends AbstractSimpleEnum
+class RelationController extends Controller
 {
-    const INDEX     = 'index';
-    const SHOW      = 'show';
-    const CREATE    = 'create';
-    const EDIT      = 'edit';
-    const DELETE    = 'delete';
-    const BATCH     = 'batch';
-    const EXPORT    = 'export';
-    const AJAX      = 'ajax';
 
     /**
-     * @inheritdoc
+     * @param Request $request
+     * @return JsonResponse
      */
-    protected static $values = [
-        self::INDEX     => 'Übersicht',
-        self::SHOW      => 'Detail',
-        self::CREATE    => 'Erstellen',
-        self::EDIT      => 'Bearbeiten',
-        self::DELETE    => 'Löschen',
-        self::BATCH     => 'Stapelverarbeitung',
-        self::EXPORT    => 'Exportieren',
-        self::AJAX      => 'AJAX',
-    ];
+    public function ajaxAction(Request $request)
+    {
+        $entity = $request->get('entity', false);
+        $term = $request->get('q', false);
+        $resultRequestEvent = new ResultRequestEvent($entity, $term);
+        $this->get('event_dispatcher')->dispatch(ResultRequestEvent::RELATION_SET, $resultRequestEvent);
+        return $resultRequestEvent->getResult();
+    }
+
 }

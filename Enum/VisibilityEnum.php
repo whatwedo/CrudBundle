@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2017, whatwedo GmbH
+ * Copyright (c) 2016, whatwedo GmbH
  * All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,40 +25,25 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Controller;
+namespace whatwedo\CrudBundle\Enum;
 
+use whatwedo\CoreBundle\Enum\AbstractSimpleEnum;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-
-class Select2AjaxController extends Controller
+/**
+ * @author Ueli Banholzer <ueli@whatwedo.ch>
+ */
+class VisibilityEnum extends AbstractSimpleEnum
 {
+    const SHOW      = 1;
+    const CREATE    = 2;
+    const EDIT      = 4;
 
-
-    public function ajaxAction(Request $request)
-    {
-        $ids = $this->getDoctrine()->getRepository('whatwedoSearchBundle:Index')
-            ->search($request->get('q'), $request->get('entity'));
-
-        $result = $this->getDoctrine()->getRepository($request->get('entity'))
-            ->createQueryBuilder('x')
-            ->where('x.id IN (:ids)')
-            ->setParameter('ids', $ids)
-            ->getQuery()
-            ->getResult();
-
-        $data = new \stdClass();
-        $data->items = [];
-        foreach ($result as $entity)
-        {
-            $item = new \stdClass();
-            $item->id = $entity->getId();
-            $item->text = $entity->__toString();
-            $data->items[] = $item;
-        }
-
-        return new Response(json_encode($data));
-    }
-
+    /**
+     * @inheritdoc
+     */
+    protected static $values = [
+        self::SHOW      => 'Detail',
+        self::CREATE    => 'Erstellen',
+        self::EDIT      => 'Bearbeiten',
+    ];
 }

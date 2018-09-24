@@ -26,18 +26,45 @@
  */
 
 namespace whatwedo\CrudBundle\Content;
+
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Ldap\Adapter\CollectionInterface;
+use Doctrine\Common\Collections\Criteria;
+use Psr\Container\ContainerInterface;
+use ReflectionClass;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CrudBundle\Enum\RouteEnum;
+use whatwedo\CrudBundle\Exception\InvalidDataException;
+use whatwedo\CrudBundle\Manager\DefinitionManager;
+use whatwedo\TableBundle\Event\CriteriaLoadEvent;
+use whatwedo\TableBundle\Factory\TableFactory;
+use whatwedo\TableBundle\Model\SimpleTableData;
 use whatwedo\TableBundle\Table\ActionColumn;
-use whatwedo\TableBundle\Table\Table;
 
 /**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
+ * Class RelationContent
+ * @package whatwedo\CrudBundle\Content
  */
 class RelationContent extends AbstractContent
 {
+    /**
+     * @var DefinitionManager
+     */
+    protected $definitionManager;
+
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * RelationContent constructor.
+     * @param ContainerInterface $container
+     */
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
 
     /**
      * @return bool
@@ -48,21 +75,56 @@ class RelationContent extends AbstractContent
     }
 
     /**
-     * @param Table $table
+     * @param $identifier
      * @param $row
+     *
      * @return string
-     * @throws \Exception
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \whatwedo\TableBundle\Exception\DataLoaderNotAvailableException
      */
-    public function renderTable(Table $table, $row)
+    public function renderTable($identifier, $row)
     {
+        $data = $this->getContents($row);
+        if (!$data instanceof Collection) {
+            throw new InvalidDataException('data for RelationContent should be an instance of ' . Collection::class);
+        }
+
+        /** @var TableFactory $tableFactory */
+        $tableFactory = $this->container->get('whatwedo_table.factory.table');
+        $options = $this->options['table_options'];
+        $options['data_loader'] = function($page, $limit) use ($data) {
+            $dataLoader = new SimpleTableData();
+            $dataLoader->setTotalResults(count($data));
+
+            if ($this->options['criteria'] instanceof Criteria) {
+                $criteria = $this->options['criteria'];
+            } else {
+                $criteria = Criteria::create();
+            }
+
+            $criteria
+                ->setMaxResults($limit)
+                ->setFirstResult(($page - 1) * $limit)
+            ;
+
+            $dataLoader->setResults($data->matching($criteria)->toArray());
+
+            return $dataLoader;
+        };
+
+        $table = $tableFactory->createTable($identifier, $options);
+
         if (is_callable($this->options['table_configuration'])) {
             $this->options['table_configuration']($table);
         }
 
+        $this->container->get('event_dispatcher')->dispatch(CriteriaLoadEvent::PRE_LOAD, new CriteriaLoadEvent($this, $table));
+
         $actionColumnItems = [];
 
         if (call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::SHOW)) {
-            $table->setRowRoute(sprintf(
+            $table->setShowRoute(sprintf(
                 '%s_%s',
                 call_user_func([$this->getOption('definition'), 'getRoutePrefix']),
                 RouteEnum::SHOW
@@ -76,16 +138,12 @@ class RelationContent extends AbstractContent
                     call_user_func([$this->getOption('definition'), 'getRoutePrefix']),
                     RouteEnum::SHOW
                 ),
+                'route_parameters' => [],
+                'voter_attribute' => RouteEnum::SHOW,
             ];
         }
 
-        $definition = $this->definitionManager->getDefinitionFromClass($this->getOption('definition'));
-        $allowEdit = call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::EDIT);
-        $showActionColumn = [];
-        if ($allowEdit) {
-            $reflection = new \ReflectionClass(get_class($definition));
-            $allowEdit = $reflection->getMethod('allowEdit')->getClosure($definition);
-            $showActionColumn[sprintf('%s_%s', call_user_func([$this->getOption('definition'), 'getRoutePrefix']), RouteEnum::EDIT)] = $allowEdit;
+        if (call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::EDIT)) {
             $actionColumnItems[] = [
                 'label' => 'Bearbeiten',
                 'icon' => 'pencil',
@@ -95,6 +153,8 @@ class RelationContent extends AbstractContent
                     call_user_func([$this->getOption('definition'), 'getRoutePrefix']),
                     RouteEnum::EDIT
                 ),
+                'route_parameters' => [],
+                'voter_attribute' => RouteEnum::EDIT,
             ];
         }
 
@@ -108,21 +168,9 @@ class RelationContent extends AbstractContent
 
         $table->addColumn('actions', ActionColumn::class, [
             'items' => $actionColumnItems,
-            'showActionColumn' => $showActionColumn
         ]);
 
-        $data = $this->getContents($row);
-
-        if ($data instanceof Collection) {
-            $data = $data->toArray();
-        }
-        if (is_string($data)){
-            throw new \Exception($data);
-        }
-
-        $table->setResults(array_values($data));
-
-        return $table->renderTableOnly();
+        return $table->renderTable();
     }
 
     /**
@@ -157,10 +205,6 @@ class RelationContent extends AbstractContent
      */
     public function getCreateRoute()
     {
-        if (!$this->options['show_create_button']) {
-            return null;
-        }
-
         $capibilities = call_user_func([$this->options['definition'], 'getCapabilities']);
 
         if (in_array(RouteEnum::CREATE, $capibilities)) {
@@ -168,14 +212,6 @@ class RelationContent extends AbstractContent
         }
 
         return null;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function isShowInEdit()
-    {
-        return $this->options['show_in_edit'];
     }
 
     /**
@@ -193,10 +229,18 @@ class RelationContent extends AbstractContent
         return $parameters;
     }
 
-    public function allowCreate($data = null)
+    /**
+     * @return boolean
+     */
+    public function isAddAllowed()
     {
-        $definition = $this->definitionManager->getDefinitionFromClass($this->options['definition']);
-        return $definition->allowCreate($data);
+        $definition = $this->getDefinitionManager()->getDefinitionFromClass($this->options['definition']);
+        $entityName = $definition::getEntity();
+        $entityReflector = new ReflectionClass($entityName);
+        if ($entityReflector->isAbstract()) {
+            return false;
+        }
+        return $this->container->get('security.authorization_checker')->isGranted(RouteEnum::CREATE, $entityReflector->newInstanceWithoutConstructor());
     }
 
     /**
@@ -211,6 +255,36 @@ class RelationContent extends AbstractContent
     }
 
     /**
+     * @return mixed|DefinitionManager
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    public function getDefinitionManager()
+    {
+        if (!$this->definitionManager instanceof DefinitionManager) {
+            return $this->definitionManager = $this->container->get('whatwedo_crud.manager.definition');
+        }
+
+        return $this->definitionManager;
+    }
+
+    /**
+     * @param DefinitionManager $definitionManager
+     */
+    public function setDefinitionManager($definitionManager)
+    {
+        $this->definitionManager = $definitionManager;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAddVoterAttribute()
+    {
+        return $this->options['add_voter_attribute'];
+    }
+
+    /**
      * @param OptionsResolver $resolver
      */
     public function configureOptions(OptionsResolver $resolver)
@@ -219,12 +293,35 @@ class RelationContent extends AbstractContent
 
         $resolver->setDefaults([
             'accessor_path' => $this->acronym,
+            'table_options' => [],
+            'criteria' => [],
             'table_configuration' => null,
             'definition' => null,
             'route_addition_key' => null,
-            'show_in_edit' => true,
             'show_index_button' => false,
-            'show_create_button' => true,
+            'add_voter_attribute' => RouteEnum::EDIT,
         ]);
+
+        $resolver->setAllowedTypes('table_options', ['array']);
+        $resolver->setAllowedTypes('table_configuration', ['callable']);
+    }
+
+    /**
+     * @return Request
+     */
+    public function getRequest()
+    {
+        return $this->container->get('request_stack')->getCurrentRequest();
+    }
+
+    /**
+     * @return Criteria
+     */
+    public function getCriteria()
+    {
+        if (!$this->options['criteria'] instanceof Criteria) {
+            $this->options['criteria'] = Criteria::create();
+        }
+        return $this->options['criteria'];
     }
 }

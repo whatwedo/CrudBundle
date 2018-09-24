@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2016, whatwedo GmbH
+ * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,35 +25,62 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Enum;
+namespace whatwedo\CrudBundle\Form\Type;
 
-use whatwedo\CoreBundle\Enum\AbstractSimpleEnum;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Routing\Router;
 
 /**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
+ * Class EntityAjaxType
+ * @package whatwedo\CrudBundle\Form
  */
-final class RouteEnum extends AbstractSimpleEnum
+class EntityAjaxType extends AbstractType
 {
-    const INDEX     = 'index';
-    const SHOW      = 'show';
-    const CREATE    = 'create';
-    const EDIT      = 'edit';
-    const DELETE    = 'delete';
-    const BATCH     = 'batch';
-    const EXPORT    = 'export';
-    const AJAX      = 'ajax';
 
     /**
-     * @inheritdoc
+     * @var Router $router
      */
-    protected static $values = [
-        self::INDEX     => 'Übersicht',
-        self::SHOW      => 'Detail',
-        self::CREATE    => 'Erstellen',
-        self::EDIT      => 'Bearbeiten',
-        self::DELETE    => 'Löschen',
-        self::BATCH     => 'Stapelverarbeitung',
-        self::EXPORT    => 'Exportieren',
-        self::AJAX      => 'AJAX',
-    ];
+    private $router;
+
+    /**
+     * EntityAjaxType constructor.
+     * @param Router $router
+     */
+    public function __construct(Router $router)
+    {
+        $this->router = $router;
+    }
+
+    /**
+     * @param FormView $view
+     * @param FormInterface $form
+     * @param array $options
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['attr']['data-ajax-select'] = true;
+        $view->vars['attr']['data-ajax-entity'] = $options['class'];
+        $view->vars['attr']['data-ajax-url'] = $this->router->generate('whatwedo_crud_crud_select_ajax');
+    }
+
+    /**
+     * @return string
+     */
+    public function getParent()
+    {
+        return EntityType::class;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return 'ajaxSelect';
+    }
+
 }

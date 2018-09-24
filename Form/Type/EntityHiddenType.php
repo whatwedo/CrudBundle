@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2016, whatwedo GmbH
+ * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,27 +25,68 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Content;
+namespace whatwedo\CrudBundle\Form\Type;
+
+use Doctrine\ORM\EntityManager;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use whatwedo\CrudBundle\Form\DataTransformer\EntityToIdTransformer;
 
 /**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
+ * Class EntityHiddenType
+ * @package whatwedo\CrudBundle\Form
  */
-interface EditableContentInterface
+class EntityHiddenType extends AbstractType
 {
-    /**
-     * @return string
-     */
-    public function getFormType();
 
     /**
+     * @var EntityManager
+     */
+    protected $em;
+
+    /**
+     * HiddenEntityType constructor.
+     * @param EntityManager $em
+     */
+    public function __construct(EntityManager $em)
+    {
+        $this->em = $em;
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
      * @param array $options
-     * @return array
      */
-    public function getFormOptions($options = []);
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $transformer = new EntityToIdTransformer($this->em, $options['class']);
+        $builder->addModelTransformer($transformer);
+    }
 
     /**
-     * Definiton der Vorselektion
+     * @param OptionsResolver $resolver
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setRequired(['class'])
+            ->setDefault('invalid_message', 'Das Objekt existiert nicht');
+    }
+
+    /**
      * @return string
      */
-    public function getPreselectDefinition();
+    public function getParent()
+    {
+        return HiddenType::class;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return 'entity_hidden';
+    }
 }

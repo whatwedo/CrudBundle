@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2016, whatwedo GmbH
+ * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,35 +25,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Enum;
+namespace whatwedo\CrudBundle\Manager;
 
-use whatwedo\CoreBundle\Enum\AbstractSimpleEnum;
+use whatwedo\CrudBundle\Content\ContentInterface;
 
 /**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
+ * Class ContentManager
  */
-final class RouteEnum extends AbstractSimpleEnum
+class ContentManager
 {
-    const INDEX     = 'index';
-    const SHOW      = 'show';
-    const CREATE    = 'create';
-    const EDIT      = 'edit';
-    const DELETE    = 'delete';
-    const BATCH     = 'batch';
-    const EXPORT    = 'export';
-    const AJAX      = 'ajax';
+    protected $contents = [];
 
     /**
-     * @inheritdoc
+     * @param ContentInterface $content
      */
-    protected static $values = [
-        self::INDEX     => 'Übersicht',
-        self::SHOW      => 'Detail',
-        self::CREATE    => 'Erstellen',
-        self::EDIT      => 'Bearbeiten',
-        self::DELETE    => 'Löschen',
-        self::BATCH     => 'Stapelverarbeitung',
-        self::EXPORT    => 'Exportieren',
-        self::AJAX      => 'AJAX',
-    ];
+    public function addContent(ContentInterface $content)
+    {
+        $this->contents[get_class($content)] = $content;
+    }
+
+    /**
+     * @param string $class
+     *
+     * @return ContentInterface|null
+     */
+    public function getContent($class)
+    {
+        return isset($this->contents[$class]) ? clone $this->contents[$class] : new $class;
+    }
 }

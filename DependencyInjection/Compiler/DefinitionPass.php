@@ -30,13 +30,13 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
+use whatwedo\CrudBundle\Resource\DefinitionResource;
 
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
  */
 class DefinitionPass implements CompilerPassInterface
 {
-
     /**
      * this will initialize all Definitions
      *
@@ -85,6 +85,9 @@ class DefinitionPass implements CompilerPassInterface
             foreach ($tags as $attributes) {
                 $definition->addMethodCall('addDefinition', [$attributes['alias'], new Reference($id)]);
             }
+
+            // create a resource so that the cache is loaded new as soon as a definition is updated
+            $container->addResource(new DefinitionResource($id));
         }
     }
 }

@@ -26,18 +26,23 @@
  */
 
 namespace whatwedo\CrudBundle\Block;
+
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use whatwedo\CrudBundle\Enum\RouteEnum;
+use whatwedo\CrudBundle\Enum\VisibilityEnum;
+use whatwedo\CrudBundle\Manager\ContentManager;
 use whatwedo\CrudBundle\Content\Content;
 use whatwedo\CrudBundle\Content\ContentInterface;
-use whatwedo\CrudBundle\Manager\DefinitionManager;
+use whatwedo\CrudBundle\Enum\BlockSizeEnum;
+use whatwedo\CrudBundle\Traits\VisibilityTrait;
 
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
  */
 class Block
 {
-    const BLOCK_SIZE_SMALL = 'small';
-    const BLOCK_SIZE_LARGE = 'large';
+
+    use VisibilityTrait;
 
     /**
      * @var string block acronym
@@ -55,23 +60,16 @@ class Block
     protected $elements = [];
 
     /**
-     * @var DefinitionManager
+     * @var ContentManager
      */
-    protected $definitionManager;
+    protected $contentManager;
 
     /**
-     * Block constructor.
-     *
      * @param string $acronym
-     * @param array $options
      */
-    public function __construct($acronym, array $options = [])
+    public function setAcronym($acronym)
     {
         $this->acronym = $acronym;
-
-        $resolver = new OptionsResolver();
-        $this->configureOptions($resolver);
-        $this->options = $resolver->resolve($options);
     }
 
     /**
@@ -83,6 +81,24 @@ class Block
     }
 
     /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param array $options
+     */
+    public function setOptions($options)
+    {
+        $resolver = new OptionsResolver();
+        $this->configureOptions($resolver);
+        $this->options = $resolver->resolve($options);
+    }
+
+    /**
      * @return string
      */
     public function getLabel()
@@ -90,6 +106,13 @@ class Block
         return $this->options['label'];
     }
 
+    /**
+     * @return array
+     */
+    public function getAttr()
+    {
+        return $this->options['attr'];
+    }
 
     /**
      * @return string
@@ -100,6 +123,30 @@ class Block
     }
 
     /**
+     * @return string
+     */
+    public function getShowVoterAttribute()
+    {
+        return $this->options['show_voter_attribute'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getEditVoterAttribute()
+    {
+        return $this->options['edit_voter_attribute'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getCreateVoterAttribute()
+    {
+        return $this->options['create_voter_attribute'];
+    }
+
+    /**
      * adds a new content to the block
      *
      * @param string $acronym acronym of the block
@@ -107,14 +154,16 @@ class Block
      * @param array $options configuration
      * @return $this
      */
-    public function addContent($acronym, $type = null, array $options = [])
+    public function addContent($acronym, $type = Content::class, $options = [])
     {
         if ($type === null) {
             $type = Content::class;
         }
 
-        $this->elements[$acronym] = new $type($acronym, $options);
-        $this->elements[$acronym]->setDefinitionManager($this->definitionManager);
+        $this->elements[$acronym] = $this->contentManager->getContent($type);
+        $this->elements[$acronym]->setAcronym($acronym);
+        $this->elements[$acronym]->setOptions($options);
+
         return $this;
     }
 
@@ -151,25 +200,31 @@ class Block
     {
         $resolver->setDefaults([
             'label' => '',
-            'size' => static::BLOCK_SIZE_SMALL,
+            'attr' => [],
+            'size' => BlockSizeEnum::SMALL,
+            'visibility' => VisibilityEnum::SHOW | VisibilityEnum::EDIT | VisibilityEnum::CREATE,
+            'show_voter_attribute' => RouteEnum::SHOW,
+            'edit_voter_attribute' => RouteEnum::EDIT,
+            'create_voter_attribute' => RouteEnum::CREATE,
         ]);
     }
 
     /**
-     * @return DefinitionManager
+     * @return ContentManager
      */
-    public function getDefinitionManager()
+    public function getContentManager()
     {
-        return $this->definitionManager;
+        return $this->contentManager;
     }
 
     /**
-     * @param DefinitionManager $definitionManager
-     * @return Block
+     * @param $contentManager
+     * @return $this
      */
-    public function setDefinitionManager(DefinitionManager $definitionManager)
+    public function setContentManager($contentManager)
     {
-        $this->definitionManager = $definitionManager;
+        $this->contentManager = $contentManager;
+
         return $this;
     }
 }

@@ -32,6 +32,19 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end() // end breadcrumbs
+                ->arrayNode('templates')
+                    ->children()
+                        ->scalarNode('show')
+                            ->defaultValue('whatwedoCrudBundle:Crud/_boxes:show.html.twig')
+                        ->end()
+                        ->scalarNode('create')
+                            ->defaultValue('whatwedoCrudBundle:Crud/_boxes:create.html.twig')
+                        ->end()
+                        ->scalarNode('edit')
+                            ->defaultValue('whatwedoCrudBundle:Crud/_boxes:edit.html.twig')
+                        ->end()
+                    ->end()
+                ->end() // end templates
             ->end()
         ;
         return $treeBuilder;

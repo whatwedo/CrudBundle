@@ -27,14 +27,14 @@
 
 namespace whatwedo\CrudBundle\Content;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Ldap\Adapter\CollectionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\TableBundle\Table\ActionColumn;
 use whatwedo\TableBundle\Table\Table;
 
 /**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
+ * Class TableContent
+ * @package whatwedo\CrudBundle\Content
  */
 class TableContent extends AbstractContent
 {
@@ -53,7 +53,7 @@ class TableContent extends AbstractContent
 
         if ($this->getOption('definition')
             && call_user_func([$this->getOption('definition'), 'hasCapability'], RouteEnum::SHOW)) {
-            $table->setRowRoute(sprintf(
+            $table->setShowRoute(sprintf(
                 '%s_%s',
                 call_user_func([$this->getOption('definition'), 'getRoutePrefix']),
                 RouteEnum::SHOW
@@ -67,6 +67,8 @@ class TableContent extends AbstractContent
                     call_user_func([$this->getOption('definition'), 'getRoutePrefix']),
                     RouteEnum::SHOW
                 ),
+                'route_parameters' => [],
+                'voter_attribute' => RouteEnum::SHOW,
             ];
         }
 
@@ -87,19 +89,22 @@ class TableContent extends AbstractContent
 
         $table->setResults(array_values($data));
 
-        return $table->renderTableOnly();
+        return $table->renderTable();
     }
 
+    /**
+     * @param $row
+     * @return string
+     */
     public function render($row)
     {
         return 'call RelationContent::renderTable()';
     }
 
-    public function isShowInEdit()
-    {
-        return $this->options['show_in_edit'];
-    }
-
+    /**
+     * @param $key
+     * @param $value
+     */
     public function setOption($key, $value)
     {
         if (isset($this->options[$key])) {
@@ -107,6 +112,9 @@ class TableContent extends AbstractContent
         }
     }
 
+    /**
+     * @param OptionsResolver $resolver
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
@@ -116,7 +124,6 @@ class TableContent extends AbstractContent
             'table_configuration' => null,
             'definition' => null,
             'route_addition_key' => null,
-            'show_in_edit' => true,
             'show_index_button' => false,
         ]);
     }

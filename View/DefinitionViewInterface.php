@@ -91,15 +91,31 @@ interface DefinitionViewInterface
     public function renderCreate($additionalParameters = []);
 
     /**
+     * returns a create form
+     *
+     * @return FormInterface
+     */
+    public function getCreateForm();
+
+    /**
      * returns an edit form
      *
      * @return FormInterface
      */
-    public function getForm();
+    public function getEditForm();
 
     /**
-     * @param $data
-     * @return boolean
+     * sets the boxes templates
+     *
+     * @param array $templates
      */
-    public function allowDelete($data = null);
+    public function setTemplates(array $templates);
+
+    /**
+     * sets the parameters for additional box parameters
+     *
+     * @param array $templateParameters
+     */
+    public function setTemplateParameters(array $templateParameters);
+
 }

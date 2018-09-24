@@ -25,35 +25,35 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Enum;
-
-use whatwedo\CoreBundle\Enum\AbstractSimpleEnum;
+namespace whatwedo\CrudBundle\DependencyInjection\Compiler;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
+use whatwedo\CrudBundle\Extension\ExtensionInterface;
 
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
  */
-final class RouteEnum extends AbstractSimpleEnum
+class BlockPass implements CompilerPassInterface
 {
-    const INDEX     = 'index';
-    const SHOW      = 'show';
-    const CREATE    = 'create';
-    const EDIT      = 'edit';
-    const DELETE    = 'delete';
-    const BATCH     = 'batch';
-    const EXPORT    = 'export';
-    const AJAX      = 'ajax';
 
     /**
-     * @inheritdoc
+     * this will initialize all Definitions
+     *
+     * @param ContainerBuilder $container
      */
-    protected static $values = [
-        self::INDEX     => 'Übersicht',
-        self::SHOW      => 'Detail',
-        self::CREATE    => 'Erstellen',
-        self::EDIT      => 'Bearbeiten',
-        self::DELETE    => 'Löschen',
-        self::BATCH     => 'Stapelverarbeitung',
-        self::EXPORT    => 'Exportieren',
-        self::AJAX      => 'AJAX',
-    ];
+    public function process(ContainerBuilder $container)
+    {
+        if (!$container->has('whatwedo_crud.manager.block')) {
+            return;
+        }
+
+        $definition = $container->findDefinition('whatwedo_crud.manager.block');
+
+        $taggedServices = $container->findTaggedServiceIds('crud.block');
+
+        foreach ($taggedServices as $id => $tags) {
+            $definition->addMethodCall('addBlock', array(new Reference($id)));
+        }
+    }
 }

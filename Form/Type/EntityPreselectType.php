@@ -25,68 +25,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Form;
+namespace whatwedo\CrudBundle\Form\Type;
 
-use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use whatwedo\CrudBundle\Form\DataTransformer\EntityToIdTransformer;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Class EntityHiddenType
- * @package whatwedo\CrudBundle\Form
+ * Class EntityPreselectType
+ * @package whatwedo\CrudBundle\Form\Type
  */
-class EntityHiddenType extends AbstractType
+abstract class EntityPreselectType extends AbstractType
 {
 
     /**
-     * @var EntityManager
-     */
-    protected $em;
-
-    /**
-     * HiddenEntityType constructor.
-     * @param EntityManager $em
-     */
-    public function __construct(EntityManager $em)
-    {
-        $this->em = $em;
-    }
-
-    /**
-     * @param FormBuilderInterface $builder
+     * @param Request $request
      * @param array $options
+     * @return boolean
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public static function isValueProvided(Request $request, array $options)
     {
-        $transformer = new EntityToIdTransformer($this->em, $options['class']);
-        $builder->addModelTransformer($transformer);
+        preg_match('/[^\\\\]+$/', $options['class'], $matches);
+        $query = strtolower($matches[0]);
+        if (array_key_exists('query', $options)) {
+            $query = $options['query'];
+        }
+        return $request->query->has($query);
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setRequired(['class'])
-            ->setDefault('invalid_message', 'Das Objekt existiert nicht');
-    }
-
-    /**
-     * @return string
-     */
-    public function getParent()
-    {
-        return HiddenType::class;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'entity_hidden';
-    }
 }

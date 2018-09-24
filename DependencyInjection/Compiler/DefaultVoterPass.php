@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2016, whatwedo GmbH
+ * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,35 +25,36 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Enum;
+namespace whatwedo\CrudBundle\DependencyInjection\Compiler;
 
-use whatwedo\CoreBundle\Enum\AbstractSimpleEnum;
+use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
+ * Class DefaultVoterPass
+ * @package whatwedo\CrudBundle\DependencyInjection\Compiler
  */
-final class RouteEnum extends AbstractSimpleEnum
+class DefaultVoterPass implements CompilerPassInterface
 {
-    const INDEX     = 'index';
-    const SHOW      = 'show';
-    const CREATE    = 'create';
-    const EDIT      = 'edit';
-    const DELETE    = 'delete';
-    const BATCH     = 'batch';
-    const EXPORT    = 'export';
-    const AJAX      = 'ajax';
 
     /**
-     * @inheritdoc
+     * You can modify the container here before it is dumped to PHP code.
+     *
+     * @param ContainerBuilder $container
      */
-    protected static $values = [
-        self::INDEX     => 'Übersicht',
-        self::SHOW      => 'Detail',
-        self::CREATE    => 'Erstellen',
-        self::EDIT      => 'Bearbeiten',
-        self::DELETE    => 'Löschen',
-        self::BATCH     => 'Stapelverarbeitung',
-        self::EXPORT    => 'Exportieren',
-        self::AJAX      => 'AJAX',
-    ];
+    public function process(ContainerBuilder $container)
+    {
+        // Get DefaultVoter service definition
+        if (!$container->has('whatwedo_crud.security.voter.default')) {
+            return;
+        }
+        $definition = $container->findDefinition('whatwedo_crud.security.voter.default');
+
+        // Get services with security.voter tag
+        $taggedServices = $container->findTaggedServiceIds('security.voter');
+        foreach ($taggedServices as $id => $tags) {
+            $definition->addMethodCall('addVoter', array(new Reference($id)));
+        }
+    }
 }

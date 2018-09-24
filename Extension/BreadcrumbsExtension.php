@@ -27,7 +27,6 @@
 
 namespace whatwedo\CrudBundle\Extension;
 
-use Symfony\Component\DependencyInjection\Reference;
 use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 use WhiteOctober\BreadcrumbsBundle\WhiteOctoberBreadcrumbsBundle;
 

@@ -29,9 +29,9 @@
 namespace whatwedo\CrudBundle\Encoder;
 
 use Prophecy\Exception\InvalidArgumentException;
-use Symfony\Component\Serializer\Encoder\CsvEncoder;
+use Symfony\Component\Serializer\Encoder\CsvEncoder as BaseCsvEncoder;
 
-class WhatwedoCsvEncoder extends CsvEncoder
+class CsvEncoder extends BaseCsvEncoder
 {
 
     private $delimiter;
