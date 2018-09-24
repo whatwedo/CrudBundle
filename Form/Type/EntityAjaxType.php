@@ -27,12 +27,18 @@
 
 namespace whatwedo\CrudBundle\Form\Type;
 
+use Symfony\Bridge\Doctrine\Form\ChoiceList\DoctrineChoiceLoader;
+use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Routing\Router;
+use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\RouterInterface;
+use whatwedo\CrudBundle\Form\ChoiceLoader\AjaxDoctrineChoiceLoader;
 
 /**
  * Class EntityAjaxType
@@ -40,47 +46,54 @@ use Symfony\Component\Routing\Router;
  */
 class EntityAjaxType extends AbstractType
 {
-
-    /**
-     * @var Router $router
-     */
     private $router;
 
-    /**
-     * EntityAjaxType constructor.
-     * @param Router $router
-     */
-    public function __construct(Router $router)
+    public function __construct(RouterInterface $router)
     {
         $this->router = $router;
     }
 
-    /**
-     * @param FormView $view
-     * @param FormInterface $form
-     * @param array $options
-     */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['attr']['data-ajax-select'] = true;
-        $view->vars['attr']['data-ajax-entity'] = $options['class'];
+        // prefer definition over entity class for ajax search (uses definition querybuilder for results)
+        $view->vars['attr']['data-ajax-entity'] = $options['definition'] ?: $options['class'];
         $view->vars['attr']['data-ajax-url'] = $this->router->generate('whatwedo_crud_crud_select_ajax');
     }
 
-    /**
-     * @return string
-     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder->addEventListener
+        (
+            FormEvents::POST_SET_DATA,
+            [$options['choice_loader'], 'onFormPostSetData']
+        );
+
+        $builder->addEventListener
+        (
+            FormEvents::POST_SUBMIT,
+            [$options['choice_loader'], 'onFormPostSetData']
+        );
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefault('choice_loader', function (Options $options, DoctrineChoiceLoader $doctrineChoiceLoader) {
+            if ($doctrineChoiceLoader) {
+                return new AjaxDoctrineChoiceLoader($doctrineChoiceLoader);
+            }
+        });
+
+        $resolver->setDefault('definition', null);
+        $resolver->setDefault('class', function(Options $options, ?string $className) {
+            return $className ?: $options['definition']::getEntity();
+        });
+    }
+
     public function getParent()
     {
         return EntityType::class;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'ajaxSelect';
-    }
 
 }

@@ -44,8 +44,10 @@ class DefinitionManager
      * @param $alias
      * @param DefinitionInterface $definition
      */
-    public function addDefinition($alias, DefinitionInterface $definition)
+    public function addDefinition(DefinitionInterface $definition, $alias = null)
     {
+        if($alias == null) $alias = $definition::getAlias();
+
         $this->definitions[$alias] = $definition;
     }
 
@@ -75,6 +77,10 @@ class DefinitionManager
         return null;
     }
 
+    /**
+     * @param $entity
+     * @return null|DefinitionInterface
+     */
     public function getDefinitionFor($entity)
     {
         if (!is_object($entity)) {
@@ -82,13 +88,17 @@ class DefinitionManager
         }
         foreach ($this->definitions as $definition)
         {
-            if ($definition::getEntity() == ClassUtils::getRealClass(get_class($entity))) {
+            if ($definition::supports($entity)) {
                 return $definition;
             }
         }
         return null;
     }
 
+    /**
+     * @param string $class
+     * @return null|DefinitionInterface
+     */
     public function getDefinitionFromClass($class)
     {
         foreach ($this->definitions as $definition) {

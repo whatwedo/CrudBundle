@@ -29,6 +29,7 @@ namespace whatwedo\CrudBundle\Security\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
+use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 /**
@@ -88,7 +89,7 @@ class DefaultDefinitionVoter implements VoterInterface
         }
 
         // Check if base on definition
-        $definition = $this->definitionManager->getDefinitionFor($subject);
+        $definition = $subject instanceof DefinitionInterface ? $subject : $this->definitionManager->getDefinitionFor($subject);
         if (is_null($definition)) {
             return static::ACCESS_ABSTAIN;
         }

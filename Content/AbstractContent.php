@@ -31,6 +31,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Enum\VisibilityEnum;
 use whatwedo\CrudBundle\Traits\VisibilityTrait;
@@ -51,6 +52,11 @@ abstract class AbstractContent implements ContentInterface
      * @var array block options
      */
     protected $options = [];
+
+    /**
+     * @var DefinitionInterface
+     */
+    protected $definition;
 
     /**
      * @param string $acronym
@@ -74,6 +80,24 @@ abstract class AbstractContent implements ContentInterface
     public function getOptions()
     {
         return $this->options;
+    }
+
+    /**
+     * @return DefinitionInterface
+     */
+    public function getDefinition()
+    {
+        return $this->definition;
+    }
+
+    /**
+     * @param DefinitionInterface $definition
+     * @return $this
+     */
+    public function setDefinition($definition)
+    {
+        $this->definition = $definition;
+        return $this;
     }
 
     /**

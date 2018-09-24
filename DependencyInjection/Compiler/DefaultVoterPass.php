@@ -45,11 +45,10 @@ class DefaultVoterPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        // Get DefaultVoter service definition
-        if (!$container->has('whatwedo_crud.security.voter.default')) {
+        if (!$container->has('whatwedo\CrudBundle\Security\Voter\DefaultDefinitionVoter')) {
             return;
         }
-        $definition = $container->findDefinition('whatwedo_crud.security.voter.default');
+        $definition = $container->findDefinition('whatwedo\CrudBundle\Security\Voter\DefaultDefinitionVoter');
 
         // Get services with security.voter tag
         $taggedServices = $container->findTaggedServiceIds('security.voter');

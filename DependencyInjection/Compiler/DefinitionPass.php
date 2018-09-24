@@ -44,7 +44,7 @@ class DefinitionPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->has('whatwedo_crud.manager.definition')) {
+        if (!$container->has('whatwedo\CrudBundle\Manager\DefinitionManager')) {
             return;
         }
 
@@ -52,20 +52,20 @@ class DefinitionPass implements CompilerPassInterface
          * Load Definition Extensions
          */
         foreach ($container->findTaggedServiceIds('crud.extension') as $id => $tags) {
-            $definition = $container->getDefinition($id);
+            $crudExtension = $container->getDefinition($id);
 
             // all extensions must implement ExtensionInExtensionInterfaceterface
-            if (!is_subclass_of($definition->getClass(), ExtensionInterface::class)) {
+            if (!is_subclass_of($crudExtension->getClass(), ExtensionInterface::class)) {
                 throw new \UnexpectedValueException(sprintf(
                     'Extensions tagged with crud.extension must implement %s - %s given.',
                     ExtensionInterface::class,
-                    $definition->getClass()
+                    $crudExtension->getClass()
                 ));
                 continue;
             }
 
             // remove extensions from container if their requirements (other bundles) are not fulfilled
-            if (!call_user_func([$definition->getClass(), 'isEnabled'], [$container->getParameter('kernel.bundles')])) {
+            if (!call_user_func([$crudExtension->getClass(), 'isEnabled'], [$container->getParameter('kernel.bundles')])) {
                 $container->removeDefinition($id);
             }
         }
@@ -73,17 +73,29 @@ class DefinitionPass implements CompilerPassInterface
         /*
          * Load definitions
          */
-        $definition = $container->findDefinition('whatwedo_crud.manager.definition');
+        $crudManager = $container->findDefinition('whatwedo\CrudBundle\Manager\DefinitionManager');
 
         foreach ($container->findTaggedServiceIds('crud.definition') as $id => $tags) {
+            $crudDefinition = $container->getDefinition($id);
+
+            if($crudDefinition->isAbstract()) {
+                continue;
+            }
+
+            $crudDefinition->addMethodCall('setTemplates', [$container->getParameter('whatwedo_crud.config.templates')]);
+
             // add available extensions to all Definitions
             foreach ($container->findTaggedServiceIds('crud.extension') as $idExtension => $tagsExtension) {
-                $container->getDefinition($id)->addMethodCall('addExtension', [new Reference($idExtension)]);
+                $crudDefinition->addMethodCall('addExtension', [new Reference($idExtension)]);
             }
+
+            $crudManager->addMethodCall('addDefinition', [new Reference($id)]);
 
             // add all Defintions to our DefinitionManager
             foreach ($tags as $attributes) {
-                $definition->addMethodCall('addDefinition', [$attributes['alias'], new Reference($id)]);
+                if(array_key_exists('alias', $attributes)) {
+                    $crudManager->addMethodCall('addDefinition', [$attributes['alias'], new Reference($id)]);
+                }
             }
 
             // create a resource so that the cache is loaded new as soon as a definition is updated
