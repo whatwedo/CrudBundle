@@ -86,14 +86,16 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      * @var RouterInterface
      */
     protected  $router;
+
     /**
      * @var DefinitionManager
      */
-    private $definitionManager;
+    protected $definitionManager;
+    
     /**
      * @var TableFactory
      */
-    private $tableFactory;
+    protected $tableFactory;
 
     /**
      * CrudController constructor.
