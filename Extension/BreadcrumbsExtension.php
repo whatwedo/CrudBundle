@@ -40,7 +40,7 @@ class BreadcrumbsExtension implements ExtensionInterface
     /**
      * @var bool to only add it once
      */
-    protected $isStartPrepended = false;
+    protected static $isStartPrepended = false;
 
     /**
      * @var bool|string
@@ -56,14 +56,12 @@ class BreadcrumbsExtension implements ExtensionInterface
     {
         $this->breadcrumbs = $breadcrumbs;
 
-        if (!$isStartPrepended && $startText) {
-            if ($startRoute) {
-                $this->breadcrumbs->prependRouteItem($startText, $startRoute);
-            } else {
-                $this->breadcrumbs->prependItem($startText);
-            }
+        if ($startText) {
+            $this->startText = $startText;
+        }
 
-            $isStartPrepended = true;
+        if ($startRoute) {
+            $this->startRoute = $startRoute;
         }
     }
 
@@ -86,6 +84,17 @@ class BreadcrumbsExtension implements ExtensionInterface
      */
     public function getBreadcrumbs()
     {
+        // add Dashboard Link (needs to be here, because routing is not available in the constructor
+        if (!static::$isStartPrepended
+            && $this->startText) {
+            static::$isStartPrepended = true;
+            if ($this->startRoute) {
+                $this->breadcrumbs->prependRouteItem($this->startText, $this->startRoute);
+            } else {
+                $this->breadcrumbs->prependItem($this->startText);
+            }
+        }
+
         return $this->breadcrumbs;
     }
 }
