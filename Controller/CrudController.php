@@ -500,6 +500,10 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         }
     }
 
+    /**
+     * @return array
+     * @throws \whatwedo\TableBundle\Exception\DataLoaderNotAvailableException
+     */
     protected function getExportEntities()
     {
         $table = $this->tableFactory
@@ -516,6 +520,10 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         return $table->getResults();
     }
 
+    /**
+     * @param $event
+     * @param $entity
+     */
     public function dispatchEvent($event, $entity)
     {
         $this->eventDispatcher->dispatch(
@@ -548,5 +556,18 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     private function redirectToDefinitionObject(DefinitionInterface $definition, string $capability, array $parameters = array(), int $status = 302): RedirectResponse {
         $route = $definition::getRouteName($capability);
         return $this->redirectToRoute($route, $parameters, $status);
+    }
+
+    /**
+     * @param $attributes
+     * @param null $subject
+     * @param string $message
+     */
+    protected function denyAccessUnlessGranted($attributes, $subject = null, string $message = 'Access Denied.')
+    {
+        if (!$this->getUser()) {
+            return;
+        }
+        parent::denyAccessUnlessGranted($attributes, $subject, $message);
     }
 }

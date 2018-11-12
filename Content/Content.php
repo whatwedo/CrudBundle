@@ -27,6 +27,7 @@
 
 namespace whatwedo\CrudBundle\Content;
 
+use http\Exception\InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -56,9 +57,10 @@ class Content extends AbstractContent implements EditableContentInterface
         $this->formatterManager = $formatterManager;
     }
 
-    protected function formatData($data, $formatter) {
+    protected function formatData($data, $formatter, $formatterOptions) {
         if (is_string($formatter)) {
             $formatterObj = $this->formatterManager->getFormatter($formatter);
+            $formatterObj->processOptions($formatterOptions);
             return $formatterObj->getHtml($data);
         }
 
@@ -67,8 +69,8 @@ class Content extends AbstractContent implements EditableContentInterface
         }
 
         if (is_array($formatter)) {
-            foreach($formatter as $aFormatter) {
-                $data = $this->formatData($data, $aFormatter);
+            foreach($formatter as $index => $aFormatter) {
+                $data = $this->formatData($data, $aFormatter, $formatterOptions[$index]);
             }
 
             return $data;
@@ -82,7 +84,7 @@ class Content extends AbstractContent implements EditableContentInterface
      */
     public function render($row)
     {
-        return (string) $this->formatData($this->getContents($row), $this->options['formatter']);
+        return (string) $this->formatData($this->getContents($row), $this->options['formatter'], $this->options['formatter_options']);
     }
 
     /**
@@ -160,7 +162,7 @@ class Content extends AbstractContent implements EditableContentInterface
             'accessor_path' => $this->acronym, // Zugriffsmöglichkeit auf die Daten
             'callable' => null, // Falls nicht null: anzuzeigender Inhalt (muss string oder Objekt mit __toString sein)
             'formatter' => DefaultFormatter::class, // Formatierer
-            'formatter_options' => null,
+            'formatter_options' => [],
             'form_type' => null, // Formular-Typ (Klasse)
             'form_options' => [], // Formular-Optionen
             'help' => null, // Hilfetext
