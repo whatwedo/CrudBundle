@@ -52,7 +52,7 @@ class CrudDefinitionListener
 
         if ($controller[0] instanceof CrudDefinitionController) {
             if (($resource = $event->getRequest()->attributes->get('_resource'))) {
-                $controller[0]->configureDefinition($this->definitionManager->getDefinition($resource));
+                $controller[0]->configureDefinition($this->definitionManager->getDefinitionFromClass($resource) ?: $this->definitionManager->getDefinition($resource));
                 //throw new \RuntimeException('_resource has not been set for CRUD routing');
             }
         }

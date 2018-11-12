@@ -51,7 +51,7 @@ class CrudLoader extends Loader
     public function load($resource, $type = null)
     {
         $routes = new RouteCollection();
-        $definition = $this->definitionManager->getDefinition($resource);
+        $definition = $this->definitionManager->getDefinitionFromClass($resource) ?: $this->definitionManager->getDefinition($resource);
 
         foreach ($definition->getCapabilities() as $capability) {
             $route = new Route(
