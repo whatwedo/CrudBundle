@@ -67,13 +67,14 @@ class DefinitionManager
         return $this->definitions[$alias];
     }
 
-    public function getDefinitionFromEntityClass($entityclass)
+    public function getDefinitionFromEntityClass($entityclass, $allowInheritance = false)
     {
         foreach ($this->definitions as $definition) {
-            if ($definition::getEntity() == $entityclass) {
+            if ($definition::getEntity() == $entityclass || ($allowInheritance && is_a($entityclass, $definition::getEntity(), true))) {
                 return $definition;
             }
         }
+        if(!$allowInheritance) return $this->getDefinitionFromEntityClass($entityclass, true);
         return null;
     }
 

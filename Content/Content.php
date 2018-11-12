@@ -56,25 +56,33 @@ class Content extends AbstractContent implements EditableContentInterface
         $this->formatterManager = $formatterManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function render($row)
-    {
-        $data = $this->getContents($row);
-
-        $formatter = $this->options['formatter'];
-
+    protected function formatData($data, $formatter) {
         if (is_string($formatter)) {
             $formatterObj = $this->formatterManager->getFormatter($formatter);
             return $formatterObj->getHtml($data);
         }
 
         if (is_callable($formatter)) {
-            return (string) $formatter($data);
+            return $formatter($data);
         }
 
-        return (string) $data;
+        if (is_array($formatter)) {
+            foreach($formatter as $aFormatter) {
+                $data = $this->formatData($data, $aFormatter);
+            }
+
+            return $data;
+        }
+
+        return $data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function render($row)
+    {
+        return (string) $this->formatData($this->getContents($row), $this->options['formatter']);
     }
 
     /**
@@ -152,6 +160,7 @@ class Content extends AbstractContent implements EditableContentInterface
             'accessor_path' => $this->acronym, // Zugriffsmöglichkeit auf die Daten
             'callable' => null, // Falls nicht null: anzuzeigender Inhalt (muss string oder Objekt mit __toString sein)
             'formatter' => DefaultFormatter::class, // Formatierer
+            'formatter_options' => null,
             'form_type' => null, // Formular-Typ (Klasse)
             'form_options' => [], // Formular-Optionen
             'help' => null, // Hilfetext
