@@ -404,15 +404,15 @@ abstract class AbstractDefinition implements DefinitionInterface
     }
 
     /**
-     * @param string $route
+     * @param string $capability
      * @see RouteEnum
      * @return string
      */
-    public static function getRouteName(string $route)
+    public static function getRouteName(string $capability)
     {
-        if(!RouteEnum::has($route)) throw new \InvalidArgumentException("Invalid route specified. Only RouteEnum values are supported.");
+        if(!RouteEnum::has($capability)) throw new \InvalidArgumentException("Invalid capability specified. Only RouteEnum values are supported.");
 
-        return sprintf('%s_%s', static::getRoutePrefix(), $route);
+        return sprintf('%s_%s', static::getRoutePrefix(), $capability);
     }
 
 

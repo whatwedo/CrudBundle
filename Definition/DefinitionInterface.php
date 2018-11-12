@@ -55,7 +55,7 @@ interface DefinitionInterface
      * @see RouteEnum
      * @return string
      */
-    public static function getRouteName(string $route);
+    public static function getRouteName(string $capability);
 
     /**
      * @param null|object $entity
