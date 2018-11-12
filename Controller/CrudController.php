@@ -33,6 +33,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -534,5 +535,18 @@ class CrudController extends AbstractController implements CrudDefinitionControl
             $this->getDefinition()::getQueryAlias(),
             $this->getDefinition()->getQueryBuilder()->getEntityManager()->getClassMetadata($this->getDefinition()::getEntity())->identifier[0]
         );
+    }
+
+    protected function redirectToCapability(string $capability, array $parameters = array(), int $status = 302): RedirectResponse {
+        return $this->redirectToDefinitionObject($this->definition, $capability, $parameters, $status);
+    }
+
+    protected function redirectToDefinition(string $definitionClass, string $capability, array $parameters = array(), int $status = 302): RedirectResponse {
+        return $this->redirectToDefinitionObject($this->definitionManager->getDefinitionFromClass($definitionClass), $capability, $parameters, $status);
+    }
+
+    private function redirectToDefinitionObject(DefinitionInterface $definition, string $capability, array $parameters = array(), int $status = 302): RedirectResponse {
+        $route = $definition::getRouteName($capability);
+        return $this->redirectToRoute($route, $parameters, $status);
     }
 }
