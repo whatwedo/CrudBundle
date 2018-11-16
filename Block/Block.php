@@ -197,14 +197,10 @@ class Block
     private function optionsCouldBeRelationContent($options = [])
     {
         $notAllowedOptions = [
-            'form_options', 'formatter', 'callable', 'form_type', 'help', 'preselect_definition', 'auto_fill', 'attr'
+            'form_options', 'formatter', 'callable', 'form_type', 'help', 'preselect_definition', 'attr'
         ];
-        foreach ($notAllowedOptions as $notAllowedOption) {
-            if (in_array($notAllowedOption, array_keys($options))) {
-                return false;
-            }
-        }
-        return true;
+
+        return !array_intersect(array_keys($options), $notAllowedOptions);
     }
 
     /**
