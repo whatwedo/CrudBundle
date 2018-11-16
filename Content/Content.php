@@ -70,7 +70,7 @@ class Content extends AbstractContent implements EditableContentInterface
 
         if (is_array($formatter)) {
             foreach($formatter as $index => $aFormatter) {
-                $data = $this->formatData($data, $aFormatter, $formatterOptions[$index]);
+                $data = $this->formatData($data, $aFormatter, isset($formatterOptions[$index]) ? $formatterOptions[$index] : $formatterOptions);
             }
 
             return $data;
@@ -127,14 +127,6 @@ class Content extends AbstractContent implements EditableContentInterface
     /**
      * @return string
      */
-    public function getAutoFill()
-    {
-        return $this->options['auto_fill'];
-    }
-
-    /**
-     * @return string
-     */
     public function getHelp()
     {
         return $this->options['help'];
@@ -167,7 +159,6 @@ class Content extends AbstractContent implements EditableContentInterface
             'form_options' => [], // Formular-Optionen
             'help' => null, // Hilfetext
             'preselect_definition' => null, // Vorausgewählte Entity folgender Definition
-            'auto_fill' => null, // Auto-Fill Wert
             'attr' => [], // Attribute auf dem Element
         ]);
     }

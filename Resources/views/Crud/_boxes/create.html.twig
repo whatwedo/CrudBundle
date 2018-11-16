@@ -74,22 +74,6 @@
                                             </label>
                                         {% endif %}
                                         {{ form_widget(attribute(form, content.acronym)) }}
-                                        {% if content.autoFill|default(false) %}
-                                            {% for autoFill in content.autoFill %}
-                                                <div class="hidden auto-fill">
-                                                    <ul data-set-to="{{ autoFill.apply_to }}" data-listen-on="{{ attribute(form, content.acronym).vars.id }}">
-                                                        {% for choice in attribute(form, content.acronym).vars.choices %}
-                                                            {% set value2 = attribute(choice.data, autoFill.property) %}
-                                                            {% if autoFill['transform'] is defined %}
-                                                                <li data-value="{{ choice.value }}" data-value2="{{ whatwedo_crud_callable(autoFill['transform'], value2) }}"></li>
-                                                            {% else %}
-                                                                <li data-value="{{ choice.value }}" data-value2="{{ value2 }}"></li>
-                                                            {% endif %}
-                                                        {% endfor %}
-                                                    </ul>
-                                                </div>
-                                            {% endfor %}
-                                        {% endif %}
 
                                         {% if attribute(form, content.acronym).vars.errors|length %}
                                             <div class="help-block">

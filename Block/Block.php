@@ -39,13 +39,14 @@ use whatwedo\CrudBundle\Content\Content;
 use whatwedo\CrudBundle\Content\ContentInterface;
 use whatwedo\CrudBundle\Enum\BlockSizeEnum;
 use whatwedo\CrudBundle\Traits\VisibilityTrait;
+use whatwedo\CrudBundle\Traits\VoterAttributeTrait;
 
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
  */
 class Block
 {
-    use VisibilityTrait;
+    use VisibilityTrait, VoterAttributeTrait;
 
     /**
      * @var string block acronym
@@ -131,30 +132,6 @@ class Block
     }
 
     /**
-     * @return string
-     */
-    public function getShowVoterAttribute()
-    {
-        return $this->options['show_voter_attribute'];
-    }
-
-    /**
-     * @return string
-     */
-    public function getEditVoterAttribute()
-    {
-        return $this->options['edit_voter_attribute'];
-    }
-
-    /**
-     * @return string
-     */
-    public function getCreateVoterAttribute()
-    {
-        return $this->options['create_voter_attribute'];
-    }
-
-    /**
      * adds a new content to the block
      *
      * @param string $acronym acronym of the block
@@ -197,14 +174,10 @@ class Block
     private function optionsCouldBeRelationContent($options = [])
     {
         $notAllowedOptions = [
-            'form_options', 'formatter', 'callable', 'form_type', 'help', 'preselect_definition', 'auto_fill', 'attr'
+            'form_options', 'formatter', 'callable', 'form_type', 'help', 'preselect_definition', 'attr'
         ];
-        foreach ($notAllowedOptions as $notAllowedOption) {
-            if (in_array($notAllowedOption, array_keys($options))) {
-                return false;
-            }
-        }
-        return true;
+
+        return !array_intersect(array_keys($options), $notAllowedOptions);
     }
 
     /**
