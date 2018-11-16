@@ -70,7 +70,7 @@ class Content extends AbstractContent implements EditableContentInterface
 
         if (is_array($formatter)) {
             foreach($formatter as $index => $aFormatter) {
-                $data = $this->formatData($data, $aFormatter, $formatterOptions[$index]);
+                $data = $this->formatData($data, $aFormatter, isset($formatterOptions[$index]) ? $formatterOptions[$index] : $formatterOptions);
             }
 
             return $data;
