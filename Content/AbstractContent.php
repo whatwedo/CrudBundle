@@ -35,13 +35,14 @@ use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Enum\VisibilityEnum;
 use whatwedo\CrudBundle\Traits\VisibilityTrait;
+use whatwedo\CrudBundle\Traits\VoterAttributeTrait;
 
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
  */
 abstract class AbstractContent implements ContentInterface
 {
-    use VisibilityTrait;
+    use VisibilityTrait, VoterAttributeTrait;
 
     /**
      * @var string block acronym
@@ -177,29 +178,5 @@ abstract class AbstractContent implements ContentInterface
     public function getAttr()
     {
         return $this->options['attr'];
-    }
-
-    /**
-     * @return string
-     */
-    public function getShowVoterAttribute()
-    {
-        return $this->options['show_voter_attribute'];
-    }
-
-    /**
-     * @return string
-     */
-    public function getEditVoterAttribute()
-    {
-        return $this->options['edit_voter_attribute'];
-    }
-
-    /**
-     * @return string
-     */
-    public function getCreateVoterAttribute()
-    {
-        return $this->options['create_voter_attribute'];
     }
 }

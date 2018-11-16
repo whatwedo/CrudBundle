@@ -39,13 +39,14 @@ use whatwedo\CrudBundle\Content\Content;
 use whatwedo\CrudBundle\Content\ContentInterface;
 use whatwedo\CrudBundle\Enum\BlockSizeEnum;
 use whatwedo\CrudBundle\Traits\VisibilityTrait;
+use whatwedo\CrudBundle\Traits\VoterAttributeTrait;
 
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
  */
 class Block
 {
-    use VisibilityTrait;
+    use VisibilityTrait, VoterAttributeTrait;
 
     /**
      * @var string block acronym
@@ -128,30 +129,6 @@ class Block
     public function getSize()
     {
         return $this->options['size'];
-    }
-
-    /**
-     * @return string
-     */
-    public function getShowVoterAttribute()
-    {
-        return $this->options['show_voter_attribute'];
-    }
-
-    /**
-     * @return string
-     */
-    public function getEditVoterAttribute()
-    {
-        return $this->options['edit_voter_attribute'];
-    }
-
-    /**
-     * @return string
-     */
-    public function getCreateVoterAttribute()
-    {
-        return $this->options['create_voter_attribute'];
     }
 
     /**
