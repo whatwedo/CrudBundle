@@ -28,6 +28,7 @@
 namespace whatwedo\CrudBundle\Security\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\TraceableVoter;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
@@ -63,7 +64,7 @@ class DefaultDefinitionVoter implements VoterInterface
      */
     public function addVoter(VoterInterface $voter)
     {
-        if ($voter instanceof DefaultDefinitionVoter) {
+        if ($voter instanceof DefaultDefinitionVoter || $voter instanceof TraceableVoter) {
             return;
         }
         $this->voters[] = $voter;
