@@ -16,7 +16,7 @@ you can add as many blocks as you want
  */
 public function configureView(DefinitionBuilder $builder, $data)
 {
-    $builder->addBlock('example', [
+    $builder->addBlock('example', null, [
         'label' => 'Example Block',
     ])
         ->addContent('firstname', null, [
