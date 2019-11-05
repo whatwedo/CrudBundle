@@ -2,6 +2,29 @@
 
 For basic table configuration refer to the [WhatwedoTableBundle Documentations](https://doc.whatwedo.ch/whatwedo/tablebundle/table-configuration)
 
+```php
+
+class LocationDefinition extends AbstractDefinition
+{
+....
+
+    public function configureTable(Table $table)
+    {
+        $table
+            ->addColumn(
+                'name', 
+                null, [
+                    'label' => 'Name',
+                ]
+            )
+            ->addColumn('zip', null, ['label' => 'ZIP']);
+    }
+
+...
+}
+```
+
+
 ## Advanced Table Configuration with CrudBundle
 
 ### Filters
