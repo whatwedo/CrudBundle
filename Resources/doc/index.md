@@ -36,7 +36,7 @@ Thirdly, add our routes to your ```config/routes.yaml```
 ```
 whatwedo_crud_bundle:
     resource: "@whatwedoCrudBundle/Resources/config/routing.yml"
-    prefix: /cruds
+    prefix: /
 ```
     
 ## Use the bundle
@@ -186,7 +186,7 @@ agency_location_location_crud:
     type: crud
     prefix: /location
 
-trianer_crud:
+trainer_crud:
     resource: App\Definition\TrainerDefinition # put in the alias of your definition
     type: crud
     prefix: /trainer
@@ -201,7 +201,7 @@ trianer_crud:
 
 That's all.
 
-```http://127.0.0.1:8000/crud/location```
+```http://127.0.0.1:8000/location```
 
 ### More resources
 
