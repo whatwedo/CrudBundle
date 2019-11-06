@@ -39,6 +39,15 @@ public function configureView(DefinitionBuilder $builder, $data)
 ### Block Options
 
 - `label`: Title of the block
+- `attr`: Block attributes
+- `size`: BlockSizeEnum::SMALL, BlockSizeEnum::LARGE
+- `collapsible`: boolean
+- `collapsed`: boolean
+- `visibility`: display Box in which Context VisibilityEnum::SHOW | VisibilityEnum::EDIT | VisibilityEnum::CREATE,
+- `show_voter_attribute`:  RouteEnum::SHOW,
+- `edit_voter_attribute`: RouteEnum::EDIT,
+- `create_voter_attribute`: RouteEnum::CREATE,
+
 
 ### Content Options
 
