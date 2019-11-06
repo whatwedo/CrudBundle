@@ -54,12 +54,13 @@ public function configureView(DefinitionBuilder $builder, $data)
  - `accessor_path`: default to the acronym
  - `callable`: callable to get the data, no accessor_path needed
  - `formatter`: [formatter class](formatter.md) to format the output of the field
+ - `formatter_options`: options for the [formatter class](formatter.md) 
  - `visibility`: define visibilities of a form
  - `form_type`: custom [form type](https://symfony.com/doc/current/reference/forms/types.html) (only needed if symfony takes the wrong one)
  - `form_options`: options given to the form type
  - `preselect_definition`: needed for relations, see below
-
-
+ - `help`: Helptext
+ - `attr`: attributes
 
 ## Add a relation
  
