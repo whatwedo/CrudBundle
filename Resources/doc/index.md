@@ -20,23 +20,19 @@ First, add the bundle to your dependencies and install it.
 composer require whatwedo/crud-bundle
 ```
 
-Secondly, enable this bundle and the whatwedoTableBundle in your kernel.
+Secondly, enable this bundle and the whatwedoTableBundle in your ```config/bundles.php```. Normaly not needed for Symfony 4. 
 ```
 <?php
-// app/AppKernel.php
+return [
+// ...
+    whatwedo\TableBundle\whatwedoTableBundle::class => ['all' => true],
+    whatwedo\CrudBundle\whatwedoCrudBundle::class => ['all' => true],
+// ...
+];
 
-public function registerBundles()
-{
-    $bundles = array(
-        // ...
-        new whatwedo\TableBundle\whatwedoTableBundle(),
-        new whatwedo\CrudBundle\whatwedoCrudBundle(),
-        // ...
-    );
-}
 ```
 
-Thirdly, add our routes to your ```app/config/routing.yml```
+Thirdly, add our routes to your ```config/routes.yaml```
 ```
 whatwedo_crud_bundle:
     resource: "@whatwedoCrudBundle/Resources/config/routing.yml"
@@ -155,10 +151,11 @@ Check out our documentation for the [view configuration](view-configuration.md).
 
 ### Step 3: Create a service
 
-Now, create a new service is your services.yml. Important: the alias given here is the same as defined in your definition-file!
+Now, create a new service is your ```config/services.yaml```. Important: the alias given here is the same as defined in your definition-file!
+For Symfony with autowiring not needed.
 
 ```
-# src/Agency/LocationBundle/Resources/services.yml
+# config/services.yaml
 services:
     # Definitions
     agency_location.definition.location:
@@ -174,8 +171,11 @@ services:
 
 Now we need to tell our router that there are new routes. In our projects, we always create new routing-files for every controller - you can just put it in one file if you want.
 
+
 ```
-# src/Agency/LocationBundle/Resources/config/routing.yml
+
+# config/routes/crud.yaml
+
 agency_location_location_import:
     prefix: /location
     resource: "@AgencyLocationBundle/Resources/config/routing/location.yml"
@@ -184,12 +184,24 @@ agency_location_location_import:
 agency_location_location_crud:
     resource: 'agency_location_location' # put in the alias of your definition
     type: crud
+    prefix: /location
+
+trainer_crud:
+    resource: App\Definition\TrainerDefinition # put in the alias of your definition
+    type: crud
+    prefix: /trainer
 
 ```
 
-### Step 5: Try it
+### Step 5: configure whatwedoTableBundle
+
+[whatwedoTableBundle](https://github.com/whatwedo/TableBundle)
+
+### Step 6: Try it
 
 That's all.
+
+```http://127.0.0.1:8000/location```
 
 ### More resources
 
