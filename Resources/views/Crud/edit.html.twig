@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block page_title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title | trans }}{% endblock %}
 
 {% block page_actions %}
     {% if is_granted('delete', view.data) %}
