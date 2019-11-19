@@ -126,7 +126,7 @@ interface DefinitionInterface
     /**
      * get template directory of this definition
      *
-     * @return bool
+     * @return string
      */
     public function getTemplateDirectory();
 
