@@ -31,7 +31,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig\Environment;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -74,7 +74,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     protected $eventDispatcher;
 
     /**
-     * @var EngineInterface
+     * @var Environment
      */
     protected $templating;
 
@@ -100,10 +100,10 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
     /**
      * CrudController constructor.
-     * @param EngineInterface $templating
+     * @param Environment $templating
      * @param LoggerInterface $logger
      */
-    public function __construct(EngineInterface $templating, LoggerInterface $logger, EventDispatcherInterface $eventDispatcher, RouterInterface $router, DefinitionManager $definitionManager, TableFactory $tableFactory)
+    public function __construct(Environment $templating, LoggerInterface $logger, EventDispatcherInterface $eventDispatcher, RouterInterface $router, DefinitionManager $definitionManager, TableFactory $tableFactory)
     {
         $this->eventDispatcher = $eventDispatcher;
         $this->router = $router;

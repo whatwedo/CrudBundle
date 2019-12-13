@@ -30,7 +30,7 @@ namespace whatwedo\CrudBundle\View;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\Mapping\Column;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig\Environment;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -78,7 +78,7 @@ class DefinitionView implements DefinitionViewInterface
     protected $blocks;
 
     /**
-     * @var EngineInterface
+     * @var Environment
      */
     protected $templating;
 
@@ -144,7 +144,7 @@ class DefinitionView implements DefinitionViewInterface
 
     /**
      * DefinitionView constructor.
-     * @param EngineInterface $templating
+     * @param Environment $templating
      * @param FormFactoryInterface $formFactory
      * @param FormRegistry $formRegistry
      * @param Router $router
@@ -152,7 +152,7 @@ class DefinitionView implements DefinitionViewInterface
      * @param AuthorizationChecker $authorizationChecker
      * @param RequestStack $requestStack
      */
-    public function __construct(EngineInterface $templating, FormFactoryInterface $formFactory, FormRegistryInterface $formRegistry, RouterInterface $router, AccessMapInterface $accessMap, AuthorizationCheckerInterface $authorizationChecker, RequestStack $requestStack)
+    public function __construct(Environment $templating, FormFactoryInterface $formFactory, FormRegistryInterface $formRegistry, RouterInterface $router, AccessMapInterface $accessMap, AuthorizationCheckerInterface $authorizationChecker, RequestStack $requestStack)
     {
         $this->templating = $templating;
         $this->formFactory = $formFactory;
