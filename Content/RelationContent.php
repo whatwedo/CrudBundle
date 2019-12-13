@@ -63,6 +63,10 @@ class RelationContent extends TableContent implements EditableContentInterface
     protected $authorizationChecker;
     protected $definitionManager;
     protected $requestStack;
+
+    /**
+     * @var \Doctrine\Common\Persistence\ManagerRegistry
+     */
     protected $doctrine;
 
     protected $accessorPathDefinitionCacheMap = [];
@@ -71,7 +75,13 @@ class RelationContent extends TableContent implements EditableContentInterface
      * RelationContent constructor.
      * @param ContainerInterface $container
      */
-    public function __construct(TableFactory $tableFactory, EventDispatcherInterface $eventDispatcher, AuthorizationCheckerInterface $authorizationChecker, DefinitionManager $definitionManager, RequestStack $requestStack, RegistryInterface $doctrine)
+    public function __construct(
+        TableFactory $tableFactory,
+        EventDispatcherInterface $eventDispatcher,
+        AuthorizationCheckerInterface $authorizationChecker,
+        DefinitionManager $definitionManager,
+        RequestStack $requestStack,
+        \Doctrine\Common\Persistence\ManagerRegistry $doctrine)
     {
         $this->tableFactory = $tableFactory;
         $this->eventDispatcher = $eventDispatcher;

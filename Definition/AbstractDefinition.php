@@ -29,6 +29,7 @@ namespace whatwedo\CrudBundle\Definition;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -65,7 +66,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     const AJAX = 2;
 
     /**
-     * @var RegistryInterface
+     * @var \Doctrine\Common\Persistence\ManagerRegistry
      */
     protected $doctrine;
 
@@ -117,7 +118,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * {@inheritdoc}
      */
-    public function getTitle($entity = null, $route = null)
+    public function getTitle($entity = null, $route = null): string
     {
         switch ($route) {
             case RouteEnum::INDEX:
@@ -138,7 +139,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * {@inheritdoc}
      */
-    public static function getCapabilities()
+    public static function getCapabilities():array
     {
         return [
             RouteEnum::INDEX,
@@ -149,7 +150,7 @@ abstract class AbstractDefinition implements DefinitionInterface
         ];
     }
 
-    public static function hasCapability($string)
+    public static function hasCapability($string):bool
     {
         return in_array($string, static::getCapabilities());
     }
@@ -157,7 +158,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * {@inheritdoc}
      */
-    public static function getController()
+    public static function getController():string
     {
         return CrudController::class;
     }
@@ -173,7 +174,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * {@inheritdoc}
      */
-    public function getQueryBuilder()
+    public function getQueryBuilder():QueryBuilder
     {
         return $this->getRepository()->createQueryBuilder($this->getQueryAlias());
     }
@@ -181,7 +182,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * {@inheritdoc}
      */
-    public function configureTable(Table $table)
+    public function configureTable(Table $table):void
     {
     }
 
@@ -193,7 +194,7 @@ abstract class AbstractDefinition implements DefinitionInterface
         return $this->doctrine;
     }
 
-    public static function getAlias()
+    public static function getAlias():string
     {
         return str_replace(
             ['\\', '_definition', '_bundle'],
@@ -207,7 +208,7 @@ abstract class AbstractDefinition implements DefinitionInterface
      *
      * @return string alias
      */
-    public static function getQueryAlias()
+    public static function getQueryAlias():string
     {
         return static::getAlias();
     }
@@ -218,7 +219,7 @@ abstract class AbstractDefinition implements DefinitionInterface
      * @param Registry $registry
      * @required
      */
-    public function setDoctrine(RegistryInterface $registry)
+    public function setDoctrine(\Doctrine\Common\Persistence\ManagerRegistry $registry):void
     {
         $this->doctrine = $registry;
     }
@@ -226,7 +227,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @return BlockManager
      */
-    public function getBlockManager()
+    public function getBlockManager():BlockManager
     {
         return $this->blockManager;
     }
@@ -235,7 +236,7 @@ abstract class AbstractDefinition implements DefinitionInterface
      * @param BlockManager $blockManager
      * @required
      */
-    public function setBlockManager(BlockManager $blockManager)
+    public function setBlockManager(BlockManager $blockManager):void
     {
         $this->blockManager = $blockManager;
     }
@@ -243,7 +244,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @param array $templates
      */
-    public function setTemplates(array $templates)
+    public function setTemplates(array $templates):void
     {
         $this->templates = $templates;
     }
@@ -251,7 +252,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @return RequestStack
      */
-    public function getRequestStack()
+    public function getRequestStack():RequestStack
     {
         return $this->requestStack;
     }
@@ -269,7 +270,7 @@ abstract class AbstractDefinition implements DefinitionInterface
      * @return AbstractDefinition
      * @required
      */
-    public function setRequestStack(RequestStack $requestStack)
+    public function setRequestStack(RequestStack $requestStack): self
     {
         $this->requestStack = $requestStack;
 
@@ -279,7 +280,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @return DefinitionManager
      */
-    public function getDefinitionManager()
+    public function getDefinitionManager():DefinitionManager
     {
         return $this->definitionManager;
     }
@@ -289,7 +290,7 @@ abstract class AbstractDefinition implements DefinitionInterface
      * @return AbstractDefinition
      * @required
      */
-    public function setDefinitionManager(DefinitionManager $definitionManager)
+    public function setDefinitionManager(DefinitionManager $definitionManager):self
     {
         $this->definitionManager = $definitionManager;
         return $this;
@@ -298,7 +299,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @return string
      */
-    public function getTemplateDirectory()
+    public function getTemplateDirectory():string
     {
         return '@whatwedoCrud/Crud';
     }
@@ -316,7 +317,7 @@ abstract class AbstractDefinition implements DefinitionInterface
      * @param null $data
      * @return DefinitionViewInterface
      */
-    public function createView($data = null)
+    public function createView($data = null):DefinitionViewInterface
     {
         $this->builder = new DefinitionBuilder($this->blockManager, $this->definitionManager, $this->templates, $this);
 
@@ -333,7 +334,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @param Table|DoctrineTable $table
      */
-    public function overrideTableConfiguration(Table $table)
+    public function overrideTableConfiguration(Table $table): void
     {
         if ($table->hasExtension(FilterExtension::class)) {
             $table->getFilterExtension()
@@ -349,7 +350,7 @@ abstract class AbstractDefinition implements DefinitionInterface
      *
      * @return string
      */
-    public function getLabelFor($table, $property)
+    public function getLabelFor($table, $property):string
     {
         if ($table instanceof DoctrineTable) {
             foreach ($table->getColumns() as $column) {
@@ -382,7 +383,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * {@inheritdoc}
      */
-    public function getDeleteRedirect(RouterInterface $router, $entity = null)
+    public function getDeleteRedirect(RouterInterface $router, $entity = null): RedirectResponse
     {
         return new RedirectResponse($router->generate(static::getRouteName(RouteEnum::INDEX)));
     }
@@ -398,7 +399,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * {@inheritdoc}
      */
-    protected static function getRoutePrefix()
+    protected static function getRoutePrefix():string
     {
         return static::getAlias();
     }
@@ -408,7 +409,7 @@ abstract class AbstractDefinition implements DefinitionInterface
      * @see RouteEnum
      * @return string
      */
-    public static function getRouteName(string $capability)
+    public static function getRouteName(string $capability):string
     {
         if(!RouteEnum::has($capability)) throw new \InvalidArgumentException("Invalid capability specified. Only RouteEnum values are supported.");
 
@@ -419,7 +420,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @return string
      */
-    public static function getChildRouteAddition()
+    public static function getChildRouteAddition():string
     {
         return static::getQueryAlias();
     }
@@ -427,7 +428,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @return array
      */
-    public function getExportAttributes()
+    public function getExportAttributes(): array
     {
         return [];
     }
@@ -435,7 +436,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @return array
      */
-    public function getExportCallbacks()
+    public function getExportCallbacks(): array
     {
         return [];
     }
@@ -443,7 +444,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @return array
      */
-    public function getExportHeaders()
+    public function getExportHeaders():array
     {
         return [];
     }
@@ -451,7 +452,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @return array
      */
-    public function getExportOptions()
+    public function getExportOptions():array
     {
         return [
             'csv' => [
@@ -466,7 +467,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @return array
      */
-    public function addAjaxOnChangeListener()
+    public function addAjaxOnChangeListener():array
     {
         return [];
     }
@@ -475,7 +476,7 @@ abstract class AbstractDefinition implements DefinitionInterface
      * @param array $data
      * @return null|\stdClass
      */
-    public function ajaxOnDataChanged($data)
+    public function ajaxOnDataChanged($data): ? \stdClass
     {
         return null;
     }
@@ -486,7 +487,7 @@ abstract class AbstractDefinition implements DefinitionInterface
      * @param null|object $entity
      * @param null|string $route
      */
-    public function buildBreadcrumbs($entity = null, $route = null)
+    public function buildBreadcrumbs($entity = null, $route = null):void
     {
         if (!$this->hasExtension(BreadcrumbsExtension::class)) {
             return;
@@ -506,7 +507,7 @@ abstract class AbstractDefinition implements DefinitionInterface
      *
      * @return array
      */
-    public function getIndexBreadcrumbParameters($parameters = [], $entity = null)
+    public function getIndexBreadcrumbParameters($parameters = [], $entity = null):array
     {
         return $parameters;
     }
@@ -514,7 +515,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * {@inheritdoc}
      */
-    public function getExtension($extension)
+    public function getExtension($extension):ExtensionInterface
     {
         if (!$this->hasExtension($extension)) {
             throw new \InvalidArgumentException(sprintf(
@@ -529,7 +530,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * {@inheritdoc}
      */
-    public function hasExtension($extension)
+    public function hasExtension($extension):bool
     {
         return isset($this->extensions[$extension]);
     }
@@ -537,7 +538,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * {@inheritdoc}
      */
-    public function addExtension(ExtensionInterface $extension)
+    public function addExtension(ExtensionInterface $extension):void
     {
         $this->extensions[get_class($extension)] = $extension;
     }
