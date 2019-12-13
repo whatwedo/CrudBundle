@@ -405,7 +405,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      */
     public function getView($file)
     {
-        if ($this->templating->exists($this->getDefinition()->getTemplateDirectory() . '/' . $file)) {
+        if ($this->templating->getLoader()->exists($this->getDefinition()->getTemplateDirectory() . '/' . $file)) {
             return $this->getDefinition()->getTemplateDirectory() . '/' . $file;
         }
 
