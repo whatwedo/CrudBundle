@@ -49,7 +49,14 @@ class CsvEncoder extends BaseCsvEncoder
      */
     public function __construct($delimiter = ',', $enclosure = '"', $escapeChar = '\\', $keySeparator = '.')
     {
-        parent::__construct($delimiter, $enclosure, $escapeChar, $keySeparator);
+        parent::__construct(
+            [
+                CsvEncoder::DELIMITER_KEY => $delimiter,
+                CsvEncoder::ENCLOSURE_KEY => $enclosure,
+                CsvEncoder::ESCAPE_CHAR_KEY => $escapeChar,
+                CsvEncoder::KEY_SEPARATOR_KEY => $keySeparator,
+            ]
+        );
         $this->delimiter = $delimiter;
         $this->enclosure = $enclosure;
         $this->escapeChar = $escapeChar;
