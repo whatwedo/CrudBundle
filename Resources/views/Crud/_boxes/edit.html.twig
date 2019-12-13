@@ -21,7 +21,7 @@
     {% set hasVisibleContent = false %}
     {% for key, content in block.contents %}{% if content.isVisibleOnEdit and is_granted(content.editVoterAttribute, helper.data) %}
         {% set hasVisibleContent = true %}
-    {% endfor %}
+    {% endif %}{% endfor %}
 
     {% if hasVisibleContent %}
 
@@ -106,7 +106,7 @@
                                 {% endif %}
                             </div>
 
-                        {% endfor %}
+                        {% endif %}{% endfor %}
                     </div>
                 </div>
             </div>
@@ -123,7 +123,7 @@
     {% endif %}
 
     {% endif %}
-{% endfor %}
+{% endif %}{% endfor %}
 
 {% if i > 0 %}
     </div>
