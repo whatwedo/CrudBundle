@@ -2,7 +2,7 @@
 
 {% set keyArr = helper.blocks|keys %}
 {% set i = 0 %}
-{% for block in helper.blocks if block.isVisibleOnShow and is_granted(block.showVoterAttribute, helper.data) %}
+{% for block in helper.blocks %}{% if block.isVisibleOnShow and is_granted(block.showVoterAttribute, helper.data) %}
 
     {# Zeile #}
     {% set i = i + 1 %}
@@ -32,7 +32,7 @@
                     {% endif %}
 
                     <div class="box-body"{{ block.options.collapsed|default(false) ? ' style="display: none;"' }}>
-                        {% for key, content in block.contents if content.isVisibleOnShow and is_granted(content.showVoterAttribute, helper.data) %}
+                        {% for key, content in block.contents %}{% if content.isVisibleOnShow and is_granted(content.showVoterAttribute, helper.data) %}
 
                             {% if content.attr.class is not defined %}
                                 {% set contentAttr = content.attr|merge({

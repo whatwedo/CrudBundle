@@ -14,7 +14,7 @@
 {% endif %}
 {% set i = 0 %}
 {% set isOpen = false %}
-{% for block in helper.blocks if block.isVisibleOnCreate and is_granted(block.createVoterAttribute, helper.data) %}
+{% for block in helper.blocks %}{%  if block.isVisibleOnCreate and is_granted(block.createVoterAttribute, helper.data) %}
 
     {# Zeile #}
     {% set i = i + 1 %}
@@ -45,7 +45,7 @@
                     {% endif %}
 
                     <div class="box-body">
-                        {% for content in block.contents if content.isVisibleOnCreate and is_granted(content.createVoterAttribute, helper.data) %}
+                        {% for content in block.contents %}{% if content.isVisibleOnCreate and is_granted(content.createVoterAttribute, helper.data) %}
 
                             {% if content.attr.class is not defined %}
                                 {% set contentAttr = content.attr|merge({

@@ -16,10 +16,10 @@
 {% set keyArr =  helper.blocks|keys %}
 {% set i = 0 %}
 {% set isOpen = false %}
-{% for block in helper.blocks if block.isVisibleOnEdit and is_granted(block.editVoterAttribute, helper.data) %}
+{% for block in helper.blocks %}{% if block.isVisibleOnEdit and is_granted(block.editVoterAttribute, helper.data) %}
 
     {% set hasVisibleContent = false %}
-    {% for key, content in block.contents if content.isVisibleOnEdit and is_granted(content.editVoterAttribute, helper.data) %}
+    {% for key, content in block.contents %}{% if content.isVisibleOnEdit and is_granted(content.editVoterAttribute, helper.data) %}
         {% set hasVisibleContent = true %}
     {% endfor %}
 
@@ -54,7 +54,7 @@
                     {% endif %}
 
                     <div class="box-body">
-                        {% for key, content in block.contents if content.isVisibleOnEdit and is_granted(content.editVoterAttribute, helper.data) %}
+                        {% for key, content in block.contents %}{% if content.isVisibleOnEdit and is_granted(content.editVoterAttribute, helper.data) %}
 
                             {% if content.attr.class is not defined %}
                                 {% set contentAttr = content.attr|merge({

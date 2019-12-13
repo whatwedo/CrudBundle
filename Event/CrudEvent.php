@@ -26,7 +26,7 @@
  */
 
 namespace whatwedo\CrudBundle\Event;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * @author Ueli Banholzer <ueli@whatwedo.ch>
