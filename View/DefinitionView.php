@@ -235,10 +235,16 @@ class DefinitionView implements DefinitionViewInterface
     public function renderShow($additionalParameters = [])
     {
         return $this->templating->render(
-            $this->templates['show'], array_merge([
-            'data' => $this->data,
-            'helper' => $this,
-        ], $additionalParameters, $this->templateParameters));
+            $this->getTemplate($this->templates['show']),
+            array_merge(
+                [
+                    'data' => $this->data,
+                    'helper' => $this,
+                ],
+                $additionalParameters,
+                $this->templateParameters
+            )
+        );
     }
 
     /**
@@ -283,10 +289,17 @@ class DefinitionView implements DefinitionViewInterface
      */
     public function renderEdit($additionalParameters = [])
     {
-        return $this->templating->render($this->templates['edit'], array_merge([
-            'form' => $this->getEditForm()->createView(),
-            'helper' => $this,
-        ], $additionalParameters, $this->templateParameters));
+        return $this->templating->render(
+            $this->getTemplate($this->templates['edit']),
+            array_merge(
+                [
+                    'form' => $this->getEditForm()->createView(),
+                    'helper' => $this,
+                ],
+                $additionalParameters,
+                $this->templateParameters
+            )
+        );
     }
 
     /**
@@ -294,10 +307,17 @@ class DefinitionView implements DefinitionViewInterface
      */
     public function renderCreate($additionalParameters = [])
     {
-        return $this->templating->render($this->templates['create'], array_merge([
-            'form' => $this->getCreateForm()->createView(),
-            'helper' => $this,
-        ], $additionalParameters, $this->templateParameters));
+        return $this->templating->render(
+            $this->getTemplate($this->templates['create']),
+            array_merge(
+                [
+                    'form' => $this->getCreateForm()->createView(),
+                    'helper' => $this,
+                ],
+                $additionalParameters,
+                $this->templateParameters
+            )
+        );
     }
 
     /**
@@ -526,5 +546,16 @@ class DefinitionView implements DefinitionViewInterface
     public function guessType($class, $property)
     {
         return $this->formRegistry->getTypeGuesser()->guessType($class, $property);
+    }
+
+
+    public function getTemplate($tempaltePath):string
+    {
+        $templateDirectory = $this->getDefinition()->getTemplateDirectory();
+        if ($this->templating->getLoader()->exists($templateDirectory. $tempaltePath)) {
+            return $templateDirectory . $tempaltePath;
+        }
+        // return vendor Template
+        return '@whatwedoCrud/Crud/' . $tempaltePath;
     }
 }
