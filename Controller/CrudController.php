@@ -418,7 +418,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $actionColumnItems = [];
 
         if ($targetDefinition->hasCapability(RouteEnum::SHOW)) {
-            $actionColumnItems[] = [
+            $actionColumnItems[RouteEnum::SHOW] = [
                 'label' => 'Details',
                 'icon' => 'arrow-right',
                 'button' => 'primary',
@@ -429,7 +429,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         }
 
         if ($targetDefinition->hasCapability(RouteEnum::EDIT)) {
-            $actionColumnItems[] = [
+            $actionColumnItems[RouteEnum::EDIT] = [
                 'label' => 'Bearbeiten',
                 'icon' => 'pencil',
                 'button' => 'warning',
