@@ -100,10 +100,10 @@ class DefinitionManager
      * @param string $class
      * @return null|DefinitionInterface
      */
-    public function getDefinitionFromClass($class)
+    public function getDefinitionFromClass(string $class): ? DefinitionInterface
     {
         foreach ($this->definitions as $definition) {
-            if (get_class($definition) == $class) {
+            if (get_class($definition) === $class) {
                 return $definition;
             }
         }
