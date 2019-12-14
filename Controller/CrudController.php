@@ -142,12 +142,15 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
         $this->definition->buildBreadcrumbs(null, RouteEnum::INDEX);
 
-        return $this->render($this->getView('index.html.twig'), [
-            'view' => $this->getDefinition()->createView(),
-            'table' => $table,
-            'title' => $this->getDefinition()->getTitle(null, RouteEnum::INDEX),
-            'voter_entity' => $this->getDefinition(),
-        ]);
+        return $this->render(
+            $this->getView('index.html.twig'),
+            [
+                'view' => $this->getDefinition()->createView(),
+                'table' => $table,
+                'title' => $this->getDefinition()->getTitle(null, RouteEnum::INDEX),
+                'voter_entity' => $this->getDefinition(),
+            ]
+        );
     }
 
     /**
@@ -163,10 +166,16 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
         $this->definition->buildBreadcrumbs($entity, RouteEnum::SHOW);
 
-        return $this->render($this->getView('show.html.twig'), $this->getShowParameters($entity, [
-            'view' => $this->getDefinition()->createView($entity),
-            'title' => $this->getDefinition()->getTitle($entity, RouteEnum::SHOW),
-        ]));
+        return $this->render(
+            $this->getView('show.html.twig'),
+            $this->getShowParameters(
+                $entity,
+                [
+                    'view' => $this->getDefinition()->createView($entity),
+                    'title' => $this->getDefinition()->getTitle($entity, RouteEnum::SHOW),
+                ]
+            )
+        );
     }
 
     protected function getShowParameters($entity, $parameters = [])
@@ -207,10 +216,16 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
         $this->definition->buildBreadcrumbs($entity, RouteEnum::EDIT);
 
-        return $this->render($this->getView('edit.html.twig'), $this->getEditParameters($entity, [
-            'view' => $view,
-            'title' => $this->getDefinition()->getTitle($entity, RouteEnum::EDIT),
-        ]));
+        return $this->render(
+            $this->getView('edit.html.twig'),
+            $this->getEditParameters(
+                $entity,
+                [
+                    'view' => $view,
+                    'title' => $this->getDefinition()->getTitle($entity, RouteEnum::EDIT),
+                ]
+            )
+        );
     }
 
     protected function getEditParameters($entity, $parameters = [])
