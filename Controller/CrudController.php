@@ -468,7 +468,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      *
      * @param DoctrineTable $table
      */
-    protected function configureTable(DoctrineTable $table)
+    protected function configureTable($table)
     {
         $this->getDefinition()->configureTable($table);
 
