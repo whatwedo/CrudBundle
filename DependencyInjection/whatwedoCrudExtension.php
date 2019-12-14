@@ -42,9 +42,9 @@ class whatwedoCrudExtension extends Extension
 
         // templates
         $templates = [
-            'show' => '@whatwedoCrud/Crud/_boxes/show.html.twig',
-            'create' => '@whatwedoCrud/Crud/_boxes/create.html.twig',
-            'edit' => '@whatwedoCrud/Crud/_boxes/edit.html.twig'
+            'show' => '_boxes/show.html.twig',
+            'create' => '_boxes/create.html.twig',
+            'edit' => '_boxes/edit.html.twig'
         ];
         if (isset($config['templates'])) {
             $templates = $config['templates'];
