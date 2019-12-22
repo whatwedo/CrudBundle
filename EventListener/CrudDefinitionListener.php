@@ -42,7 +42,7 @@ class CrudDefinitionListener
         $this->definitionManager = $definitionManager;
     }
 
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelController(\Symfony\Component\HttpKernel\Event\ControllerEvent $event)
     {
         $controller = $event->getController();
 

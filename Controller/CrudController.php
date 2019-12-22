@@ -578,7 +578,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      * @param null $subject
      * @param string $message
      */
-    protected function denyAccessUnlessGranted($attributes, $subject = null, string $message = 'Access Denied.')
+    protected function denyAccessUnlessGranted($attributes, $subject = null, string $message = 'Access Denied.'):void
     {
         if (!$this->getUser()) {
             return;
