@@ -131,7 +131,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      */
     public function indexAction(Request $request)
     {
-        $this->denyAccessUnlessGranted(RouteEnum::INDEX, $this->getDefinition());
+        $this->denyAccessUnlessGrantedCrud(RouteEnum::INDEX, $this->getDefinition());
 
         $table = $this->tableFactory
             ->createDoctrineTable('index', [
@@ -160,7 +160,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     public function showAction(Request $request)
     {
         $entity = $this->getEntityOr404($request);
-        $this->denyAccessUnlessGranted(RouteEnum::SHOW, $entity);
+        $this->denyAccessUnlessGrantedCrud(RouteEnum::SHOW, $entity);
 
         $this->dispatchEvent(CrudEvent::PRE_SHOW_PREFIX, $entity);
 
@@ -190,7 +190,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     public function editAction(Request $request)
     {
         $entity = $this->getEntityOr404($request);
-        $this->denyAccessUnlessGranted(RouteEnum::EDIT, $entity);
+        $this->denyAccessUnlessGrantedCrud(RouteEnum::EDIT, $entity);
 
         $view = $this->getDefinition()->createView($entity);
 
@@ -239,7 +239,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      */
     public function createAction(Request $request)
     {
-        $this->denyAccessUnlessGranted(RouteEnum::CREATE, $this->getDefinition());
+        $this->denyAccessUnlessGrantedCrud(RouteEnum::CREATE, $this->getDefinition());
 
         $className = $this->getDefinition()->getEntity();
         $entity = new $className;
@@ -332,7 +332,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     public function deleteAction(Request $request)
     {
         $entity = $this->getEntityOr404($request);
-        $this->denyAccessUnlessGranted(RouteEnum::DELETE, $entity);
+        $this->denyAccessUnlessGrantedCrud(RouteEnum::DELETE, $entity);
 
         try {
             $this->getDoctrine()->getManager()->remove($entity);
@@ -357,7 +357,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      */
     public function exportAction(Request $request)
     {
-        $this->denyAccessUnlessGranted(RouteEnum::EXPORT, $this->getDefinition());
+        $this->denyAccessUnlessGrantedCrud(RouteEnum::EXPORT, $this->getDefinition());
 
         $entities = $this->getExportEntities();
         if (!$entities) {
@@ -400,7 +400,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      */
     public function ajaxAction(Request $request)
     {
-        $this->denyAccessUnlessGranted(RouteEnum::AJAX, $this->getDefinition());
+        $this->denyAccessUnlessGrantedCrud(RouteEnum::AJAX, $this->getDefinition());
 
         $data = [];
         foreach ($request->request->get('data') as $pair) {
@@ -578,11 +578,11 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      * @param null $subject
      * @param string $message
      */
-    protected function denyAccessUnlessGranted($attributes, $subject = null, string $message = 'Access Denied.'):void
+    protected function denyAccessUnlessGrantedCrud($attributes, $subject = null, string $message = 'Access Denied.')
     {
         if (!$this->getUser()) {
             return;
         }
-        parent::denyAccessUnlessGranted($attributes, $subject, $message);
+        $this->denyAccessUnlessGranted($attributes, $subject, $message);
     }
 }
