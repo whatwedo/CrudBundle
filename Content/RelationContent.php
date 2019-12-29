@@ -65,7 +65,7 @@ class RelationContent extends TableContent implements EditableContentInterface
     protected $requestStack;
 
     /**
-     * @var \Doctrine\Common\Persistence\ManagerRegistry
+     * @var \Doctrine\Persistence\ManagerRegistry
      */
     protected $doctrine;
 
@@ -81,7 +81,7 @@ class RelationContent extends TableContent implements EditableContentInterface
         AuthorizationCheckerInterface $authorizationChecker,
         DefinitionManager $definitionManager,
         RequestStack $requestStack,
-        \Doctrine\Common\Persistence\ManagerRegistry $doctrine)
+        \Doctrine\Persistence\ManagerRegistry $doctrine)
     {
         $this->tableFactory = $tableFactory;
         $this->eventDispatcher = $eventDispatcher;

@@ -66,7 +66,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     const AJAX = 2;
 
     /**
-     * @var \Doctrine\Common\Persistence\ManagerRegistry
+     * @var \Doctrine\Persistence\ManagerRegistry
      */
     protected $doctrine;
 
@@ -219,7 +219,7 @@ abstract class AbstractDefinition implements DefinitionInterface
      * @param Registry $registry
      * @required
      */
-    public function setDoctrine(\Doctrine\Common\Persistence\ManagerRegistry $registry):void
+    public function setDoctrine(\Doctrine\Persistence\ManagerRegistry $registry):void
     {
         $this->doctrine = $registry;
     }
