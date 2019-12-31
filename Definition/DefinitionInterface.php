@@ -52,7 +52,7 @@ interface DefinitionInterface
     public static function getAlias():string;
 
     /**
-     * @param string $route
+     * @param string $capability
      * @see RouteEnum
      * @return string
      */
