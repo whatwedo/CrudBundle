@@ -387,7 +387,7 @@ class RelationContent extends TableContent implements EditableContentInterface
     }
 
     /**
-     * @return \Doctrine\Common\Persistence\Mapping\ClassMetadataFactory|ClassMetadataFactory
+     * @return \Doctrine\Persistence\Mapping\ClassMetadataFactory|ClassMetadataFactory
      */
     private function getMetadataFactory()
     {
