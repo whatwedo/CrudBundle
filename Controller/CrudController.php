@@ -299,7 +299,8 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
                 $this->addFlash('success', sprintf('Erfolgreich gespeichert.'));
 
-                if(isset($redirectPath) && $redirectPath) {
+                $redirectPath = $this->getDefinition()->getCreateRedirect($this->router, $entity);
+                if($redirectPath) {
                     return $this->redirect($redirectPath);
                 }
                 else {
