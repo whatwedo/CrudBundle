@@ -88,8 +88,8 @@
                                         </label>
                                         <i>Diese Felder können nach dem Hinzufügen bearbeitet werden.</i>
                                     {% endif %}
-                                    {% if content.isTwigContent is defined and content.isTwigContent %}%}
-                                        {% include content.template with content.parameters  %}
+                                    {% if content.isTwigContent is defined and content.isTwigContent %}
+                                        {% include content.template with content.parameters %}
                                     {% endif %}
                                 {% endif %}
                             </div>
