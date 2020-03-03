@@ -244,6 +244,8 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $className = $this->getDefinition()->getEntity();
         $entity = new $className;
 
+        $this->dispatchEvent(CrudEvent::NEW_PREFIX, $entity);
+
         $view = $this->getDefinition()->createView($entity);
         $uri = null;
 

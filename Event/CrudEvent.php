@@ -43,6 +43,7 @@ class CrudEvent extends Event
     const POST_VALIDATE_PREFIX = 'whatwedo_crud.post_validate';
     const PRE_SHOW_PREFIX = 'whatwedo_crud.pre_show';
     const CREATE_SHOW_PREFIX = 'whatwedo_crud.create_show';
+    const NEW_PREFIX = 'whatwedo_crud.new';
 
     protected $entity;
 
