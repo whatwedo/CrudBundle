@@ -153,7 +153,7 @@ class RelationContent extends TableContent implements EditableContentInterface
             $showRoute = $this->getRoute(RouteEnum::SHOW);
 
             $table->setShowRoute($showRoute);
-            $actionColumnItems[] = [
+            $actionColumnItems[RouteEnum::SHOW] = [
                 'label' => 'Details',
                 'icon' => 'arrow-right',
                 'button' => 'primary',
@@ -164,7 +164,7 @@ class RelationContent extends TableContent implements EditableContentInterface
         }
 
         if ($this->hasCapability(RouteEnum::EDIT)) {
-            $actionColumnItems[] = [
+            $actionColumnItems[RouteEnum::EDIT] = [
                 'label' => 'Bearbeiten',
                 'icon' => 'pencil',
                 'button' => 'warning',
@@ -177,6 +177,11 @@ class RelationContent extends TableContent implements EditableContentInterface
         if ($this->hasCapability(RouteEnum::EXPORT)) {
             $table->setExportRoute($this->getRoute(RouteEnum::EXPORT));
         }
+
+        if (is_callable($this->options['action_configuration'])) {
+            $actionColumnItems = $this->options['action_configuration']($actionColumnItems);
+        }
+
 
         $table->addColumn('actions', ActionColumn::class, [
             'items' => $actionColumnItems,
@@ -280,6 +285,7 @@ class RelationContent extends TableContent implements EditableContentInterface
             'form_options' => [],
             'query_builder_configuration' => null,
             'table_configuration' => null,
+            'action_configuration' => null,
             'route_addition_key' => $this->definition::getAlias(),
             'show_index_button' => false,
             'add_voter_attribute' => RouteEnum::EDIT
@@ -296,6 +302,7 @@ class RelationContent extends TableContent implements EditableContentInterface
         $resolver->setAllowedTypes('table_options', ['array']);
         $resolver->setAllowedTypes('form_options', ['array']);
         $resolver->setAllowedTypes('table_configuration', ['callable', 'null']);
+        $resolver->setAllowedTypes('action_configuration', ['callable', 'null']);
         $resolver->setAllowedTypes('query_builder_configuration', ['callable', 'null']);
     }
 
