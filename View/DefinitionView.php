@@ -258,7 +258,8 @@ class DefinitionView implements DefinitionViewInterface
         $def = $this->definitionManager->getDefinitionFor($entity);
 
         if (!is_null($def)) {
-            if ($this->authorizationChecker->isGranted(RouteEnum::SHOW, $entity)) {
+            if ($this->authorizationChecker->isGranted(RouteEnum::SHOW, $entity)
+                && $def::hasCapability(RouteEnum::SHOW)) {
                 $path = $this->router->generate($def::getRouteName(RouteEnum::SHOW), ['id' => $entity->getId()]);
 
                 $granted = false;
