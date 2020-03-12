@@ -31,7 +31,6 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Twig\Environment;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,6 +39,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Serializer\Serializer;
+use Twig\Environment;
 use whatwedo\CrudBundle\Content\EditableContentInterface;
 use whatwedo\CrudBundle\Definition\AbstractDefinition;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
@@ -143,14 +143,19 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $this->definition->buildBreadcrumbs(null, RouteEnum::INDEX);
 
         return $this->render(
-            $this->getView('index.html.twig'),
+            $this->getView('index.html.twig'), $this->getIndexParameters(
             [
                 'view' => $this->getDefinition()->createView(),
                 'table' => $table,
                 'title' => $this->getDefinition()->getTitle(null, RouteEnum::INDEX),
                 'voter_entity' => $this->getDefinition(),
             ]
-        );
+        ));
+    }
+
+    protected function getIndexParameters($parameters = [])
+    {
+        return $parameters;
     }
 
     /**
