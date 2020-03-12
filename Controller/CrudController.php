@@ -142,12 +142,17 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
         $this->definition->buildBreadcrumbs(null, RouteEnum::INDEX);
 
-        return $this->render($this->getView('index.html.twig'), [
+        return $this->render($this->getView('index.html.twig'), $this->getIndexParameters([
             'view' => $this->getDefinition()->createView(),
             'table' => $table,
             'title' => $this->getDefinition()->getTitle(null, RouteEnum::INDEX),
             'voter_entity' => $this->getDefinition(),
-        ]);
+        ]));
+    }
+
+    protected function getIndexParameters($parameters = [])
+    {
+        return $parameters;
     }
 
     /**
