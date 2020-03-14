@@ -30,7 +30,6 @@ namespace whatwedo\CrudBundle\View;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\Mapping\Column;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
-use Twig\Environment;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -45,6 +44,7 @@ use Symfony\Component\Security\Http\AccessMap;
 use Symfony\Component\Security\Http\AccessMapInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
+use Twig\Environment;
 use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Content\Content;
 use whatwedo\CrudBundle\Content\EditableContentInterface;
@@ -103,54 +103,52 @@ class DefinitionView implements DefinitionViewInterface
     protected $definitionManager;
 
     /**
-     * @var AccessMap $accessMap
+     * @var AccessMap
      */
     protected $accessMap;
 
     /**
-     * @var AuthorizationChecker $authorizationChecker
+     * @var AuthorizationChecker
      */
     protected $authorizationChecker;
 
     /**
-     * @var array $templates
+     * @var array
      */
     protected $templates;
 
     /**
-     * @var array $templateParameters
+     * @var array
      */
     protected $templateParameters;
 
     /**
-     * @var AnnotationReader $annotationReader
+     * @var AnnotationReader
      */
     protected $annotationReader;
 
     /**
-     * @var \ReflectionObject $reflectionObject
+     * @var \ReflectionObject
      */
     protected $reflectionObject;
 
     /**
-     * @var Request $request
+     * @var Request
      */
     protected $request;
 
     /**
-     * @var FormRegistry $formRegistry
+     * @var FormRegistry
      */
     protected $formRegistry;
 
     /**
      * DefinitionView constructor.
-     * @param Environment $templating
-     * @param FormFactoryInterface $formFactory
-     * @param FormRegistry $formRegistry
-     * @param Router $router
-     * @param AccessMap $accessMap
+     *
+     * @param FormRegistry         $formRegistry
+     * @param Router               $router
+     * @param AccessMap            $accessMap
      * @param AuthorizationChecker $authorizationChecker
-     * @param RequestStack $requestStack
      */
     public function __construct(Environment $templating, FormFactoryInterface $formFactory, FormRegistryInterface $formRegistry, RouterInterface $router, AccessMapInterface $accessMap, AuthorizationCheckerInterface $authorizationChecker, RequestStack $requestStack)
     {
@@ -165,7 +163,6 @@ class DefinitionView implements DefinitionViewInterface
     }
 
     /**
-     * @param DefinitionManager $definitionManager
      * @required
      */
     public function setDefinitionManager(DefinitionManager $definitionManager)
@@ -213,17 +210,11 @@ class DefinitionView implements DefinitionViewInterface
         return $this->blocks;
     }
 
-    /**
-     * @param array $templates
-     */
     public function setTemplates(array $templates)
     {
         $this->templates = $templates;
     }
 
-    /**
-     * @param array $templateParameters
-     */
     public function setTemplateParameters(array $templateParameters)
     {
         $this->templateParameters = $templateParameters;
@@ -235,7 +226,7 @@ class DefinitionView implements DefinitionViewInterface
     public function renderShow($additionalParameters = [])
     {
         return $this->templating->render(
-            $this->getTemplate($this->templates['show']),
+            $this->getTemplatePath($this->templates['show']),
             array_merge(
                 [
                     'data' => $this->data,
@@ -249,7 +240,7 @@ class DefinitionView implements DefinitionViewInterface
 
     /**
      * @param string $value text to be rendered
-     * @param Content $content
+     *
      * @return string html
      */
     public function linkIt($value, Content $content)
@@ -257,7 +248,7 @@ class DefinitionView implements DefinitionViewInterface
         $entity = $content->getContents($this->data);
         $def = $this->definitionManager->getDefinitionFor($entity);
 
-        if (!is_null($def)) {
+        if (null !== $def) {
             if ($this->authorizationChecker->isGranted(RouteEnum::SHOW, $entity)
                 && $def::hasCapability(RouteEnum::SHOW)) {
                 $path = $this->router->generate($def::getRouteName(RouteEnum::SHOW), ['id' => $entity->getId()]);
@@ -291,7 +282,7 @@ class DefinitionView implements DefinitionViewInterface
     public function renderEdit($additionalParameters = [])
     {
         return $this->templating->render(
-            $this->getTemplate($this->templates['edit']),
+            $this->getTemplatePath($this->templates['edit']),
             array_merge(
                 [
                     'form' => $this->getEditForm()->createView(),
@@ -309,7 +300,7 @@ class DefinitionView implements DefinitionViewInterface
     public function renderCreate($additionalParameters = [])
     {
         return $this->templating->render(
-            $this->getTemplate($this->templates['create']),
+            $this->getTemplatePath($this->templates['create']),
             array_merge(
                 [
                     'form' => $this->getCreateForm()->createView(),
@@ -324,17 +315,18 @@ class DefinitionView implements DefinitionViewInterface
     /**
      * @param $route
      * @param array $params
+     *
      * @return string
      */
     public function getPath($route, $params = [])
     {
         if ($this->definition->hasCapability($route)) {
-            switch($route) {
+            switch ($route) {
                 case RouteEnum::SHOW:
                 case RouteEnum::EDIT:
                 case RouteEnum::DELETE:
                     if (!$this->data) {
-                        return 'javascript:alert(\'can\\\'t generate route "' . $route . '" without data\')';
+                        return 'javascript:alert(\'can\\\'t generate route "'.$route.'" without data\')';
                     }
 
                     return $this->router->generate($this->definition::getRouteName($route),
@@ -348,6 +340,7 @@ class DefinitionView implements DefinitionViewInterface
                             $params
                         );
                     }
+
                     return $this->router->generate($this->definition::getRouteName($route),
                         array_merge([
                             'id' => $this->data->getId(),
@@ -361,44 +354,48 @@ class DefinitionView implements DefinitionViewInterface
                     );
 
                 default:
-                    return 'javascript:alert(\'can\\\'t generate route "' . $route . '".\')';
+                    return 'javascript:alert(\'can\\\'t generate route "'.$route.'".\')';
             }
         }
 
-        return 'javascript:alert(\'Definition does not have the capability "' . $route . '".\')';
+        return 'javascript:alert(\'Definition does not have the capability "'.$route.'".\')';
     }
 
     /**
      * @param EditableContentInterface $content
-     * @return boolean
+     *
+     * @return bool
      */
     protected function isContentRequired($content)
     {
         $reflectionObject = $this->getReflectionObject();
-        if (!is_null($reflectionObject)) {
+        if (null !== $reflectionObject) {
             foreach ($reflectionObject->getProperties() as $property) {
                 if ($property->getName() === $content->getAcronym()) {
                     $notNullAnnotation = $this->annotationReader->getPropertyAnnotation($property, NotNull::class);
                     $notBlankAnnotation = $this->annotationReader->getPropertyAnnotation($property, NotBlank::class);
                     $columnAnnotation = $this->annotationReader->getPropertyAnnotation($property, Column::class);
-                    if (!is_null($columnAnnotation) && ($columnAnnotation->type === 'boolean' || $columnAnnotation->type === 'bool')) {
+                    if (null !== $columnAnnotation && ('boolean' === $columnAnnotation->type || 'bool' === $columnAnnotation->type)) {
                         return false;
                     }
-                    return !is_null($notNullAnnotation) || !is_null($notBlankAnnotation);
+
+                    return null !== $notNullAnnotation || null !== $notBlankAnnotation;
                 }
             }
         }
+
         return false;
     }
 
     /**
      * @param Content|RelationContent $content
+     *
      * @return string
      */
     protected function getFormType(EditableContentInterface $content)
     {
         $formType = $content->getFormType();
-        if ($formType === EntityPreselectType::class) {
+        if (EntityPreselectType::class === $formType) {
             if (EntityPreselectType::isValueProvided($this->request, $content->getFormOptions())) {
                 $formType = EntityHiddenType::class;
             } else {
@@ -406,11 +403,12 @@ class DefinitionView implements DefinitionViewInterface
             }
         }
         $content->setOption('form_type', $formType);
+
         return $formType;
     }
 
     /**
-     * @return null|FormInterface
+     * @return FormInterface|null
      */
     public function getEditForm()
     {
@@ -436,7 +434,7 @@ class DefinitionView implements DefinitionViewInterface
                     $builder->add(
                         $content->getAcronym(),
                         $formType,
-                        $content->getFormOptions([ 'required' => $this->isContentRequired($content) ])
+                        $content->getFormOptions(['required' => $this->isContentRequired($content)])
                     );
                 }
             }
@@ -448,7 +446,7 @@ class DefinitionView implements DefinitionViewInterface
     }
 
     /**
-     * @return null|FormInterface
+     * @return FormInterface|null
      */
     public function getCreateForm()
     {
@@ -473,7 +471,7 @@ class DefinitionView implements DefinitionViewInterface
                     $builder->add(
                         $content->getAcronym(),
                         $formType,
-                        $content->getFormOptions([ 'required' => $this->isContentRequired($content) ])
+                        $content->getFormOptions(['required' => $this->isContentRequired($content)])
                     );
                 }
             }
@@ -486,33 +484,34 @@ class DefinitionView implements DefinitionViewInterface
 
     /**
      * @param bool $onlylisten
+     *
      * @return string
      */
     public function getAjaxListen($onlylisten = false)
     {
         $data = $this->definition->addAjaxOnChangeListener();
-        if ($onlylisten)
-        {
-            $data = array_filter($data, function($item) {
-                return $item == AbstractDefinition::AJAX_LISTEN;
+        if ($onlylisten) {
+            $data = array_filter($data, function ($item) {
+                return AbstractDefinition::AJAX_LISTEN === $item;
             });
         }
         $ret = '[';
         $i = 0;
-        foreach ($data as $key => $item)
-        {
-            $ret .= '\'' . $key . '\'';
-            if ($i != count($data) - 1){
+        foreach ($data as $key => $item) {
+            $ret .= '\''.$key.'\'';
+            if ($i !== \count($data) - 1) {
                 $ret .= ',';
             }
-            $i++;
+            ++$i;
         }
         $ret .= ']';
+
         return $ret;
     }
 
     /**
      * @param $route
+     *
      * @return bool
      */
     public function hasCapability($route)
@@ -533,30 +532,31 @@ class DefinitionView implements DefinitionViewInterface
      */
     protected function getReflectionObject()
     {
-        if (is_null($this->reflectionObject) && $this->data) {
+        if (null === $this->reflectionObject && $this->data) {
             $this->reflectionObject = new \ReflectionObject($this->data);
         }
+
         return $this->reflectionObject;
     }
 
     /**
      * @param string $class
      * @param string $property
-     * @return null|\Symfony\Component\Form\Guess\Guess|\Symfony\Component\Form\Guess\TypeGuess
+     *
+     * @return \Symfony\Component\Form\Guess\Guess|\Symfony\Component\Form\Guess\TypeGuess|null
      */
     public function guessType($class, $property)
     {
         return $this->formRegistry->getTypeGuesser()->guessType($class, $property);
     }
 
-
-    public function getTemplate($tempaltePath):string
+    public function getTemplatePath($templatePath): string
     {
         $templateDirectory = $this->getDefinition()->getTemplateDirectory();
-        if ($this->templating->getLoader()->exists($templateDirectory. $tempaltePath)) {
-            return $templateDirectory . $tempaltePath;
+        if ($this->templating->getLoader()->exists($templateDirectory.$templatePath)) {
+            return $templateDirectory.$templatePath;
         }
         // return vendor Template
-        return '@whatwedoCrud/Crud/' . $tempaltePath;
+        return '@whatwedoCrud/Crud/'.$templatePath;
     }
 }
