@@ -30,13 +30,12 @@
         "whatwedo/core-bundle":     "dev-symfony5",
         "whatwedo/table-bundle":    "dev-symfony5",
         "phpspec/prophecy": "~1.0"
-
     },
     "require-dev": {
         "phpunit/phpunit": "~4.8|~5.0"
     },
     "suggest": {
-        "whiteoctober/breadcrumbs-bundle": "Allows creation of breadcrumbs"
+        "mhujer/breadcrumbs-bundle": "Allows creation of breadcrumbs"
     },
     "autoload": {
         "psr-4": {
