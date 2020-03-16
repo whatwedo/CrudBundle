@@ -211,9 +211,16 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
                 $this->addFlash('success', sprintf('Erfolgreich gespeichert.'));
 
-                return $this->redirectToRoute($this->getDefinition()::getRouteName(RouteEnum::SHOW), [
-                    'id' => $entity->getId(),
-                ]);
+                $redirectPath = $this->getDefinition()->getEditRedirect($this->router, $entity);
+                if($redirectPath) {
+                    return $this->redirect($redirectPath);
+                }
+                else {
+
+                    return $this->redirectToRoute($this->getDefinition()::getRouteName(RouteEnum::SHOW), [
+                        'id' => $entity->getId(),
+                    ]);
+                }
             } else {
                 $this->addFlash('danger', sprintf('Beim Speichern ist ein Fehler aufgetreten. Bitte überprüfe deine Eingaben.'));
             }
