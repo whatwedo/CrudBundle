@@ -388,10 +388,18 @@ abstract class AbstractDefinition implements DefinitionInterface
         return new RedirectResponse($router->generate(static::getRouteName(RouteEnum::INDEX)));
     }
 
-     /**
+    /**
      * {@inheritdoc}
      */
     public function getCreateRedirect(RouterInterface $router, $entity = null)
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEditRedirect(RouterInterface $router, $entity = null)
     {
         return null;
     }
