@@ -55,6 +55,7 @@ use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Form\Type\EntityAjaxType;
 use whatwedo\CrudBundle\Form\Type\EntityHiddenType;
 use whatwedo\CrudBundle\Form\Type\EntityPreselectType;
+use whatwedo\CrudBundle\Formatter\DefinitionLinkFormatter;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 /**
@@ -138,6 +139,11 @@ class DefinitionView implements DefinitionViewInterface
     protected $formRegistry;
 
     /**
+     * @var DefinitionLinkFormatter
+     */
+    protected DefinitionLinkFormatter $definitionLinkFormatter;
+
+    /**
      * DefinitionView constructor.
      *
      * @param Environment $templating
@@ -147,7 +153,15 @@ class DefinitionView implements DefinitionViewInterface
      * @param AuthorizationCheckerInterface $authorizationChecker
      * @param RequestStack $requestStack
      */
-    public function __construct(Environment $templating, FormFactoryInterface $formFactory, FormRegistryInterface $formRegistry, RouterInterface $router, AuthorizationCheckerInterface $authorizationChecker, RequestStack $requestStack)
+    public function __construct(
+        Environment $templating,
+        FormFactoryInterface $formFactory,
+        FormRegistryInterface $formRegistry,
+        RouterInterface $router,
+        AuthorizationCheckerInterface $authorizationChecker,
+        RequestStack $requestStack,
+        DefinitionLinkFormatter $definitionLinkFormatter
+    )
     {
         $this->templating = $templating;
         $this->formFactory = $formFactory;
@@ -156,6 +170,7 @@ class DefinitionView implements DefinitionViewInterface
         $this->annotationReader = new AnnotationReader();
         $this->request = $requestStack->getCurrentRequest();
         $this->formRegistry = $formRegistry;
+        $this->definitionLinkFormatter = $definitionLinkFormatter;
     }
 
     /**
@@ -233,6 +248,25 @@ class DefinitionView implements DefinitionViewInterface
             )
         );
     }
+
+
+    /**
+     * @param string $value text to be rendered
+     *
+     * @return string html
+     * @deprecated use DefinitionLinkFormatter in Definition
+     */
+    public function linkIt($value, Content $content) {
+        $entity = $content->getContents($this->data);
+        $def = $this->definitionManager->getDefinitionFor($entity);
+
+        if (null !== $def) {
+            return $this->definitionLinkFormatter->getHtml($entity);
+        }
+
+        return $value;
+    }
+
 
     /**
      * {@inheritdoc}
