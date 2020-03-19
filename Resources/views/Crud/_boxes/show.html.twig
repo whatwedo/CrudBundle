@@ -91,7 +91,7 @@
                                                     <strong>{{ key }}:</strong>
                                                 </div>
                                                 <div class="col-lg-8">
-                                                    {{ helper.linkIt(v, content)|raw }}
+                                                    {{ v|raw }}
                                                 </div>
                                             </div>
                                         {% endfor %}
@@ -103,7 +103,7 @@
                                                 </strong>
                                             </div>
                                             <div class="col-lg-8">
-                                                {{ helper.linkIt(value, content)|raw }}
+                                                {{ value|raw }}
                                             </div>
                                         </div>
                                     {% endif %}

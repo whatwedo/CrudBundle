@@ -103,11 +103,6 @@ class DefinitionView implements DefinitionViewInterface
     protected $definitionManager;
 
     /**
-     * @var AccessMap
-     */
-    protected $accessMap;
-
-    /**
      * @var AuthorizationChecker
      */
     protected $authorizationChecker;
@@ -145,17 +140,18 @@ class DefinitionView implements DefinitionViewInterface
     /**
      * DefinitionView constructor.
      *
-     * @param FormRegistry         $formRegistry
-     * @param Router               $router
-     * @param AccessMap            $accessMap
-     * @param AuthorizationChecker $authorizationChecker
+     * @param Environment $templating
+     * @param FormFactoryInterface $formFactory
+     * @param FormRegistryInterface $formRegistry
+     * @param RouterInterface $router
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param RequestStack $requestStack
      */
-    public function __construct(Environment $templating, FormFactoryInterface $formFactory, FormRegistryInterface $formRegistry, RouterInterface $router, AccessMapInterface $accessMap, AuthorizationCheckerInterface $authorizationChecker, RequestStack $requestStack)
+    public function __construct(Environment $templating, FormFactoryInterface $formFactory, FormRegistryInterface $formRegistry, RouterInterface $router, AuthorizationCheckerInterface $authorizationChecker, RequestStack $requestStack)
     {
         $this->templating = $templating;
         $this->formFactory = $formFactory;
         $this->router = $router;
-        $this->accessMap = $accessMap;
         $this->authorizationChecker = $authorizationChecker;
         $this->annotationReader = new AnnotationReader();
         $this->request = $requestStack->getCurrentRequest();
@@ -236,44 +232,6 @@ class DefinitionView implements DefinitionViewInterface
                 $this->templateParameters
             )
         );
-    }
-
-    /**
-     * @param string $value text to be rendered
-     *
-     * @return string html
-     */
-    public function linkIt($value, Content $content)
-    {
-        $entity = $content->getContents($this->data);
-        $def = $this->definitionManager->getDefinitionFor($entity);
-
-        if (null !== $def) {
-            if ($this->authorizationChecker->isGranted(RouteEnum::SHOW, $entity)
-                && $def::hasCapability(RouteEnum::SHOW)) {
-                $path = $this->router->generate($def::getRouteName(RouteEnum::SHOW), ['id' => $entity->getId()]);
-
-                $granted = false;
-                if (!$this->authorizationChecker->isGranted('IS_AUTHENTICATED_ANONYMOUSLY')) {
-                    // if the user is not authenticated, we link it because a
-                    // login form is shown if the user tries to access the resource
-                    // otherwise there would happens a InsufficientAuthenticationException
-                    $fakeRequest = Request::create($path, 'GET');
-                    list($roles, $channel) = $this->accessMap->getPatterns($fakeRequest);
-                    foreach ($roles as $role) {
-                        $granted = $granted || $this->authorizationChecker->isGranted($role);
-                    }
-                } else {
-                    $granted = true;
-                }
-
-                if ($granted) {
-                    return sprintf('<a href="%s">%s</a>', $path, $value);
-                }
-            }
-        }
-
-        return $value;
     }
 
     /**

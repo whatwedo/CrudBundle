@@ -12,7 +12,7 @@ services:
         tags:
             - crud.block
 
-    whatwedo\CrudBundle\View\DefinitionView:
+    whatwedo\CrudBundle\Formatter\DefnitionEntityLinkFormatter:
         shared: false
         arguments:
             $accessMap: '@security.access_map'
