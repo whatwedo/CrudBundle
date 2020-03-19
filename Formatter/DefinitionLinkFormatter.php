@@ -38,7 +38,7 @@ use whatwedo\CrudBundle\Manager\DefinitionManager;
 /**
  * @author Maurizio Monticelli <maurizio@whatwedo.ch>
  */
-class DefnitionLinkFormatter extends AbstractFormatter
+class DefinitionLinkFormatter extends AbstractFormatter
 {
     /**
      * @var DefinitionManager
