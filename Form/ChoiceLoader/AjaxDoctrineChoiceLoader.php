@@ -33,7 +33,9 @@ class AjaxDoctrineChoiceLoader implements ChoiceLoaderInterface
     public function onFormPostSetData(FormEvent $event)
     {
         $data = $event->getData();
-        $this->selected = is_iterable($data) ? $data : [$data];
+        if ($data) {
+            $this->selected = is_iterable($data) ? $data : [$data];
+        }
     }
 
     public function loadChoiceList($value = null)
