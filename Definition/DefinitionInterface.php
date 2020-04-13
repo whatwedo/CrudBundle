@@ -30,7 +30,6 @@ namespace whatwedo\CrudBundle\Definition;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
@@ -149,10 +148,26 @@ interface DefinitionInterface
 
     /**
      * @param RouterInterface $router
-     * @param $entity
+     * @param midex $entity
      * @return Response
      */
-    public function getDeleteRedirect(RouterInterface $router, $entity = null): RedirectResponse;
+    public function getDeleteRedirect(RouterInterface $router, $entity = null): Response;
+
+
+    /**
+     * @param RouterInterface $router
+     * @param midex $entity
+     * @return Response
+     */
+    public function getCreateRedirect(RouterInterface $router, $entity = null): Response;
+
+    /**
+     * @param RouterInterface $router
+     * @param midex $entity
+     * @return Response
+     */
+    public function getEditRedirect(RouterInterface $router, $entity = null): Response;
+
 
     /**
      * @return array

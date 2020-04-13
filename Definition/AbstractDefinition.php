@@ -34,6 +34,7 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CrudBundle\Block\Block;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
@@ -383,7 +384,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * {@inheritdoc}
      */
-    public function getDeleteRedirect(RouterInterface $router, $entity = null): RedirectResponse
+    public function getDeleteRedirect(RouterInterface $router, $entity = null): Response
     {
         return new RedirectResponse($router->generate(static::getRouteName(RouteEnum::INDEX)));
     }
@@ -391,17 +392,21 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * {@inheritdoc}
      */
-    public function getCreateRedirect(RouterInterface $router, $entity = null)
+    public function getCreateRedirect(RouterInterface $router, $entity = null): Response
     {
-        return null;
+        return $this->redirectToRoute($this->getDefinition()::getRouteName(RouteEnum::SHOW), [
+            'id' => $entity->getId(),
+        ]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getEditRedirect(RouterInterface $router, $entity = null)
+    public function getEditRedirect(RouterInterface $router, $entity = null): Response
     {
-        return null;
+        return $this->redirectToRoute($this->getDefinition()::getRouteName(RouteEnum::SHOW), [
+            'id' => $entity->getId(),
+        ]);
     }
 
     /**
