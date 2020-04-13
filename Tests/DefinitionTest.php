@@ -27,132 +27,192 @@
 
 namespace whatwedo\CrudBundle\Tests;
 
+use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\ExpectationFailedException;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Routing\Router;
+use Symfony\Component\HttpFoundation\Request;
+use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\RouteEnum;
+use whatwedo\CrudBundle\Manager\DefinitionManager;
+use whatwedo\TableBundle\Table\SortableColumnInterface;
 
 /**
  * Class DefinitionTest
- *
- * @package whatwedo\CrudBundle\Tests
- * @author Nicolo Singer <nicolo@whatwedo.ch>
  */
 class DefinitionTest extends WebTestCase
 {
+    /** @var string[][] */
+    const EXCLUDE_DEFINITIONS = [];
+
+    //todo: find another way to do this
+
+    /** @var string[] */
+    const SKIP_ORDERING_TESTS = [];
+
     /**
-     * tests all index pages
+     * @var KernelBrowser|null
      */
-    public function testIndex()
+    private $client;
+
+    /**
+     * @return DefinitionInterface[]
+     */
+    public function getDefinitions(): array
     {
+        static::bootKernel();
+
+        return array_map(function (DefinitionInterface $definition) {
+            return [$definition];
+        }, static::$container->get(DefinitionManager::class)->getDefinitions());
+    }
+
+    /**
+     * @dataProvider getDefinitions
+     */
+    public function testDefinition(DefinitionInterface $definition): void
+    {
+        $client = $this->getWebClient();
+
+        $router = self::$container->get('router');
         $failures = [];
-        $client = static::createClient();
-        $definitionManager = $client->getContainer()->get('whatwedo_crud.manager.definition');
-        $router = $client->getContainer()->get('router');
-        foreach ($definitionManager->getDefinitions() as $definition)
-        {
-            $routename = $definition::getRoutePrefix() . '_' . RouteEnum::INDEX;
-            if (!$definition::hasCapability(RouteEnum::INDEX)) {
+        $isTestable = false;
+
+        foreach ($definition::getCapabilities() as $capability) {
+            if ($this->isExcluded($definition, $capability)) {
                 continue;
             }
-            if ($this->routeHasParameter($router, $routename)) {
-                continue;
-            }
-            $index = $router->generate($routename);
-            $client->request('GET', $index);
-            $statusCode = $client->getResponse()->getStatusCode();
+            $isTestable = true;
+
+            $route = $router->generate($definition::getRouteName($capability));
+            $client->request(Request::METHOD_GET, $route);
+
             try {
-                $this->assertEquals(200, $statusCode, $index . ' returns not a 200 response');
-            } catch (\PHPUnit_Framework_ExpectationFailedException $e) {
-                $failures[] = $e->getMessage();
+                $this->assertTrue($client->getResponse()->isSuccessful());
+            } catch (ExpectationFailedException $e) {
+                $failures[] = new AssertionFailedError(sprintf(
+                    '"%s" unsuccessful (%s): %s',
+                    strtoupper($capability),
+                    $client->getResponse()->getStatusCode(),
+                    $route
+                ));
             }
         }
+
+        if (!$isTestable) {
+            $this->markTestSkipped('Definition has no capabilities to test');
+        }
+
         $this->printFailures($failures);
     }
 
     /**
-     * tests ordering of elements
+     * @dataProvider getDefinitions
      */
-    public function testOrdering()
+    public function testOrdering(DefinitionInterface $definition): void
     {
+        $client = $client = $this->getWebClient();
+
         $failures = [];
-        $client = static::createClient();
-        $definitionManager = $client->getContainer()->get('whatwedo_crud.manager.definition');
-        $router = $client->getContainer()->get('router');
-        foreach ($definitionManager->getDefinitions() as $definition)
-        {
-            $routename = $definition::getRoutePrefix() . '_' . RouteEnum::INDEX;
-            if (!$definition::hasCapability(RouteEnum::INDEX)) {
-                continue;
-            }
-            if ($this->routeHasParameter($router, $routename)) {
-                continue;
-            }
-            $index = $router->generate($routename);
-            $crawler = $client->request('GET', $index);
-            $anchors = $crawler->filter('a.ordering-test');
-            foreach ($anchors as $anchor)
-            {
-                $suffix = $anchor->getAttribute('href');
-                $innerClient = static::createClient();
-                $innerClient->request('GET', $index . $suffix);
-                $statusCode = $innerClient->getResponse()->getStatusCode();
-                try {
-                    $this->assertEquals(200, $statusCode, 'sort_expression false in ' . $index . $suffix);
-                } catch (\PHPUnit_Framework_ExpectationFailedException $e) {
-                    $failures[] = $e->getMessage();
-                }
-            }
+
+        $router = self::$container->get('router');
+
+        if (in_array($definition::getAlias(), self::SKIP_ORDERING_TESTS)) {
+            $this->markTestSkipped('Definition has no ORDERING');
         }
-        $this->printFailures($failures);
-    }
 
-    /**
-     * tests create pages
-     */
-    public function testCreate()
-    {
-        $failures = [];
-        $client = static::createClient();
-        $definitionManager = $client->getContainer()->get('whatwedo_crud.manager.definition');
-        $router = $client->getContainer()->get('router');
-        foreach ($definitionManager->getDefinitions() as $definition)
-        {
-            $routename = $definition::getRoutePrefix() . '_' . RouteEnum::CREATE;
-            if (!$definition::hasCapability(RouteEnum::CREATE)) {
-                continue;
-            }
-            if ($this->routeHasParameter($router, $routename)) {
-                continue;
-            }
-            $create = $router->generate($routename);
+        if (!$definition::hasCapability(RouteEnum::INDEX)) {
+            $this->markTestSkipped('Definition has no INDEX');
+        }
 
-            $client->request('GET', $create);
-            $statusCode = $client->getResponse()->getStatusCode();
+        if ($this->isExcluded($definition, RouteEnum::INDEX)) {
+            $this->markTestSkipped('INDEX excluded from test');
+        }
+
+        $index = $router->generate($definition::getRouteName(RouteEnum::INDEX));
+        $crawler = $client->request(Request::METHOD_GET, $index);
+
+        // TODO: use Definition data to figure out sortable columns instead?
+        $anchors = $crawler->filter('table[id^="whatwedo_table_"] thead a');
+
+        /** @var \DOMElement $anchor */
+        foreach ($anchors as $anchor) {
+            $suffix = $anchor->getAttribute('href');
+            $client->request('GET', $index . $suffix);
+
             try {
-                $this->assertEquals(200, $statusCode, $create . ' returns not a 200 response');
-            } catch (\PHPUnit_Framework_ExpectationFailedException $e) {
-                $failures[] = $e->getMessage();
+                $this->assertTrue($client->getResponse()->isSuccessful());
+            } catch (ExpectationFailedException $e) {
+                preg_match(sprintf('/%s[^_]*_([^=]*)/', SortableColumnInterface::ORDER_ENABLED), $suffix, $sortOptions);
+
+                $failures[] = new AssertionFailedError(sprintf(
+                    'Sorting column "%s" unsuccessful: %s',
+                    $sortOptions[1],
+                    $index
+                ));
             }
         }
+
         $this->printFailures($failures);
     }
 
-    private function printFailures($failures)
+    protected function isExcluded(DefinitionInterface $definition, string $capability): bool
     {
-        if(!empty($failures))
-        {
-            throw new \PHPUnit_Framework_ExpectationFailedException (
-                count($failures)." assertions failed:\n\t".implode("\n\t", $failures)
-            );
+        // TODO: why skip? takes to long? set low "page size"?
+        if ($capability === RouteEnum::EXPORT) {
+            return true;
+        }
+
+        /** @var string $definitionClass */
+        $definitionClass = get_class($definition);
+        $excludeCapabilities = [];
+
+        if (isset(self::EXCLUDE_DEFINITIONS[$definitionClass])) {
+            $excludeCapabilities  = self::EXCLUDE_DEFINITIONS[$definitionClass];
+        }
+        if (in_array($capability, $excludeCapabilities)) {
+            return true;
+        }
+
+        // TODO: get reference from fixtures for show/edit/delete?
+        return $this->routeHasParameter($definition::getRouteName($capability));
+    }
+
+    protected function routeHasParameter(string $routeName): bool
+    {
+        $router = self::$container->get('router');
+        return !empty($router->getRouteCollection()->get($routeName)->compile()->getPathVariables());
+    }
+
+    /**
+     * @param string[] $failures
+     */
+    protected function printFailures(array $failures): void
+    {
+        if (!empty($failures)) {
+            throw new ExpectationFailedException(implode("\n", $failures));
         }
     }
 
-    private function routeHasParameter(Router $router, $routename)
+    protected function getWebClient(?string $userId = null): KernelBrowser
     {
-        $routes = $router->getRouteCollection();
-        $route = $routes->get($routename);
-        $path = $route->getPath();
-        preg_match('#{([^}]+)}#', $path, $matches);
-        return !empty($matches);
+        if (!$this->client) {
+            $this->client = self::$container->get('test.client');
+            $this->client->setServerParameters([]);
+
+            if ($userId) {
+                $this->login($userId);
+            }
+        }
+        return $this->client;
+    }
+
+    protected function login(string $user)
+    {
+    }
+
+    protected function setUp(): void
+    {
+        static::bootKernel();
     }
 }
