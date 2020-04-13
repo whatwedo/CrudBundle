@@ -82,8 +82,8 @@ class DefinitionBuilder
      * adds a new block to the definition
      *
      * @param string $acronym unique block acronym
+     * @param string|null $type block type (class name)
      * @param array  $options options
-     * @param string $type block type (class name)
      *
      * @return Block
      */
