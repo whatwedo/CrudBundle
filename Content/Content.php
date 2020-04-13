@@ -27,22 +27,17 @@
 
 namespace whatwedo\CrudBundle\Content;
 
-use http\Exception\InvalidArgumentException;
-use Psr\Container\ContainerInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CoreBundle\Formatter\DefaultFormatter;
-use whatwedo\CoreBundle\Formatter\FormatterInterface;
 use whatwedo\CoreBundle\Manager\FormatterManager;
 use whatwedo\CrudBundle\Form\Type\EntityHiddenType;
 
 /**
  * Class Content
- * @package whatwedo\CrudBundle\Content
  */
 class Content extends AbstractContent implements EditableContentInterface
 {
-
     /**
      * @var FormatterManager
      */
@@ -50,38 +45,12 @@ class Content extends AbstractContent implements EditableContentInterface
 
     /**
      * Content constructor.
-     * @param FormatterManager $formatterManager
      */
     public function __construct(FormatterManager $formatterManager)
     {
         $this->formatterManager = $formatterManager;
     }
 
-    protected function formatData($data, $formatter, $formatterOptions) {
-        if (is_string($formatter)) {
-            $formatterObj = $this->formatterManager->getFormatter($formatter);
-            $formatterObj->processOptions($formatterOptions);
-            return $formatterObj->getHtml($data);
-        }
-
-        if (is_callable($formatter)) {
-            return $formatter($data);
-        }
-
-        if (is_array($formatter)) {
-            foreach($formatter as $index => $aFormatter) {
-                $data = $this->formatData($data, $aFormatter, isset($formatterOptions[$index]) ? $formatterOptions[$index] : $formatterOptions);
-            }
-
-            return $data;
-        }
-
-        return $data;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function render($row)
     {
         return (string) $this->formatData($this->getContents($row), $this->options['formatter'], $this->options['formatter_options']);
@@ -143,9 +112,6 @@ class Content extends AbstractContent implements EditableContentInterface
         }
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
@@ -161,5 +127,28 @@ class Content extends AbstractContent implements EditableContentInterface
             'preselect_definition' => null, // Vorausgewählte Entity folgender Definition
             'attr' => [], // Attribute auf dem Element
         ]);
+    }
+
+    protected function formatData($data, $formatter, $formatterOptions)
+    {
+        if (is_string($formatter)) {
+            $formatterObj = $this->formatterManager->getFormatter($formatter);
+            $formatterObj->processOptions($formatterOptions);
+            return $formatterObj->getHtml($data);
+        }
+
+        if (is_callable($formatter)) {
+            return $formatter($data);
+        }
+
+        if (is_array($formatter)) {
+            foreach ($formatter as $index => $aFormatter) {
+                $data = $this->formatData($data, $aFormatter, isset($formatterOptions[$index]) ? $formatterOptions[$index] : $formatterOptions);
+            }
+
+            return $data;
+        }
+
+        return $data;
     }
 }

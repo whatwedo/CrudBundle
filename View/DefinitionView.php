@@ -57,9 +57,6 @@ use whatwedo\CrudBundle\Form\Type\EntityHiddenType;
 use whatwedo\CrudBundle\Form\Type\EntityPreselectType;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 
-/**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
- */
 class DefinitionView implements DefinitionViewInterface
 {
     /**
@@ -170,17 +167,11 @@ class DefinitionView implements DefinitionViewInterface
         $this->definitionManager = $definitionManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDefinition(DefinitionInterface $definition)
     {
         $this->definition = $definition;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setData($data)
     {
         $this->data = $data;
@@ -194,17 +185,11 @@ class DefinitionView implements DefinitionViewInterface
         return $this->data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setBlocks(BlockCollection $blocks)
     {
         $this->blocks = $blocks;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlocks()
     {
         return $this->blocks;
@@ -220,9 +205,6 @@ class DefinitionView implements DefinitionViewInterface
         $this->templateParameters = $templateParameters;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function renderShow($additionalParameters = [])
     {
         return $this->templating->render(
@@ -276,9 +258,6 @@ class DefinitionView implements DefinitionViewInterface
         return $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function renderEdit($additionalParameters = [])
     {
         return $this->templating->render(
@@ -294,9 +273,6 @@ class DefinitionView implements DefinitionViewInterface
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function renderCreate($additionalParameters = [])
     {
         return $this->templating->render(
@@ -329,19 +305,22 @@ class DefinitionView implements DefinitionViewInterface
                         return 'javascript:alert(\'can\\\'t generate route "'.$route.'" without data\')';
                     }
 
-                    return $this->router->generate($this->definition::getRouteName($route),
+                    return $this->router->generate(
+                        $this->definition::getRouteName($route),
                         array_merge([
                             'id' => $this->data->getId(),
-                            ], $params)
+                        ], $params)
                     );
                 case RouteEnum::AJAX:
                     if (!$this->data) {
-                        return $this->router->generate($this->definition::getRouteName($route),
+                        return $this->router->generate(
+                            $this->definition::getRouteName($route),
                             $params
                         );
                     }
 
-                    return $this->router->generate($this->definition::getRouteName($route),
+                    return $this->router->generate(
+                        $this->definition::getRouteName($route),
                         array_merge([
                             'id' => $this->data->getId(),
                         ], $params)
@@ -349,7 +328,8 @@ class DefinitionView implements DefinitionViewInterface
                 case RouteEnum::INDEX:
                 case RouteEnum::BATCH:
                 case RouteEnum::CREATE:
-                    return $this->router->generate($this->definition::getRouteName($route),
+                    return $this->router->generate(
+                        $this->definition::getRouteName($route),
                         $params
                     );
 
@@ -359,52 +339,6 @@ class DefinitionView implements DefinitionViewInterface
         }
 
         return 'javascript:alert(\'Definition does not have the capability "'.$route.'".\')';
-    }
-
-    /**
-     * @param EditableContentInterface $content
-     *
-     * @return bool
-     */
-    protected function isContentRequired($content)
-    {
-        $reflectionObject = $this->getReflectionObject();
-        if (null !== $reflectionObject) {
-            foreach ($reflectionObject->getProperties() as $property) {
-                if ($property->getName() === $content->getAcronym()) {
-                    $notNullAnnotation = $this->annotationReader->getPropertyAnnotation($property, NotNull::class);
-                    $notBlankAnnotation = $this->annotationReader->getPropertyAnnotation($property, NotBlank::class);
-                    $columnAnnotation = $this->annotationReader->getPropertyAnnotation($property, Column::class);
-                    if (null !== $columnAnnotation && ('boolean' === $columnAnnotation->type || 'bool' === $columnAnnotation->type)) {
-                        return false;
-                    }
-
-                    return null !== $notNullAnnotation || null !== $notBlankAnnotation;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @param Content|RelationContent $content
-     *
-     * @return string
-     */
-    protected function getFormType(EditableContentInterface $content)
-    {
-        $formType = $content->getFormType();
-        if (EntityPreselectType::class === $formType) {
-            if (EntityPreselectType::isValueProvided($this->request, $content->getFormOptions())) {
-                $formType = EntityHiddenType::class;
-            } else {
-                $formType = EntityAjaxType::class;
-            }
-        }
-        $content->setOption('form_type', $formType);
-
-        return $formType;
     }
 
     /**
@@ -497,7 +431,7 @@ class DefinitionView implements DefinitionViewInterface
         }
         $ret = '[';
         $i = 0;
-        foreach ($data as $key => $item) {
+        foreach (array_keys($data) as $key) {
             $ret .= '\''.$key.'\'';
             if ($i !== \count($data) - 1) {
                 $ret .= ',';
@@ -528,18 +462,6 @@ class DefinitionView implements DefinitionViewInterface
     }
 
     /**
-     * @return \ReflectionObject
-     */
-    protected function getReflectionObject()
-    {
-        if (null === $this->reflectionObject && $this->data) {
-            $this->reflectionObject = new \ReflectionObject($this->data);
-        }
-
-        return $this->reflectionObject;
-    }
-
-    /**
      * @param string $class
      * @param string $property
      *
@@ -558,5 +480,63 @@ class DefinitionView implements DefinitionViewInterface
         }
         // return vendor Template
         return '@whatwedoCrud/Crud/'.$templatePath;
+    }
+
+    /**
+     * @param EditableContentInterface $content
+     *
+     * @return bool
+     */
+    protected function isContentRequired($content)
+    {
+        $reflectionObject = $this->getReflectionObject();
+        if (null !== $reflectionObject) {
+            foreach ($reflectionObject->getProperties() as $property) {
+                if ($property->getName() === $content->getAcronym()) {
+                    $notNullAnnotation = $this->annotationReader->getPropertyAnnotation($property, NotNull::class);
+                    $notBlankAnnotation = $this->annotationReader->getPropertyAnnotation($property, NotBlank::class);
+                    $columnAnnotation = $this->annotationReader->getPropertyAnnotation($property, Column::class);
+                    if (null !== $columnAnnotation && ('boolean' === $columnAnnotation->type || 'bool' === $columnAnnotation->type)) {
+                        return false;
+                    }
+
+                    return null !== $notNullAnnotation || null !== $notBlankAnnotation;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param Content|RelationContent $content
+     *
+     * @return string
+     */
+    protected function getFormType(EditableContentInterface $content)
+    {
+        $formType = $content->getFormType();
+        if (EntityPreselectType::class === $formType) {
+            if (EntityPreselectType::isValueProvided($this->request, $content->getFormOptions())) {
+                $formType = EntityHiddenType::class;
+            } else {
+                $formType = EntityAjaxType::class;
+            }
+        }
+        $content->setOption('form_type', $formType);
+
+        return $formType;
+    }
+
+    /**
+     * @return \ReflectionObject
+     */
+    protected function getReflectionObject()
+    {
+        if (null === $this->reflectionObject && $this->data) {
+            $this->reflectionObject = new \ReflectionObject($this->data);
+        }
+
+        return $this->reflectionObject;
     }
 }

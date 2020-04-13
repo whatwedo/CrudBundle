@@ -27,8 +27,6 @@
 
 namespace whatwedo\CrudBundle\Security\Voter;
 
-use ReflectionClass;
-use Symfony\Component\Debug\Exception\ClassNotFoundException;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Exception\DefinitionNotFoundException;
@@ -36,11 +34,9 @@ use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 /**
  * Class AbstractDefinitionVoter
- * @package whatwedo\CrudBundle\Security\Voter
  */
 abstract class AbstractDefinitionVoter extends Voter
 {
-
     /**
      * @var DefinitionManager
      */
@@ -48,7 +44,6 @@ abstract class AbstractDefinitionVoter extends Voter
 
     /**
      * AbstractDefinitionVoter constructor.
-     * @param DefinitionManager $definitionManager
      */
     public function __construct(DefinitionManager $definitionManager)
     {
@@ -96,7 +91,7 @@ abstract class AbstractDefinitionVoter extends Voter
             return false;
         }
         $entityName = $this->getDefinition()->getEntity();
-        $entityReflector = new ReflectionClass($entityName);
+        $entityReflector = new \ReflectionClass($entityName);
         return $entityReflector->isInstance($subject);
     }
 

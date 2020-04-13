@@ -26,6 +26,7 @@
  */
 
 namespace whatwedo\CrudBundle\Content;
+
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CrudBundle\Enum\RouteEnum;
@@ -34,7 +35,6 @@ use whatwedo\TableBundle\Table\Table;
 
 /**
  * Class TableContent
- * @package whatwedo\CrudBundle\Content
  */
 class TableContent extends AbstractContent
 {
@@ -53,7 +53,6 @@ class TableContent extends AbstractContent
 
         if ($this->getOption('definition')
             && $this->hasCapability(RouteEnum::SHOW)) {
-
             $showRoute = $this->getRoute(RouteEnum::SHOW);
 
             $table->setShowRoute($showRoute);
@@ -78,7 +77,7 @@ class TableContent extends AbstractContent
         if ($data instanceof Collection) {
             $data = $data->toArray();
         }
-        if (is_string($data)){
+        if (is_string($data)) {
             throw new \Exception($data);
         }
 
@@ -107,9 +106,6 @@ class TableContent extends AbstractContent
         }
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
@@ -125,7 +121,6 @@ class TableContent extends AbstractContent
 
     /**
      * @param $capability
-     * @return bool
      */
     protected function hasCapability($capability): bool
     {
@@ -134,7 +129,6 @@ class TableContent extends AbstractContent
 
     /**
      * @param $suffix
-     * @return string
      */
     protected function getRoute($suffix): string
     {

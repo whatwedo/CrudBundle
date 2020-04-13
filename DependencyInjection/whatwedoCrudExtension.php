@@ -2,10 +2,10 @@
 
 namespace whatwedo\CrudBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use whatwedo\CrudBundle\Content\ContentInterface;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
@@ -17,9 +17,6 @@ use whatwedo\CrudBundle\Extension\ExtensionInterface;
  */
 class whatwedoCrudExtension extends Extension
 {
-    /**
-     * {@inheritdoc}
-     */
     public function load(array $configs, ContainerBuilder $container)
     {
         $configuration = new Configuration();
@@ -44,7 +41,7 @@ class whatwedoCrudExtension extends Extension
         $templates = [
             'show' => '_boxes/show.html.twig',
             'create' => '_boxes/create.html.twig',
-            'edit' => '_boxes/edit.html.twig'
+            'edit' => '_boxes/edit.html.twig',
         ];
         if (isset($config['templates'])) {
             $templates = $config['templates'];

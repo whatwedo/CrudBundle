@@ -32,15 +32,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class EntityPreselectType
- * @package whatwedo\CrudBundle\Form\Type
  */
 abstract class EntityPreselectType extends AbstractType
 {
-
     /**
-     * @param Request $request
-     * @param array $options
-     * @return boolean
+     * @return bool
      */
     public static function isValueProvided(Request $request, array $options)
     {
@@ -51,5 +47,4 @@ abstract class EntityPreselectType extends AbstractType
         }
         return $request->query->has($query);
     }
-
 }

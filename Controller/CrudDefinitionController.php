@@ -25,14 +25,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 namespace whatwedo\CrudBundle\Controller;
+
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 
-
-/**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
- */
 interface CrudDefinitionController
 {
     public function configureDefinition(DefinitionInterface $definition);

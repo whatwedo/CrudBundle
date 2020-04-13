@@ -27,17 +27,14 @@
 
 namespace whatwedo\CrudBundle\Enum;
 
-
 use whatwedo\CoreBundle\Enum\AbstractSimpleEnum;
 
 class BlockSizeEnum extends AbstractSimpleEnum
 {
     const SMALL = 'small';
+
     const LARGE = 'large';
 
-    /**
-     * @inheritdoc
-     */
     protected static $values = [
         self::SMALL     => 'Klein',
         self::LARGE     => 'Gross',

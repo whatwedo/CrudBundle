@@ -29,9 +29,7 @@ namespace whatwedo\CrudBundle\Exception;
 
 /**
  * Class ElementNotFoundException
- * @package whatwedo\CrudBundle\Exception
  */
 class ElementNotFoundException extends \Exception
 {
-
 }

@@ -12,9 +12,6 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder('whatwedo_crud');
@@ -45,8 +42,7 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end() // end templates
-            ->end()
-        ;
+            ->end();
         return $treeBuilder;
     }
 }

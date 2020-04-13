@@ -36,11 +36,11 @@ use whatwedo\TableBundle\Event\ResultRequestEvent;
 
 /**
  * Class RelationController
- * @package whatwedo\TableBundle\Controller
  */
 class RelationController extends AbstractController
 {
     protected $eventDispatcher;
+
     /**
      * @var DefinitionManager
      */
@@ -57,7 +57,6 @@ class RelationController extends AbstractController
     }
 
     /**
-     * @param Request $request
      * @return JsonResponse
      */
     public function ajaxAction(Request $request)
@@ -75,5 +74,4 @@ class RelationController extends AbstractController
         $this->eventDispatcher->dispatch($resultRequestEvent, ResultRequestEvent::RELATION_SET);
         return $resultRequestEvent->getResult();
     }
-
 }

@@ -26,23 +26,31 @@
  */
 
 namespace whatwedo\CrudBundle\Event;
+
 use Symfony\Contracts\EventDispatcher\Event;
 
-/**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
- */
 class CrudEvent extends Event
 {
     const PRE_CREATE_PREFIX = 'whatwedo_crud.pre_create';
+
     const POST_CREATE_PREFIX = 'whatwedo_crud.post_create';
+
     const PRE_DELETE_PREFIX = 'whatwedo_crud.pre_delete';
+
     const POST_DELETE_PREFIX = 'whatwedo_crud.post_delete';
+
     const PRE_EDIT_PREFIX = 'whatwedo_crud.pre_edit';
+
     const POST_EDIT_PREFIX = 'whatwedo_crud.post_edit';
+
     const PRE_VALIDATE_PREFIX = 'whatwedo_crud.pre_validate';
+
     const POST_VALIDATE_PREFIX = 'whatwedo_crud.post_validate';
+
     const PRE_SHOW_PREFIX = 'whatwedo_crud.pre_show';
+
     const CREATE_SHOW_PREFIX = 'whatwedo_crud.create_show';
+
     const NEW_PREFIX = 'whatwedo_crud.new';
 
     protected $entity;

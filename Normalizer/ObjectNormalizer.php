@@ -30,24 +30,20 @@ namespace whatwedo\CrudBundle\Normalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer as BaseObjectNormalizer;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 
-/**
- * @author Nicolo Singer <nicolo@whatwedo.ch>
- */
 class ObjectNormalizer extends BaseObjectNormalizer
 {
     /**
-     * @var DefinitionInterface $definition
+     * @var DefinitionInterface
      */
     private $definition;
 
     /**
-     * @var array $customCallbacks
+     * @var array
      */
     private $customCallbacks = [];
 
     /**
      * WhatwedoObjectNormalizer constructor.
-     * @param DefinitionInterface $definition
      */
     public function __construct(DefinitionInterface $definition)
     {
@@ -56,8 +52,27 @@ class ObjectNormalizer extends BaseObjectNormalizer
     }
 
     /**
+     * @return array
+     */
+    public function getCustomCallbacks()
+    {
+        return $this->customCallbacks;
+    }
+
+    /**
+     * @param array $customCallbacks
+     *
+     * @return self
+     */
+    public function setCustomCallbacks($customCallbacks)
+    {
+        $this->customCallbacks = $customCallbacks;
+
+        return $this;
+    }
+
+    /**
      * @param object|string $classOrObject
-     * @param array $context
      * @param bool $attributesAsString
      * @return array
      */
@@ -72,11 +87,8 @@ class ObjectNormalizer extends BaseObjectNormalizer
      * @param object      $object
      * @param string      $attribute
      * @param string|null $format
-     * @param array       $context
-     *
-     * @return mixed
      */
-    protected function getAttributeValue($object, $attribute, $format = null, array $context = array())
+    protected function getAttributeValue($object, $attribute, $format = null, array $context = [])
     {
         $attrValue = $this->propertyAccessor->getValue($object, $attribute);
         if (isset($this->customCallbacks[$attribute])) {
@@ -84,25 +96,4 @@ class ObjectNormalizer extends BaseObjectNormalizer
         }
         return $attrValue;
     }
-
-    /**
-     * @return array
-     */
-    public function getCustomCallbacks()
-    {
-        return $this->customCallbacks;
-    }
-
-    /**
-     * @param array $customCallbacks
-     *
-     * @return ObjectNormalizer
-     */
-    public function setCustomCallbacks($customCallbacks)
-    {
-        $this->customCallbacks = $customCallbacks;
-
-        return $this;
-    }
-
 }

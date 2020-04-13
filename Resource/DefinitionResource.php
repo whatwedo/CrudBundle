@@ -33,7 +33,7 @@ use Symfony\Component\Config\Resource\SelfCheckingResourceInterface;
 class DefinitionResource implements ResourceInterface, SelfCheckingResourceInterface
 {
     /**
-     * @var string $definitionClass class of definition
+     * @var string class of definition
      */
     protected $definitionClass;
 
@@ -42,15 +42,11 @@ class DefinitionResource implements ResourceInterface, SelfCheckingResourceInter
         $this->definitionClass = $definitionClass;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function isFresh($timestamp)
     {
         try {
             $reflectionClass = new \ReflectionClass($this->definitionClass);
-        }
-        catch (\ReflectionException $e) {
+        } catch (\ReflectionException $e) {
             return false;
         }
 
@@ -62,9 +58,6 @@ class DefinitionResource implements ResourceInterface, SelfCheckingResourceInter
         return false;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function __toString()
     {
         return call_user_func([$this->definitionClass, 'getAlias']);

@@ -28,7 +28,6 @@
 namespace whatwedo\CrudBundle\Form\Type;
 
 use Symfony\Bridge\Doctrine\Form\ChoiceList\DoctrineChoiceLoader;
-use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -42,7 +41,6 @@ use whatwedo\CrudBundle\Form\ChoiceLoader\AjaxDoctrineChoiceLoader;
 
 /**
  * Class EntityAjaxType
- * @package whatwedo\CrudBundle\Form
  */
 class EntityAjaxType extends AbstractType
 {
@@ -63,14 +61,12 @@ class EntityAjaxType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventListener
-        (
+        $builder->addEventListener(
             FormEvents::POST_SET_DATA,
             [$options['choice_loader'], 'onFormPostSetData']
         );
 
-        $builder->addEventListener
-        (
+        $builder->addEventListener(
             FormEvents::POST_SUBMIT,
             [$options['choice_loader'], 'onFormPostSetData']
         );
@@ -85,7 +81,7 @@ class EntityAjaxType extends AbstractType
         });
 
         $resolver->setDefault('definition', null);
-        $resolver->setDefault('class', function(Options $options, ?string $className) {
+        $resolver->setDefault('class', function (Options $options, ?string $className) {
             return $className ?: $options['definition']::getEntity();
         });
     }
@@ -94,6 +90,4 @@ class EntityAjaxType extends AbstractType
     {
         return EntityType::class;
     }
-
-
 }
