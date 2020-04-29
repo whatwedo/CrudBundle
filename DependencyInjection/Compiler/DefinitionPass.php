@@ -87,7 +87,7 @@ class DefinitionPass implements CompilerPassInterface
             }
 
             // create a resource so that the cache is loaded new as soon as a definition is updated
-            $container->addResource(new DefinitionResource($id));
+            $container->addResource(new DefinitionResource($container->getDefinition($id)->getClass()));
         }
     }
 }
