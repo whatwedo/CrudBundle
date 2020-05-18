@@ -331,16 +331,16 @@ abstract class AbstractDefinition implements DefinitionInterface
 
     public function getCreateRedirect(RouterInterface $router, $entity = null): Response
     {
-        return $this->redirectToRoute($this->getDefinition()::getRouteName(RouteEnum::SHOW), [
+        return new RedirectResponse($router->generate(static::getRouteName(RouteEnum::SHOW), [
             'id' => $entity->getId(),
-        ]);
+        ]));
     }
 
     public function getEditRedirect(RouterInterface $router, $entity = null): Response
     {
-        return $this->redirectToRoute($this->getDefinition()::getRouteName(RouteEnum::SHOW), [
+        return  new RedirectResponse($router->generate(static::getRouteName(RouteEnum::SHOW), [
             'id' => $entity->getId(),
-        ]);
+        ]));
     }
 
     /**
