@@ -92,7 +92,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      * @var DefinitionManager
      */
     protected $definitionManager;
-    
+
     /**
      * @var TableFactory
      */
@@ -527,13 +527,13 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     public function dispatchEvent($event, $entity)
     {
         $this->eventDispatcher->dispatch(
-            $event,
-            new CrudEvent($entity)
+            new CrudEvent($entity),
+            $event
         );
 
         $this->eventDispatcher->dispatch(
-            $event . '.' . $this->getDefinition()::getAlias(),
-            new CrudEvent($entity)
+            new CrudEvent($entity),
+            $event . '.' . $this->getDefinition()::getAlias()
         );
     }
 

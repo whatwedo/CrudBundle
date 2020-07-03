@@ -14,7 +14,7 @@
 {% macro blockHeader(title, options) %}
     <div class="box-header">
         <h3 class="box-title">
-            {{ title }}
+            {{ title | trans }}
         </h3>
         {% if options.collapsible|default(false) %}
         <div class="box-tools">

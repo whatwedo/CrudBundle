@@ -72,7 +72,7 @@ class RelationController extends AbstractController
             $resultRequestEvent->setQueryBuilder($definition->getQueryBuilder());
         }
 
-        $this->eventDispatcher->dispatch(ResultRequestEvent::RELATION_SET, $resultRequestEvent);
+        $this->eventDispatcher->dispatch($resultRequestEvent, ResultRequestEvent::RELATION_SET);
         return $resultRequestEvent->getResult();
     }
 

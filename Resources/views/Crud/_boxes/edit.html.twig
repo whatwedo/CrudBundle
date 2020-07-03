@@ -74,7 +74,7 @@
                                                 {% if attribute(form, content.acronym).vars.errors|length %}
                                                     <i class="fa fa-times-circle-o"></i>
                                                 {% endif %}
-                                                {{ content.label }}:
+                                                {{ content.label | trans }}:
                                                 {% for attrname, attrvalue in attribute(form, content.acronym).vars.attr %}
                                                     {% if attrname == 'help' %}
                                                         &nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="{{ attrvalue }}"></i>
@@ -93,7 +93,7 @@
                                 {% elseif content.isTable|default(false) %}
                                     <div class="row">
                                         <div class="col-lg-12">
-                                            <strong>{{ content.label }}:</strong>
+                                            <strong>{{ content.label | trans}}:</strong>
                                         </div>
                                     </div>
                                     <div class="row">

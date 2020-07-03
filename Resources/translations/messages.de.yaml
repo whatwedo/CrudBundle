@@ -4,3 +4,4 @@ whatwedo_crud:
     edit: Bearbeiten
     delete: Löschen
     view: Ansehen
+    show_all: Alle ansehen

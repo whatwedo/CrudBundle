@@ -49,7 +49,7 @@
                                     {% if content.label is not empty %}
                                         <div class="row">
                                             <div class="col-lg-12">
-                                                <strong>{{ content.label }}:</strong>
+                                                <strong>{{ content.label | trans }}:</strong>
                                             </div>
                                         </div>
                                     {% endif %}
@@ -65,14 +65,14 @@
                                                 {% if content.indexRoute %}
                                                     <a href="{{ path(content.indexRoute, content.createRouteParameters(data)) }}" class="btn btn-primary btn-xs">
                                                         <i class="fa fa-list"></i>
-                                                        Alle ansehen
+                                                        {{ 'whatwedo_crud.show_all' | trans }}
                                                     </a>
                                                 {% endif %}
                                                 {% block add_button %}
                                                     {% if content.createRoute and content.isAddAllowed|default %}
                                                         <a href="{{ path(content.createRoute, content.createRouteParameters(data)) }}" class="btn btn-success btn-xs">
                                                             <i class="fa fa-plus"></i>
-                                                            Hinzufügen
+                                                            {{ 'whatwedo_crud.add' | trans }}
                                                         </a>
                                                     {% endif %}
                                                 {% endblock %}
@@ -87,22 +87,22 @@
                                     {% if value is iterable %}
                                         {% for key, v in value %}
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-xs-4">
                                                     <strong>{{ key }}:</strong>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-xs-8">
                                                     {{ helper.linkIt(v, content)|raw }}
                                                 </div>
                                             </div>
                                         {% endfor %}
                                     {% else %}
                                         <div class="row">
-                                            <div class="col-lg-4">
-                                                <strong>{{ content.label }}{% if content.label is not empty %}:{% endif %}
+                                            <div class="col-xs-4">
+                                                <strong>{{ content.label | trans }}{% if content.label is not empty %}:{% endif %}
                                                     {% if content.help is not empty %}&nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="{{ content.help }}"></i>{% endif %}
                                                 </strong>
                                             </div>
-                                            <div class="col-lg-8">
+                                            <div class="col-xs-8">
                                                 {{ helper.linkIt(value, content)|raw }}
                                             </div>
                                         </div>
