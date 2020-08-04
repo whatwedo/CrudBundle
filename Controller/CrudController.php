@@ -487,9 +487,9 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         }
 
         // this is normally the main table of the page, so we're fixing the header
-        $table->setOption('table_attr', [
+        $table->setOption('table_attr', array_merge($table->getOption('table_attr'), [
             'data-fixed-header' => true,
-        ]);
+        ]));
 
         $table->addColumn('actions', ActionColumn::class, [
             'items' => [$this, 'getActionColumnItems'],
