@@ -34,9 +34,6 @@ use Symfony\Component\HttpFoundation\Request;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\TableBundle\Event\ResultRequestEvent;
 
-/**
- * Class RelationController
- */
 class RelationController extends AbstractController
 {
     protected $eventDispatcher;

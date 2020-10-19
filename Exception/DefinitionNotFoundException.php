@@ -27,9 +27,6 @@
 
 namespace whatwedo\CrudBundle\Exception;
 
-/**
- * Class DefinitionNotFoundException
- */
 class DefinitionNotFoundException extends \Exception
 {
 }

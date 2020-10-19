@@ -32,6 +32,7 @@ use function array_reduce;
 use function array_reverse;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Doctrine\Persistence\ManagerRegistry;
 use function implode;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -49,9 +50,6 @@ use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\TableBundle\Factory\TableFactory;
 use whatwedo\TableBundle\Table\ActionColumn;
 
-/**
- * Class RelationContent
- */
 class RelationContent extends TableContent implements EditableContentInterface
 {
     protected $tableFactory;
@@ -64,23 +62,17 @@ class RelationContent extends TableContent implements EditableContentInterface
 
     protected $requestStack;
 
-    /**
-     * @var \Doctrine\Persistence\ManagerRegistry
-     */
     protected $doctrine;
 
     protected $accessorPathDefinitionCacheMap = [];
 
-    /**
-     * RelationContent constructor.
-     */
     public function __construct(
         TableFactory $tableFactory,
         EventDispatcherInterface $eventDispatcher,
         AuthorizationCheckerInterface $authorizationChecker,
         DefinitionManager $definitionManager,
         RequestStack $requestStack,
-        \Doctrine\Persistence\ManagerRegistry $doctrine
+        ManagerRegistry $doctrine
     ) {
         $this->tableFactory = $tableFactory;
         $this->eventDispatcher = $eventDispatcher;

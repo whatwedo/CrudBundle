@@ -29,9 +29,6 @@ namespace whatwedo\CrudBundle\Manager;
 
 use whatwedo\CrudBundle\Content\ContentInterface;
 
-/**
- * Class ContentManager
- */
 class ContentManager
 {
     protected $contents = [];

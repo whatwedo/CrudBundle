@@ -33,9 +33,6 @@ use whatwedo\CoreBundle\Formatter\DefaultFormatter;
 use whatwedo\CoreBundle\Manager\FormatterManager;
 use whatwedo\CrudBundle\Form\Type\EntityHiddenType;
 
-/**
- * Class Content
- */
 class Content extends AbstractContent implements EditableContentInterface
 {
     /**

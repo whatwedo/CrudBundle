@@ -33,9 +33,6 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CoreBundle\Enum\AbstractSimpleEnum;
 
-/**
- * Class SimpleEnumType
- */
 class SimpleEnumType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver)

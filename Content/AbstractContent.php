@@ -153,7 +153,6 @@ abstract class AbstractContent implements ContentInterface
             return $propertyAccessor->getValue($row, $this->options['accessor_path']);
         } catch (UnexpectedTypeException $e) {
             return null;
-            // return $e->getMessage();
         } catch (NoSuchPropertyException $e) {
             return $e->getMessage();
         }

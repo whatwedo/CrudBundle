@@ -57,8 +57,7 @@ class DefinitionPass implements CompilerPassInterface
                     ExtensionInterface::class,
                     $crudExtension->getClass()
                 ));
-                continue;
-            }
+                }
 
             // remove extensions from container if their requirements (other bundles) are not fulfilled
             if (!call_user_func([$crudExtension->getClass(), 'isEnabled'], [$container->getParameter('kernel.bundles')])) {

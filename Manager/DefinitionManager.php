@@ -42,7 +42,7 @@ class DefinitionManager
      */
     public function addDefinition(DefinitionInterface $definition, $alias = null)
     {
-        if ($alias == null) {
+        if ($alias === null) {
             $alias = $definition::getAlias();
         }
 

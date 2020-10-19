@@ -30,9 +30,6 @@ namespace whatwedo\CrudBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\HttpFoundation\Request;
 
-/**
- * Class EntityPreselectType
- */
 abstract class EntityPreselectType extends AbstractType
 {
     /**

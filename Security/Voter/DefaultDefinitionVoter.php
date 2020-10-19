@@ -33,9 +33,6 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 
-/**
- * Class DefaultDefinitionVoter
- */
 class DefaultDefinitionVoter implements VoterInterface
 {
     /**
@@ -48,9 +45,6 @@ class DefaultDefinitionVoter implements VoterInterface
      */
     protected $voters = [];
 
-    /**
-     * DefaultDefinitionVoter constructor.
-     */
     public function __construct(DefinitionManager $definitionManager)
     {
         $this->definitionManager = $definitionManager;

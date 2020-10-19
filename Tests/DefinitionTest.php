@@ -37,17 +37,18 @@ use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\TableBundle\Table\SortableColumnInterface;
 
-/**
- * Class DefinitionTest
- */
 class DefinitionTest extends WebTestCase
 {
-    /** @var string[][] */
+    /**
+     * @var string[][]
+     */
     const EXCLUDE_DEFINITIONS = [];
 
     //todo: find another way to do this
 
-    /** @var string[] */
+    /**
+     * @var string[]
+     */
     const SKIP_ORDERING_TESTS = [];
 
     /**

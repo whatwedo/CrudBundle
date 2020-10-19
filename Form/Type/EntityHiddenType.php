@@ -34,9 +34,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CrudBundle\Form\DataTransformer\EntityToIdTransformer;
 
-/**
- * Class EntityHiddenType
- */
 class EntityHiddenType extends AbstractType
 {
     protected $em;

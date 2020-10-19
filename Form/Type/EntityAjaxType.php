@@ -39,9 +39,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CrudBundle\Form\ChoiceLoader\AjaxDoctrineChoiceLoader;
 
-/**
- * Class EntityAjaxType
- */
 class EntityAjaxType extends AbstractType
 {
     private $router;

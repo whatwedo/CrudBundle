@@ -32,9 +32,6 @@ use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Exception\DefinitionNotFoundException;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 
-/**
- * Class AbstractDefinitionVoter
- */
 abstract class AbstractDefinitionVoter extends Voter
 {
     /**
@@ -42,9 +39,6 @@ abstract class AbstractDefinitionVoter extends Voter
      */
     protected $definitionManager;
 
-    /**
-     * AbstractDefinitionVoter constructor.
-     */
     public function __construct(DefinitionManager $definitionManager)
     {
         $this->definitionManager = $definitionManager;

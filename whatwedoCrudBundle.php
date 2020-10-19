@@ -9,9 +9,6 @@ use whatwedo\CrudBundle\DependencyInjection\Compiler\ContentPass;
 use whatwedo\CrudBundle\DependencyInjection\Compiler\DefaultVoterPass;
 use whatwedo\CrudBundle\DependencyInjection\Compiler\DefinitionPass;
 
-/**
- * Class whatwedoCrudBundle
- */
 class whatwedoCrudBundle extends Bundle
 {
     public function build(ContainerBuilder $container)

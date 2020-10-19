@@ -33,9 +33,6 @@ use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\TableBundle\Table\ActionColumn;
 use whatwedo\TableBundle\Table\Table;
 
-/**
- * Class TableContent
- */
 class TableContent extends AbstractContent
 {
     public function isTable()
