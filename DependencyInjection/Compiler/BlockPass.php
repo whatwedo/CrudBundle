@@ -26,21 +26,15 @@
  */
 
 namespace whatwedo\CrudBundle\DependencyInjection\Compiler;
+
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
-use whatwedo\CrudBundle\Extension\ExtensionInterface;
 
-/**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
- */
 class BlockPass implements CompilerPassInterface
 {
-
     /**
      * this will initialize all Definitions
-     *
-     * @param ContainerBuilder $container
      */
     public function process(ContainerBuilder $container)
     {
@@ -52,8 +46,8 @@ class BlockPass implements CompilerPassInterface
 
         $taggedServices = $container->findTaggedServiceIds('crud.block');
 
-        foreach ($taggedServices as $id => $tags) {
-            $definition->addMethodCall('addBlock', array(new Reference($id)));
+        foreach (array_keys($taggedServices) as $id) {
+            $definition->addMethodCall('addBlock', [new Reference($id)]);
         }
     }
 }

@@ -25,14 +25,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 namespace whatwedo\CrudBundle\Content;
+
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-
-/**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
- */
 interface ContentInterface
 {
     /**

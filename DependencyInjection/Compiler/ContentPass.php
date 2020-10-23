@@ -26,21 +26,15 @@
  */
 
 namespace whatwedo\CrudBundle\DependencyInjection\Compiler;
+
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
-use whatwedo\CrudBundle\Extension\ExtensionInterface;
 
-/**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
- */
 class ContentPass implements CompilerPassInterface
 {
-
     /**
      * this will initialize all Definitions
-     *
-     * @param ContainerBuilder $container
      */
     public function process(ContainerBuilder $container)
     {
@@ -51,8 +45,8 @@ class ContentPass implements CompilerPassInterface
         $definition = $container->findDefinition('whatwedo\CrudBundle\Manager\ContentManager');
 
         $taggedServices = $container->findTaggedServiceIds('crud.content');
-        foreach ($taggedServices as $id => $tags) {
-            $definition->addMethodCall('addContent', array(new Reference($id)));
+        foreach (array_keys($taggedServices) as $id) {
+            $definition->addMethodCall('addContent', [new Reference($id)]);
         }
     }
 }

@@ -29,16 +29,10 @@ namespace whatwedo\CrudBundle\Manager;
 
 use whatwedo\CrudBundle\Block\Block;
 
-/**
- * Class BlockManager
- */
 class BlockManager
 {
     protected $blocks = [];
 
-    /**
-     * @param Block $block
-     */
     public function addBlock(Block $block)
     {
         $this->blocks[get_class($block)] = $block;

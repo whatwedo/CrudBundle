@@ -26,27 +26,25 @@
  */
 
 namespace whatwedo\CrudBundle\Manager;
-use Doctrine\Common\Util\ClassUtils;
+
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Exception\ElementNotFoundException;
 
-/**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
- */
 class DefinitionManager
 {
     /**
-     * @var array|DefinitionInterface[]
+     * @var DefinitionInterface[]
      */
     protected $definitions = [];
 
     /**
      * @param $alias
-     * @param DefinitionInterface $definition
      */
     public function addDefinition(DefinitionInterface $definition, $alias = null)
     {
-        if($alias == null) $alias = $definition::getAlias();
+        if ($alias === null) {
+            $alias = $definition::getAlias();
+        }
 
         $this->definitions[$alias] = $definition;
     }
@@ -74,21 +72,22 @@ class DefinitionManager
                 return $definition;
             }
         }
-        if(!$allowInheritance) return $this->getDefinitionFromEntityClass($entityclass, true);
+        if (!$allowInheritance) {
+            return $this->getDefinitionFromEntityClass($entityclass, true);
+        }
         return null;
     }
 
     /**
      * @param $entity
-     * @return null|DefinitionInterface
+     * @return DefinitionInterface|null
      */
     public function getDefinitionFor($entity)
     {
         if (!is_object($entity)) {
             return null;
         }
-        foreach ($this->definitions as $definition)
-        {
+        foreach ($this->definitions as $definition) {
             if ($definition::supports($entity)) {
                 return $definition;
             }
@@ -96,14 +95,10 @@ class DefinitionManager
         return null;
     }
 
-    /**
-     * @param string $class
-     * @return null|DefinitionInterface
-     */
-    public function getDefinitionFromClass($class)
+    public function getDefinitionFromClass(string $class): ? DefinitionInterface
     {
         foreach ($this->definitions as $definition) {
-            if (get_class($definition) == $class) {
+            if (get_class($definition) === $class) {
                 return $definition;
             }
         }
@@ -111,7 +106,7 @@ class DefinitionManager
     }
 
     /**
-     * @return array|DefinitionInterface[]
+     * @return DefinitionInterface[]
      */
     public function getDefinitions()
     {

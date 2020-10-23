@@ -53,7 +53,7 @@ class TwigContent extends AbstractContent
 
         $resolver->setDefaults([
             'template' => null,
-            'parameters' => []
+            'parameters' => [],
         ]);
 
         $resolver->setAllowedTypes('template', 'string');
@@ -79,5 +79,4 @@ class TwigContent extends AbstractContent
     {
         return '';
     }
-
 }

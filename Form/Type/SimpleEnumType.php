@@ -33,10 +33,6 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CoreBundle\Enum\AbstractSimpleEnum;
 
-/**
- * Class SimpleEnumType
- * @package whatwedo\CrudBundle\Form
- */
 class SimpleEnumType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver)
@@ -45,15 +41,16 @@ class SimpleEnumType extends AbstractType
             /** @var AbstractSimpleEnum|string $enumClass */
             $enumClass = $options['class'];
 
-            if(!is_subclass_of($enumClass, AbstractSimpleEnum::class))
-            {
+            if (!is_subclass_of($enumClass, AbstractSimpleEnum::class)) {
                 throw new \InvalidArgumentException(sprintf('Option \'class\' needs to be subclass of %s', AbstractSimpleEnum::class));
             }
 
-            if(!$options['choice_values']) return $enumClass::getFormValues();
+            if (!$options['choice_values']) {
+                return $enumClass::getFormValues();
+            }
 
             $choices = [];
-            foreach($options['choice_values'] as $choiceValue) {
+            foreach ($options['choice_values'] as $choiceValue) {
                 $choices[$enumClass::getRepresentation($choiceValue)] = $choiceValue;
             }
 
@@ -70,6 +67,4 @@ class SimpleEnumType extends AbstractType
     {
         return ChoiceType::class;
     }
-
-
 }

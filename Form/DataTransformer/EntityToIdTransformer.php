@@ -27,7 +27,6 @@
 
 namespace whatwedo\CrudBundle\Form\DataTransformer;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
@@ -62,7 +61,7 @@ class EntityToIdTransformer implements DataTransformerInterface
 
     /**
      * @param $id
-     * @return null|object
+     * @return object|null
      */
     public function reverseTransform($id)
     {

@@ -25,23 +25,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 namespace whatwedo\CrudBundle\View;
+
 use Symfony\Component\Form\FormInterface;
 use whatwedo\CrudBundle\Block\Block;
 use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 
-
-/**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
- */
 interface DefinitionViewInterface
 {
     /**
      * sets the definition
-     *
-     * @param DefinitionInterface $definition
      */
     public function setDefinition(DefinitionInterface $definition);
 
@@ -53,14 +47,12 @@ interface DefinitionViewInterface
     public function setData($data);
 
     /**
-     * @return object $data
+     * @return object
      */
     public function getData();
 
     /**
      * sets the blocks from the builder
-     *
-     * @param BlockCollection $blocks
      */
     public function setBlocks(BlockCollection $blocks);
 
@@ -71,21 +63,21 @@ interface DefinitionViewInterface
 
     /**
      * renders show state
-     * @param $additionalParameters array
+     * @param array $additionalParameters
      * @return string
      */
     public function renderShow($additionalParameters = []);
 
     /**
      * renders edit state
-     * @param $additionalParameters array
+     * @param array $additionalParameters
      * @return string
      */
     public function renderEdit($additionalParameters = []);
 
     /**
      * renders create state
-     * @param $additionalParameters array
+     * @param array $additionalParameters
      * @return string
      */
     public function renderCreate($additionalParameters = []);
@@ -106,23 +98,18 @@ interface DefinitionViewInterface
 
     /**
      * sets the boxes templates
-     *
-     * @param array $templates
      */
     public function setTemplates(array $templates);
 
     /**
      * sets the parameters for additional box parameters
-     *
-     * @param array $templateParameters
      */
     public function setTemplateParameters(array $templateParameters);
 
     /**
      * @param string $class
      * @param string $property
-     * @return null|\Symfony\Component\Form\Guess\Guess|\Symfony\Component\Form\Guess\TypeGuess
+     * @return \Symfony\Component\Form\Guess\Guess|\Symfony\Component\Form\Guess\TypeGuess|null
      */
     public function guessType($class, $property);
-
 }

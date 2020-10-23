@@ -26,12 +26,9 @@
  */
 
 namespace whatwedo\CrudBundle\Collection;
+
 use whatwedo\CoreBundle\Collection\ArrayCollection;
 
-/**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
- */
 class BlockCollection extends ArrayCollection
 {
-
 }

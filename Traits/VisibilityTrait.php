@@ -31,11 +31,9 @@ use whatwedo\CrudBundle\Enum\VisibilityEnum;
 
 /**
  * Trait VisibilityTrait
- * @package whatwedo\CrudBundle\Traits
  */
 trait VisibilityTrait
 {
-
     /**
      * @return int
      */

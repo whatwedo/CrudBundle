@@ -27,7 +27,6 @@
 
 namespace whatwedo\CrudBundle\Form\Type;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -35,10 +34,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CrudBundle\Form\DataTransformer\EntityToIdTransformer;
 
-/**
- * Class EntityHiddenType
- * @package whatwedo\CrudBundle\Form
- */
 class EntityHiddenType extends AbstractType
 {
     protected $em;
@@ -48,19 +43,12 @@ class EntityHiddenType extends AbstractType
         $this->em = $em;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $transformer = new EntityToIdTransformer($this->em, $options['class']);
         $builder->addModelTransformer($transformer);
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired(['class'])

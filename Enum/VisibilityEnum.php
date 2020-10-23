@@ -29,18 +29,14 @@ namespace whatwedo\CrudBundle\Enum;
 
 use whatwedo\CoreBundle\Enum\AbstractSimpleEnum;
 
-/**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
- */
 class VisibilityEnum extends AbstractSimpleEnum
 {
     const SHOW      = 1;
+
     const CREATE    = 2;
+
     const EDIT      = 4;
 
-    /**
-     * @inheritdoc
-     */
     protected static $values = [
         self::SHOW      => 'Detail',
         self::CREATE    => 'Erstellen',

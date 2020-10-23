@@ -29,16 +29,10 @@ namespace whatwedo\CrudBundle\Manager;
 
 use whatwedo\CrudBundle\Content\ContentInterface;
 
-/**
- * Class ContentManager
- */
 class ContentManager
 {
     protected $contents = [];
 
-    /**
-     * @param ContentInterface $content
-     */
     public function addContent(ContentInterface $content)
     {
         $this->contents[get_class($content)] = $content;
@@ -51,6 +45,6 @@ class ContentManager
      */
     public function getContent($class)
     {
-        return isset($this->contents[$class]) ? clone $this->contents[$class] : new $class;
+        return isset($this->contents[$class]) ? clone $this->contents[$class] : new $class();
     }
 }

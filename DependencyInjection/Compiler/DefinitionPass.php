@@ -26,21 +26,17 @@
  */
 
 namespace whatwedo\CrudBundle\DependencyInjection\Compiler;
+
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
 use whatwedo\CrudBundle\Resource\DefinitionResource;
 
-/**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
- */
 class DefinitionPass implements CompilerPassInterface
 {
     /**
      * this will initialize all Definitions
-     *
-     * @param ContainerBuilder $container
      */
     public function process(ContainerBuilder $container)
     {
@@ -51,7 +47,7 @@ class DefinitionPass implements CompilerPassInterface
         /*
          * Load Definition Extensions
          */
-        foreach ($container->findTaggedServiceIds('crud.extension') as $id => $tags) {
+        foreach (array_keys($container->findTaggedServiceIds('crud.extension')) as $id) {
             $crudExtension = $container->getDefinition($id);
 
             // all extensions must implement ExtensionInExtensionInterfaceterface
@@ -61,8 +57,7 @@ class DefinitionPass implements CompilerPassInterface
                     ExtensionInterface::class,
                     $crudExtension->getClass()
                 ));
-                continue;
-            }
+                }
 
             // remove extensions from container if their requirements (other bundles) are not fulfilled
             if (!call_user_func([$crudExtension->getClass(), 'isEnabled'], [$container->getParameter('kernel.bundles')])) {
@@ -78,14 +73,14 @@ class DefinitionPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds('crud.definition') as $id => $tags) {
             $crudDefinition = $container->getDefinition($id);
 
-            if($crudDefinition->isAbstract()) {
+            if ($crudDefinition->isAbstract()) {
                 continue;
             }
 
             $crudDefinition->addMethodCall('setTemplates', [$container->getParameter('whatwedo_crud.config.templates')]);
 
             // add available extensions to all Definitions
-            foreach ($container->findTaggedServiceIds('crud.extension') as $idExtension => $tagsExtension) {
+            foreach (array_keys($container->findTaggedServiceIds('crud.extension')) as $idExtension) {
                 $crudDefinition->addMethodCall('addExtension', [new Reference($idExtension)]);
             }
 
@@ -93,7 +88,7 @@ class DefinitionPass implements CompilerPassInterface
 
             // add all Defintions to our DefinitionManager
             foreach ($tags as $attributes) {
-                if(array_key_exists('alias', $attributes)) {
+                if (array_key_exists('alias', $attributes)) {
                     $crudManager->addMethodCall('addDefinition', [$attributes['alias'], new Reference($id)]);
                 }
             }

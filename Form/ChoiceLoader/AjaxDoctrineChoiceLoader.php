@@ -1,8 +1,6 @@
 <?php
 
-
 namespace whatwedo\CrudBundle\Form\ChoiceLoader;
-
 
 use Doctrine\Common\Collections\Collection;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\DoctrineChoiceLoader;
@@ -22,9 +20,6 @@ class AjaxDoctrineChoiceLoader implements ChoiceLoaderInterface
      */
     private $doctrineChoiceLoader;
 
-    /**
-     * @param DoctrineChoiceLoader $doctrineChoiceLoader
-     */
     public function __construct(DoctrineChoiceLoader $doctrineChoiceLoader)
     {
         $this->doctrineChoiceLoader = $doctrineChoiceLoader;

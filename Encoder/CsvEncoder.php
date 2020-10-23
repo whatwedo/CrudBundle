@@ -33,10 +33,12 @@ use Symfony\Component\Serializer\Encoder\CsvEncoder as BaseCsvEncoder;
 
 class CsvEncoder extends BaseCsvEncoder
 {
-
     private $delimiter;
+
     private $enclosure;
+
     private $escapeChar;
+
     private $keySeparator;
 
     private $headers;
@@ -49,30 +51,34 @@ class CsvEncoder extends BaseCsvEncoder
      */
     public function __construct($delimiter = ',', $enclosure = '"', $escapeChar = '\\', $keySeparator = '.')
     {
-        parent::__construct($delimiter, $enclosure, $escapeChar, $keySeparator);
+        parent::__construct(
+            [
+                self::DELIMITER_KEY => $delimiter,
+                self::ENCLOSURE_KEY => $enclosure,
+                self::ESCAPE_CHAR_KEY => $escapeChar,
+                self::KEY_SEPARATOR_KEY => $keySeparator,
+            ]
+        );
         $this->delimiter = $delimiter;
         $this->enclosure = $enclosure;
         $this->escapeChar = $escapeChar;
         $this->keySeparator = $keySeparator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function encode($data, $format, array $context = array())
+    public function encode($data, $format, array $context = [])
     {
         $handle = fopen('php://temp,', 'w+');
 
         if (!is_array($data)) {
-            $data = array(array($data));
+            $data = [[$data]];
         } elseif (empty($data)) {
-            $data = array(array());
+            $data = [[]];
         } else {
             // Sequential arrays of arrays are considered as collections
             $i = 0;
             foreach ($data as $key => $value) {
                 if ($i !== $key || !is_array($value)) {
-                    $data = array($data);
+                    $data = [$data];
                     break;
                 }
 
@@ -82,7 +88,7 @@ class CsvEncoder extends BaseCsvEncoder
 
         $headers = null;
         foreach ($data as $value) {
-            $result = array();
+            $result = [];
             $this->flatten($value, $result);
 
             if (null === $headers) {
@@ -101,11 +107,19 @@ class CsvEncoder extends BaseCsvEncoder
 
         return $value;
     }
+
+    /**
+     * @return $this
+     */
+    public function setHeaderTransformation(array $headers)
+    {
+        $this->headers = $headers;
+        return $this;
+    }
+
     /**
      * Flattens an array and generates keys including the path.
      *
-     * @param array  $array
-     * @param array  $result
      * @param string $parentKey
      */
     private function flatten(array $array, array &$result, $parentKey = '')
@@ -122,15 +136,4 @@ class CsvEncoder extends BaseCsvEncoder
             }
         }
     }
-
-    /**
-     * @param array $headers
-     * @return $this
-     */
-    public function setHeaderTransformation(array $headers)
-    {
-        $this->headers = $headers;
-        return $this;
-    }
-
 }
