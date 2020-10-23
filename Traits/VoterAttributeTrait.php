@@ -1,8 +1,6 @@
 <?php
 
-
 namespace whatwedo\CrudBundle\Traits;
-
 
 trait VoterAttributeTrait
 {

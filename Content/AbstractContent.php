@@ -37,12 +37,10 @@ use whatwedo\CrudBundle\Enum\VisibilityEnum;
 use whatwedo\CrudBundle\Traits\VisibilityTrait;
 use whatwedo\CrudBundle\Traits\VoterAttributeTrait;
 
-/**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
- */
 abstract class AbstractContent implements ContentInterface
 {
-    use VisibilityTrait, VoterAttributeTrait;
+    use VisibilityTrait;
+    use VoterAttributeTrait;
 
     /**
      * @var string block acronym
@@ -111,9 +109,6 @@ abstract class AbstractContent implements ContentInterface
         $this->options = $resolver->resolve($options);
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -158,7 +153,6 @@ abstract class AbstractContent implements ContentInterface
             return $propertyAccessor->getValue($row, $this->options['accessor_path']);
         } catch (UnexpectedTypeException $e) {
             return null;
-            // return $e->getMessage();
         } catch (NoSuchPropertyException $e) {
             return $e->getMessage();
         }

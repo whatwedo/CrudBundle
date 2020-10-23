@@ -27,11 +27,13 @@
 
 namespace whatwedo\CrudBundle\Content;
 
+use function array_keys;
+use function array_reduce;
+use function array_reverse;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
-use Psr\Container\ContainerInterface;
-use ReflectionClass;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Persistence\ManagerRegistry;
+use function implode;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,32 +49,31 @@ use whatwedo\CrudBundle\Form\Type\EntityHiddenType;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\TableBundle\Factory\TableFactory;
 use whatwedo\TableBundle\Table\ActionColumn;
-use function array_keys;
-use function array_reduce;
-use function array_reverse;
-use function implode;
 
-/**
- * Class RelationContent
- * @package whatwedo\CrudBundle\Content
- */
 class RelationContent extends TableContent implements EditableContentInterface
 {
     protected $tableFactory;
+
     protected $eventDispatcher;
+
     protected $authorizationChecker;
+
     protected $definitionManager;
+
     protected $requestStack;
+
     protected $doctrine;
 
     protected $accessorPathDefinitionCacheMap = [];
 
-    /**
-     * RelationContent constructor.
-     * @param ContainerInterface $container
-     */
-    public function __construct(TableFactory $tableFactory, EventDispatcherInterface $eventDispatcher, AuthorizationCheckerInterface $authorizationChecker, DefinitionManager $definitionManager, RequestStack $requestStack, RegistryInterface $doctrine)
-    {
+    public function __construct(
+        TableFactory $tableFactory,
+        EventDispatcherInterface $eventDispatcher,
+        AuthorizationCheckerInterface $authorizationChecker,
+        DefinitionManager $definitionManager,
+        RequestStack $requestStack,
+        ManagerRegistry $doctrine
+    ) {
         $this->tableFactory = $tableFactory;
         $this->eventDispatcher = $eventDispatcher;
         $this->authorizationChecker = $authorizationChecker;
@@ -109,10 +110,9 @@ class RelationContent extends TableContent implements EditableContentInterface
 
             $queryBuilder->leftJoin($rootAlias . '.' . $field, $newAlias);
 
-            if($value instanceof Collection) {
+            if ($value instanceof Collection) {
                 $queryBuilder->andWhere($newAlias . ' IN (:' . $newAlias.')');
-            }
-            else {
+            } else {
                 $queryBuilder->andWhere($newAlias . ' = :' . $newAlias);
             }
 
@@ -143,7 +143,7 @@ class RelationContent extends TableContent implements EditableContentInterface
             $showRoute = $this->getRoute(RouteEnum::SHOW);
 
             $table->setShowRoute($showRoute);
-            $actionColumnItems[] = [
+            $actionColumnItems[RouteEnum::SHOW] = [
                 'label' => 'Details',
                 'icon' => 'arrow-right',
                 'button' => 'primary',
@@ -154,7 +154,7 @@ class RelationContent extends TableContent implements EditableContentInterface
         }
 
         if ($this->hasCapability(RouteEnum::EDIT)) {
-            $actionColumnItems[] = [
+            $actionColumnItems[RouteEnum::EDIT] = [
                 'label' => 'Bearbeiten',
                 'icon' => 'pencil',
                 'button' => 'warning',
@@ -166,6 +166,10 @@ class RelationContent extends TableContent implements EditableContentInterface
 
         if ($this->hasCapability(RouteEnum::EXPORT)) {
             $table->setExportRoute($this->getRoute(RouteEnum::EXPORT));
+        }
+
+        if (is_callable($this->options['action_configuration'])) {
+            $actionColumnItems = $this->options['action_configuration']($actionColumnItems);
         }
 
         $table->addColumn('actions', ActionColumn::class, [
@@ -185,7 +189,7 @@ class RelationContent extends TableContent implements EditableContentInterface
     }
 
     /**
-     * @return null|string
+     * @return string|null
      */
     public function getIndexRoute()
     {
@@ -201,7 +205,7 @@ class RelationContent extends TableContent implements EditableContentInterface
     }
 
     /**
-     * @return null|string
+     * @return string|null
      */
     public function getCreateRoute()
     {
@@ -228,7 +232,7 @@ class RelationContent extends TableContent implements EditableContentInterface
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isAddAllowed()
     {
@@ -256,9 +260,6 @@ class RelationContent extends TableContent implements EditableContentInterface
         return $this->options['add_voter_attribute'];
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
@@ -270,9 +271,10 @@ class RelationContent extends TableContent implements EditableContentInterface
             'form_options' => [],
             'query_builder_configuration' => null,
             'table_configuration' => null,
+            'action_configuration' => null,
             'route_addition_key' => $this->definition::getAlias(),
             'show_index_button' => false,
-            'add_voter_attribute' => RouteEnum::EDIT
+            'add_voter_attribute' => RouteEnum::EDIT,
         ]);
 
         $resolver->setDefault('definition', function (Options $options) {
@@ -286,7 +288,45 @@ class RelationContent extends TableContent implements EditableContentInterface
         $resolver->setAllowedTypes('table_options', ['array']);
         $resolver->setAllowedTypes('form_options', ['array']);
         $resolver->setAllowedTypes('table_configuration', ['callable', 'null']);
+        $resolver->setAllowedTypes('action_configuration', ['callable', 'null']);
         $resolver->setAllowedTypes('query_builder_configuration', ['callable', 'null']);
+    }
+
+    /**
+     * @return Request
+     */
+    public function getRequest()
+    {
+        return $this->requestStack->getCurrentRequest();
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormType()
+    {
+        return $this->getOption('form_type');
+    }
+
+    /**
+     * @param array $options
+     * @return array
+     */
+    public function getFormOptions($options = [])
+    {
+        if (in_array($this->getFormType(), [EntityHiddenType::class, HiddenType::class])) {
+            $this->options['label'] = false;
+        }
+        return array_merge($options, ['label' => $this->getLabel(), 'multiple' => true, 'class' => $this->getOption('class')], $this->options['form_options']);
+    }
+
+    /**
+     * Definiton der Vorselektion
+     * @return string
+     */
+    public function getPreselectDefinition()
+    {
+        return $this->getOption('definition');
     }
 
     private function getReverseMapping($row)
@@ -319,7 +359,7 @@ class RelationContent extends TableContent implements EditableContentInterface
             $stack[$part] = [
                 '_mapping' => $mapping,
                 'field' => $mapping['mappedBy'] ?: $mapping['inversedBy'],
-                'path' => implode('.', array_keys($stack))
+                'path' => implode('.', array_keys($stack)),
             ];
         }
 
@@ -369,49 +409,12 @@ class RelationContent extends TableContent implements EditableContentInterface
     }
 
     /**
-     * @return Request
-     */
-    public function getRequest()
-    {
-        return $this->requestStack->getCurrentRequest();
-    }
-
-    /**
-     * @return \Doctrine\Common\Persistence\Mapping\ClassMetadataFactory|ClassMetadataFactory
+     * @return \Doctrine\Persistence\Mapping\ClassMetadataFactory|ClassMetadataFactory
      */
     private function getMetadataFactory()
     {
         return $this->doctrine
             ->getManager()
             ->getMetadataFactory();
-    }
-
-    /**
-     * @return string
-     */
-    public function getFormType()
-    {
-        return $this->getOption('form_type');
-    }
-
-    /**
-     * @param array $options
-     * @return array
-     */
-    public function getFormOptions($options = [])
-    {
-        if (in_array($this->getFormType(), [EntityHiddenType::class, HiddenType::class])) {
-            $this->options['label'] = false;
-        }
-        return array_merge($options, ['label' => $this->getLabel(), 'multiple' => true, 'class' => $this->getOption('class')], $this->options['form_options']);
-    }
-
-    /**
-     * Definiton der Vorselektion
-     * @return string
-     */
-    public function getPreselectDefinition()
-    {
-        return $this->getOption('definition');
     }
 }

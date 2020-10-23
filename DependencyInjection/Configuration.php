@@ -12,13 +12,10 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('whatwedo_crud');
+        $treeBuilder = new TreeBuilder('whatwedo_crud');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()
@@ -45,8 +42,7 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end() // end templates
-            ->end()
-        ;
+            ->end();
         return $treeBuilder;
     }
 }

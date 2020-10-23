@@ -27,9 +27,6 @@
 
 namespace whatwedo\CrudBundle\Content;
 
-/**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
- */
 interface EditableContentInterface
 {
     /**

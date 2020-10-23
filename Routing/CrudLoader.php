@@ -26,16 +26,13 @@
  */
 
 namespace whatwedo\CrudBundle\Routing;
+
 use Symfony\Component\Config\Loader\Loader;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
-use whatwedo\CoreBundle\Formatter\CollectionFormatter;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 
-/**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
- */
 class CrudLoader extends Loader
 {
     /**

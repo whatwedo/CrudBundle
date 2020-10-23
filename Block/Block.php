@@ -28,25 +28,22 @@
 namespace whatwedo\CrudBundle\Block;
 
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Guess\TypeGuess;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use whatwedo\CrudBundle\Content\Content;
+use whatwedo\CrudBundle\Content\ContentInterface;
 use whatwedo\CrudBundle\Content\RelationContent;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
+use whatwedo\CrudBundle\Enum\BlockSizeEnum;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Enum\VisibilityEnum;
 use whatwedo\CrudBundle\Manager\ContentManager;
-use whatwedo\CrudBundle\Content\Content;
-use whatwedo\CrudBundle\Content\ContentInterface;
-use whatwedo\CrudBundle\Enum\BlockSizeEnum;
 use whatwedo\CrudBundle\Traits\VisibilityTrait;
 use whatwedo\CrudBundle\Traits\VoterAttributeTrait;
 
-/**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
- */
 class Block
 {
-    use VisibilityTrait, VoterAttributeTrait;
+    use VisibilityTrait;
+    use VoterAttributeTrait;
 
     /**
      * @var string block acronym
@@ -151,35 +148,6 @@ class Block
         return $this;
     }
 
-    private function getType($acronym, $type = null, $options = [])
-    {
-        if (!is_null($type)) {
-            return $type;
-        }
-        $accessor = isset($options['accessor_path']) ? $options['accessor_path'] : $acronym;
-        $typeGuess = $this->definition->guessType($this->definition::getEntity(), $accessor);
-        $needRelationContent = [
-            EntityType::class
-        ];
-        if (!is_null($typeGuess)
-            && in_array($typeGuess->getType(), $needRelationContent)
-            && $typeGuess->getOptions()['multiple']
-            && $this->optionsCouldBeRelationContent($options)) {
-            return RelationContent::class;
-        } else {
-            return Content::class;
-        }
-    }
-
-    private function optionsCouldBeRelationContent($options = [])
-    {
-        $notAllowedOptions = [
-            'form_options', 'formatter', 'callable', 'form_type', 'help', 'preselect_definition', 'attr'
-        ];
-
-        return !array_intersect(array_keys($options), $notAllowedOptions);
-    }
-
     /**
      * @param string $acronym
      * @return $this
@@ -191,7 +159,7 @@ class Block
     }
 
     /**
-     * @return array|ContentInterface[]
+     * @return ContentInterface[]
      */
     public function getContents()
     {
@@ -206,9 +174,6 @@ class Block
         return isset($this->elements[$acronym]) ? $this->elements[$acronym] : null;
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -225,7 +190,6 @@ class Block
     }
 
     /**
-     * @param ContentManager $contentManager
      * @required
      */
     public function setContentManager(ContentManager $contentManager): void
@@ -233,11 +197,36 @@ class Block
         $this->contentManager = $contentManager;
     }
 
-    /**
-     * @param DefinitionInterface $definition
-     */
     public function setDefinition(DefinitionInterface $definition): void
     {
         $this->definition = $definition;
+    }
+
+    private function getType($acronym, $type = null, $options = [])
+    {
+        if (!is_null($type)) {
+            return $type;
+        }
+        $accessor = isset($options['accessor_path']) ? $options['accessor_path'] : $acronym;
+        $typeGuess = $this->definition->guessType($this->definition::getEntity(), $accessor);
+        $needRelationContent = [
+            EntityType::class,
+        ];
+        if (!is_null($typeGuess)
+            && in_array($typeGuess->getType(), $needRelationContent)
+            && $typeGuess->getOptions()['multiple']
+            && $this->optionsCouldBeRelationContent($options)) {
+            return RelationContent::class;
+        }
+        return Content::class;
+    }
+
+    private function optionsCouldBeRelationContent($options = [])
+    {
+        $notAllowedOptions = [
+            'form_options', 'formatter', 'callable', 'form_type', 'help', 'preselect_definition', 'attr',
+        ];
+
+        return !array_intersect(array_keys($options), $notAllowedOptions);
     }
 }

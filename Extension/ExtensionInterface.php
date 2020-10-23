@@ -27,7 +27,6 @@
 
 namespace whatwedo\CrudBundle\Extension;
 
-
 interface ExtensionInterface
 {
     /**

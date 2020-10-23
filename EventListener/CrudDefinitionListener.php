@@ -26,13 +26,10 @@
  */
 
 namespace whatwedo\CrudBundle\EventListener;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+
 use whatwedo\CrudBundle\Controller\CrudDefinitionController;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 
-/**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
- */
 class CrudDefinitionListener
 {
     protected $definitionManager;
@@ -42,7 +39,7 @@ class CrudDefinitionListener
         $this->definitionManager = $definitionManager;
     }
 
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelController(\Symfony\Component\HttpKernel\Event\ControllerEvent $event)
     {
         $controller = $event->getController();
 
@@ -51,7 +48,8 @@ class CrudDefinitionListener
         }
 
         if ($controller[0] instanceof CrudDefinitionController) {
-            if (($resource = $event->getRequest()->attributes->get('_resource'))) {
+            $resource = $event->getRequest()->attributes->get('_resource');
+            if ($resource) {
                 $controller[0]->configureDefinition($this->definitionManager->getDefinitionFromClass($resource) ?: $this->definitionManager->getDefinition($resource));
             }
         }

@@ -29,23 +29,24 @@ namespace whatwedo\CrudBundle\Enum;
 
 use whatwedo\CoreBundle\Enum\AbstractSimpleEnum;
 
-/**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
- */
 final class RouteEnum extends AbstractSimpleEnum
 {
     const INDEX     = 'index';
+
     const SHOW      = 'show';
+
     const CREATE    = 'create';
+
     const EDIT      = 'edit';
+
     const DELETE    = 'delete';
+
     const BATCH     = 'batch';
+
     const EXPORT    = 'export';
+
     const AJAX      = 'ajax';
 
-    /**
-     * @inheritdoc
-     */
     protected static $values = [
         self::INDEX     => 'Übersicht',
         self::SHOW      => 'Detail',

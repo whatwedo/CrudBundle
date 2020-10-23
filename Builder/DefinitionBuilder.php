@@ -28,18 +28,14 @@
 namespace whatwedo\CrudBundle\Builder;
 
 use whatwedo\CrudBundle\Block\Block;
-use whatwedo\CrudBundle\Definition\DefinitionInterface;
-use whatwedo\CrudBundle\Manager\BlockManager;
 use whatwedo\CrudBundle\Collection\BlockCollection;
+use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Exception\ElementNotFoundException;
+use whatwedo\CrudBundle\Manager\BlockManager;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 
-/**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
- */
 class DefinitionBuilder
 {
-
     /**
      * @var DefinitionManager
      */
@@ -56,7 +52,7 @@ class DefinitionBuilder
     protected $blocks = [];
 
     /**
-     * @var DefinitionInterface $definition
+     * @var DefinitionInterface
      */
     protected $definition;
 
@@ -82,8 +78,8 @@ class DefinitionBuilder
      * adds a new block to the definition
      *
      * @param string $acronym unique block acronym
+     * @param string|null $type block type (class name)
      * @param array  $options options
-     * @param string $type block type (class name)
      *
      * @return Block
      */
@@ -134,7 +130,7 @@ class DefinitionBuilder
 
     /**
      * @param string $template
-     * @return DefinitionBuilder $this
+     * @return self $this
      */
     public function setShowTemplate($template)
     {
@@ -144,7 +140,7 @@ class DefinitionBuilder
 
     /**
      * @param string $template
-     * @return DefinitionBuilder $this
+     * @return self $this
      */
     public function setEditTemplate($template)
     {
@@ -154,7 +150,7 @@ class DefinitionBuilder
 
     /**
      * @param string $template
-     * @return DefinitionBuilder $this
+     * @return self $this
      */
     public function setCreateTemplate($template)
     {
@@ -164,8 +160,7 @@ class DefinitionBuilder
 
     /**
      * @param string $name
-     * @param mixed $value
-     * @return DefinitionBuilder $this
+     * @return self $this
      */
     public function addTemplateParameter($name, $value)
     {
@@ -173,18 +168,11 @@ class DefinitionBuilder
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getTemplateParameters(): array
     {
         return $this->templateParameters;
     }
 
-
-    /**
-     * @return array
-     */
     public function getTemplates(): array
     {
         return $this->templates;

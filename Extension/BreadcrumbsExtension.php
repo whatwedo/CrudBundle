@@ -65,9 +65,6 @@ class BreadcrumbsExtension implements ExtensionInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function isEnabled($enabledBundles)
     {
         foreach ($enabledBundles as $bundles) {

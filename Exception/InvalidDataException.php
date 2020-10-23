@@ -27,7 +27,6 @@
 
 namespace whatwedo\CrudBundle\Exception;
 
-/**
- * @author Ueli Banholzer <ueli@whatwedo.ch>
- */
-class InvalidDataException extends \InvalidArgumentException { }
+class InvalidDataException extends \InvalidArgumentException
+{
+}
