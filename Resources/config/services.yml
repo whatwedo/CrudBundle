@@ -32,3 +32,11 @@ services:
             - '@white_october_breadcrumbs'
             - '%whatwedo_crud.config.breadcrumbs.home.text%'
             - '%whatwedo_crud.config.breadcrumbs.home.route%'
+
+    whatwedo\CrudBundle\Maker\MakeDefinition:
+        arguments:
+            - '@maker.doctrine_helper'
+            - '@maker.renderer.form_type_renderer'
+            - '%kernel.project_dir%'
+        tags:
+            - { name: maker.command }
