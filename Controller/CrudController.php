@@ -326,9 +326,6 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
         $objectNormalizer = new ObjectNormalizer($this->definition);
         $objectNormalizer->setCustomCallbacks($this->definition->getExportCallbacks());
-        $objectNormalizer->setCircularReferenceHandler(function ($obj) {
-            return $obj->__toString();
-        });
         $exportOptions = $this->definition->getExportOptions()['csv'];
         $csvEncoder = new CsvEncoder($exportOptions['delimiter'], $exportOptions['enclosure'], $exportOptions['escapeChar'], $exportOptions['keySeparator']);
         /** @var Serializer $serializer */
