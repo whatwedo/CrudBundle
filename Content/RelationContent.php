@@ -27,6 +27,7 @@
 
 namespace whatwedo\CrudBundle\Content;
 
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use function array_keys;
 use function array_reduce;
 use function array_reverse;
@@ -314,10 +315,26 @@ class RelationContent extends TableContent implements EditableContentInterface
      */
     public function getFormOptions($options = [])
     {
-        if (in_array($this->getFormType(), [EntityHiddenType::class, HiddenType::class])) {
+        if (!isset($options['label'])) {
+            $this->options['label'] = $this->getLabel();
+        }
+
+        if ($this->getFormType() instanceof EntityHiddenType
+            || $this->getFormType() instanceof HiddenType) {
             $this->options['label'] = false;
         }
-        return array_merge($options, ['label' => $this->getLabel(), 'multiple' => true, 'class' => $this->getOption('class')], $this->options['form_options']);
+
+        if ($this->getFormType() instanceof ChoiceType
+            && !isset($options['class'])) {
+            $options['class'] = $this->getOption('class');
+        }
+
+        if ($this->getFormType() instanceof ChoiceType
+            && !isset($options['multiple'])) {
+            $options['multiple'] = true;
+        }
+
+        return array_merge($options, $this->options['form_options']);
     }
 
     /**
