@@ -112,7 +112,7 @@ class RelationContent extends TableContent implements EditableContentInterface
             $queryBuilder->leftJoin($rootAlias . '.' . $field, $newAlias);
 
             if ($value instanceof Collection) {
-                $queryBuilder->andWhere($newAlias . ' IN (:' . $newAlias.')');
+                $queryBuilder->andWhere($newAlias . ' IN (:' . $newAlias . ')');
             } else {
                 $queryBuilder->andWhere($newAlias . ' = :' . $newAlias);
             }
@@ -433,5 +433,100 @@ class RelationContent extends TableContent implements EditableContentInterface
         return $this->doctrine
             ->getManager()
             ->getMetadataFactory();
+    }
+
+    /**
+     * @param $row
+     * @return \whatwedo\TableBundle\Table\DoctrineTable
+     */
+    public function getTable($row): \whatwedo\TableBundle\Table\DoctrineTable
+    {
+        $options = $this->options['table_options'];
+
+        /*
+         * $row = Lesson
+         */
+        $reverseMapping = $this->getReverseMapping($row);
+        $targetDefinition = $this->definitionManager->getDefinitionFromClass($this->getOption('definition'));
+
+        $queryBuilder = $targetDefinition->getQueryBuilder();
+
+        $rootAlias = $targetDefinition::getQueryAlias();
+        foreach ($reverseMapping as $field => $value) {
+            /*
+             * person.studentModuleOccasions => person_studentModuleOccasions
+             * person_studentModuleOccasions.occasion => person_studentModuleOccasions_occasion
+             * person_studentModuleOccasions_occasion.lessons => person_studentModuleOccasions_occasion_lessons
+             */
+            $newAlias = $rootAlias . '_' . $field;
+
+            $queryBuilder->leftJoin($rootAlias . '.' . $field, $newAlias);
+
+            if ($value instanceof Collection) {
+                $queryBuilder->andWhere($newAlias . ' IN (:' . $newAlias . ')');
+            } else {
+                $queryBuilder->andWhere($newAlias . ' = :' . $newAlias);
+            }
+
+            $queryBuilder->setParameter($newAlias, $value);
+
+            $queryBuilder->addSelect($newAlias);
+
+            $rootAlias = $newAlias;
+        }
+
+        $options['query_builder'] = $queryBuilder;
+
+        if (is_callable($this->options['query_builder_configuration'])) {
+            $this->options['query_builder_configuration']($queryBuilder, $targetDefinition);
+        }
+
+        $table = $this->tableFactory->createDoctrineTable($this->acronym, $options);
+        $targetDefinition->configureTable($table);
+        $targetDefinition->overrideTableConfiguration($table);
+
+        if (is_callable($this->options['table_configuration'])) {
+            $this->options['table_configuration']($table);
+        }
+
+        $actionColumnItems = [];
+
+        if ($this->hasCapability(RouteEnum::SHOW)) {
+            $showRoute = $this->getRoute(RouteEnum::SHOW);
+
+            $table->setShowRoute($showRoute);
+            $actionColumnItems[RouteEnum::SHOW] = [
+                'label' => 'Details',
+                'icon' => 'arrow-right',
+                'button' => 'primary',
+                'route' => $showRoute,
+                'route_parameters' => [],
+                'voter_attribute' => RouteEnum::SHOW,
+            ];
+        }
+
+        if ($this->hasCapability(RouteEnum::EDIT)) {
+            $actionColumnItems[RouteEnum::EDIT] = [
+                'label' => 'Bearbeiten',
+                'icon' => 'pencil',
+                'button' => 'warning',
+                'route' => $this->getRoute(RouteEnum::EDIT),
+                'route_parameters' => [],
+                'voter_attribute' => RouteEnum::EDIT,
+            ];
+        }
+
+        if ($this->hasCapability(RouteEnum::EXPORT)) {
+            $table->setExportRoute($this->getRoute(RouteEnum::EXPORT));
+        }
+
+        if (is_callable($this->options['action_configuration'])) {
+            $actionColumnItems = $this->options['action_configuration']($actionColumnItems);
+        }
+
+        $table->addColumn('actions', ActionColumn::class, [
+            'items' => $actionColumnItems,
+        ]);
+        return $table;
     }
 }
