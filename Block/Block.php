@@ -29,6 +29,7 @@ namespace whatwedo\CrudBundle\Block;
 
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use whatwedo\CoreBundle\Formatter\Nl2brFormatter;
 use whatwedo\CrudBundle\Content\Content;
 use whatwedo\CrudBundle\Content\ContentInterface;
 use whatwedo\CrudBundle\Content\RelationContent;
@@ -186,6 +187,7 @@ class Block
             'show_voter_attribute' => RouteEnum::SHOW,
             'edit_voter_attribute' => RouteEnum::EDIT,
             'create_voter_attribute' => RouteEnum::CREATE,
+            'block_prefix' => '',
         ]);
     }
 
@@ -228,5 +230,9 @@ class Block
         ];
 
         return !array_intersect(array_keys($options), $notAllowedOptions);
+    }
+
+    public function getBlockPrefix(): string {
+        return $this->options['block_prefix'];
     }
 }

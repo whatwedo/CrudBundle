@@ -119,6 +119,7 @@ abstract class AbstractContent implements ContentInterface
             'show_voter_attribute' => RouteEnum::SHOW,
             'edit_voter_attribute' => RouteEnum::EDIT,
             'create_voter_attribute' => RouteEnum::CREATE,
+            'block_prefix' => '',
         ]);
     }
 
@@ -172,5 +173,10 @@ abstract class AbstractContent implements ContentInterface
     public function getAttr()
     {
         return $this->options['attr'];
+    }
+
+    public function getBlockPrefix(): string
+    {
+        return $this->options['block_prefix'];
     }
 }

@@ -45,4 +45,6 @@ interface ContentInterface
     public function getOption($key);
 
     public function setOption($key, $value);
+
+    public function getBlockPrefix(): string;
 }
