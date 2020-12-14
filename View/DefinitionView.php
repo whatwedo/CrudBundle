@@ -52,6 +52,7 @@ use whatwedo\CrudBundle\Content\RelationContent;
 use whatwedo\CrudBundle\Definition\AbstractDefinition;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\RouteEnum;
+use whatwedo\CrudBundle\Enum\VisibilityEnum;
 use whatwedo\CrudBundle\Form\Type\EntityAjaxType;
 use whatwedo\CrudBundle\Form\Type\EntityHiddenType;
 use whatwedo\CrudBundle\Form\Type\EntityPreselectType;
@@ -70,7 +71,7 @@ class DefinitionView implements DefinitionViewInterface
     protected $definition;
 
     /**
-     * @var BlockCollection
+     * @var BlockCollection|Block[]
      */
     protected $blocks;
 
@@ -190,8 +191,19 @@ class DefinitionView implements DefinitionViewInterface
         $this->blocks = $blocks;
     }
 
-    public function getBlocks()
+    public function getBlocks(?int $visibility = null)
     {
+        if ($visibility) {
+            // TODO: move to BlockCollection::byVisibity() or some how
+            $blocks = new BlockCollection();
+            /** @var Block $block */
+            foreach ($this->blocks as $block) {
+                if ($block->getOptions()['visibility'] & $visibility) {
+                    $blocks->add($block);
+                }
+            }
+            return $blocks;
+        }
         return $this->blocks;
     }
 

@@ -27,6 +27,7 @@
 
 namespace whatwedo\CrudBundle\Content;
 
+use Symfony\Component\Form\Util\StringUtil;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
@@ -177,6 +178,6 @@ abstract class AbstractContent implements ContentInterface
 
     public function getBlockPrefix(): string
     {
-        return $this->options['block_prefix'];
+        return StringUtil::fqcnToBlockPrefix(static::class) ?: $this->options['block_prefix'];
     }
 }

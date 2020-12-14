@@ -59,7 +59,7 @@ interface DefinitionViewInterface
     /**
      * @return BlockCollection|Block[]
      */
-    public function getBlocks();
+    public function getBlocks(?int $visibility = null);
 
     /**
      * renders show state
