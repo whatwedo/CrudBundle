@@ -41,6 +41,7 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Serializer\Serializer;
 use Twig\Environment;
 use whatwedo\CrudBundle\Content\EditableContentInterface;
+use whatwedo\CrudBundle\Content\RelationContent;
 use whatwedo\CrudBundle\Definition\AbstractDefinition;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Encoder\CsvEncoder;
@@ -322,7 +323,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     {
         $this->denyAccessUnlessGrantedCrud(RouteEnum::EXPORT, $this->getDefinition());
 
-        $entities = $this->getExportEntities();
+        $entities = $this->getExportEntities($request);
         if (!$entities) {
             $this->addFlash('warning', 'Nichts zu exportieren');
             return $this->redirectToRoute($this->getDefinition()::getRouteName(RouteEnum::INDEX));
@@ -525,16 +526,27 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      * @return array
      * @throws \whatwedo\TableBundle\Exception\DataLoaderNotAvailableException
      */
-    protected function getExportEntities()
+    protected function getExportEntities(Request $request)
     {
-        $table = $this->tableFactory
-            ->createDoctrineTable('index', [
-                'query_builder' => $this->getDefinition()->getQueryBuilder(),
-            ]);
+        $export = $request->query->get('export', []);
+        if (isset($export['definition']) && isset($export['acronym']) && isset($export['class']) && isset($export['id'])
+            && ($definition = $this->definitionManager->getDefinitionFromClass($export['definition']))
+            && ($content = $definition->getContent($export['acronym']))
+            && $content instanceof RelationContent
+            && ($repository = $this->getDoctrine()->getRepository($export['class']))
+            && ($row = $repository->find($export['id']))
+        ) {
+            $table = $content->getTable($export['acronym'], $row);
+        } else {
+            $table = $this->tableFactory
+                ->createDoctrineTable('index', [
+                    'query_builder' => $this->getDefinition()->getQueryBuilder(),
+                ]);
 
-        // to respect column sort order
-        $this->getDefinition()->configureTable($table);
-        $this->getDefinition()->overrideTableConfiguration($table);
+            // to respect column sort order
+            $this->getDefinition()->configureTable($table);
+            $this->getDefinition()->overrideTableConfiguration($table);
+        }
 
         $table->loadData();
 

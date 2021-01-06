@@ -36,6 +36,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CrudBundle\Action\Action;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
+use whatwedo\CrudBundle\Content\AbstractContent;
 use whatwedo\CrudBundle\Controller\CrudController;
 use whatwedo\CrudBundle\Enum\RouteEnum;
 use whatwedo\CrudBundle\Extension\BreadcrumbsExtension;
@@ -108,7 +109,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @var DefinitionBuilder|null
      */
-    protected $definitionBuilderLabelCache = null;
+    protected $definitionBuilderCache = null;
 
     protected string $templateDirectory = '';
 
@@ -338,6 +339,15 @@ abstract class AbstractDefinition implements DefinitionInterface
         }
     }
 
+    protected function getDefinitionBuilderCache(): DefinitionBuilder
+    {
+        if (is_null($this->definitionBuilderCache)) {
+            $this->definitionBuilderCache = new DefinitionBuilder($this->blockManager, $this->definitionManager, $this->templates, $this);
+            $this->configureView($this->definitionBuilderCache, null);
+        }
+        return $this->definitionBuilderCache;
+    }
+
     /**
      * @param DoctrineTable $table
      * @param               $property
@@ -355,13 +365,8 @@ abstract class AbstractDefinition implements DefinitionInterface
                 }
             }
         }
-
-        if (is_null($this->definitionBuilderLabelCache)) {
-            $this->definitionBuilderLabelCache = new DefinitionBuilder($this->blockManager, $this->definitionManager, $this->templates, $this);
-            $this->configureView($this->definitionBuilderLabelCache, null);
-        }
-
-        foreach ($this->definitionBuilderLabelCache->getBlocks() as $block) {
+        $definitionBuilderCache = $this->getDefinitionBuilderCache();
+        foreach ($definitionBuilderCache->getBlocks() as $block) {
             foreach ($block->getContents() as $content) {
                 if ($content->getAcronym() == $property) {
                     $label = $content->getOption('label');
@@ -374,6 +379,23 @@ abstract class AbstractDefinition implements DefinitionInterface
         }
 
         return ucfirst($property);
+    }
+
+    /**
+     * @param string $acronym
+     * @return AbstractContent|null
+     */
+    public function getContent(string $acronym): ?AbstractContent
+    {
+        $definitionBuilderCache = $this->getDefinitionBuilderCache();
+        foreach ($definitionBuilderCache->getBlocks() as $block) {
+            foreach ($block->getContents() as $content) {
+                if ($content->getAcronym() == $acronym) {
+                    return $content;
+                }
+            }
+        }
+        return null;
     }
 
     public function getDeleteRedirect(RouterInterface $router, $entity = null): Response

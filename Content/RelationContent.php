@@ -31,6 +31,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use whatwedo\CrudBundle\Action\Action;
 use whatwedo\CrudBundle\Action\IdentityAction;
 use whatwedo\CrudBundle\Action\PostAction;
+use whatwedo\TableBundle\Table\DoctrineTable;
 use function array_keys;
 use function array_reduce;
 use function array_reverse;
@@ -86,7 +87,7 @@ class RelationContent extends TableContent implements EditableContentInterface
         $this->doctrine = $doctrine;
     }
 
-    public function renderTable($identifier, $row)
+    public function getTable($identifier, $row): DoctrineTable
     {
         $data = $this->getContents($row);
         if (!$data instanceof Collection) {
@@ -134,12 +135,9 @@ class RelationContent extends TableContent implements EditableContentInterface
         }
 
         $table = $this->tableFactory->createDoctrineTable($identifier, $options);
+        $table->setTableOnly(true);
         $targetDefinition->configureTable($table);
         $targetDefinition->overrideTableConfiguration($table);
-
-        if (is_callable($this->options['table_configuration'])) {
-            $this->options['table_configuration']($table);
-        }
 
         $actionColumnItems = [];
 
@@ -170,6 +168,10 @@ class RelationContent extends TableContent implements EditableContentInterface
 
         if ($this->hasCapability(RouteEnum::EXPORT)) {
             $table->setExportRoute($this->getRoute(RouteEnum::EXPORT));
+            $table->addExportRouteParameter('export[definition]', get_class($this->definition));
+            $table->addExportRouteParameter('export[acronym]', $this->getAcronym());
+            $table->addExportRouteParameter('export[class]', get_class($row));
+            $table->addExportRouteParameter('export[id]', $row->getId());
         }
 
         if (is_callable($this->options['action_configuration'])) {
@@ -180,7 +182,15 @@ class RelationContent extends TableContent implements EditableContentInterface
             'items' => $actionColumnItems,
         ]);
 
-        return $table->renderTable();
+        if (is_callable($this->options['table_configuration'])) {
+            $this->options['table_configuration']($table);
+        }
+        return $table;
+    }
+
+    public function renderTable($identifier, $row)
+    {
+        return $this->getTable($identifier, $row)->renderTable();
     }
 
     /**
