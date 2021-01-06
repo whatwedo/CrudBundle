@@ -38,5 +38,6 @@ services:
             - '@maker.doctrine_helper'
             - '@maker.renderer.form_type_renderer'
             - '%kernel.project_dir%'
+            - '@whatwedo\CoreBundle\Manager\FormatterManager'
         tags:
             - { name: maker.command }

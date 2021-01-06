@@ -40,6 +40,12 @@ class <?= $class_name ?> extends AbstractDefinition
                 null,
                 [
                     'label' => '<?= $entity_twig_var_singular ?>.<?= $label ?>',
+                    <?php
+    if (isset($fieldFormatters[$field]) ) {
+        echo sprintf("'formatter' => \\%s::class,", $fieldFormatters[$field]);
+    }
+    ?>
+
                 ]
             )
 <?php endforeach ?>
@@ -52,6 +58,12 @@ class <?= $class_name ?> extends AbstractDefinition
 <?php foreach ($fields as $label => $field): ?>
             ->addColumn('<?= $field ?>', null, [
                 'label' => '<?= $entity_twig_var_singular ?>.<?= $label ?>',
+                <?php
+        if (isset($fieldFormatters[$field]) ) {
+            echo sprintf("'formatter' => \\%s::class,", $fieldFormatters[$field]);
+        }
+    ?>
+
             ])
 <?php endforeach ?>
         ;

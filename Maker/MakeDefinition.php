@@ -31,11 +31,16 @@ use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Csrf\CsrfTokenManager;
 use Symfony\Component\Validator\Validation;
+use whatwedo\CoreBundle\Formatter\DefaultFormatter;
+use whatwedo\CoreBundle\Manager\FormatterManager;
+use whatwedo\CrudBundle\Enum\VisibilityEnum;
+use whatwedo\TableBundle\Table\FormattableColumnInterface;
 
 final class MakeDefinition extends AbstractMaker
 {
@@ -45,8 +50,9 @@ final class MakeDefinition extends AbstractMaker
 
     private $inflector;
     private string $rootPath;
+    private FormatterManager $formatterManager;
 
-    public function __construct(DoctrineHelper $doctrineHelper, FormTypeRenderer $formTypeRenderer, string $rootPath)
+    public function __construct(DoctrineHelper $doctrineHelper, FormTypeRenderer $formTypeRenderer, string $rootPath, FormatterManager $formatterManager)
     {
         $this->doctrineHelper = $doctrineHelper;
         $this->formTypeRenderer = $formTypeRenderer;
@@ -55,6 +61,7 @@ final class MakeDefinition extends AbstractMaker
             $this->inflector = InflectorFactory::create()->build();
         }
         $this->rootPath = $rootPath;
+        $this->formatterManager = $formatterManager;
     }
 
     public static function getCommandName(): string
@@ -104,12 +111,17 @@ final class MakeDefinition extends AbstractMaker
             'Definition\\',
             'Definition'
         );
-
-
         $entityVarSingular = lcfirst($this->singularize($entityClassDetails->getShortName()));
 
+        $fieldFormatters = $this->askFormatters($entityDoctrineMetaData, $io);
 
-        $this->generateDefition($generator, $definitionClassDetails, $entityClassDetails, $entityDoctrineMetaData, $entityVarSingular);
+        $this->generateDefition(
+            $generator,
+            $definitionClassDetails,
+            $entityClassDetails,
+            $entityDoctrineMetaData,
+            $entityVarSingular,
+            $fieldFormatters);
 
         $this->genereteRoute($generator, $entityVarSingular, $definitionClassDetails->getFullName());
 
@@ -181,7 +193,8 @@ final class MakeDefinition extends AbstractMaker
         ClassNameDetails $definitionClassDetails,
         ClassNameDetails $entityClassDetails,
         ?ClassMetadata $entityDetails,
-        string $entityVarSingular)
+        string $entityVarSingular,
+        array $fieldFormatters)
     {
         $templatePath = __DIR__ . '/../Resources/skeleton/definition/Definition.tpl.php';
         $fieldNames = $entityDetails->fieldNames;
@@ -197,6 +210,7 @@ final class MakeDefinition extends AbstractMaker
                 'entity_twig_var_singular' => $entityVarSingular,
                 'entity_class_name' => $entityClassDetails->getShortName(),
                 'fields' => $fieldNames,
+                'fieldFormatters' => $fieldFormatters,
             ],
         );
 
@@ -221,5 +235,46 @@ final class MakeDefinition extends AbstractMaker
         );
     }
 
+    /**
+     * @param $entities
+     * @param ConsoleStyle $io
+     */
+    public function askFormatters(ClassMetadata $entityDoctrineMetaData,  $io): array
+    {
+        $r = new \ReflectionObject($this->formatterManager);
+        $p = $r->getProperty('formatters');
+        $p->setAccessible(true); // <--- you set the property to public before you read the value
+        $formattersInstances = $p->getValue($this->formatterManager);
+
+        $formatters = ['none'];
+
+        foreach ($formattersInstances as $formattersInstance) {
+            if ($formattersInstance instanceof DefaultFormatter) {
+                continue;
+            }
+            $formatters[] = get_class($formattersInstance);
+        }
+
+        $responses = [];
+        foreach ($entityDoctrineMetaData->getFieldNames() as $fieldName) {
+            $mapping = $entityDoctrineMetaData->getFieldMapping($fieldName);
+
+            if (isset($mapping['id']) && $mapping['id']) {
+                continue;
+            }
+            $question = new ChoiceQuestion(
+                'Formatter for Field "' . $fieldName . '" type:'. $mapping['type'] . ' (default none)?',
+                $formatters,
+                0
+            );
+            $response = $io->askQuestion($question);
+            if ($response === 'none') {
+                continue;
+            }
+            $responses[$fieldName] = $response;
+        }
+
+        return $responses;
+    }
 
 }
