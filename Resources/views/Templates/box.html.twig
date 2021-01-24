@@ -1,0 +1,28 @@
+<div {{ boxAttributes|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
+    {% if boxTitle is defined or block('boxHeader') is defined  %}
+        <div class="box-header">
+            {% if boxTitle is defined %}
+                <h3 class="box-title">{{ boxTitle|trans }}</h3>
+            {% endif %}
+
+            {% if block('boxHeader') is defined %}
+                {% block boxHeader %}
+                {% endblock %}
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <div class="box-body">
+        {% block boxBody %}
+        {% endblock %}
+    </div>
+
+    {% if block('boxFooter') is defined %}
+        <div class="box-footer clearfix">
+            {{ block('boxFooter') }}
+        </div>
+    {% endif %}
+
+    {% block boxPostFooter %}
+    {% endblock %}
+</div>

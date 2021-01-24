@@ -45,6 +45,9 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('templateDirectory')
                     ->defaultValue('@whatwedoCrud/Crud')
                 ->end()
+                ->scalarNode('layout')
+                    ->defaultValue('@whatwedoCrud/layout/adminlte_layout.html.twig')
+                ->end()
             ->end();
         return $treeBuilder;
     }

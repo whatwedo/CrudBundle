@@ -48,6 +48,7 @@ class whatwedoCrudExtension extends Extension
         }
         $container->setParameter('whatwedo_crud.config.templates', $templates);
         $container->setParameter('whatwedo_crud.config.template_directory', $config['templateDirectory']);
+        $container->setParameter('whatwedo_crud.config.layout', $config['layout']);
 
         $container->registerForAutoconfiguration(ContentInterface::class)->addTag('crud.content');
         $container->registerForAutoconfiguration(ExtensionInterface::class)->addTag('crud.extension');

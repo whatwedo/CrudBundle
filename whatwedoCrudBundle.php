@@ -8,6 +8,7 @@ use whatwedo\CrudBundle\DependencyInjection\Compiler\BlockPass;
 use whatwedo\CrudBundle\DependencyInjection\Compiler\ContentPass;
 use whatwedo\CrudBundle\DependencyInjection\Compiler\DefaultVoterPass;
 use whatwedo\CrudBundle\DependencyInjection\Compiler\DefinitionPass;
+use whatwedo\CrudBundle\DependencyInjection\Compiler\TwigExtensionPass;
 
 class whatwedoCrudBundle extends Bundle
 {
@@ -17,5 +18,6 @@ class whatwedoCrudBundle extends Bundle
         $container->addCompilerPass(new ContentPass());
         $container->addCompilerPass(new BlockPass());
         $container->addCompilerPass(new DefaultVoterPass());
+        $container->addCompilerPass(new TwigExtensionPass());
     }
 }

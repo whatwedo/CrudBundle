@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block page_title %}{{ title | trans }}{% endblock %}
+
+{% block page_actions %}
+    <div class="btn-group pull-right btn-group-sm">
+        {% block page_actions_back_to_list %}
+            {% if view.hasCapability('index') %}
+                <a href="{{ view.path('index') }}" class="btn btn-default">
+                    <i class="fa fa-list"></i>
+                    {{ 'whatwedo_crud.index'|trans }}
+                </a>
+            {% endif %}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block content %}
+    {{ crud_create(view) }}
+{% endblock %}
