@@ -109,6 +109,8 @@ abstract class AbstractDefinition implements DefinitionInterface
      */
     protected $definitionBuilderLabelCache = null;
 
+    protected string $templateDirectory = '@whatwedoCrud/Crud';
+
     public function getTitle($entity = null, $route = null): string
     {
         switch ($route) {
@@ -244,8 +246,16 @@ abstract class AbstractDefinition implements DefinitionInterface
 
     public function getTemplateDirectory(): string
     {
-        return '@whatwedoCrud/Crud';
+        return $this->templateDirectory;
     }
+
+    public function setTemplateDirectory(string $templateDirectory): DefinitionInterface
+    {
+        $this->templateDirectory = $templateDirectory;
+
+        return $this;
+    }
+
 
     /**
      * @required

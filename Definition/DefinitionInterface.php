@@ -114,6 +114,11 @@ interface DefinitionInterface
     public function getTemplateDirectory(): string;
 
     /**
+     * get template directory of this definition
+     */
+    public function setTemplateDirectory(string $templateDirectory): self;
+
+    /**
      * returns a view
      *
      * @param $data

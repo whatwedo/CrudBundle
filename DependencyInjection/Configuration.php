@@ -42,6 +42,9 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end() // end templates
+                ->scalarNode('templateDirectory')
+                    ->defaultValue('@whatwedoCrud/Crud')
+                ->end()
             ->end();
         return $treeBuilder;
     }

@@ -78,6 +78,7 @@ class DefinitionPass implements CompilerPassInterface
             }
 
             $crudDefinition->addMethodCall('setTemplates', [$container->getParameter('whatwedo_crud.config.templates')]);
+            $crudDefinition->addMethodCall('setTemplateDirectory', [$container->getParameter('whatwedo_crud.config.template_directory')]);
 
             // add available extensions to all Definitions
             foreach (array_keys($container->findTaggedServiceIds('crud.extension')) as $idExtension) {
