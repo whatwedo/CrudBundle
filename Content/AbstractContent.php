@@ -178,6 +178,6 @@ abstract class AbstractContent implements ContentInterface
 
     public function getBlockPrefix(): string
     {
-        return StringUtil::fqcnToBlockPrefix(static::class) ?: $this->options['block_prefix'];
+        return $this->options['block_prefix']?: StringUtil::fqcnToBlockPrefix(static::class);
     }
 }

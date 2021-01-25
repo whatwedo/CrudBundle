@@ -1,4 +1,4 @@
-{% block crud_create %}
+{% block create %}
     {{ form_start(form, {
         'attr': {
             'class': 'default-crud-form'
@@ -24,7 +24,7 @@
     {{ form_end(form) }}
 {% endblock %}
 
-{% block crud_edit %}
+{% block edit %}
     {{ form_start(form, {
         'attr': {
             'class': 'default-crud-form'
@@ -50,14 +50,14 @@
     {{ form_end(form) }}
 {% endblock %}
 
-{% block crud_show %}
+{% block show %}
     {% for blockKey,block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\VisibilityEnum::SHOW')) %}
         {{ crud_block(view, block) }}
     {% endfor %}
 {% endblock %}
 
 
-{% block crud_block %}
+{% block block %}
     {% if block is defined %}
         {% if block.attr.class is not defined %}
             {% set blockAttr = block.attr|merge({ class: '' }) %}
@@ -85,12 +85,12 @@
     {% endembed %}
 {% endblock %}
 
-{% block crud_content_row %}
+{% block content_row %}
     <code>renderMode "{{ renderMode }}" not supported yet</code>
 {% endblock %}
 
-{% block crud_content_create_row %}
-    <div>
+{% block content_create_row %}
+    <div data-identifier="{{ content.acronym }}-row">
         {% if attribute(form, content.acronym) is defined %}
             <div class="form-group{% if attribute(form, content.acronym).vars.errors|length %} has-error{% endif %} form-group__{{ content.acronym }}">
                 {% if content.label %}
@@ -129,8 +129,8 @@
     </div>
 {% endblock %}
 
-{% block crud_content_edit_row %}
-    <div>
+{% block content_edit_row %}
+    <div data-identifier="{{ content.acronym }}-row">
         {% if attribute(form, content.acronym) is defined %}
             <div class="form-group{% if attribute(form, content.acronym).vars.errors|length %} has-error{% endif %} form-group__{{ content.acronym }}">
                 {% if content.label %}
@@ -169,7 +169,48 @@
     </div>
 {% endblock %}
 
-{% block crud_content_show_row %}
+{% block content_show_row %}
+    <div data-identifier="{{ content.acronym }}-row">
+        {% if content.attr.class is not defined %}
+            {% set contentAttr = content.attr|merge({
+                class: 'content_show content_' ~ block.acronym
+            }) %}
+        {% else %}
+            {% set contentAttr = content.attr|merge({
+                class: 'content_show content_' ~ block.acronym ~ ' ' ~ content.attr.class
+            }) %}
+        {% endif %}
+
+        <div {{ contentAttr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
+            {% set value = content.render(view.data) %}
+            {% if value is iterable %}
+                {% for key, v in value %}
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <strong>{{ key }}:</strong>
+                        </div>
+                        <div class="col-xs-8">
+                            {{ view.linkIt(v, content)|raw }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="row">
+                    <div class="col-xs-4">
+                        <strong>{{ content.label | trans }}{% if content.label is not empty %}:{% endif %}
+                            {% if content.help is not empty %}&nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="{{ content.help }}"></i>{% endif %}
+                        </strong>
+                    </div>
+                    <div class="col-xs-8">
+                        {{ view.linkIt(value, content)|raw }}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block twig_content_show_row %}
     <div>
         {% if content.attr.class is not defined %}
             {% set contentAttr = content.attr|merge({
@@ -182,72 +223,62 @@
         {% endif %}
 
         <div {{ contentAttr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
-            {% if content.isTable is defined and content.isTable %}
-                {% if content.label is not empty %}
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <strong>{{ content.label|trans }}:</strong>
-                        </div>
-                    </div>
-                {% endif %}
+            {% include content.template with content.parameters  %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block relation_content_show_row %}
+    <div>
+        {% if content.attr.class is not defined %}
+            {% set contentAttr = content.attr|merge({
+                class: 'content_show content_' ~ block.acronym
+            }) %}
+        {% else %}
+            {% set contentAttr = content.attr|merge({
+                class: 'content_show content_' ~ block.acronym ~ ' ' ~ content.attr.class
+            }) %}
+        {% endif %}
+
+        <div {{ contentAttr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
+
+            {% if content.label is not empty %}
                 <div class="row">
                     <div class="col-lg-12">
-                        {{ crud_table(content.table(view.data), contentKey) }}
+                        <strong>{{ content.label|trans }}:</strong>
                     </div>
                 </div>
-                {% if content.createRoute is defined and content.createRoute %}
-                    <div class="row">
-                        <div class="col-lg-12 text-right">
-                            {% if content.indexRoute %}
-                                <a href="{{ path(content.indexRoute, content.createRouteParameters(view.data)) }}" class="btn btn-primary btn-xs">
-                                    <i class="fa fa-list"></i>
-                                    {{ 'whatwedo_crud.show_all' | trans }}
+            {% endif %}
+            <div class="row">
+                <div class="col-lg-12">
+                    {{ crud_table(content.table(view.data)) }}
+                </div>
+            </div>
+            {% if content.createRoute is defined and content.createRoute %}
+                <div class="row">
+                    <div class="col-lg-12 text-right">
+                        {% if content.indexRoute %}
+                            <a href="{{ path(content.indexRoute, content.createRouteParameters(view.data)) }}" class="btn btn-primary btn-xs">
+                                <i class="fa fa-list"></i>
+                                {{ 'whatwedo_crud.show_all' | trans }}
+                            </a>
+                        {% endif %}
+                        {% block add_button %}
+                            {% if content.createRoute and content.isAddAllowed|default %}
+                                <a href="{{ path(content.createRoute, content.createRouteParameters(view.data)) }}" class="btn btn-success btn-xs">
+                                    <i class="fa fa-plus"></i>
+                                    {{ 'whatwedo_crud.add' | trans }}
                                 </a>
                             {% endif %}
-                            {% block add_button %}
-                                {% if content.createRoute and content.isAddAllowed|default %}
-                                    <a href="{{ path(content.createRoute, content.createRouteParameters(view.data)) }}" class="btn btn-success btn-xs">
-                                        <i class="fa fa-plus"></i>
-                                        {{ 'whatwedo_crud.add' | trans }}
-                                    </a>
-                                {% endif %}
-                            {% endblock %}
-                        </div>
+                        {% endblock %}
                     </div>
-                {% endif %}
-            {% elseif content.isTwigContent is defined and content.isTwigContent %}
-                {% include content.template with content.parameters  %}
-            {% else %}
-                {% set value = content.render(view.data) %}
-                {% if value is iterable %}
-                    {% for key, v in value %}
-                        <div class="row">
-                            <div class="col-xs-4">
-                                <strong>{{ key }}:</strong>
-                            </div>
-                            <div class="col-xs-8">
-                                {{ view.linkIt(v, content)|raw }}
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="row">
-                        <div class="col-xs-4">
-                            <strong>{{ content.label | trans }}{% if content.label is not empty %}:{% endif %}
-                                {% if content.help is not empty %}&nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="{{ content.help }}"></i>{% endif %}
-                            </strong>
-                        </div>
-                        <div class="col-xs-8">
-                            {{ view.linkIt(value, content)|raw }}
-                        </div>
-                    </div>
-                {% endif %}
+                </div>
             {% endif %}
         </div>
     </div>
 {% endblock %}
 
-{% block crud_table %}
+{% block table %}
     {% if table.options.table_attr.class is not defined %}
         {% set contentAttr = table.options.table_attr|merge({
             class: 'table table-striped table-hover whatwedo_table_inner whatwedo_table_inner_' ~ table.identifier
@@ -268,7 +299,7 @@
             <thead class="thead-default">
             <tr>
                 {% for tableHeaderKey, column in table.columns %}
-                    {{ crud_table_header_cell() }}
+                    {{ crud_table_header_cell(column) }}
                 {% endfor %}
             </tr>
             </thead>
@@ -279,7 +310,7 @@
                     {% set showRoute = table.getShowRoute(row.data) %}
                     <tr{% if showRoute %} data-href="{{ path(showRoute, { id: row.data.id }) }}"{% endif %}>
                         {% for column in row %}
-                            {{ crud_table_content_cell() }}
+                            {{ crud_table_content_cell(column, row) }}
                         {% endfor %}
                     </tr>
                 {% endfor %}
@@ -295,7 +326,7 @@
     </div>
 {% endblock %}
 
-{% block crud_table_header_cell %}
+{% block table_header %}
     {% set columnSortOrder = table.getSortOrder(column) %}
     <th class="{% if columnSortOrder %}sorted {% endif %}{{ column.thClass }}" nowrap>
         {{ column.label|trans }}
@@ -314,16 +345,16 @@
     </th>
 {% endblock %}
 
-{% block crud_table_content_cell %}
-    <td class="{{ column.column.tdClass }}">
-        {{ column|raw }}
+{% block table_cell %}
+    <td class="{{ column.tdClass }}">
+        {{ column.render(rowData)|raw }}
     </td>
 {% endblock %}
 
-{% block crud_table_content_actions_cell %}
-    <td class="{{ column.column.tdClass }}" nowrap>
+{% block action_table_cell %}
+    <td class="{{ column.tdClass }}" nowrap>
         <div class="btn-group" role="group">
-            {% for item in column.column.items(row.data) %}
+            {% for item in column.items(row.data) %}
                 {% if not item.voter_attribute or is_granted(item.voter_attribute, row.data) %}
                     <a href="{{ path(item.route, item.route_parameters|merge({ id: row.data.id })) }}" class="btn btn-{{ item.button }} btn-xs" title="{{ item.label }}">
                         <i class="fa fa-{{ item.icon }}"></i>
