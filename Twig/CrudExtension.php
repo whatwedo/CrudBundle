@@ -71,6 +71,8 @@ class CrudExtension extends AbstractExtension
     {
         $template = $this->getTemplate($environment);
         $blockName = $this->getBlockName($block->getBlockPrefix(),'', 'block');
+        $context['blockName'] = $blockName;
+        $context['blockPrefix'] = $block->getBlockPrefix();
 
         return $template->renderBlock($blockName, $context);
     }
@@ -79,6 +81,8 @@ class CrudExtension extends AbstractExtension
     {
         $template = $this->getTemplate($environment);
         $blockName = $this->getBlockName($content->getBlockPrefix(), 'content' , $context['renderMode'] . '_' . 'row');
+        $context['blockName'] = $blockName;
+        $context['blockPrefix'] = $content->getBlockPrefix();
 
         return $template->renderBlock($blockName, $context);
     }
@@ -90,10 +94,14 @@ class CrudExtension extends AbstractExtension
 
         $template = $environment->load($this->templateFile);
 
+        // TODO: needed?
         $context['renderMode'] = RouteEnum::INDEX;
+
         $context['table'] = $table;
 
         $blockName = $this->getBlockName($table->getBlockPrefix(), '' , 'table');
+        $context['blockName'] = $blockName;
+        $context['blockPrefix'] = $table->getBlockPrefix();
 
         return $template->renderBlock($blockName, $context);
     }
@@ -101,26 +109,32 @@ class CrudExtension extends AbstractExtension
     public function crudTableHeaderCell(Environment $environment, $context, ColumnInterface $column)
     {
         $template = $this->getTemplate($environment);
-        // TODO: renderMode?
+
+        // TODO: needed?
         $context['renderMode'] = RouteEnum::INDEX;
+
         $blockName = $this->getBlockName($column->getBlockPrefix(), '' , 'table_header');
-        $renderedBlock = $template->renderBlock($blockName, $context);
-        return $renderedBlock;
+        $context['blockName'] = $blockName;
+        $context['blockPrefix'] = $column->getBlockPrefix();
+
+        return $template->renderBlock($blockName, $context);;
     }
 
     public function crudTableContentCell(Environment $environment, $context, ColumnInterface $column, RowColumnIterator $row)
     {
         $template = $this->getTemplate($environment);
 
+        // TODO: needed?
         $context['renderMode'] = RouteEnum::INDEX;
 
         $context['column'] = $column;
         $context['rowData'] = $row->getData();
-        $blockPrefix = $column->getBlockPrefix();
-        $blockName = $this->getBlockName($column->getBlockPrefix(), '' , 'table_cell');
 
-        $renderedBlock = $template->renderBlock($blockName, $context);
-        return $renderedBlock;
+        $blockName = $this->getBlockName($column->getBlockPrefix(), '' , 'table_cell');
+        $context['blockName'] = $blockName;
+        $context['blockPrefix'] = $column->getBlockPrefix();
+
+        return $template->renderBlock($blockName, $context);;
     }
 
     private function getBlockName(string $blockPrefix, string $default, ?string $suffix = null)
