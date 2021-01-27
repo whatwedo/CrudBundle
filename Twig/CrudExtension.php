@@ -5,6 +5,7 @@ namespace whatwedo\CrudBundle\Twig;
 use Twig\Environment;
 use Twig\Extension\AbstractExtension;
 use Twig\Node\Expression\FunctionExpression;
+use Twig\TemplateWrapper;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 use whatwedo\CrudBundle\Block\Block;
@@ -69,7 +70,7 @@ class CrudExtension extends AbstractExtension
     public function crudBlock(Environment $environment, $context,  DefinitionViewInterface $view, Block $block)
     {
         $template = $this->getTemplate($environment);
-        $blockName = $this->getBlockName($block->getBlockPrefix(),'block');
+        $blockName = $this->getBlockName($block->getBlockPrefix(),'', 'block');
 
         return $template->renderBlock($blockName, $context);
     }
@@ -164,6 +165,7 @@ class CrudExtension extends AbstractExtension
      */
     public function getTemplate(Environment $environment): \Twig\TemplateWrapper
     {
+        /** @var Twig\Environment environment */
         $this->environment = $environment;
         return $environment->load($this->templateFile);
     }

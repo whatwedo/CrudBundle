@@ -2,8 +2,8 @@
 
 ## Layout Based Rendering
 
-with Version v0.5 a new templating method is introduced. Like in Symfony form one layout file is introduced with can 
-easily extended or overwirtten. The old rendering is still available a is the default rendering engine.  
+with Version v0.5 a new templating method is introduced. Like in Symfony form one layout file is introduced with 
+can easily extended or overwritten. The old rendering is still available and is the default rendering engine.  
 
 To enable the layout based rendering you need to change the template path in the `config/packages/whatwedo_crud.yaml` config.
 
@@ -27,7 +27,7 @@ class PostDefinition extends AbstractDefinition
 
 ## Layout Files
 
-The Layout file definies how the crud will be rendered. The default layout file is `@whatwedoCrud/layout/adminlte_layout.html.twig` 
+The Layout file defines how the crud will be rendered. The default layout file is `@whatwedoCrud/layout/adminlte_layout.html.twig` 
 and can be changed in the config `config/packages/whatwedo_crud.yaml`
 
 ```
@@ -61,7 +61,7 @@ Like Symfony Form the layout file can be extended or overwritten. New blocks can
 
 ### `crud_content_row` - Twig-Function 
 
-The row block name will be dynamicly.   `<block_prefix>` and `<render_mode>` will be used to create the block name.
+The row block name will be dynamically created.   `<block_prefix>` and `<render_mode>` will be used to create the block name.
 
 ### `<block_prefix>`
 
@@ -85,7 +85,7 @@ class PostDefinition extends AbstractDefinition
 
 ```
 
-By default, the `block_prefix` is the sneakcase of the class name. 
+By default, the `block_prefix` is the snake case of the class name. 
 
 | Class                                         | Default Block - Prefix |
 |---------------                                |-----------             |
