@@ -18,6 +18,5 @@ class whatwedoCrudBundle extends Bundle
         $container->addCompilerPass(new ContentPass());
         $container->addCompilerPass(new BlockPass());
         $container->addCompilerPass(new DefaultVoterPass());
-        $container->addCompilerPass(new TwigExtensionPass());
     }
 }

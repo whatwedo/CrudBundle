@@ -109,7 +109,9 @@ abstract class AbstractDefinition implements DefinitionInterface
      */
     protected $definitionBuilderLabelCache = null;
 
-    protected string $templateDirectory = '@whatwedoCrud/Crud';
+    protected string $templateDirectory = '';
+
+    protected string $layoutFile = '';
 
     public function getTitle($entity = null, $route = null): string
     {
@@ -256,6 +258,21 @@ abstract class AbstractDefinition implements DefinitionInterface
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getLayoutFile(): string
+    {
+        return $this->layoutFile;
+    }
+
+    /**
+     * @param string $layoutFile
+     */
+    public function setLayoutFile(string $layoutFile): void
+    {
+        $this->layoutFile = $layoutFile;
+    }
 
     /**
      * @required

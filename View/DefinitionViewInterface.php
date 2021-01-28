@@ -51,6 +51,8 @@ interface DefinitionViewInterface
      */
     public function getData();
 
+    public function getLayoutFile(): string;
+
     /**
      * sets the blocks from the builder
      */
@@ -65,6 +67,7 @@ interface DefinitionViewInterface
      * renders show state
      * @param array $additionalParameters
      * @return string
+     * @deprecated use Layoutbased Rendering
      */
     public function renderShow($additionalParameters = []);
 
@@ -72,6 +75,7 @@ interface DefinitionViewInterface
      * renders edit state
      * @param array $additionalParameters
      * @return string
+     * @deprecated use Layoutbased Rendering
      */
     public function renderEdit($additionalParameters = []);
 
@@ -79,6 +83,7 @@ interface DefinitionViewInterface
      * renders create state
      * @param array $additionalParameters
      * @return string
+     * @deprecated use Layoutbased Rendering
      */
     public function renderCreate($additionalParameters = []);
 

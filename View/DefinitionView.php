@@ -173,6 +173,11 @@ class DefinitionView implements DefinitionViewInterface
         $this->definition = $definition;
     }
 
+    public function getLayoutFile(): string
+    {
+        return $this->definition->getLayoutFile();
+    }
+
     public function setData($data)
     {
         $this->data = $data;

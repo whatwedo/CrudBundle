@@ -5,7 +5,7 @@
         }
     }) }}
 
-    {% for blockKey,block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\VisibilityEnum::CREATE')) %}
+    {% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\VisibilityEnum::CREATE')) %}
         {{ crud_block(view, block) }}
     {% endfor %}
 
@@ -31,7 +31,7 @@
         }
     }) }}
 
-    {% for blockKey,block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\VisibilityEnum::EDIT')) %}
+    {% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\VisibilityEnum::EDIT')) %}
         {{ crud_block(view, block) }}
     {% endfor %}
 
@@ -51,7 +51,7 @@
 {% endblock %}
 
 {% block show %}
-    {% for blockKey,block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\VisibilityEnum::SHOW')) %}
+    {% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\VisibilityEnum::SHOW')) %}
         {{ crud_block(view, block) }}
     {% endfor %}
 {% endblock %}
@@ -78,8 +78,8 @@
 
     {% embed '@whatwedoCrud/Templates/box.html.twig' with { boxAttributes: blockAttr, boxTitle: block.label } %}
         {% block boxBody %}
-            {% for contentKey, content in block.contents %}
-                {{ crud_content_row(view, content, contentKey) }}
+            {% for content in block.contents %}
+                {{ crud_content_row(view, content) }}
             {% endfor %}
         {% endblock %}
     {% endembed %}

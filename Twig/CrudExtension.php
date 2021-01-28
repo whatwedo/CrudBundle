@@ -24,12 +24,7 @@ class CrudExtension extends AbstractExtension
      * @var Environment
      */
     private Environment $environment;
-    private string $templateFile = '';
-
-    public function setTemplateFile(string $templateFile): void
-    {
-        $this->templateFile = $templateFile;
-    }
+    private ?TemplateWrapper $template = null;
 
     public function getFunctions(): array
     {
@@ -45,7 +40,7 @@ class CrudExtension extends AbstractExtension
             new TwigFunction( 'crud_show', fn (Environment $environment, $context,  DefinitionViewInterface $view) => $this->crudRender( RouteEnum::SHOW, $environment, $context, $view), $options ),
             new TwigFunction( 'crud_edit', fn (Environment $environment, $context,  DefinitionViewInterface $view) => $this->crudRender( RouteEnum::EDIT, $environment, $context, $view), $options ),
             new TwigFunction( 'crud_block',  fn (Environment $environment, $context,  DefinitionViewInterface $view, Block $block) => $this->crudBlock($environment, $context, $view, $block), $options ),
-            new TwigFunction( 'crud_content_row', fn (Environment $environment, $context,  DefinitionViewInterface $view, ContentInterface $content, string $blockKey) => $this->crudContentRow($environment, $context, $view, $content, $blockKey), $options ),
+            new TwigFunction( 'crud_content_row', fn (Environment $environment, $context,  DefinitionViewInterface $view, ContentInterface $content) => $this->crudContentRow($environment, $context, $view, $content), $options ),
 
             new TwigFunction( 'crud_table',  fn (Environment $environment, $context, Table $table) => $this->crudTable($environment, $context, $table), $options ),
             new TwigFunction( 'crud_table_header_cell',  fn (Environment $environment, $context, ColumnInterface $column) => $this->crudTableHeaderCell($environment, $context, $column), $options ),
@@ -55,7 +50,7 @@ class CrudExtension extends AbstractExtension
 
     public function crudRender(string $mode, Environment $environment, $context,  DefinitionViewInterface $view)
     {
-        $template = $this->getTemplate($environment);
+        $this->template = $this->getTemplate($view->getLayoutFile(), $environment);
         if ($mode === RouteEnum::EDIT
             || $mode === RouteEnum::CREATE
         ) {
@@ -63,37 +58,32 @@ class CrudExtension extends AbstractExtension
         }
 
         $context['renderMode'] = $mode;
-        $renderedBlock = $template->renderBlock($mode, $context);
+        $renderedBlock = $this->template->renderBlock($mode, $context);
         return $renderedBlock;
     }
 
     public function crudBlock(Environment $environment, $context,  DefinitionViewInterface $view, Block $block)
     {
-        $template = $this->getTemplate($environment);
         $blockName = $this->getBlockName($block->getBlockPrefix(),'', 'block');
         $context['blockName'] = $blockName;
         $context['blockPrefix'] = $block->getBlockPrefix();
 
-        return $template->renderBlock($blockName, $context);
+        return $this->template->renderBlock($blockName, $context);
     }
 
-    public function crudContentRow(Environment $environment, $context,  DefinitionViewInterface $view, ContentInterface $content, string $blockKey)
+    public function crudContentRow(Environment $environment, $context,  DefinitionViewInterface $view, ContentInterface $content)
     {
-        $template = $this->getTemplate($environment);
         $blockName = $this->getBlockName($content->getBlockPrefix(), 'content' , $context['renderMode'] . '_' . 'row');
         $context['blockName'] = $blockName;
         $context['blockPrefix'] = $content->getBlockPrefix();
 
-        return $template->renderBlock($blockName, $context);
+        return $this->template->renderBlock($blockName, $context);
     }
 
     public function crudTable(Environment $environment, $context, Table $table)
     {
-        $this->environment = $environment;
+        $this->template = $this->getTemplate($context['view']->getLayoutFile(), $environment);
         $table->loadData();
-
-        $template = $environment->load($this->templateFile);
-
         // TODO: needed?
         $context['renderMode'] = RouteEnum::INDEX;
 
@@ -103,30 +93,20 @@ class CrudExtension extends AbstractExtension
         $context['blockName'] = $blockName;
         $context['blockPrefix'] = $table->getBlockPrefix();
 
-        return $template->renderBlock($blockName, $context);
+        return $this->template->renderBlock($blockName, $context);
     }
 
     public function crudTableHeaderCell(Environment $environment, $context, ColumnInterface $column)
     {
-        $template = $this->getTemplate($environment);
-
-        // TODO: needed?
-        $context['renderMode'] = RouteEnum::INDEX;
-
         $blockName = $this->getBlockName($column->getBlockPrefix(), '' , 'table_header');
         $context['blockName'] = $blockName;
         $context['blockPrefix'] = $column->getBlockPrefix();
 
-        return $template->renderBlock($blockName, $context);;
+        return $this->template->renderBlock($blockName, $context);;
     }
 
     public function crudTableContentCell(Environment $environment, $context, ColumnInterface $column, RowColumnIterator $row)
     {
-        $template = $this->getTemplate($environment);
-
-        // TODO: needed?
-        $context['renderMode'] = RouteEnum::INDEX;
-
         $context['column'] = $column;
         $context['rowData'] = $row->getData();
 
@@ -134,13 +114,12 @@ class CrudExtension extends AbstractExtension
         $context['blockName'] = $blockName;
         $context['blockPrefix'] = $column->getBlockPrefix();
 
-        return $template->renderBlock($blockName, $context);;
+        return $this->template->renderBlock($blockName, $context);;
     }
 
     private function getBlockName(string $blockPrefix, string $default, ?string $suffix = null)
     {
-        $template = $this->environment->load($this->templateFile);
-        $blockNames = $template->getBlockNames();
+        $blockNames = $this->template->getBlockNames();
 
         if ($blockPrefix != '') {
             $blockName = $blockPrefix;
@@ -170,18 +149,10 @@ class CrudExtension extends AbstractExtension
         return $defaultBlockName;
     }
 
-    /**
-     * @param Environment $environment
-     * @return \Twig\TemplateWrapper
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
-     */
-    public function getTemplate(Environment $environment): \Twig\TemplateWrapper
+    private function getTemplate(string $layoutFile, Environment $environment): \Twig\TemplateWrapper
     {
         /** @var Twig\Environment environment */
-        $this->environment = $environment;
-        return $environment->load($this->templateFile);
+        return $environment->load($layoutFile);
     }
 
 }
