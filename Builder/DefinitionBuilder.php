@@ -39,27 +39,27 @@ class DefinitionBuilder
     /**
      * @var DefinitionManager
      */
-    protected $definitionManager;
+    protected DefinitionManager $definitionManager;
 
     /**
      * @var BlockManager
      */
-    protected $blockManager;
+    protected BlockManager $blockManager;
 
     /**
      * @var Block[]
      */
-    protected $blocks = [];
+    protected array $blocks = [];
 
     /**
      * @var DefinitionInterface
      */
-    protected $definition;
+    protected DefinitionInterface $definition;
 
     /**
      * @var array
      */
-    protected $templates;
+    protected array $templates;
 
     /**
      * @var array

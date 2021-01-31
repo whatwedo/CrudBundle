@@ -15,52 +15,5 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-xs-12">
-            {% if table.options.attr.class is not defined %}
-                {% set contentAttr = table.options.attr|merge({
-                    class: 'box whatwedo_table whatwedo_table_' ~ table.identifier
-                }) %}
-            {% else %}
-                {% set contentAttr = table.options.table_attr|merge({
-                    class: 'box whatwedo_table whatwedo_table_' ~ table.identifier ~ ' ' ~ table.options.attr.class
-                }) %}
-            {% endif %}
-
-            {% set contentAttr = contentAttr|merge({
-                id: 'whatwedo_table_' ~ table.identifier,
-                'data-identifier': table.identifier
-            }) %}
-
-
-            {% set hasSearchArea = table.searchExtension or table.paginationExtension or table.filterExtension or table.exportRoute %}
-
-            {% embed '@whatwedoCrud/Templates/box.html.twig' with { boxAttributes: contentAttr } %}
-                {% block headerBlock %}
-                    {% if hasSearchArea %}
-                        {% include '@whatwedoTable/_search.html.twig' %}
-                    {% endif %}
-                {% endblock %}
-
-                {% block boxBody %}
-                    {% include '@whatwedoTable/_filter.html.twig' %}
-                    {{ crud_table(table) }}
-                {% endblock %}
-
-                {% block boxFooter %}
-                    {% include '@whatwedoTable/_foot.html.twig' %}
-                {% endblock %}
-
-                {% block postFooter %}
-                    <div class="whatwedo_table-overlay">
-                        <div class="spinner">
-                            <div class="bounce1"></div>
-                            <div class="bounce2"></div>
-                            <div class="bounce3"></div>
-                        </div>
-                    </div>
-                {% endblock %}
-            {% endembed %}
-        </div>
-    </div>
+    {{ crud_index(view) }}
 {% endblock %}

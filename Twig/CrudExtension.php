@@ -36,6 +36,7 @@ class CrudExtension extends AbstractExtension
             'blockName' => 'blockName'
         ];
         return [
+            new TwigFunction( 'crud_index', fn (Environment $environment, $context,  DefinitionViewInterface $view) => $this->crudRender( RouteEnum::INDEX, $environment, $context, $view), $options ),
             new TwigFunction( 'crud_create', fn (Environment $environment, $context,  DefinitionViewInterface $view) => $this->crudRender( RouteEnum::CREATE, $environment, $context, $view), $options ),
             new TwigFunction( 'crud_show', fn (Environment $environment, $context,  DefinitionViewInterface $view) => $this->crudRender( RouteEnum::SHOW, $environment, $context, $view), $options ),
             new TwigFunction( 'crud_edit', fn (Environment $environment, $context,  DefinitionViewInterface $view) => $this->crudRender( RouteEnum::EDIT, $environment, $context, $view), $options ),
@@ -84,11 +85,7 @@ class CrudExtension extends AbstractExtension
     {
         $this->template = $this->getTemplate($context['view']->getLayoutFile(), $environment);
         $table->loadData();
-        // TODO: needed?
-        $context['renderMode'] = RouteEnum::INDEX;
-
         $context['table'] = $table;
-
         $blockName = $this->getBlockName($table->getBlockPrefix(), '' , 'table');
         $context['blockName'] = $blockName;
         $context['blockPrefix'] = $table->getBlockPrefix();
