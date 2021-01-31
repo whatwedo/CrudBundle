@@ -470,10 +470,7 @@ class DefinitionView implements DefinitionViewInterface
         return $this->definition->hasCapability($route);
     }
 
-    /**
-     * @return DefinitionInterface
-     */
-    public function getDefinition()
+    public function getDefinition(): DefinitionInterface
     {
         return $this->definition;
     }

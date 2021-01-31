@@ -2,12 +2,14 @@
 
 namespace whatwedo\CrudBundle\Twig;
 
+use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Environment;
 use Twig\Extension\AbstractExtension;
 use Twig\Node\Expression\FunctionExpression;
 use Twig\TemplateWrapper;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
+use whatwedo\CrudBundle\Action\IdentityableActionInterface;
 use whatwedo\CrudBundle\Block\Block;
 use whatwedo\CrudBundle\Content\ContentInterface;
 use whatwedo\CrudBundle\Enum\RouteEnum;
@@ -16,6 +18,7 @@ use whatwedo\TableBundle\Iterator\RowColumnIterator;
 use whatwedo\TableBundle\Table\Table;
 use whatwedo\TableBundle\Table\ColumnInterface;
 use whatwedo\TableBundle\Table\ColumnReflection;
+use whatwedo\CrudBundle\Action\IdentityAction;
 
 class CrudExtension extends AbstractExtension
 {
@@ -36,6 +39,7 @@ class CrudExtension extends AbstractExtension
             'blockName' => 'blockName'
         ];
         return [
+            new TwigFunction( 'crud_actions', fn (Environment $environment, $context,  DefinitionViewInterface $view) => $this->crudActions( $environment, $context, $view), $options ),
             new TwigFunction( 'crud_index', fn (Environment $environment, $context,  DefinitionViewInterface $view) => $this->crudRender( RouteEnum::INDEX, $environment, $context, $view), $options ),
             new TwigFunction( 'crud_create', fn (Environment $environment, $context,  DefinitionViewInterface $view) => $this->crudRender( RouteEnum::CREATE, $environment, $context, $view), $options ),
             new TwigFunction( 'crud_show', fn (Environment $environment, $context,  DefinitionViewInterface $view) => $this->crudRender( RouteEnum::SHOW, $environment, $context, $view), $options ),
@@ -47,6 +51,36 @@ class CrudExtension extends AbstractExtension
             new TwigFunction( 'crud_table_header_cell',  fn (Environment $environment, $context, ColumnInterface $column) => $this->crudTableHeaderCell($environment, $context, $column), $options ),
             new TwigFunction( 'crud_table_content_cell', fn (Environment $environment, $context, ColumnReflection $column, RowColumnIterator $row) => $this->crudTableContentCell($environment, $context, $column->getColumn(), $row), $options ),
         ];
+    }
+
+    public function crudActions(Environment $environment, $context,  DefinitionViewInterface $view)
+    {
+        $this->template = $this->getTemplate($view->getLayoutFile(), $environment);
+
+
+        if (!isset($context['_route'])) {
+            return 'not Actions';
+        }
+
+        $route = $context['_route'];
+
+        $actions = $view->getDefinition()->getActions()[$route];
+
+
+        $renderedBlock = '';
+        foreach ($actions as $action) {
+            $blockName = $this->getBlockName($action->getBlockPrefix(), '' , 'action');
+
+            $action->setData($view->getData());
+            if ($action instanceof IdentityableActionInterface) {
+                $action->setRouteParameters(array_merge($action->getRouteParameters(), ['id' => $view->getData()->getId()]));
+            }
+
+            $context['action'] = $action;
+            $renderedBlock .= $this->template->renderBlock($blockName, $context);
+        }
+
+        return $renderedBlock;
     }
 
     public function crudRender(string $mode, Environment $environment, $context,  DefinitionViewInterface $view)
@@ -140,7 +174,7 @@ class CrudExtension extends AbstractExtension
 
 
         if (!in_array($defaultBlockName, $blockNames)) {
-            throw new \Exception(sprintf('block %s not found in Template', $defaultBlockName));
+            throw new \Exception(sprintf('block "%s" not found in Template', $defaultBlockName));
         }
 
         return $defaultBlockName;

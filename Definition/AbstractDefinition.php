@@ -34,6 +34,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
+use whatwedo\CrudBundle\Action\Action;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
 use whatwedo\CrudBundle\Controller\CrudController;
 use whatwedo\CrudBundle\Enum\RouteEnum;
@@ -139,6 +140,29 @@ abstract class AbstractDefinition implements DefinitionInterface
             RouteEnum::DELETE,
             RouteEnum::EDIT,
             RouteEnum::CREATE,
+        ];
+    }
+
+    public function getActions(): array
+    {
+        return [
+            RouteEnum::INDEX => [
+                Action::new('whatwedo_crud.add'),
+            ],
+            RouteEnum::CREATE => [
+                Action::new('whatwedo_crud.back'),
+            ],
+            RouteEnum::SHOW => [
+                Action::new('whatwedo_crud.back'),
+                Action::new('whatwedo_crud.edit'),
+                Action::new('whatwedo_crud.delete'),
+            ],
+            RouteEnum::EDIT => [
+                Action::new('whatwedo_crud.back'),
+                Action::new('whatwedo_crud.save'),
+                Action::new('whatwedo_crud.view'),
+                Action::new('whatwedo_crud.delete'),
+            ],
         ];
     }
 

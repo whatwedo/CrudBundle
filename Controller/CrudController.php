@@ -137,6 +137,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
                     'table' => $table,
                     'title' => $this->getDefinition()->getTitle(null, RouteEnum::INDEX),
                     'voter_entity' => $this->getDefinition(),
+                    '_route' => RouteEnum::INDEX,
                 ]
             )
         );
@@ -161,6 +162,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
                 [
                     'view' => $this->getDefinition()->createView($entity),
                     'title' => $this->getDefinition()->getTitle($entity, RouteEnum::SHOW),
+                    '_route' => RouteEnum::SHOW,
                 ]
             )
         );
@@ -202,6 +204,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
                 [
                     'view' => $view,
                     'title' => $this->getDefinition()->getTitle($entity, RouteEnum::EDIT),
+                    '_route' => RouteEnum::EDIT,
                 ]
             )
         );
@@ -283,6 +286,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         return $this->render($this->getView('create.html.twig'), $this->getCreateParameters([
             'view' => $view,
             'title' => $this->getDefinition()->getTitle(null, RouteEnum::CREATE),
+            '_route' => RouteEnum::CREATE,
         ]));
     }
 

@@ -70,6 +70,9 @@ interface DefinitionInterface
      */
     public static function getCapabilities(): array;
 
+    public function getActions(): array;
+
+
     /**
      * returns FQDN of the controller
      */

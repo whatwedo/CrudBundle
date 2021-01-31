@@ -38,6 +38,8 @@ interface DefinitionViewInterface
      * sets the definition
      */
     public function setDefinition(DefinitionInterface $definition);
+    public function getDefinition(): DefinitionInterface;
+
 
     /**
      * sets the definition
