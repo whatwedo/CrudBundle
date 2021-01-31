@@ -39,7 +39,7 @@ class CrudExtension extends AbstractExtension
             'blockName' => 'blockName'
         ];
         return [
-            new TwigFunction( 'crud_actions', fn (Environment $environment, $context,  DefinitionViewInterface $view) => $this->crudActions( $environment, $context, $view), $options ),
+            new TwigFunction( 'crud_actions', fn (Environment $environment, $context,  array $actions) => $this->crudActions( $environment, $context, $actions), $options ),
             new TwigFunction( 'crud_index', fn (Environment $environment, $context,  DefinitionViewInterface $view) => $this->crudRender( RouteEnum::INDEX, $environment, $context, $view), $options ),
             new TwigFunction( 'crud_create', fn (Environment $environment, $context,  DefinitionViewInterface $view) => $this->crudRender( RouteEnum::CREATE, $environment, $context, $view), $options ),
             new TwigFunction( 'crud_show', fn (Environment $environment, $context,  DefinitionViewInterface $view) => $this->crudRender( RouteEnum::SHOW, $environment, $context, $view), $options ),
@@ -53,28 +53,13 @@ class CrudExtension extends AbstractExtension
         ];
     }
 
-    public function crudActions(Environment $environment, $context,  DefinitionViewInterface $view)
+    public function crudActions(Environment $environment, $context,  $actions)
     {
+        $view = $context['view'];
         $this->template = $this->getTemplate($view->getLayoutFile(), $environment);
-
-
-        if (!isset($context['_route'])) {
-            return 'not Actions';
-        }
-
-        $route = $context['_route'];
-
-        $actions = $view->getDefinition()->getActions()[$route];
-
-
         $renderedBlock = '';
         foreach ($actions as $action) {
             $blockName = $this->getBlockName($action->getBlockPrefix(), '' , 'action');
-
-            $action->setData($view->getData());
-            if ($action instanceof IdentityableActionInterface) {
-                $action->setRouteParameters(array_merge($action->getRouteParameters(), ['id' => $view->getData()->getId()]));
-            }
 
             $context['action'] = $action;
             $renderedBlock .= $this->template->renderBlock($blockName, $context);

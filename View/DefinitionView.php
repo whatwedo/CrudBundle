@@ -45,6 +45,10 @@ use Symfony\Component\Security\Http\AccessMapInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Twig\Environment;
+use whatwedo\CrudBundle\Action\Action;
+use whatwedo\CrudBundle\Action\IdentityableActionInterface;
+use whatwedo\CrudBundle\Action\IdentityAction;
+use whatwedo\CrudBundle\Action\PostAction;
 use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Content\Content;
 use whatwedo\CrudBundle\Content\EditableContentInterface;
@@ -140,6 +144,8 @@ class DefinitionView implements DefinitionViewInterface
      */
     protected $formRegistry;
 
+    protected string $route;
+
     /**
      * DefinitionView constructor.
      *
@@ -189,6 +195,44 @@ class DefinitionView implements DefinitionViewInterface
     public function getData()
     {
         return $this->data;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRoute(): string
+    {
+        return $this->route;
+    }
+
+    /**
+     * @param string $route
+     * @return DefinitionView
+     */
+    public function setRoute(string $route): DefinitionView
+    {
+        $this->route = $route;
+        return $this;
+    }
+
+
+    public function getActions()
+    {
+       $actions = $this->definition->getActions();
+
+
+       $viewActions = [];
+       foreach ($actions[$this->getRoute()] as $action) {
+           $action->setData($this->getData());
+           if ($action instanceof IdentityableActionInterface) {
+               if ($this->getData()) {
+                   $action->setRouteParameters(array_merge($action->getRouteParameters(), ['id' => $this->getData()->getId()]));
+               }
+           }
+           $viewActions[] = $action;
+       }
+
+       return $viewActions;
     }
 
     public function setBlocks(BlockCollection $blocks)

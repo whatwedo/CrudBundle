@@ -136,7 +136,7 @@ interface DefinitionInterface
      *
      * @param $data
      */
-    public function createView($data = null): DefinitionViewInterface;
+    public function createView(string $route, $data = null): DefinitionViewInterface;
 
     /**
      * builds the interface

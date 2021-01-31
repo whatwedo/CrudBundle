@@ -309,12 +309,13 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @param null $data
      */
-    public function createView($data = null): DefinitionViewInterface
+    public function createView(string $route, $data = null): DefinitionViewInterface
     {
         $this->builder = new DefinitionBuilder($this->blockManager, $this->definitionManager, $this->templates, $this);
 
         $this->configureView($this->builder, $data);
 
+        $this->definitionView->setRoute($route);
         $this->definitionView->setDefinition($this);
         $this->definitionView->setData($data);
         $this->definitionView->setBlocks($this->builder->getBlocks());
