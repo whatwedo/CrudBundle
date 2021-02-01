@@ -28,6 +28,9 @@
 namespace whatwedo\CrudBundle\Content;
 
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use whatwedo\CrudBundle\Action\Action;
+use whatwedo\CrudBundle\Action\IdentityAction;
+use whatwedo\CrudBundle\Action\PostAction;
 use function array_keys;
 use function array_reduce;
 use function array_reverse;
@@ -276,6 +279,12 @@ class RelationContent extends TableContent implements EditableContentInterface
             'route_addition_key' => $this->definition::getAlias(),
             'show_index_button' => false,
             'add_voter_attribute' => RouteEnum::EDIT,
+            'actions' => [
+                    Action::new('create')
+                        ->setClass('btn btn-success')
+                        ->setIcon('fa fa-plus')
+                        ->setRoute($this->definition::getRouteName(RouteEnum::CREATE)),
+            ],
         ]);
 
         $resolver->setDefault('definition', function (Options $options) {
@@ -527,6 +536,33 @@ class RelationContent extends TableContent implements EditableContentInterface
         $table->addColumn('actions', ActionColumn::class, [
             'items' => $actionColumnItems,
         ]);
+
+
+
+        $actionColumn = $table->getActionColumn();
+
+        $actionColumn->setActions(
+            [
+                IdentityAction::new('')
+                    ->setClass('btn btn-xs btn-primary')
+                    ->setIcon('fa fa-arrow-right')
+                    ->setRoute($this->getRoute(RouteEnum::SHOW)),
+                IdentityAction::new('')
+                    ->setClass('btn btn-xs btn-warning')
+                    ->setIcon('fa fa-pencil')
+                    ->setRoute($this->getRoute(RouteEnum::EDIT)),
+                PostAction::new('')
+                    ->setClass('btn btn-xs btn-danger')
+                    ->setIcon('fa fa-trash-o')
+                    ->setRoute($this->getRoute(RouteEnum::DELETE)),
+            ]
+        );
+
         return $table;
+    }
+
+    public function getActions(): array
+    {
+        return $this->options['actions'];
     }
 }

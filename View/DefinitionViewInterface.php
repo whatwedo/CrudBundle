@@ -38,6 +38,12 @@ interface DefinitionViewInterface
      * sets the definition
      */
     public function setDefinition(DefinitionInterface $definition);
+    public function getDefinition(): DefinitionInterface;
+
+    public function setRoute(string $route): self;
+    public function getRoute(): string;
+
+
 
     /**
      * sets the definition

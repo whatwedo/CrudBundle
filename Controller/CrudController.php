@@ -133,10 +133,11 @@ class CrudController extends AbstractController implements CrudDefinitionControl
             $this->getView('index.html.twig'),
             $this->getIndexParameters(
                 [
-                    'view' => $this->getDefinition()->createView(),
+                    'view' => $this->getDefinition()->createView(RouteEnum::INDEX),
                     'table' => $table,
                     'title' => $this->getDefinition()->getTitle(null, RouteEnum::INDEX),
                     'voter_entity' => $this->getDefinition(),
+                    '_route' => RouteEnum::INDEX,
                 ]
             )
         );
@@ -159,8 +160,9 @@ class CrudController extends AbstractController implements CrudDefinitionControl
             $this->getShowParameters(
                 $entity,
                 [
-                    'view' => $this->getDefinition()->createView($entity),
+                    'view' => $this->getDefinition()->createView(RouteEnum::SHOW, $entity),
                     'title' => $this->getDefinition()->getTitle($entity, RouteEnum::SHOW),
+                    '_route' => RouteEnum::SHOW,
                 ]
             )
         );
@@ -174,7 +176,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $entity = $this->getEntityOr404($request);
         $this->denyAccessUnlessGrantedCrud(RouteEnum::EDIT, $entity);
 
-        $view = $this->getDefinition()->createView($entity);
+        $view = $this->getDefinition()->createView(RouteEnum::EDIT, $entity);
 
         $form = $view->getEditForm();
 
@@ -202,6 +204,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
                 [
                     'view' => $view,
                     'title' => $this->getDefinition()->getTitle($entity, RouteEnum::EDIT),
+                    '_route' => RouteEnum::EDIT,
                 ]
             )
         );
@@ -219,7 +222,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
         $this->dispatchEvent(CrudEvent::NEW_PREFIX, $entity);
 
-        $view = $this->getDefinition()->createView($entity);
+        $view = $this->getDefinition()->createView(RouteEnum::CREATE, $entity);
 
         if ($request->isMethod('get') || $request->isMethod('post')) {
             // set preselected entities
@@ -283,6 +286,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         return $this->render($this->getView('create.html.twig'), $this->getCreateParameters([
             'view' => $view,
             'title' => $this->getDefinition()->getTitle(null, RouteEnum::CREATE),
+            '_route' => RouteEnum::CREATE,
         ]));
     }
 
