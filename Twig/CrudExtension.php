@@ -36,16 +36,16 @@ class CrudExtension extends AbstractExtension
             'blockName' => 'blockName'
         ];
         return [
-            new TwigFunction( 'crud_index', fn (Environment $environment, $context,  DefinitionViewInterface $view) => $this->crudRender( RouteEnum::INDEX, $environment, $context, $view), $options ),
-            new TwigFunction( 'crud_create', fn (Environment $environment, $context,  DefinitionViewInterface $view) => $this->crudRender( RouteEnum::CREATE, $environment, $context, $view), $options ),
-            new TwigFunction( 'crud_show', fn (Environment $environment, $context,  DefinitionViewInterface $view) => $this->crudRender( RouteEnum::SHOW, $environment, $context, $view), $options ),
-            new TwigFunction( 'crud_edit', fn (Environment $environment, $context,  DefinitionViewInterface $view) => $this->crudRender( RouteEnum::EDIT, $environment, $context, $view), $options ),
-            new TwigFunction( 'crud_block',  fn (Environment $environment, $context,  DefinitionViewInterface $view, Block $block) => $this->crudBlock($environment, $context, $view, $block), $options ),
-            new TwigFunction( 'crud_content_row', fn (Environment $environment, $context,  DefinitionViewInterface $view, ContentInterface $content) => $this->crudContentRow($environment, $context, $view, $content), $options ),
+            new TwigFunction( 'whatwedo_crud_index', fn (Environment $environment, $context,  DefinitionViewInterface $view) => $this->crudRender( RouteEnum::INDEX, $environment, $context, $view), $options ),
+            new TwigFunction( 'whatwedo_crud_create', fn (Environment $environment, $context,  DefinitionViewInterface $view) => $this->crudRender( RouteEnum::CREATE, $environment, $context, $view), $options ),
+            new TwigFunction( 'whatwedo_crud_show', fn (Environment $environment, $context,  DefinitionViewInterface $view) => $this->crudRender( RouteEnum::SHOW, $environment, $context, $view), $options ),
+            new TwigFunction( 'whatwedo_crud_edit', fn (Environment $environment, $context,  DefinitionViewInterface $view) => $this->crudRender( RouteEnum::EDIT, $environment, $context, $view), $options ),
+            new TwigFunction( 'whatwedo_crud_block',  fn (Environment $environment, $context,  DefinitionViewInterface $view, Block $block) => $this->crudBlock($environment, $context, $view, $block), $options ),
+            new TwigFunction( 'whatwedo_crud_content_row', fn (Environment $environment, $context,  DefinitionViewInterface $view, ContentInterface $content) => $this->crudContentRow($environment, $context, $view, $content), $options ),
 
-            new TwigFunction( 'crud_table',  fn (Environment $environment, $context, Table $table) => $this->crudTable($environment, $context, $table), $options ),
-            new TwigFunction( 'crud_table_header_cell',  fn (Environment $environment, $context, ColumnInterface $column) => $this->crudTableHeaderCell($environment, $context, $column), $options ),
-            new TwigFunction( 'crud_table_content_cell', fn (Environment $environment, $context, ColumnReflection $column, RowColumnIterator $row) => $this->crudTableContentCell($environment, $context, $column->getColumn(), $row), $options ),
+            new TwigFunction( 'whatwedo_crud_table',  fn (Environment $environment, $context, Table $table) => $this->crudTable($environment, $context, $table), $options ),
+            new TwigFunction( 'whatwedo_crud_table_header_cell',  fn (Environment $environment, $context, ColumnInterface $column) => $this->crudTableHeaderCell($environment, $context, $column), $options ),
+            new TwigFunction( 'whatwedo_crud_table_content_cell', fn (Environment $environment, $context, ColumnReflection $column, RowColumnIterator $row) => $this->crudTableContentCell($environment, $context, $column->getColumn(), $row), $options ),
         ];
     }
 

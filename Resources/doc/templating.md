@@ -40,7 +40,7 @@ Like Symfony Form the layout file can be extended or overwritten. New blocks can
 ```
 {% extends '@whatwedoCrud/layout/adminlte_layout.html.twig' %}
 
-{% block crud_show %}
+{% block whatwedo_whatwedo_crud_show %}
     my fancy show block
     {{ parent() }}
 {% endblock %}
@@ -53,13 +53,14 @@ Like Symfony Form the layout file can be extended or overwritten. New blocks can
 ### Main Twig-Functions
 | Twig-Function  | Default Blockname | with Blockprefix        | -----                     |
 |--------------- |----------         | ----                    | -----                     |
-|`crud_show`     |`show`             | N/A                     | `render_mode = 'edit'`    |
-|`crud_create`   |`create`           | N/A                     | `render_mode = 'create'`  |
-|`crud_edit`     |`edit`             | N/A                     | `render_mode = 'create'`  |
-|`crud_table`    |`table`            | `<block_prefix>_table`  | `render_mode = 'create'`  |
+|`whatwedo_crud_index`    |`index`            | N/A                     | `render_mode = 'index'`    |
+|`whatwedo_crud_show`     |`show`             | N/A                     | `render_mode = 'edit'`    |
+|`whatwedo_crud_create`   |`create`           | N/A                     | `render_mode = 'create'`  |
+|`whatwedo_crud_edit`     |`edit`             | N/A                     | `render_mode = 'edit'`  |
+|`whatwedo_crud_table`    |`table`            | `<block_prefix>_table`  |  |
 
 
-### `crud_content_row` - Twig-Function 
+### `whatwedo_crud_content_row` - Twig-Function 
 
 The row block name will be dynamically created.   `<block_prefix>` and `<render_mode>` will be used to create the block name.
 
@@ -71,17 +72,17 @@ The `block_prefix` can be set in with the content options.
 class PostDefinition extends AbstractDefinition
 {
 ....
-        $builder
-            ->getBlock('post')
-            ->addContent(
-                'content',
-                null,
-                [
-                    'label' => 'post.content',
-                    'block_prefix' => 'postcontent'
-                ]
-            )
-        ;
+    $builder
+        ->getBlock('post')
+        ->addContent(
+            'content',
+            null,
+            [
+                'label' => 'post.content',
+                'block_prefix' => 'postcontent'
+            ]
+        )
+    ;
 
 ```
 
@@ -100,7 +101,7 @@ By default, the `block_prefix` is the snake case of the class name.
 
 | Twig-Function             | Default Blockname | with Blockprefix | ---   |
 |---------------            | ----------        | ----                   | -----                     |
-|`crud_table`               | `table`           | `<block_prefix>_table`<br> eg. `post_table`        |
-|`crud_table_header_cell`   | `table_header`    | `<block_prefix>_header`<br> eg. `posttitle_header` |
-|`crud_table_content_cell`  | `table_cell`      | `<block_prefix>_cell`<br> eg. `posttitle_cell`     |
+|`whatwedo_crud_table`               | `table`           | `<block_prefix>_table`<br> eg. `post_table`        |
+|`whatwedo_crud_table_header_cell`   | `table_header`    | `<block_prefix>_header`<br> eg. `posttitle_header` |
+|`whatwedo_crud_table_content_cell`  | `table_cell`      | `<block_prefix>_cell`<br> eg. `posttitle_cell`     |
 
