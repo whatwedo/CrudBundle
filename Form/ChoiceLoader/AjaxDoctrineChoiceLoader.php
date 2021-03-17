@@ -3,7 +3,7 @@
 namespace whatwedo\CrudBundle\Form\ChoiceLoader;
 
 use Doctrine\Common\Collections\Collection;
-use Symfony\Bridge\Doctrine\Form\ChoiceList\DoctrineChoiceLoader;
+use Symfony\Component\Form\ChoiceList\Factory\Cache\ChoiceLoader;
 use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -16,11 +16,11 @@ class AjaxDoctrineChoiceLoader implements ChoiceLoaderInterface
     private $selected = [];
 
     /**
-     * @var DoctrineChoiceLoader
+     * @var ChoiceLoader
      */
     private $doctrineChoiceLoader;
 
-    public function __construct(DoctrineChoiceLoader $doctrineChoiceLoader)
+    public function __construct(ChoiceLoader $doctrineChoiceLoader)
     {
         $this->doctrineChoiceLoader = $doctrineChoiceLoader;
     }
@@ -28,7 +28,11 @@ class AjaxDoctrineChoiceLoader implements ChoiceLoaderInterface
     public function onFormPostSetData(FormEvent $event)
     {
         $data = $event->getData();
-        $this->selected = is_iterable($data) ? $data : [$data];
+        if($data){
+            $this->selected = is_iterable($data) ? $data : [$data];
+        }else{
+            $this->selected = [];
+        }
     }
 
     public function loadChoiceList($value = null)
