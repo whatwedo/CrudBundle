@@ -1,0 +1,39 @@
+<!-- Page title & actions -->
+<div class="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between">
+    <div class="flex-1 min-w-0">
+        <h1 class="text-lg font-medium leading-6 text-gray-900 sm:truncate">
+            Firmen
+        </h1>
+    </div>
+    <div class="mt-4 flex sm:mt-0 sm:ml-4">
+        <button
+            type="button"
+            class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3"
+        >
+            {{ bootstrap_icon('download', { class: 'w-4 h-4' }) }}
+        </button>
+
+        <button
+            type="button"
+            class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3"
+            data-action="click->whatwedo--crud-bundle--filter#open"
+        >
+            {{ bootstrap_icon('funnel-fill', { class: 'w-4 h-4' }) }}
+        </button>
+
+        <div class="inline-flex items-center px-3 ml-2">
+            <div class="flex rounded-md shadow-sm">
+                <div class="relative flex items-stretch flex-grow focus-within:z-10">
+                    <input type="search" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-none rounded-l-md sm:text-sm border-gray-300" placeholder="Suchbegriff ...">
+                </div>
+                <button class="-ml-px relative inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-700 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+                    {{ bootstrap_icon('search', { class: 'h-4 w-4 text-gray-400', alt: 'Suchen' }) }}
+                </button>
+            </div>
+        </div>
+
+        <button type="button" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:ml-3">
+            Hinzufügen
+        </button>
+    </div>
+</div>

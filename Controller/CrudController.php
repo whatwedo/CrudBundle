@@ -55,83 +55,24 @@ use whatwedo\TableBundle\Table\DoctrineTable;
 
 class CrudController extends AbstractController implements CrudDefinitionController
 {
-    protected $twigParametersIndex = [];
+    protected ?DefinitionInterface $definition = null;
+    protected DefinitionManager $definitionManager;
+    protected Environment $twig;
 
-    protected $twigParametersShow = [];
-
-    protected $twigParametersEdit = [];
-
-    /**
-     * @var DefinitionInterface|AbstractDefinition
-     */
-    protected $definition;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @var Environment
-     */
-    protected $templating;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var RouterInterface
-     */
-    protected $router;
-
-    /**
-     * @var DefinitionManager
-     */
-    protected $definitionManager;
-
-    /**
-     * @var TableFactory
-     */
-    protected $tableFactory;
-
-    /**
-     * CrudController constructor.
-     */
-    public function __construct(Environment $templating, LoggerInterface $logger, EventDispatcherInterface $eventDispatcher, RouterInterface $router, DefinitionManager $definitionManager, TableFactory $tableFactory)
-    {
-        $this->eventDispatcher = $eventDispatcher;
-        $this->router = $router;
-        $this->templating = $templating;
-        $this->logger = $logger;
-        $this->definitionManager = $definitionManager;
-        $this->tableFactory = $tableFactory;
-    }
-
-    public function configureDefinition(DefinitionInterface $definition)
-    {
-        $this->definition = $definition;
-    }
-
-    /**
-     * @return Response
-     */
-    public function indexAction(Request $request)
+    public function index(TableFactory $tableFactory)
     {
         $this->denyAccessUnlessGrantedCrud(RouteEnum::INDEX, $this->getDefinition());
 
-        $table = $this->tableFactory
-            ->createDoctrineTable('index', [
-                'query_builder' => $this->getDefinition()->getQueryBuilder(),
-            ]);
+        $table = $tableFactory->createDoctrineTable('index', [
+            'query_builder' => $this->getDefinition()->getQueryBuilder(),
+        ]);
 
         $this->configureTable($table);
 
         $this->definition->buildBreadcrumbs(null, RouteEnum::INDEX);
 
         return $this->render(
-            $this->getView('index.html.twig'),
+            $this->getTemplate('index.html.twig'),
             $this->getIndexParameters(
                 [
                     'view' => $this->getDefinition()->createView(RouteEnum::INDEX),
@@ -147,7 +88,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     /**
      * @return Response
      */
-    public function showAction(Request $request)
+    public function show(Request $request)
     {
         $entity = $this->getEntityOr404($request);
         $this->denyAccessUnlessGrantedCrud(RouteEnum::SHOW, $entity);
@@ -172,7 +113,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     /**
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-    public function editAction(Request $request)
+    public function edit(Request $request)
     {
         $entity = $this->getEntityOr404($request);
         $this->denyAccessUnlessGrantedCrud(RouteEnum::EDIT, $entity);
@@ -214,7 +155,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     /**
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-    public function createAction(Request $request)
+    public function create(Request $request)
     {
         $this->denyAccessUnlessGrantedCrud(RouteEnum::CREATE, $this->getDefinition());
 
@@ -294,7 +235,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     /**
      * @return Response
      */
-    public function deleteAction(Request $request)
+    public function delete(Request $request)
     {
         $entity = $this->getEntityOr404($request);
         $this->denyAccessUnlessGrantedCrud(RouteEnum::DELETE, $entity);
@@ -319,14 +260,14 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     /**
      * @return Response
      */
-    public function exportAction(Request $request)
+    public function export(Request $request)
     {
         $this->denyAccessUnlessGrantedCrud(RouteEnum::EXPORT, $this->getDefinition());
 
         $entities = $this->getExportEntities($request);
         if (!$entities) {
             $this->addFlash('warning', 'Nichts zu exportieren');
-            return $this->redirectToRoute($this->getDefinition()::getRouteName(RouteEnum::INDEX));
+            return $this->redirectToRoute($this->getDefinition()::getRouteNamePrefix().'_'.RouteEnum::INDEX);
         }
 
         $objectNormalizer = new ObjectNormalizer($this->definition);
@@ -359,7 +300,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     /**
      * @return Response
      */
-    public function ajaxAction(Request $request)
+    public function ajax(Request $request)
     {
         $this->denyAccessUnlessGrantedCrud(RouteEnum::AJAX, $this->getDefinition());
 
@@ -379,9 +320,9 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      * @param string $file file name
      * @return string
      */
-    public function getView($file)
+    public function getTemplate($file)
     {
-        if ($this->templating->getLoader()->exists($this->getDefinition()->getTemplateDirectory() . '/' . $file)) {
+        if ($this->twig->getLoader()->exists($this->getDefinition()->getTemplateDirectory() . '/' . $file)) {
             return $this->getDefinition()->getTemplateDirectory() . '/' . $file;
         }
 
@@ -390,7 +331,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
     public function getActionColumnItems($row)
     {
-        $targetDefinition = $this->definitionManager->getDefinitionFor($row);
+        $targetDefinition = $this->definitionManager->getDefinitionByEntity($row);
 
         $actionColumnItems = [];
 
@@ -399,7 +340,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
                 'label' => 'Details',
                 'icon' => 'arrow-right',
                 'button' => 'primary',
-                'route' => $targetDefinition::getRouteName(RouteEnum::SHOW),
+                'route' => $targetDefinition::getRouteNamePrefix().'_'.RouteEnum::SHOW,
                 'route_parameters' => [],
                 'voter_attribute' => RouteEnum::SHOW,
             ];
@@ -410,7 +351,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
                 'label' => 'Bearbeiten',
                 'icon' => 'pencil',
                 'button' => 'warning',
-                'route' => $targetDefinition::getRouteName(RouteEnum::EDIT),
+                'route' => $targetDefinition::getRouteNamePrefix().'_'.RouteEnum::EDIT,
                 'route_parameters' => [],
                 'voter_attribute' => RouteEnum::EDIT,
             ];
@@ -421,9 +362,9 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
     public function getShowRoute($row)
     {
-        $targetDefinition = $this->definitionManager->getDefinitionFor($row);
+        $targetDefinition = $this->definitionManager->getDefinitionByEntity($row);
 
-        return $targetDefinition::getRouteName(RouteEnum::SHOW);
+        return $targetDefinition::getRouteNamePrefix().'_'.RouteEnum::SHOW;
     }
 
     /**
@@ -485,7 +426,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         }
 
         if ($this->getDefinition()->hasCapability(RouteEnum::EXPORT)) {
-            $table->setExportRoute($this->getDefinition()::getRouteName(RouteEnum::EXPORT));
+            $table->setExportRoute($this->getDefinition()::getRouteNamePrefix().'_'.RouteEnum::EXPORT);
         }
 
         // this is normally the main table of the page, so we're fixing the header
@@ -530,7 +471,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     {
         $export = $request->query->get('export', []);
         if (isset($export['definition']) && isset($export['acronym']) && isset($export['class']) && isset($export['id'])
-            && ($definition = $this->definitionManager->getDefinitionFromClass($export['definition']))
+            && ($definition = $this->definitionManager->getDefinitionByClassName($export['definition']))
             && ($content = $definition->getContent($export['acronym']))
             && $content instanceof RelationContent
             && ($repository = $this->getDoctrine()->getRepository($export['class']))
@@ -569,7 +510,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
     protected function redirectToDefinition(string $definitionClass, string $capability, array $parameters = [], int $status = 302): RedirectResponse
     {
-        return $this->redirectToDefinitionObject($this->definitionManager->getDefinitionFromClass($definitionClass), $capability, $parameters, $status);
+        return $this->redirectToDefinitionObject($this->definitionManager->getDefinitionByClassName($definitionClass), $capability, $parameters, $status);
     }
 
     /**
@@ -586,7 +527,28 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
     private function redirectToDefinitionObject(DefinitionInterface $definition, string $capability, array $parameters = [], int $status = 302): RedirectResponse
     {
-        $route = $definition::getRouteName($capability);
+        $route = $definition::getRouteNamePrefix().'_'.$capability;
         return $this->redirectToRoute($route, $parameters, $status);
+    }
+
+    public function setDefinition(?DefinitionInterface $definition): void
+    {
+        $this->definition = $definition;
+    }
+
+    /**
+     * @required
+     */
+    public function setTwig(Environment $twig): void
+    {
+        $this->twig = $twig;
+    }
+
+    /**
+     * @required
+     */
+    public function setDefinitionManager(DefinitionManager $definitionManager): void
+    {
+        $this->definitionManager = $definitionManager;
     }
 }

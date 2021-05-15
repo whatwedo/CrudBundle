@@ -35,75 +35,80 @@ use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 class CrudLoader extends Loader
 {
-    /**
-     * @var DefinitionManager
-     */
-    protected $definitionManager;
+    private bool $isLoaded = false;
+    protected DefinitionManager $definitionManager;
 
     public function __construct(DefinitionManager $definitionManager)
     {
         $this->definitionManager = $definitionManager;
+
+        parent::__construct();
     }
 
-    public function load($resource, $type = null)
+    public function load($resource, $type = null): RouteCollection
     {
-        $routes = new RouteCollection();
-        $definition = $this->definitionManager->getDefinitionFromClass($resource) ?: $this->definitionManager->getDefinition($resource);
-
-        foreach ($definition->getCapabilities() as $capability) {
-            $route = new Route(
-                '/' . $capability,
-                [
-                    '_resource' => $resource,
-                    '_controller' => $definition->getController() . '::' . $capability . 'Action',
-                ]
-            );
-            $routeName = $definition::getRouteName($capability);
-
-            switch ($capability) {
-                case RouteEnum::INDEX:
-                    $route->setPath('/');
-                    break;
-                case RouteEnum::SHOW:
-                    $route->setPath('/{id}');
-                    $route->setRequirement('id', '\d+');
-                    break;
-                case RouteEnum::CREATE:
-                    $route->setPath('/create');
-                    $route->setMethods(['GET', 'POST']);
-                    break;
-                case RouteEnum::EDIT:
-                    $route->setPath('/{id}/edit');
-                    $route->setMethods(['GET', 'POST', 'PUT', 'PATCH']);
-                    $route->setRequirement('id', '\d+');
-                    break;
-                case RouteEnum::DELETE:
-                    $route->setPath('/{id}/delete');
-                    $route->setMethods(['POST']);
-                    $route->setRequirement('id', '\d+');
-                    break;
-                case RouteEnum::BATCH:
-                    $route->setPath('/batch');
-                    $route->setMethods(['POST']);
-                    break;
-                case RouteEnum::EXPORT:
-                    $route->setPath('/export');
-                    $route->setMethods(['GET']);
-                    break;
-                case RouteEnum::AJAX:
-                    $route->setPath('/ajax');
-                    $route->setMethods(['POST']);
-                    break;
-            }
-
-            $routes->add($routeName, $route);
+        if (true === $this->isLoaded) {
+            throw new \RuntimeException('Do not add the "whatwedo_crud" loader twice');
         }
+
+        $routes = new RouteCollection();
+
+        foreach ($this->definitionManager->getDefinitions() as $definition) {
+            foreach ($definition::getCapabilities() as $capability) {
+                $route = new Route(
+                    '/' . $definition::getRouteNamePrefix() . '/',
+                    [
+                        '_resource' => $resource,
+                        '_controller' => $definition::getController() . '::' . $capability,
+                    ]
+                );
+
+                switch ($capability) {
+                    case RouteEnum::INDEX:
+                        break;
+                    case RouteEnum::SHOW:
+                        $route->setPath($route->getPath().'{id}');
+                        $route->setRequirement('id', '\d+');
+                        break;
+                    case RouteEnum::CREATE:
+                        $route->setPath($route->getPath().'create');
+                        $route->setMethods(['GET', 'POST']);
+                        break;
+                    case RouteEnum::EDIT:
+                        $route->setPath($route->getPath().'{id}/edit');
+                        $route->setMethods(['GET', 'POST', 'PUT', 'PATCH']);
+                        $route->setRequirement('id', '\d+');
+                        break;
+                    case RouteEnum::DELETE:
+                        $route->setPath($route->getPath().'{id}/delete');
+                        $route->setMethods(['POST']);
+                        $route->setRequirement('id', '\d+');
+                        break;
+                    case RouteEnum::BATCH:
+                        $route->setPath($route->getPath().'batch');
+                        $route->setMethods(['POST']);
+                        break;
+                    case RouteEnum::EXPORT:
+                        $route->setPath($route->getPath().'export');
+                        $route->setMethods(['GET']);
+                        break;
+                    case RouteEnum::AJAX:
+                        $route->setPath($route->getPath().'ajax');
+                        $route->setMethods(['POST']);
+                        break;
+                }
+
+                $routes->add($definition::getRouteNamePrefix().'_'.$capability, $route);
+            }
+        }
+
+        $this->isLoaded = true;
 
         return $routes;
     }
 
     public function supports($resource, $type = null)
     {
-        return 'crud' === $type;
+        return 'whatwedo_crud' === $type;
     }
 }

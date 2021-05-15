@@ -7,35 +7,28 @@
     "minimum-stability": "dev",
     "authors": [
         {
-            "name": "Ueli Banholzer",
-            "email": "ueli@whatwedo.ch"
-        },
-        {
-            "name": "Felix Imobersteg",
-            "email": "felix@whatwedo.ch"
-        },
-        {
-            "name": "Nicolo Singer",
-            "email": "nicolo@whatwedo.ch"
+            "name": "whatwedo GmbH",
+            "email": "welove@whatwedo.ch"
         }
     ],
     "require": {
-        "php":                      ">=7.2",
-        "symfony/framework-bundle": "~4.0|~5.0",
-        "symfony/http-kernel":      "~4.0|~5.0",
-        "symfony/security-bundle":  "~4.0|~5.0",
-        "symfony/serializer":       "~4.0|~5.0",
-        "symfony/form":             "~4.0|~5.0",
-        "symfony/twig-bundle":      "~4.0|~5.0",
-        "whatwedo/core-bundle":     "^0.4",
-        "whatwedo/table-bundle":    "^0.4",
+        "php":                      ">=8.0",
+        "symfony/framework-bundle": "^5.3",
+        "symfony/http-kernel":      "^5.3",
+        "symfony/security-bundle":  "^5.3",
+        "symfony/serializer":       "^5.3",
+        "symfony/form":             "^5.3",
+        "symfony/twig-bundle":      "^5.3",
+        "whatwedo/core-bundle":     "^1.0",
+        "whatwedo/table-bundle":    "^1.0",
         "phpspec/prophecy": "~1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.8|~5.0"
+        "symfony/phpunit-bridge": "^5.2"
     },
     "suggest": {
-        "mhujer/breadcrumbs-bundle": "Allows creation of breadcrumbs"
+        "mhujer/breadcrumbs-bundle": "Allows creation of breadcrumbs",
+        "knplabs/knp-menu-bundle": "Allows creation of breadcrumbs"
     },
     "autoload": {
         "psr-4": {

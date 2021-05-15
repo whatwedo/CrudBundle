@@ -100,7 +100,7 @@ class RelationContent extends TableContent implements EditableContentInterface
          * $row = Lesson
          */
         $reverseMapping = $this->getReverseMapping($row);
-        $targetDefinition = $this->definitionManager->getDefinitionFromClass($this->getOption('definition'));
+        $targetDefinition = $this->definitionManager->getDefinitionByClassName($this->getOption('definition'));
 
         $queryBuilder = $targetDefinition->getQueryBuilder();
 
@@ -250,7 +250,7 @@ class RelationContent extends TableContent implements EditableContentInterface
      */
     public function isAddAllowed()
     {
-        $definition = $this->definitionManager->getDefinitionFromClass($this->getOption('definition'));
+        $definition = $this->definitionManager->getDefinitionByClassName($this->getOption('definition'));
 
         return $this->authorizationChecker->isGranted(RouteEnum::CREATE, $definition);
     }
@@ -441,7 +441,7 @@ class RelationContent extends TableContent implements EditableContentInterface
             return $metadataFactory->getMetadataFor($className)->getAssociationTargetClass($association);
         }, $this->definition::getEntity());
 
-        return $this->definitionManager->getDefinitionFromEntityClass($target);
+        return $this->definitionManager->getDefinitionByEntity($target);
     }
 
     /**

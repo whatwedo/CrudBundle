@@ -78,7 +78,7 @@ class DefaultDefinitionVoter implements VoterInterface
         }
 
         // Check if base on definition
-        $definition = $subject instanceof DefinitionInterface ? $subject : $this->definitionManager->getDefinitionFor($subject);
+        $definition = $subject instanceof DefinitionInterface ? $subject : $this->definitionManager->getDefinitionByEntity($subject);
         if (is_null($definition)) {
             return static::ACCESS_ABSTAIN;
         }

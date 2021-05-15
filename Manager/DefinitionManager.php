@@ -35,80 +35,64 @@ class DefinitionManager
     /**
      * @var DefinitionInterface[]
      */
-    protected $definitions = [];
+    protected array $definitions = [];
 
-    /**
-     * @param $alias
-     */
-    public function addDefinition(DefinitionInterface $definition, $alias = null)
+    public function addDefinition(DefinitionInterface $definition): void
     {
-        if ($alias === null) {
-            $alias = $definition::getAlias();
-        }
-
-        $this->definitions[$alias] = $definition;
+        $this->definitions[$definition::getAlias()] = $definition;
     }
 
-    /**
-     * returns a definition based on the alias
-     *
-     * @param string $alias alias of the definition
-     * @return DefinitionInterface
-     * @throws ElementNotFoundException
-     */
-    public function getDefinition($alias)
+    public function getDefinitionByAlias(string $alias): DefinitionInterface
     {
-        if (!isset($this->definitions[$alias])) {
-            throw new ElementNotFoundException(sprintf('Definition with the alias "%s" not found.', $alias));
-        }
-
-        return $this->definitions[$alias];
+        return $this->definitions[$alias]
+            ?? throw new ElementNotFoundException(sprintf('definition with the alias "%s" not found.', $alias));
     }
 
-    public function getDefinitionFromEntityClass($entityclass, $allowInheritance = false)
+    public function getDefinitionByEntity($entity): DefinitionInterface
     {
-        foreach ($this->definitions as $definition) {
-            if ($definition::getEntity() == $entityclass || ($allowInheritance && is_a($entityclass, $definition::getEntity(), true))) {
-                return $definition;
-            }
-        }
-        if (!$allowInheritance) {
-            return $this->getDefinitionFromEntityClass($entityclass, true);
-        }
-        return null;
-    }
-
-    /**
-     * @param $entity
-     * @return DefinitionInterface|null
-     */
-    public function getDefinitionFor($entity)
-    {
-        if (!is_object($entity)) {
-            return null;
-        }
         foreach ($this->definitions as $definition) {
             if ($definition::supports($entity)) {
                 return $definition;
             }
         }
-        return null;
+
+        throw new ElementNotFoundException(
+            sprintf('definition for entity "%s" not found.', is_string($entity) ? $entity : get_class($entity))
+        );
     }
 
-    public function getDefinitionFromClass(string $class): ? DefinitionInterface
+    public function getDefinitionByClassName(string $class): ?DefinitionInterface
     {
         foreach ($this->definitions as $definition) {
             if (get_class($definition) === $class) {
                 return $definition;
             }
         }
-        return null;
+
+        throw new ElementNotFoundException(
+            sprintf('definition "%s" not found.', $class)
+        );
+    }
+
+    public function getDefinitionByRoute($route): ?DefinitionInterface
+    {
+        if (preg_match('/([\w\_\-]+)\_(\w+)/', $route, $routeMatches)) {
+            foreach ($this->definitions as $definition) {
+                if ($routeMatches[1] === $definition::getRouteNamePrefix()) {
+                    return $definition;
+                }
+            }
+        }
+
+        throw new ElementNotFoundException(
+            sprintf('definition for route "%s" not found.', $route)
+        );
     }
 
     /**
      * @return DefinitionInterface[]
      */
-    public function getDefinitions()
+    public function getDefinitions(): array
     {
         return $this->definitions;
     }

@@ -36,7 +36,7 @@ Thirdly, add our routes to your ```config/routes.yaml```
 ```
 whatwedo_crud_bundle:
     resource: "@whatwedoCrudBundle/Resources/config/routing.yml"
-    prefix: /
+    prefix: /
 ```
     
 ## Use the bundle

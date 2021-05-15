@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="{{ app.request.locale }}">
+<head>
+    {% block header %}
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <title>{% block title %}Welcome!{% endblock %}</title>
+
+        {% block favicons %}{% endblock %}
+
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+        {% endblock %}
+    {% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+{% block content %}
+    <div class="h-screen flex overflow-hidden">
+        {% include "@whatwedoCrud/includes/_navigation.html.twig" %}
+        {% include "@whatwedoCrud/includes/_main.html.twig" %}
+    </div>
+{% endblock %}
+</body>
+</html>

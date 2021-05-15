@@ -417,18 +417,6 @@ abstract class AbstractDefinition implements DefinitionInterface
         ]));
     }
 
-    /**
-     * @see RouteEnum
-     */
-    public static function getRouteName(string $capability): string
-    {
-        if (!RouteEnum::has($capability)) {
-            throw new \InvalidArgumentException('Invalid capability specified. Only RouteEnum values are supported.');
-        }
-
-        return sprintf('%s_%s', static::getRoutePrefix(), $capability);
-    }
-
     public static function getChildRouteAddition(): string
     {
         return static::getQueryAlias();
@@ -545,7 +533,12 @@ abstract class AbstractDefinition implements DefinitionInterface
         return $this->doctrine;
     }
 
-    protected static function getRoutePrefix(): string
+    public static function getRouteNamePrefix(): string
+    {
+        return static::getAlias();
+    }
+
+    public static function getRoutePathPrefix(): string
     {
         return static::getAlias();
     }

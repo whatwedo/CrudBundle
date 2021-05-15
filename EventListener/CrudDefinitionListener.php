@@ -27,7 +27,9 @@
 
 namespace whatwedo\CrudBundle\EventListener;
 
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use whatwedo\CrudBundle\Controller\CrudDefinitionController;
+use whatwedo\CrudBundle\Exception\ElementNotFoundException;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 class CrudDefinitionListener
@@ -39,7 +41,7 @@ class CrudDefinitionListener
         $this->definitionManager = $definitionManager;
     }
 
-    public function onKernelController(\Symfony\Component\HttpKernel\Event\ControllerEvent $event)
+    public function onKernelController(ControllerEvent $event)
     {
         $controller = $event->getController();
 
@@ -48,10 +50,11 @@ class CrudDefinitionListener
         }
 
         if ($controller[0] instanceof CrudDefinitionController) {
-            $resource = $event->getRequest()->attributes->get('_resource');
-            if ($resource) {
-                $controller[0]->configureDefinition($this->definitionManager->getDefinitionFromClass($resource) ?: $this->definitionManager->getDefinition($resource));
-            }
+            try {
+                $controller[0]->setDefinition(
+                    $this->definitionManager->getDefinitionByRoute($event->getRequest()->attributes->get('_route'))
+                );
+            } catch (ElementNotFoundException $e) { }
         }
     }
 }

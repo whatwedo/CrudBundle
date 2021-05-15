@@ -289,7 +289,7 @@ class DefinitionView implements DefinitionViewInterface
     public function linkIt($value, Content $content)
     {
         $entity = $content->getContents($this->data);
-        $def = $this->definitionManager->getDefinitionFor($entity);
+        $def = $this->definitionManager->getDefinitionByEntity($entity);
 
         if (null !== $def) {
             if ($this->authorizationChecker->isGranted(RouteEnum::SHOW, $entity)

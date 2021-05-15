@@ -31,5 +31,5 @@ use whatwedo\CrudBundle\Definition\DefinitionInterface;
 
 interface CrudDefinitionController
 {
-    public function configureDefinition(DefinitionInterface $definition);
+    public function setDefinition(DefinitionInterface $definition);
 }

@@ -8,6 +8,11 @@ services:
         resource: '../../*'
         exclude: '../../{Normalizer,Definition}'
 
+    whatwedo\CrudBundle\Controller\:
+        resource: '../../Controller'
+        tags:
+            - controller.service_arguments
+
     whatwedo\CrudBundle\Block\Block:
         tags:
             - crud.block

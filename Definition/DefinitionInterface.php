@@ -44,10 +44,9 @@ interface DefinitionInterface
 
     public static function getAlias(): string;
 
-    /**
-     * @see RouteEnum
-     */
-    public static function getRouteName(string $capability): string;
+    public static function getRouteNamePrefix(): string;
+
+    public static function getRoutePathPrefix(): string;
 
     /**
      * @param object|null $entity
@@ -155,9 +154,6 @@ interface DefinitionInterface
      */
     public function getCreateRedirect(RouterInterface $router, $entity = null): Response;
 
-    /**
-     * @param midex $entity
-     */
     public function getEditRedirect(RouterInterface $router, $entity = null): Response;
 
     public function getExportAttributes(): array;

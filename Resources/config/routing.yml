@@ -1,3 +1,7 @@
+whatwedo_crud:
+    resource: .
+    type: whatwedo_crud
+
 whatwedo_crud_crud_select_ajax:
     path: /whatwedo/crud/select/ajax
     defaults: { _controller: whatwedo\CrudBundle\Controller\RelationController::ajaxAction }

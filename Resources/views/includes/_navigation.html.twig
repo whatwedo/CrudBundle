@@ -1,0 +1,51 @@
+<div class="hidden lg:flex lg:flex-shrink-0 bg-gray-100">
+    <div class="flex flex-col w-64 border-r border-gray-200 pt-5 pb-4">
+        <!-- Logo -->
+        <div class="flex items-center flex-shrink-0 px-6">
+            {% block logo %}
+                <a href="{{ path('dashboard') }}">
+                    <img class="h-6 w-auto" src="https://static.whatwedo.io/whatwedo-logo.svg" alt="whatwedo">
+                </a>
+            {% endblock %}
+        </div>
+
+        <!-- Navigation -->
+        <div class="mt-5 flex-grow flex flex-col">
+            {{ knp_menu_render('main', { 'template': '@whatwedoCrud/extensions/knp_menu_main.html.twig' }) }}
+            {{ knp_menu_render('sub', { 'template': '@whatwedoCrud/extensions/knp_menu_sub.html.twig' }) }}
+        </div>
+
+        <!-- Sidebar Search -->
+        <div class="flex-shrink-0 flex border-t border-gray-200 p-4">
+            <label for="search" class="sr-only">Search</label>
+            <div class="mt-1 relative rounded-md shadow-sm">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
+                    <!-- Heroicon name: solid/search -->
+                    <svg class="mr-3 h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <input type="text" name="search" id="search" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-9 sm:text-sm border-gray-300 rounded-md" placeholder="Suche ...">
+            </div>
+        </div>
+
+        <!-- Profile -->
+        <div class="flex-shrink-0 flex border-t border-gray-200 p-4">
+            <a href="#" class="flex-shrink-0 group block">
+                <div class="flex items-center">
+                    <div>
+                        <img class="inline-block h-10 w-10 rounded-full" src="https://gravatar.com/avatar/afa65669a80f322677851fe6fbdfd080?s=80" alt="" crossorigin="anonymous" referrerpolicy="no-referrer">
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-base font-medium text-gray-700 group-hover:text-gray-900">
+                            Ueli Banholzer
+                        </p>
+                        <p class="text-sm font-medium text-gray-500 group-hover:text-gray-700">
+                            Profil anzeigen
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
