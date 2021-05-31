@@ -302,7 +302,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
             $this->dispatchEvent(CrudEvent::POST_DELETE_PREFIX, $entity);
             $this->addFlash('success', 'Eintrag erfolgreich gelöscht.');
         } catch (\Exception $e) {
-            $this->addFlash('error', sprintf('Eintrag konnte nicht gelöscht werden: ' . $e->getMessage()));
+            $this->addFlash('error', 'Eintrag konnte nicht gelöscht werden: ' . $e->getMessage());
             $this->logger->warning('Error while deleting: ' . $e->getMessage(), [
                 'entity' => get_class($entity),
                 'id' => $entity->getId(),
