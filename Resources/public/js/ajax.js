@@ -38,6 +38,12 @@ var whatwedo_ajax = {
                         year: $(_.form($i)) ["0"].children["form[" + _.noListen[$i] + "][year]"].value,
                     }
                 }
+            } else if ($(_.form($i)).attr('type') === 'checkbox'
+              || $(_.form($i)).attr('type') === 'radio') {
+                vals[$i] = {
+                    key: _.noListen[$i],
+                    value: $(_.form($i)).is(':checked')
+                };
             } else {
                 vals[$i] = {
                     key: _.noListen[$i],
@@ -90,8 +96,15 @@ var whatwedo_ajax = {
                             formEle.append('<option '+ s +' value="' + keyValue + '">' + c.values[key] + '</option>')
                         }
                     }
+                } if (formEle.attr('type') === 'checkbox'
+                    || formEle.attr('type') === 'radio') {
+                    formEle.prop('checked', c.value);
                 } else {
                     formEle.val(c.value);
+
+                    if (formEle.is('select') && formEle.data('select2-id')) {
+                      formEle.trigger('change.select2');
+                    }
                 }
                 if (formEle.is('[data-ajax-trigger]')) {
                     formEle.trigger('change');
