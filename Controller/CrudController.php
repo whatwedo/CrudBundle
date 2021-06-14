@@ -204,7 +204,8 @@ class CrudController extends AbstractController implements CrudDefinitionControl
                     'view' => $view,
                     'title' => $this->getDefinition()->getTitle($entity, RouteEnum::EDIT),
                 ]
-            )
+            ),
+            new Response(null, $form->isSubmitted() && !$form->isValid() ? 422 : 200)
         );
     }
 
@@ -281,10 +282,13 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
         $this->definition->buildBreadcrumbs(null, RouteEnum::CREATE);
 
-        return $this->render($this->getView('create.html.twig'), $this->getCreateParameters([
-            'view' => $view,
-            'title' => $this->getDefinition()->getTitle(null, RouteEnum::CREATE),
-        ]));
+        return $this->render(
+            $this->getView('create.html.twig'),
+            $this->getCreateParameters([
+                'view' => $view,
+                'title' => $this->getDefinition()->getTitle(null, RouteEnum::CREATE),
+            ]),
+            new Response(null, $form->isSubmitted() && !$form->isValid() ? 422 : 200));
     }
 
     /**
