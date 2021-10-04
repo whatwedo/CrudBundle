@@ -29,6 +29,7 @@ namespace whatwedo\CrudBundle\Form\Type;
 
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
@@ -37,7 +38,6 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CrudBundle\Form\ChoiceLoader\AjaxDoctrineChoiceLoader;
-use Symfony\Component\Form\ChoiceList\Factory\Cache\ChoiceLoader;
 
 class EntityAjaxType extends AbstractType
 {
@@ -71,7 +71,7 @@ class EntityAjaxType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefault('choice_loader', function (Options $options, ChoiceLoader $doctrineChoiceLoader) {
+        $resolver->setDefault('choice_loader', function (Options $options, ChoiceLoaderInterface $doctrineChoiceLoader) {
             if ($doctrineChoiceLoader) {
                 return new AjaxDoctrineChoiceLoader($doctrineChoiceLoader);
             }
