@@ -66,8 +66,8 @@
                                                     <i class="fa fa-times-circle-o"></i>
                                                 {% endif %}
                                                 {{ content.label | trans }}:
-                                                {% if content.help is defined and content.help is not empty %}
-                                                    &nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="{{ attribute(form, content.acronym).vars.help }}"></i>
+                                                {% if content.getOption('help') is not empty %}
+                                                    &nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="{{ content.option('help') }}"></i>
                                                 {% endif %}
                                             </label>
                                         {% endif %}
