@@ -66,11 +66,9 @@
                                                     <i class="fa fa-times-circle-o"></i>
                                                 {% endif %}
                                                 {{ content.label | trans }}:
-                                                {% for attrname, attrvalue in attribute(form, content.acronym).vars.attr %}
-                                                    {% if attrname == 'help' %}
-                                                        &nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="{{ attrvalue }}"></i>
-                                                    {% endif %}
-                                                {% endfor %}
+                                                {% if content.help is not empty %}
+                                                    &nbsp;<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="{{ attribute(form, content.acronym).vars.help }}"></i>
+                                                {% endif %}
                                             </label>
                                         {% endif %}
                                         {{ form_widget(attribute(form, content.acronym)) }}
