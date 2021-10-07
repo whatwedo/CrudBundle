@@ -83,7 +83,7 @@ class Content extends AbstractContent implements EditableContentInterface
         }
 
         // Override label
-        return array_merge_recursive($options, $this->options['form_options']);
+        return array_merge($options, $this->options['form_options']);
     }
 
     /**
