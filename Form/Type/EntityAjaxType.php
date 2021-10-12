@@ -76,6 +76,7 @@ class EntityAjaxType extends AbstractType
                 return new AjaxDoctrineChoiceLoader($doctrineChoiceLoader);
             }
         });
+
         $resolver->setDefault('definition', null);
         $resolver->setDefault('class', function (Options $options, ?string $className) {
             return $className ?: $options['definition']::getEntity();

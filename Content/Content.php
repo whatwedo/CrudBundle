@@ -73,13 +73,17 @@ class Content extends AbstractContent implements EditableContentInterface
         }
 
         // Override help option
-        if (!is_null($this->getHelp()) && (!isset($this->options['form_options']['attr'])
-                || !isset($this->options['form_options']['attr']['help']))) {
-            $this->options['form_options']['attr']['help'] = $this->options['help'];
+        if (!isset($this->options['form_options']['help']) && $this->getHelp() != null) {
+            $this->options['form_options']['help'] = $this->options['help'];
+        }
+
+        // Override label option
+        if (!isset($this->options['form_options']['label']) && $this->getLabel() != null) {
+            $this->options['form_options']['label'] = $this->options['label'];
         }
 
         // Override label
-        return array_merge($options, ['label' => $this->getLabel()], $this->options['form_options']);
+        return array_merge($options, $this->options['form_options']);
     }
 
     /**
