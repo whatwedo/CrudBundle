@@ -1,35 +1,23 @@
 {
-  "name": "@whatwedo/crud-bundle",
-  "version": "1.0.0",
-  "symfony": {
-    "controllers": {
-      "navigation": {
-        "main": "controllers/navigation_controller.js",
-        "webpackMode": "eager",
-        "fetch": "eager",
-        "enabled": true
-      },
-      "table": {
-        "main": "controllers/table_controller.js",
-        "webpackMode": "eager",
-        "fetch": "eager",
-        "enabled": true
-      },
-      "filter": {
-        "main": "controllers/filter_controller.js",
-        "webpackMode": "eager",
-        "fetch": "eager",
-        "enabled": true
-      },
-      "dropdown": {
-        "main": "controllers/dropdown_controller.js",
-        "webpackMode": "eager",
-        "fetch": "eager",
-        "enabled": true
-      }
+    "name": "@whatwedo/crud-bundle",
+    "version": "1.0.0",
+    "symfony": {
+        "controllers": {
+            "navigation": {
+                "main": "controllers/navigation_controller.js",
+                "webpackMode": "eager",
+                "fetch": "eager",
+                "enabled": true
+            },
+            "remove": {
+                "main": "controllers/remove_controller.js",
+                "webpackMode": "eager",
+                "fetch": "eager",
+                "enabled": true
+            }
+        }
+    },
+    "peerDependencies": {
+        "stimulus": "^2.0.0"
     }
-  },
-  "peerDependencies": {
-    "stimulus": "^2.0.0"
-  }
 }

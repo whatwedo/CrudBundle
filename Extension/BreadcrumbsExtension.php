@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
@@ -68,7 +70,7 @@ class BreadcrumbsExtension implements ExtensionInterface
     public static function isEnabled($enabledBundles)
     {
         foreach ($enabledBundles as $bundles) {
-            if (in_array(WhiteOctoberBreadcrumbsBundle::class, $bundles)) {
+            if (in_array(WhiteOctoberBreadcrumbsBundle::class, $bundles, true)) {
                 return true;
             }
         }
@@ -82,7 +84,7 @@ class BreadcrumbsExtension implements ExtensionInterface
     public function getBreadcrumbs()
     {
         // add Dashboard Link (needs to be here, because routing is not available in the constructor
-        if (!static::$isStartPrepended
+        if (! static::$isStartPrepended
             && $this->startText) {
             static::$isStartPrepended = true;
             if ($this->startRoute) {

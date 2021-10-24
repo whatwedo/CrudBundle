@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
@@ -32,16 +34,14 @@ use Symfony\Component\HttpFoundation\Request;
 
 abstract class EntityPreselectType extends AbstractType
 {
-    /**
-     * @return bool
-     */
-    public static function isValueProvided(Request $request, array $options)
+    public static function isValueProvided(Request $request, array $options): bool
     {
-        preg_match('/[^\\\\]+$/', $options['class'], $matches);
+        preg_match('#[^\\\]+$#', $options['class'], $matches);
         $query = strtolower($matches[0]);
         if (array_key_exists('query', $options)) {
             $query = $options['query'];
         }
+
         return $request->query->has($query);
     }
 }

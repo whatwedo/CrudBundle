@@ -1,0 +1,58 @@
+{% block action %}
+    {# @var action \whatwedo\CrudBundle\Action\Action #}
+    {# @var link string #}
+    {% set attr = {
+        href: path(action.option('route'), action.option('route_parameters')),
+        class: 'inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:ml-3',
+        role: 'menuitem',
+        tabindex: '-1',
+    }|merge(action.option('attr')|default([])) %}
+    <a {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
+        {% if action.option('icon') %}
+            {{ bootstrap_icon(action.option('icon'), {
+                class: 'inline mr-1 h-4 w-4'
+            }) }}
+        {% endif %}
+        {{ action.option('label') }}
+    </a>
+{% endblock %}
+
+{% block submit_action %}
+    {# @var action \whatwedo\CrudBundle\Action\Action #}
+    {# @var link string #}
+    {% set attr = {
+        class: 'inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:ml-3',
+        role: 'menuitem',
+        tabindex: '-1',
+        type: 'submit',
+    }|merge(action.option('attr')|default([])) %}
+    <button {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
+        {% if action.option('icon') %}
+            {{ bootstrap_icon(action.option('icon'), {
+                class: 'inline mr-1 h-4 w-4'
+            }) }}
+        {% endif %}
+        {{ action.option('label') }}
+    </button>
+{% endblock %}
+
+{% block delete_action %}
+    {# @var action \whatwedo\CrudBundle\Action\Action #}
+    {# @var link string #}
+    {% set attr = {
+        class: 'inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:ml-3',
+        role: 'menuitem',
+        tabindex: '-1',
+        type: 'submit',
+    }|merge(action.option('attr')|default([])) %}
+    <form class="inline" method="post" action="{{ path(action.option('route'), action.option('route_parameters')) }}">
+        <button {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
+            {% if action.option('icon') %}
+                {{ bootstrap_icon(action.option('icon'), {
+                    class: 'inline mr-1 h-4 w-4'
+                }) }}
+            {% endif %}
+            {{ action.option('label') }}
+        </button>
+    </form>
+{% endblock %}

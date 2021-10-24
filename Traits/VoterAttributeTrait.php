@@ -1,29 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace whatwedo\CrudBundle\Traits;
+
+use whatwedo\CrudBundle\Enum\Page;
 
 trait VoterAttributeTrait
 {
-    /**
-     * @return string
-     */
-    public function getShowVoterAttribute()
+    public function getShowVoterAttribute(): ?Page
     {
         return $this->options['show_voter_attribute'];
     }
 
-    /**
-     * @return string
-     */
-    public function getEditVoterAttribute()
+    public function getEditVoterAttribute(): ?Page
     {
         return $this->options['edit_voter_attribute'];
     }
 
-    /**
-     * @return string
-     */
-    public function getCreateVoterAttribute()
+    public function getCreateVoterAttribute(): ?Page
     {
         return $this->options['create_voter_attribute'];
     }

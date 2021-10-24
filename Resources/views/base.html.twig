@@ -4,7 +4,7 @@
     {% block header %}
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %}{{ title|default('')|trans }}{% endblock %}</title>
 
         {% block favicons %}{% endblock %}
 
@@ -21,7 +21,16 @@
 {% block content %}
     <div class="h-screen flex overflow-hidden">
         {% include "@whatwedoCrud/includes/_navigation.html.twig" %}
-        {% include "@whatwedoCrud/includes/_main.html.twig" %}
+        <main id="content" class="flex-1 relative z-0 overflow-y-auto focus:outline-none" {{ stimulus_controller('whatwedo/table-bundle/filter') }}>
+            <nav class="flex-auto border-b border-gray-200 px-4 py-4 sm:flex sm:justify-between">
+                {% include "@whatwedoCrud/includes/main/_breadcrumbs.html.twig" %}
+                {% include "@whatwedoCrud/includes/main/_actions.html.twig" %}
+            </nav>
+            {% include "@whatwedoCrud/includes/main/_messages.html.twig" %}
+            {% block main %}
+            {% endblock %}
+        </main>
+
     </div>
 {% endblock %}
 </body>

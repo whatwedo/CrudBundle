@@ -1,22 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace whatwedo\CrudBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use whatwedo\CrudBundle\Content\ContentInterface;
-use whatwedo\CrudBundle\Definition\DefinitionInterface;
-use whatwedo\CrudBundle\Extension\ExtensionInterface;
 
 /**
  * This is the class that loads and manages your bundle configuration.
  *
- * @link http://symfony.com/doc/current/cookbook/bundles/extension.html
+ * @see http://symfony.com/doc/current/cookbook/bundles/extension.html
  */
 class whatwedoCrudExtension extends Extension
 {
+    /**
+     * @param string[] $configs
+     */
     public function load(array $configs, ContainerBuilder $container)
     {
         $configuration = new Configuration();
@@ -49,10 +51,6 @@ class whatwedoCrudExtension extends Extension
         $container->setParameter('whatwedo_crud.config.templates', $templates);
         $container->setParameter('whatwedo_crud.config.template_directory', $config['templateDirectory']);
         $container->setParameter('whatwedo_crud.config.layout', $config['layout']);
-
-        $container->registerForAutoconfiguration(ContentInterface::class)->addTag('crud.content');
-        $container->registerForAutoconfiguration(ExtensionInterface::class)->addTag('crud.extension');
-        $container->registerForAutoconfiguration(DefinitionInterface::class)->addTag('crud.definition');
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');

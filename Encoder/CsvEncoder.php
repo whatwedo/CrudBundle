@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
@@ -69,7 +71,7 @@ class CsvEncoder extends BaseCsvEncoder
     {
         $handle = fopen('php://temp,', 'w+');
 
-        if (!is_array($data)) {
+        if (! is_array($data)) {
             $data = [[$data]];
         } elseif (empty($data)) {
             $data = [[]];
@@ -77,7 +79,7 @@ class CsvEncoder extends BaseCsvEncoder
             // Sequential arrays of arrays are considered as collections
             $i = 0;
             foreach ($data as $key => $value) {
-                if ($i !== $key || !is_array($value)) {
+                if ($i !== $key || ! is_array($value)) {
                     $data = [$data];
                     break;
                 }
@@ -114,6 +116,7 @@ class CsvEncoder extends BaseCsvEncoder
     public function setHeaderTransformation(array $headers)
     {
         $this->headers = $headers;
+
         return $this;
     }
 

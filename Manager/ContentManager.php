@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
@@ -27,24 +29,21 @@
 
 namespace whatwedo\CrudBundle\Manager;
 
-use whatwedo\CrudBundle\Content\ContentInterface;
+use whatwedo\CrudBundle\Content\AbstractContent;
 
 class ContentManager
 {
-    protected $contents = [];
+    protected array $contents = [];
 
-    public function addContent(ContentInterface $content)
+    public function __construct(iterable $contents)
     {
-        $this->contents[get_class($content)] = $content;
+        foreach ($contents as $content) {
+            $this->contents[$content::class] = $content;
+        }
     }
 
-    /**
-     * @param string $class
-     *
-     * @return ContentInterface|null
-     */
-    public function getContent($class)
+    public function getContent($class): AbstractContent
     {
-        return isset($this->contents[$class]) ? clone $this->contents[$class] : new $class();
+        return clone $this->contents[$class];
     }
 }

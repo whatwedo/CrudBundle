@@ -1,127 +1,64 @@
 <?php
 
+declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Action;
 
+use Exception;
+use InvalidArgumentException;
+use Symfony\Component\Form\Util\StringUtil;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use whatwedo\CrudBundle\Enum\Page;
+use whatwedo\CrudBundle\Enum\VisibilityEnum;
 
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-
-class Action implements ActionInterface
+class Action
 {
-    protected $data = null;
-    protected string $label = '';
-    protected string $icon  = '';
-    protected string $class = '';
-    protected string $route = '';
-    protected array $route_parameters = [];
-    protected $voter_attribute= null;
-    protected $block_prefix= '';
-    protected array $attributes = [];
+    protected array $defaultOptions = [
+        'label' => null,
+        'attr' => null,
+        'icon' => null,
+        'route' => null,
+        'route_parameters' => [],
+        'voter_attribute' => null,
+        'visibility' => [Page::INDEX, Page::SHOW, Page::EDIT, Page::CREATE],
+        'priority' => 0,
+    ];
 
-    public static function new(?string $label = null): self
-    {
-        return (new static())
-            ->setLabel($label);
+    /**
+     * it's possible to pass functions as option value to create dynamic labels, routes and more.
+     * TODO: create docs
+     */
+    public function __construct(protected $acronym, protected array $options) {
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults(array_merge([
+            'block_prefix' => StringUtil::fqcnToBlockPrefix(static::class),
+        ], $this->defaultOptions));
+
+        $this->options = $resolver->resolve($this->options);
     }
 
-    public function getLabel(): string
+    public function getOption(string $name)
     {
-        return $this->label;
+        if (!$this->hasOption($name)) {
+            throw new InvalidArgumentException(sprintf('Option "%s" for %s does not exist.', $name, static::class));
+        }
+
+        return $this->options[$name];
     }
 
-    public function setLabel(string $label): self
+    public function setOption($name, $value): static
     {
-        $this->label = $label;
+        if (!$this->hasOption($name)) {
+            throw new InvalidArgumentException(sprintf('Option "%s" for %s does not exist.', $name, static::class));
+        }
+
+        $this->options[$name] = $value;
+
         return $this;
     }
 
-    public function getIcon(): string
+    public function hasOption(string $name): bool
     {
-        return $this->icon;
+        return isset($this->options[$name]) || array_key_exists($name, $this->options);
     }
-
-    public function setIcon(string $icon): self
-    {
-        $this->icon = $icon;
-        return $this;
-    }
-
-    public function getClass(): string
-    {
-        return $this->class;
-    }
-
-    public function setClass(string $class): self
-    {
-        $this->class = $class;
-        return $this;
-    }
-
-    public function getRoute(): string
-    {
-        return $this->route;
-    }
-
-    public function setRoute(string $route): self
-    {
-        $this->route = $route;
-        return $this;
-    }
-
-    public function getRouteParameters(): array
-    {
-        return $this->route_parameters;
-    }
-
-    public function setRouteParameters(array $route_parameters): self
-    {
-        $this->route_parameters = $route_parameters;
-        return $this;
-    }
-
-    public function getVoterAttribute()
-    {
-        return $this->voter_attribute;
-    }
-
-    public function setVoterAttribute($voter_attribute): self
-    {
-        $this->voter_attribute = $voter_attribute;
-        return $this;
-    }
-
-    public function getBlockPrefix(): string
-    {
-        return $this->block_prefix;
-    }
-
-    public function setBlockPrefix(string $block_prefix): self
-    {
-        $this->block_prefix = $block_prefix;
-        return $this;
-    }
-
-    public function getAttributes(): array
-    {
-        return $this->attributes;
-    }
-
-    public function setAttributes(array $attributes): ActionInterface
-    {
-        $this->attributes = $attributes;
-        return $this;
-    }
-
-    public function getData()
-    {
-        return $this->data;
-    }
-
-    public function setData($data): self
-    {
-        $this->data = $data;
-        return $this;
-    }
-
-
 }

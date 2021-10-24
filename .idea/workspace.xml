@@ -2,16 +2,90 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="18786ac5-e0be-42e4-abb7-3ee941937129" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/Action/Action.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Action/ActionInterface.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Action/ConfimableAction.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Action/IdentityAction.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Action/IdentityableActionInterface.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Action/PostAction.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Block/Block.php" beforeDir="false" afterPath="$PROJECT_DIR$/Block/Block.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Builder/DefinitionBuilder.php" beforeDir="false" afterPath="$PROJECT_DIR$/Builder/DefinitionBuilder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Builder/DefinitionMenuBuilder.php" beforeDir="false" afterPath="$PROJECT_DIR$/Builder/DefinitionMenuBuilder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Collection/BlockCollection.php" beforeDir="false" afterPath="$PROJECT_DIR$/Collection/BlockCollection.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Collection/ContentCollection.php" beforeDir="false" afterPath="$PROJECT_DIR$/Collection/ContentCollection.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/AbstractContent.php" beforeDir="false" afterPath="$PROJECT_DIR$/Content/AbstractContent.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Content.php" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Content.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ContentInterface.php" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ContentInterface.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/EditableContentInterface.php" beforeDir="false" afterPath="$PROJECT_DIR$/Content/EditableContentInterface.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/RelationContent.php" beforeDir="false" afterPath="$PROJECT_DIR$/Content/RelationContent.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/TableContent.php" beforeDir="false" afterPath="$PROJECT_DIR$/Content/TableContent.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/TwigContent.php" beforeDir="false" afterPath="$PROJECT_DIR$/Content/TwigContent.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controller/CrudController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/CrudController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controller/CrudDefinitionController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/CrudDefinitionController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controller/RelationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/RelationController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Definition/AbstractDefinition.php" beforeDir="false" afterPath="$PROJECT_DIR$/Definition/AbstractDefinition.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Definition/DefinitionInterface.php" beforeDir="false" afterPath="$PROJECT_DIR$/Definition/DefinitionInterface.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DependencyInjection/Compiler/BlockPass.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DependencyInjection/Compiler/ContentPass.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DependencyInjection/Compiler/DefaultVoterPass.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DependencyInjection/Compiler/DefinitionPass.php" beforeDir="false" afterPath="$PROJECT_DIR$/DependencyInjection/Compiler/DefinitionPass.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DependencyInjection/Configuration.php" beforeDir="false" afterPath="$PROJECT_DIR$/DependencyInjection/Configuration.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DependencyInjection/whatwedoCrudExtension.php" beforeDir="false" afterPath="$PROJECT_DIR$/DependencyInjection/whatwedoCrudExtension.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Encoder/CsvEncoder.php" beforeDir="false" afterPath="$PROJECT_DIR$/Encoder/CsvEncoder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Enum/BlockSizeEnum.php" beforeDir="false" afterPath="$PROJECT_DIR$/Enum/BlockSizeEnum.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Enum/RouteEnum.php" beforeDir="false" afterPath="$PROJECT_DIR$/Enum/RouteEnum.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Enum/VisibilityEnum.php" beforeDir="false" afterPath="$PROJECT_DIR$/Enum/VisibilityEnum.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Event/CrudEvent.php" beforeDir="false" afterPath="$PROJECT_DIR$/Event/CrudEvent.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EventListener/CrudDefinitionListener.php" beforeDir="false" afterPath="$PROJECT_DIR$/EventListener/CrudDefinitionListener.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Exception/DefinitionNotFoundException.php" beforeDir="false" afterPath="$PROJECT_DIR$/Exception/DefinitionNotFoundException.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Exception/ElementNotFoundException.php" beforeDir="false" afterPath="$PROJECT_DIR$/Exception/ElementNotFoundException.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Exception/InvalidDataException.php" beforeDir="false" afterPath="$PROJECT_DIR$/Exception/InvalidDataException.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Extension/BreadcrumbsExtension.php" beforeDir="false" afterPath="$PROJECT_DIR$/Extension/BreadcrumbsExtension.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Extension/ExtensionInterface.php" beforeDir="false" afterPath="$PROJECT_DIR$/Extension/ExtensionInterface.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Form/ChoiceLoader/AjaxDoctrineChoiceLoader.php" beforeDir="false" afterPath="$PROJECT_DIR$/Form/ChoiceLoader/AjaxDoctrineChoiceLoader.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Form/DataTransformer/EntityToIdTransformer.php" beforeDir="false" afterPath="$PROJECT_DIR$/Form/DataTransformer/EntityToIdTransformer.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Form/Type/EntityAjaxType.php" beforeDir="false" afterPath="$PROJECT_DIR$/Form/Type/EntityAjaxType.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Form/Type/EntityHiddenType.php" beforeDir="false" afterPath="$PROJECT_DIR$/Form/Type/EntityHiddenType.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Form/Type/EntityPreselectType.php" beforeDir="false" afterPath="$PROJECT_DIR$/Form/Type/EntityPreselectType.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Form/Type/SimpleEnumType.php" beforeDir="false" afterPath="$PROJECT_DIR$/Form/Type/SimpleEnumType.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Manager/BlockManager.php" beforeDir="false" afterPath="$PROJECT_DIR$/Manager/BlockManager.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Manager/ContentManager.php" beforeDir="false" afterPath="$PROJECT_DIR$/Manager/ContentManager.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Manager/DefinitionManager.php" beforeDir="false" afterPath="$PROJECT_DIR$/Manager/DefinitionManager.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Normalizer/ObjectNormalizer.php" beforeDir="false" afterPath="$PROJECT_DIR$/Normalizer/ObjectNormalizer.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Resource/DefinitionResource.php" beforeDir="false" afterPath="$PROJECT_DIR$/Resource/DefinitionResource.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Resources/assets/controllers/dropdown_controller.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Resources/assets/controllers/filter_controller.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Resources/assets/controllers/table_controller.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Resources/assets/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/assets/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Resources/config/services.yml" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/config/services.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Resources/views/Crud/_boxes/show.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/views/Crud/_boxes/show.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Resources/views/Crud/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/views/Crud/index.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Resources/views/Crud/show.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/views/Crud/show.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Resources/views/base.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/views/base.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Resources/views/includes/_main.html.twig" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Resources/views/includes/main/_breadcrumbs.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/views/includes/main/_breadcrumbs.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Resources/views/includes/main/_filter.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/views/includes/_remove/_filter.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Resources/views/includes/main/_header.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/views/includes/_remove/_header.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Resources/views/includes/main/_pagination.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/views/includes/_remove/_pagination.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Resources/views/includes/main/_table.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/views/includes/_remove/_table.html.twig" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Routing/CrudLoader.php" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/CrudLoader.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Security/Voter/AbstractDefinitionVoter.php" beforeDir="false" afterPath="$PROJECT_DIR$/Security/Voter/AbstractDefinitionVoter.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Security/Voter/DefaultDefinitionVoter.php" beforeDir="false" afterPath="$PROJECT_DIR$/Security/Voter/DefaultDefinitionVoter.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/DefinitionTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/DefinitionTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Traits/VisibilityTrait.php" beforeDir="false" afterPath="$PROJECT_DIR$/Traits/VisibilityTrait.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Traits/VoterAttributeTrait.php" beforeDir="false" afterPath="$PROJECT_DIR$/Traits/VoterAttributeTrait.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Twig/CrudExtension.php" beforeDir="false" afterPath="$PROJECT_DIR$/Twig/CrudExtension.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/View/DefinitionView.php" beforeDir="false" afterPath="$PROJECT_DIR$/View/DefinitionView.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/View/DefinitionViewInterface.php" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/whatwedoCrudBundle.php" beforeDir="false" afterPath="$PROJECT_DIR$/whatwedoCrudBundle.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ComposerSettings" synchronizationState="SYNCHRONIZE">
+  <component name="ComposerSettings" doNotAsk="true" synchronizationState="SYNCHRONIZE">
     <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
     <execution />
   </component>
@@ -41,8 +115,12 @@
       <option name="presentableId" value="Default" />
       <updated>1621013775857</updated>
       <workItem from="1621013778192" duration="1000" />
+      <workItem from="1631912281128" duration="29000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />

@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 /*
- * Copyright (c) 2016, whatwedo GmbH
+ * Copyright (c) 2021, whatwedo GmbH
  * All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,28 +26,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\DependencyInjection\Compiler;
+namespace whatwedo\CrudBundle\Action;
 
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
-
-class ContentPass implements CompilerPassInterface
-{
-    /**
-     * this will initialize all Definitions
-     */
-    public function process(ContainerBuilder $container)
-    {
-        if (!$container->has('whatwedo\CrudBundle\Manager\ContentManager')) {
-            return;
-        }
-
-        $definition = $container->findDefinition('whatwedo\CrudBundle\Manager\ContentManager');
-
-        $taggedServices = $container->findTaggedServiceIds('crud.content');
-        foreach (array_keys($taggedServices) as $id) {
-            $definition->addMethodCall('addContent', [new Reference($id)]);
-        }
-    }
-}
+final class DeleteAction extends Action { }

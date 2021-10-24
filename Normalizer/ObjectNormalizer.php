@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
@@ -42,9 +44,6 @@ class ObjectNormalizer extends BaseObjectNormalizer
      */
     private $customCallbacks = [];
 
-    /**
-     * WhatwedoObjectNormalizer constructor.
-     */
     public function __construct(DefinitionInterface $definition)
     {
         parent::__construct(null, null, null, null);
@@ -73,7 +72,8 @@ class ObjectNormalizer extends BaseObjectNormalizer
 
     /**
      * @param object|string $classOrObject
-     * @param bool $attributesAsString
+     * @param bool          $attributesAsString
+     *
      * @return array
      */
     protected function getAllowedAttributes($classOrObject, array $context, $attributesAsString = false)
@@ -94,6 +94,7 @@ class ObjectNormalizer extends BaseObjectNormalizer
         if (isset($this->customCallbacks[$attribute])) {
             $attrValue = call_user_func($this->customCallbacks[$attribute], $attrValue, $object);
         }
+
         return $attrValue;
     }
 }

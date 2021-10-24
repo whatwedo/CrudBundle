@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
@@ -27,34 +29,22 @@
 
 namespace whatwedo\CrudBundle\Traits;
 
-use whatwedo\CrudBundle\Enum\VisibilityEnum;
+use whatwedo\CrudBundle\Enum\Page;
 
-/**
- * Trait VisibilityTrait
- */
 trait VisibilityTrait
 {
-    /**
-     * @return int
-     */
-    public function isVisibleOnEdit()
+    public function isVisibleOnEdit(): bool
     {
-        return $this->options['visibility'] & VisibilityEnum::EDIT;
+        return in_array(Page::EDIT, $this->options['visibility'], true);
     }
 
-    /**
-     * @return int
-     */
-    public function isVisibleOnCreate()
+    public function isVisibleOnCreate(): bool
     {
-        return $this->options['visibility'] & VisibilityEnum::CREATE;
+        return in_array(Page::CREATE, $this->options['visibility'], true);
     }
 
-    /**
-     * @return int
-     */
-    public function isVisibleOnShow()
+    public function isVisibleOnShow(): bool
     {
-        return $this->options['visibility'] & VisibilityEnum::SHOW;
+        return in_array(Page::SHOW, $this->options['visibility'], true);
     }
 }

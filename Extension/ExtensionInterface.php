@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
@@ -27,10 +29,13 @@
 
 namespace whatwedo\CrudBundle\Extension;
 
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
+
+#[Autoconfigure(tags: ['whatwedo_crud.extension'])]
 interface ExtensionInterface
 {
     /**
-     * returns true if extension is enabled
+     * returns true if extension is enabled.
      *
      * @return bool
      */

@@ -2,27 +2,26 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
-        public: false
 
     whatwedo\CrudBundle\:
         resource: '../../*'
-        exclude: '../../{Normalizer,Definition}'
+        exclude:
+            - '../../Normalizer/'
 
-    whatwedo\CrudBundle\Controller\:
-        resource: '../../Controller'
-        tags:
-            - controller.service_arguments
 
-    whatwedo\CrudBundle\Block\Block:
-        tags:
-            - crud.block
+    whatwedo\CrudBundle\View\DefinitionBuilder:
+        shared: false
 
     whatwedo\CrudBundle\View\DefinitionView:
         shared: false
-        arguments:
-            $accessMap: '@security.access_map'
 
-    whatwedo\CrudBundle\View\DefinitionViewInterface: '@whatwedo\CrudBundle\View\DefinitionView'
+    whatwedo\CrudBundle\Block\:
+        resource: '*'
+        shared: false
+
+    whatwedo\CrudBundle\Content\:
+        resource: '*'
+        shared: false
 
     whatwedo\CrudBundle\Routing\CrudLoader:
         tags:
@@ -37,3 +36,15 @@ services:
             - '@white_october_breadcrumbs'
             - '%whatwedo_crud.config.breadcrumbs.home.text%'
             - '%whatwedo_crud.config.breadcrumbs.home.route%'
+
+    whatwedo\CrudBundle\Manager\BlockManager:
+        arguments:
+            - !tagged_iterator 'whatwedo_crud.block'
+
+    whatwedo\CrudBundle\Manager\ContentManager:
+        arguments:
+            - !tagged_iterator 'whatwedo_crud.content'
+
+    whatwedo\CrudBundle\Manager\DefinitionManager:
+        arguments:
+            - !tagged_iterator 'whatwedo_crud.definition'

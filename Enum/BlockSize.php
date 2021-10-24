@@ -1,6 +1,8 @@
 <?php
+
+declare(strict_types=1);
 /*
- * Copyright (c) 2016, whatwedo GmbH
+ * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,24 +27,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Content;
+namespace whatwedo\CrudBundle\Enum;
 
-interface EditableContentInterface
+enum BlockSize
 {
-    /**
-     * @return string
-     */
-    public function getFormType();
-
-    /**
-     * @param array $options
-     * @return array
-     */
-    public function getFormOptions($options = []);
-
-    /**
-     * Definiton der Vorselektion
-     * @return string
-     */
-    public function getPreselectDefinition();
+    case SMALL;
+    case LARGE;
 }

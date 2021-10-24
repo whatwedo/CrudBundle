@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
@@ -31,20 +33,20 @@ use whatwedo\CrudBundle\Block\Block;
 
 class BlockManager
 {
-    protected $blocks = [];
+    /**
+     * @var Block[]
+     */
+    protected array $blocks = [];
 
-    public function addBlock(Block $block)
+    public function __construct(iterable $blocks)
     {
-        $this->blocks[get_class($block)] = $block;
+        foreach ($blocks as $block) {
+            $this->blocks[$block::class] = $block;
+        }
     }
 
-    /**
-     * @param string $class
-     *
-     * @return Block|null
-     */
-    public function getBlock($class)
+    public function getBlock($class): Block
     {
-        return isset($this->blocks[$class]) ? clone $this->blocks[$class] : new $class();
+        return clone $this->blocks[$class];
     }
 }

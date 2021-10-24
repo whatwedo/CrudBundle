@@ -74,8 +74,8 @@ class ProductContentDefinition extends AbstractDefinition
         }
 
         if ($product instanceof Product) {
-            $this->getBreadcrumbs()->addRouteItem(ProductDefinition::getEntityTitle(), ProductDefinition::getRoutePrefix() . '_' . RouteEnum::INDEX);
-            $this->getBreadcrumbs()->addRouteItem($product->__toString(), ProductDefinition::getRoutePrefix() . '_' . RouteEnum::SHOW, ['id' => $product->getId()]);
+            $this->getBreadcrumbs()->addRouteItem(ProductDefinition::getEntityTitle(), ProductDefinition::getRoutePrefix() . '_' . Page::INDEX);
+            $this->getBreadcrumbs()->addRouteItem($product->__toString(), ProductDefinition::getRoutePrefix() . '_' . Page::SHOW, ['id' => $product->getId()]);
         }
 
         parent::buildBreadcrumbs($entity, $route);

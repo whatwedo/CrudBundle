@@ -1,0 +1,12 @@
+{% if view is defined and view.actions|length > 0 %}
+    <div aria-label="Aktionen">
+        {% for action in view.actions %}
+            {% with {
+                action: action,
+                view: view,
+            } %}
+                {{ block(action.option('block_prefix'), view.definition.layout) }}
+            {% endwith %}
+        {% endfor %}
+    </div>
+{% endif %}

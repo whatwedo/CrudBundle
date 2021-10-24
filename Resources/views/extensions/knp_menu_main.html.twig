@@ -56,7 +56,7 @@
         {%- if item.uri is empty %}
             {% set htmlElement = 'button' %}
             {% set attributes = attributes|merge({
-                'data-action': 'click->whatwedo--crud-bundle--navigation#toggle',
+                'data-action': 'whatwedo--crud-bundle--navigation#toggle',
                 type: 'button',
             }) %}
         {%- else %}

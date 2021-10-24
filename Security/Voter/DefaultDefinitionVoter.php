@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
@@ -64,29 +66,29 @@ class DefaultDefinitionVoter implements VoterInterface
      * This method must return one of the following constants:
      * ACCESS_GRANTED, ACCESS_DENIED, or ACCESS_ABSTAIN.
      *
-     * @param TokenInterface $token A TokenInterface instance
-     * @param mixed $subject The subject to secure
-     * @param array $attributes An array of attributes associated with the method being invoked
+     * @param TokenInterface $token      A TokenInterface instance
+     * @param mixed          $subject    The subject to secure
+     * @param array          $attributes An array of attributes associated with the method being invoked
      *
      * @return int either ACCESS_GRANTED, ACCESS_ABSTAIN, or ACCESS_DENIED
      */
     public function vote(TokenInterface $token, $subject, array $attributes)
     {
         // Check if subject is set
-        if (is_null($subject)) {
+        if (null === $subject) {
             return static::ACCESS_ABSTAIN;
         }
 
         // Check if base on definition
         $definition = $subject instanceof DefinitionInterface ? $subject : $this->definitionManager->getDefinitionByEntity($subject);
-        if (is_null($definition)) {
+        if (null === $definition) {
             return static::ACCESS_ABSTAIN;
         }
 
         // Check if another possible voter matches
         foreach ($this->voters as $voter) {
             $result = $voter->vote($token, $subject, $attributes);
-            if ($result != static::ACCESS_ABSTAIN) {
+            if ($result !== static::ACCESS_ABSTAIN) {
                 return static::ACCESS_ABSTAIN;
             }
         }

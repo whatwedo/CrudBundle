@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
@@ -45,14 +47,14 @@ abstract class AbstractDefinitionVoter extends Voter
     }
 
     /**
-     * Get fully qualified definition class name
+     * Get fully qualified definition class name.
      *
      * @return string
      */
     abstract protected static function getDefinitionClassName();
 
     /**
-     * Get additional attributes which are not in capabilities
+     * Get additional attributes which are not in capabilities.
      *
      * @return array
      */
@@ -63,47 +65,53 @@ abstract class AbstractDefinitionVoter extends Voter
 
     /**
      * @return DefinitionInterface
+     *
      * @throws DefinitionNotFoundException
      */
     protected function getDefinition()
     {
         $definitionName = static::getDefinitionClassName();
         $definition = $this->definitionManager->getDefinitionByClassName(static::getDefinitionClassName());
-        if (is_null($definition)) {
+        if (null === $definition) {
             throw new DefinitionNotFoundException('Definition '.$definitionName.' not found');
         }
+
         return $definition;
     }
 
     /**
      * @param $subject
+     *
      * @return bool
      */
     protected function isSubjectSupported($subject)
     {
-        if (is_null($subject)) {
+        if (null === $subject) {
             return false;
         }
         $entityName = $this->getDefinition()->getEntity();
         $entityReflector = new \ReflectionClass($entityName);
+
         return $entityReflector->isInstance($subject);
     }
 
     /**
      * @param $attribute
+     *
      * @return bool
      */
     protected function isAttributeSupported($attribute)
     {
         $supportedAttributes = array_merge($this->getDefinition()::getCapabilities(), static::getAdditionalAttributes());
-        return in_array($attribute, $supportedAttributes);
+
+        return in_array($attribute, $supportedAttributes, true);
     }
 
     /**
      * Determines if the attribute and subject are supported by this voter.
      *
      * @param string $attribute An attribute
-     * @param mixed $subject The subject to secure, e.g. an object the user wants to access or any other PHP type
+     * @param mixed  $subject   The subject to secure, e.g. an object the user wants to access or any other PHP type
      *
      * @return bool True if the attribute and subject are supported, false otherwise
      */

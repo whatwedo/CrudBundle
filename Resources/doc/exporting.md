@@ -9,12 +9,12 @@ The CrudBundle allows you to easily export your data to CSV files. For doing so 
     public static function getCapabilities()
     {
         return [
-            RouteEnum::INDEX,
-            RouteEnum::SHOW,
-            RouteEnum::DELETE,
-            RouteEnum::EDIT,
-            RouteEnum::CREATE,
-            RouteEnum::EXPORT			<----- Export Route
+            Page::INDEX,
+            Page::SHOW,
+            Page::DELETE,
+            Page::EDIT,
+            Page::CREATE,
+            Page::EXPORT			<----- Export Route
         ];
     }
 ```

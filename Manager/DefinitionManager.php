@@ -1,32 +1,11 @@
 <?php
-/*
- * Copyright (c) 2016, whatwedo GmbH
- * All rights reserved
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
+
+declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Manager;
 
+use Exception;
+use InvalidArgumentException;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Exception\ElementNotFoundException;
 
@@ -37,15 +16,17 @@ class DefinitionManager
      */
     protected array $definitions = [];
 
-    public function addDefinition(DefinitionInterface $definition): void
+    public function __construct(iterable $definitions)
     {
-        $this->definitions[$definition::getAlias()] = $definition;
+        foreach ($definitions as $definition) {
+            $this->definitions[$definition::getAlias()] = $definition;
+        }
     }
 
     public function getDefinitionByAlias(string $alias): DefinitionInterface
     {
         return $this->definitions[$alias]
-            ?? throw new ElementNotFoundException(sprintf('definition with the alias "%s" not found.', $alias));
+            ?? throw new InvalidArgumentException(sprintf('definition with the alias "%s" not found.', $alias));
     }
 
     public function getDefinitionByEntity($entity): DefinitionInterface
@@ -56,37 +37,31 @@ class DefinitionManager
             }
         }
 
-        throw new ElementNotFoundException(
-            sprintf('definition for entity "%s" not found.', is_string($entity) ? $entity : get_class($entity))
-        );
+        throw new InvalidArgumentException(sprintf('definition for entity "%s" not found.', is_string($entity) ? $entity : $entity::class));
     }
 
-    public function getDefinitionByClassName(string $class): ?DefinitionInterface
+    public function getDefinitionByClassName(string $class): \whatwedo\CrudBundle\Definition\DefinitionInterface
     {
         foreach ($this->definitions as $definition) {
-            if (get_class($definition) === $class) {
+            if ($definition::class === $class) {
                 return $definition;
             }
         }
 
-        throw new ElementNotFoundException(
-            sprintf('definition "%s" not found.', $class)
-        );
+        throw new InvalidArgumentException(sprintf('definition "%s" not found.', $class));
     }
 
-    public function getDefinitionByRoute($route): ?DefinitionInterface
+    public function getDefinitionByRoute($route): \whatwedo\CrudBundle\Definition\DefinitionInterface
     {
-        if (preg_match('/([\w\_\-]+)\_(\w+)/', $route, $routeMatches)) {
+        if (preg_match('#([\w\_\-]+)\_(\w+)#', $route, $routeMatches)) {
             foreach ($this->definitions as $definition) {
-                if ($routeMatches[1] === $definition::getRouteNamePrefix()) {
+                if ($routeMatches[1] === $definition::getRoutePrefix()) {
                     return $definition;
                 }
             }
         }
 
-        throw new ElementNotFoundException(
-            sprintf('definition for route "%s" not found.', $route)
-        );
+        throw new InvalidArgumentException(sprintf('definition for route "%s" not found.', $route));
     }
 
     /**

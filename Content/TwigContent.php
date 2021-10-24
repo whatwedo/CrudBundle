@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /*
  * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
@@ -31,23 +33,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TwigContent extends AbstractContent
 {
-    public function isTwigContent()
-    {
-        return true;
-    }
-
-    public function render($row)
-    {
-    }
-
-    public function setOption($key, $value)
-    {
-        if (isset($this->options[$key])) {
-            $this->options[$key] = $value;
-        }
-    }
-
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -58,25 +44,5 @@ class TwigContent extends AbstractContent
 
         $resolver->setAllowedTypes('template', 'string');
         $resolver->setAllowedTypes('parameters', 'array');
-    }
-
-    public function getTemplate()
-    {
-        return $this->options['template'];
-    }
-
-    public function getParameters()
-    {
-        return $this->options['parameters'];
-    }
-
-    public function getLabel()
-    {
-        return false;
-    }
-
-    public function getViewClass()
-    {
-        return '';
     }
 }

@@ -1,29 +1,6 @@
 <?php
-/*
- * Copyright (c) 2016, whatwedo GmbH
- * All rights reserved
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
+
+declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\DependencyInjection\Compiler;
 
@@ -31,36 +8,33 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
+use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\Resource\DefinitionResource;
 
 class DefinitionPass implements CompilerPassInterface
 {
     /**
-     * this will initialize all Definitions
+     * this will initialize all Definitions.
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->has('whatwedo\CrudBundle\Manager\DefinitionManager')) {
+        if (! $container->has(DefinitionManager::class)) {
             return;
         }
 
         /*
          * Load Definition Extensions
          */
-        foreach (array_keys($container->findTaggedServiceIds('crud.extension')) as $id) {
+        foreach (array_keys($container->findTaggedServiceIds('whatwedo_crud.extension')) as $id) {
             $crudExtension = $container->getDefinition($id);
 
             // all extensions must implement ExtensionInExtensionInterfaceterface
-            if (!is_subclass_of($crudExtension->getClass(), ExtensionInterface::class)) {
-                throw new \UnexpectedValueException(sprintf(
-                    'Extensions tagged with crud.extension must implement %s - %s given.',
-                    ExtensionInterface::class,
-                    $crudExtension->getClass()
-                ));
-                }
+            if (! is_subclass_of($crudExtension->getClass(), ExtensionInterface::class)) {
+                throw new \UnexpectedValueException(sprintf('Extensions tagged with whatwedo_crud.extension must implement %s - %s given.', ExtensionInterface::class, $crudExtension->getClass()));
+            }
 
             // remove extensions from container if their requirements (other bundles) are not fulfilled
-            if (!call_user_func([$crudExtension->getClass(), 'isEnabled'], [$container->getParameter('kernel.bundles')])) {
+            if (! call_user_func([$crudExtension->getClass(), 'isEnabled'], [$container->getParameter('kernel.bundles')])) {
                 $container->removeDefinition($id);
             }
         }
@@ -70,29 +44,19 @@ class DefinitionPass implements CompilerPassInterface
          */
         $crudManager = $container->findDefinition('whatwedo\CrudBundle\Manager\DefinitionManager');
 
-        foreach ($container->findTaggedServiceIds('crud.definition') as $id => $tags) {
+        foreach ($container->findTaggedServiceIds('whatwedo_crud.definition') as $id => $tags) {
             $crudDefinition = $container->getDefinition($id);
 
             if ($crudDefinition->isAbstract()) {
                 continue;
             }
 
+            // todo replace
             $crudDefinition->addMethodCall('setTemplates', [$container->getParameter('whatwedo_crud.config.templates')]);
-            $crudDefinition->addMethodCall('setTemplateDirectory', [$container->getParameter('whatwedo_crud.config.template_directory')]);
-            $crudDefinition->addMethodCall('setLayoutFile', [$container->getParameter('whatwedo_crud.config.layout')]);
 
             // add available extensions to all Definitions
-            foreach (array_keys($container->findTaggedServiceIds('crud.extension')) as $idExtension) {
+            foreach (array_keys($container->findTaggedServiceIds('whatwedo_crud.extension')) as $idExtension) {
                 $crudDefinition->addMethodCall('addExtension', [new Reference($idExtension)]);
-            }
-
-            $crudManager->addMethodCall('addDefinition', [new Reference($id)]);
-
-            // add all Defintions to our DefinitionManager
-            foreach ($tags as $attributes) {
-                if (array_key_exists('alias', $attributes)) {
-                    $crudManager->addMethodCall('addDefinition', [$attributes['alias'], new Reference($id)]);
-                }
             }
 
             // create a resource so that the cache is loaded new as soon as a definition is updated

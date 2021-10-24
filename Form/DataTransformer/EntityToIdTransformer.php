@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
@@ -34,44 +36,44 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class EntityToIdTransformer implements DataTransformerInterface
 {
-    protected $em;
-
-    protected $class;
-
-    public function __construct(EntityManagerInterface $em, string $class)
-    {
-        $this->em = $em;
-        $this->class = $class;
+    public function __construct(
+        protected EntityManagerInterface $em,
+        protected string $class
+    ) {
     }
 
     /**
      * @param $entity
-     * @return null
+     *
+     * @return mixed|null
      */
     public function transform($entity)
     {
         if (null === $entity) {
             return null;
         }
-        $entityClass = get_class($entity);
+        $entityClass = $entity::class;
         $idField = $this->em->getClassMetadata($entityClass)->getSingleIdentifierFieldName();
         $accessor = PropertyAccess::createPropertyAccessor();
+
         return $accessor->getValue($entity, $idField);
     }
 
     /**
      * @param $id
-     * @return object|null
+     *
+     * @return mixed|null
      */
     public function reverseTransform($id)
     {
-        if (!$id) {
+        if (! $id) {
             return null;
         }
         $entity = $this->em->getRepository($this->class)->find($id);
         if (null === $entity) {
             throw new TransformationFailedException();
         }
+
         return $entity;
     }
 }

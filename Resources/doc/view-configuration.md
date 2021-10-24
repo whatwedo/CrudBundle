@@ -43,10 +43,10 @@ public function configureView(DefinitionBuilder $builder, $data)
 - `size`: BlockSizeEnum::SMALL, BlockSizeEnum::LARGE
 - `collapsible`: boolean
 - `collapsed`: boolean
-- `visibility`: display Box in which Context VisibilityEnum::SHOW | VisibilityEnum::EDIT | VisibilityEnum::CREATE,
-- `show_voter_attribute`:  RouteEnum::SHOW,
-- `edit_voter_attribute`: RouteEnum::EDIT,
-- `create_voter_attribute`: RouteEnum::CREATE,
+- `visibility`: display Box in which Context Page::SHOW | Page::EDIT | Page::CREATE,
+- `show_voter_attribute`:  Page::SHOW,
+- `edit_voter_attribute`: Page::EDIT,
+- `create_voter_attribute`: Page::CREATE,
 
 
 ### Content Options

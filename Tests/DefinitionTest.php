@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
@@ -33,7 +35,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
-use whatwedo\CrudBundle\Enum\RouteEnum;
+use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\TableBundle\Table\SortableColumnInterface;
 
@@ -42,14 +44,14 @@ class DefinitionTest extends WebTestCase
     /**
      * @var string[][]
      */
-    const EXCLUDE_DEFINITIONS = [];
+    public const EXCLUDE_DEFINITIONS = [];
 
     //todo: find another way to do this
 
     /**
      * @var string[]
      */
-    const SKIP_ORDERING_TESTS = [];
+    public const SKIP_ORDERING_TESTS = [];
 
     /**
      * @var KernelBrowser|null
@@ -100,7 +102,7 @@ class DefinitionTest extends WebTestCase
             }
         }
 
-        if (!$isTestable) {
+        if (! $isTestable) {
             $this->markTestSkipped('Definition has no capabilities to test');
         }
 
@@ -118,19 +120,19 @@ class DefinitionTest extends WebTestCase
 
         $router = self::$container->get('router');
 
-        if (in_array($definition::getAlias(), self::SKIP_ORDERING_TESTS)) {
+        if (in_array($definition::getAlias(), self::SKIP_ORDERING_TESTS, true)) {
             $this->markTestSkipped('Definition has no ORDERING');
         }
 
-        if (!$definition::hasCapability(RouteEnum::INDEX)) {
+        if (! $definition::hasCapability(Page::INDEX)) {
             $this->markTestSkipped('Definition has no INDEX');
         }
 
-        if ($this->isExcluded($definition, RouteEnum::INDEX)) {
+        if ($this->isExcluded($definition, Page::INDEX)) {
             $this->markTestSkipped('INDEX excluded from test');
         }
 
-        $index = $router->generate($definition::getRouteName(RouteEnum::INDEX));
+        $index = $router->generate($definition::getRouteName(Page::INDEX));
         $crawler = $client->request(Request::METHOD_GET, $index);
 
         // TODO: use Definition data to figure out sortable columns instead?
@@ -139,7 +141,7 @@ class DefinitionTest extends WebTestCase
         /** @var \DOMElement $anchor */
         foreach ($anchors as $anchor) {
             $suffix = $anchor->getAttribute('href');
-            $client->request('GET', $index . $suffix);
+            $client->request('GET', $index.$suffix);
 
             try {
                 $this->assertTrue($client->getResponse()->isSuccessful());
@@ -160,7 +162,7 @@ class DefinitionTest extends WebTestCase
     protected function isExcluded(DefinitionInterface $definition, string $capability): bool
     {
         // TODO: why skip? takes to long? set low "page size"?
-        if ($capability === RouteEnum::EXPORT) {
+        if (Page::EXPORT === $capability) {
             return true;
         }
 
@@ -169,9 +171,9 @@ class DefinitionTest extends WebTestCase
         $excludeCapabilities = [];
 
         if (isset(self::EXCLUDE_DEFINITIONS[$definitionClass])) {
-            $excludeCapabilities  = self::EXCLUDE_DEFINITIONS[$definitionClass];
+            $excludeCapabilities = self::EXCLUDE_DEFINITIONS[$definitionClass];
         }
-        if (in_array($capability, $excludeCapabilities)) {
+        if (in_array($capability, $excludeCapabilities, true)) {
             return true;
         }
 
@@ -179,10 +181,11 @@ class DefinitionTest extends WebTestCase
         return $this->routeHasParameter($definition::getRouteName($capability));
     }
 
-    protected function routeHasParameter(string $routeName): bool
+    protected function routeHasParameter(Page $routeName): bool
     {
         $router = self::$container->get('router');
-        return !empty($router->getRouteCollection()->get($routeName)->compile()->getPathVariables());
+
+        return ! empty($router->getRouteCollection()->get($routeName)->compile()->getPathVariables());
     }
 
     /**
@@ -190,14 +193,14 @@ class DefinitionTest extends WebTestCase
      */
     protected function printFailures(array $failures): void
     {
-        if (!empty($failures)) {
+        if (! empty($failures)) {
             throw new ExpectationFailedException(implode("\n", $failures));
         }
     }
 
     protected function getWebClient(?string $userId = null): KernelBrowser
     {
-        if (!$this->client) {
+        if (! $this->client) {
             $this->client = self::$container->get('test.client');
             $this->client->setServerParameters([]);
 
@@ -205,6 +208,7 @@ class DefinitionTest extends WebTestCase
                 $this->login($userId);
             }
         }
+
         return $this->client;
     }
 

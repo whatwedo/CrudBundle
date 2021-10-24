@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace whatwedo\CrudBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -19,36 +21,37 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->arrayNode('breadcrumbs')
-                    ->children()
-                        ->scalarNode('home_text')
-                            ->defaultValue('Dashboard')
-                        ->end()
-                        ->scalarNode('home_route')
-                            ->defaultValue('')
-                        ->end()
-                    ->end()
-                ->end() // end breadcrumbs
-                ->arrayNode('templates')
-                    ->children()
-                        ->scalarNode('show')
-                            ->defaultValue('whatwedoCrudBundle:Crud/_boxes:show.html.twig')
-                        ->end()
-                        ->scalarNode('create')
-                            ->defaultValue('whatwedoCrudBundle:Crud/_boxes:create.html.twig')
-                        ->end()
-                        ->scalarNode('edit')
-                            ->defaultValue('whatwedoCrudBundle:Crud/_boxes:edit.html.twig')
-                        ->end()
-                    ->end()
-                ->end() // end templates
-                ->scalarNode('templateDirectory')
-                    ->defaultValue('@whatwedoCrud/Crud')
-                ->end()
-                ->scalarNode('layout')
-                    ->defaultValue('@whatwedoCrud/layout/adminlte_layout.html.twig')
-                ->end()
+            ->arrayNode('breadcrumbs')
+            ->children()
+            ->scalarNode('home_text')
+            ->defaultValue('Dashboard')
+            ->end()
+            ->scalarNode('home_route')
+            ->defaultValue('')
+            ->end()
+            ->end()
+            ->end() // end breadcrumbs
+            ->arrayNode('templates')
+            ->children()
+            ->scalarNode('show')
+            ->defaultValue('whatwedoCrudBundle:Crud/_boxes:show.html.twig')
+            ->end()
+            ->scalarNode('create')
+            ->defaultValue('whatwedoCrudBundle:Crud/_boxes:create.html.twig')
+            ->end()
+            ->scalarNode('edit')
+            ->defaultValue('whatwedoCrudBundle:Crud/_boxes:edit.html.twig')
+            ->end()
+            ->end()
+            ->end() // end templates
+            ->scalarNode('templateDirectory')
+            ->defaultValue('@whatwedoCrud/Crud')
+            ->end()
+            ->scalarNode('layout')
+            ->defaultValue('@whatwedoCrud/layout/adminlte_layout.html.twig')
+            ->end()
             ->end();
+
         return $treeBuilder;
     }
 }

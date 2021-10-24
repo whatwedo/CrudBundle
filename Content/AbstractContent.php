@@ -1,145 +1,116 @@
 <?php
-/*
- * Copyright (c) 2016, whatwedo GmbH
- * All rights reserved
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
+declare(strict_types=1);
+
 
 namespace whatwedo\CrudBundle\Content;
 
+use Exception;
+use InvalidArgumentException;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use Symfony\Component\Form\Util\StringUtil;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
-use whatwedo\CrudBundle\Enum\RouteEnum;
+use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Enum\VisibilityEnum;
 use whatwedo\CrudBundle\Traits\VisibilityTrait;
 use whatwedo\CrudBundle\Traits\VoterAttributeTrait;
 
-abstract class AbstractContent implements ContentInterface
+#[Autoconfigure(tags: ['whatwedo_crud.content'])]
+abstract class AbstractContent implements ServiceSubscriberInterface
 {
     use VisibilityTrait;
     use VoterAttributeTrait;
 
-    /**
-     * @var string block acronym
-     */
-    protected $acronym = '';
+    protected ContainerInterface $container;
 
-    /**
-     * @var array block options
-     */
-    protected $options = [];
+    protected string $acronym = '';
+    protected array $options = [];
 
-    /**
-     * @var DefinitionInterface
-     */
-    protected $definition;
+    protected ?DefinitionInterface $definition = null;
 
-    /**
-     * @param string $acronym
-     */
-    public function setAcronym($acronym)
+    public function setAcronym(string $acronym): static
     {
         $this->acronym = $acronym;
+
+        return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getAcronym()
+    public function getAcronym(): string
     {
         return $this->acronym;
     }
 
-    /**
-     * @return array
-     */
-    public function getOptions()
+    public function configureOptions(OptionsResolver $resolver): void
     {
-        return $this->options;
+        $resolver->setDefaults([
+            'label' => $this->acronym,
+            'callable' => null,
+            'attr' => [],
+            'visibility' => [Page::SHOW, Page::EDIT, Page::CREATE],
+            'show_voter_attribute' => Page::SHOW,
+            'edit_voter_attribute' => Page::EDIT,
+            'create_voter_attribute' => Page::CREATE,
+            'block_prefix' => StringUtil::fqcnToBlockPrefix(static::class),
+        ]);
+
+        $resolver->setAllowedTypes('visibility', 'array');
     }
 
-    /**
-     * @return DefinitionInterface
-     */
-    public function getDefinition()
-    {
-        return $this->definition;
-    }
-
-    /**
-     * @param DefinitionInterface $definition
-     * @return $this
-     */
-    public function setDefinition($definition)
-    {
-        $this->definition = $definition;
-        return $this;
-    }
-
-    /**
-     * @param array $options
-     */
-    public function setOptions($options)
+    public function setOptions(array $options): void
     {
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
         $this->options = $resolver->resolve($options);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function setOption($name, $value): static
     {
-        $resolver->setDefaults([
-            'label' => $this->acronym,
-            'callable' => null,
-            'attr' => [],
-            'visibility' => VisibilityEnum::SHOW | VisibilityEnum::EDIT | VisibilityEnum::CREATE,
-            'show_voter_attribute' => RouteEnum::SHOW,
-            'edit_voter_attribute' => RouteEnum::EDIT,
-            'create_voter_attribute' => RouteEnum::CREATE,
-            'block_prefix' => '',
-        ]);
+        if (!$this->hasOption($name)) {
+            throw new InvalidArgumentException(sprintf('Option "%s" for %s does not exist.', $name, static::class));
+        }
+
+        $this->options[$name] = $value;
+
+        return $this;
     }
 
-    /**
-     * @param $key
-     * @return mixed|null
-     */
-    public function getOption($key)
+    public function getOptions(): array
     {
-        return isset($this->options[$key]) ? $this->options[$key] : null;
+        return $this->options;
     }
 
-    /**
-     * gets the content of the row
-     *
-     * @param $row
-     * @return string
-     */
-    public function getContents($row)
+    public function getOption(string $name)
+    {
+        if (!$this->hasOption($name)) {
+            throw new InvalidArgumentException(sprintf('Option "%s" for %s does not exist.', $name, static::class));
+        }
+
+        return $this->options[$name];
+    }
+
+    public function hasOption(string $name): bool
+    {
+        return isset($this->options[$name]) || array_key_exists($name, $this->options);
+    }
+
+    public function getDefinition(): ?DefinitionInterface
+    {
+        return $this->definition;
+    }
+
+    public function setDefinition(DefinitionInterface $definition): static
+    {
+        $this->definition = $definition;
+
+        return $this;
+    }
+
+    public function getContents($row): mixed
     {
         if (is_callable($this->options['callable'])) {
             if (is_array($this->options['callable'])) {
@@ -153,31 +124,29 @@ abstract class AbstractContent implements ContentInterface
 
         try {
             return $propertyAccessor->getValue($row, $this->options['accessor_path']);
-        } catch (UnexpectedTypeException $e) {
+        } catch (UnexpectedTypeException) {
             return null;
-        } catch (NoSuchPropertyException $e) {
-            return $e->getMessage();
+        } catch (NoSuchPropertyException $noSuchPropertyException) {
+            return $noSuchPropertyException->getMessage();
         }
-    }
-
-    /**
-     * @return string
-     */
-    public function getLabel()
-    {
-        return $this->options['label'];
-    }
-
-    /**
-     * @return array
-     */
-    public function getAttr()
-    {
-        return $this->options['attr'];
     }
 
     public function getBlockPrefix(): string
     {
-        return $this->options['block_prefix']?: StringUtil::fqcnToBlockPrefix(static::class);
+        return $this->options['block_prefix'];
+    }
+
+    /**
+     * @required
+     */
+    public function setContainer(ContainerInterface $container): void
+    {
+        $this->container = $container;
+    }
+
+    public static function getSubscribedServices(): array
+    {
+        return [
+        ];
     }
 }

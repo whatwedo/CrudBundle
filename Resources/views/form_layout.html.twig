@@ -1,0 +1,17 @@
+{% use 'tailwind_2_layout.html.twig' %}
+
+{#
+    {% set row_class = row_class|default('mt-2 px-3 ...') %}
+    {% set label_class = label_class|default('font-semibold text-gray-600 ...') %}
+    {% set error_item_class = error_item_class|default('text-red-700 ...') %}
+    {% set widget_class = widget_class|default('border border-gray-200 bg-gray-50 ...') %}
+    {% set widget_disabled_class = widget_disabled_class|default('border-dashed text-gray-200 ...') %}
+    {% set widget_errors_class = widget_errors_class|default('border-double border-red-500 bg-red-50 ...') %}
+#}
+
+
+{% block widget_attributes %}
+    {% set widget_class = widget_class|default('block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md') %}
+    {{ parent() }}
+{% endblock widget_attributes %}
+

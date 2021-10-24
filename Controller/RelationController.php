@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
@@ -29,34 +31,24 @@ namespace whatwedo\CrudBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\TableBundle\Event\ResultRequestEvent;
 
 class RelationController extends AbstractController
 {
-    protected $eventDispatcher;
-
-    /**
-     * @var DefinitionManager
-     */
-    private $definitionManager;
-
     /**
      * RelationController constructor.
+     *
      * @param $eventDispatcher
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher, DefinitionManager $definitionManager)
-    {
-        $this->eventDispatcher = $eventDispatcher;
-        $this->definitionManager = $definitionManager;
+    public function __construct(
+        protected EventDispatcherInterface $eventDispatcher,
+        private DefinitionManager $definitionManager
+    ) {
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function ajaxAction(Request $request)
+    public function ajaxAction(Request $request): ?\Symfony\Component\HttpFoundation\JsonResponse
     {
         $entity = $request->get('entity', false);
         $term = $request->get('q', false);
@@ -69,6 +61,7 @@ class RelationController extends AbstractController
         }
 
         $this->eventDispatcher->dispatch($resultRequestEvent, ResultRequestEvent::RELATION_SET);
+
         return $resultRequestEvent->getResult();
     }
 }

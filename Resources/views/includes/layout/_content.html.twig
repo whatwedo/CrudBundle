@@ -1,0 +1,59 @@
+{% block content %}
+    {# @var content \whatwedo\CrudBundle\Content\Content #}
+    {# @var block \whatwedo\CrudBundle\Block\Block #}
+    {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
+    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+        <dt class="text-sm font-medium text-gray-500">
+            {{ content.option('label') }}
+            {% if content.option('help') is not empty %}
+                {{ bootstrap_icon('info-circle-fill', {
+                    class: 'inline',
+                    title: content.option('help')|e('html_attr')
+                }) }}
+            {% endif %}
+        </dt>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            {% if form is defined %}
+                {{ form_widget(attribute(form, content.acronym)) }}
+
+                {% if attribute(form, content.acronym).vars.errors|length %}
+                    <div class="help-block">
+                        {{ form_errors(attribute(form, content.acronym)) }}
+                    </div>
+                {% endif %}
+            {% else %}
+                {{ content.render(view.data) }}
+            {% endif %}
+        </dd>
+    </div>
+{% endblock %}
+
+{% block relation_content %}
+    {# @var content \whatwedo\CrudBundle\Content\RelationContent #}
+    {# @var block \whatwedo\CrudBundle\Block\Block #}
+    {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
+    <div class="bg-white px-4 py-5">
+        {% if content.option('label') %}
+            <span class="text-sm font-medium text-gray-500">
+                {{ content.option('label') }}
+            </span>
+        {% endif %}
+        {{ content.render(view.data)|raw }}
+
+
+        [Alle anzeigen]
+        [Hinzufügen]
+    </div>
+{% endblock %}
+
+{% block twig_content %}
+    {# @var content \whatwedo\CrudBundle\Content\RelationContent #}
+    {# @var block \whatwedo\CrudBundle\Block\Block #}
+    {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
+
+    {% with content.option('parameters') %}
+        <div class="bg-white">
+            {% include content.option('template') %}
+        </div>
+    {% endwith %}
+{% endblock %}

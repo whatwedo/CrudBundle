@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /*
  * Copyright (c) 2021, whatwedo GmbH
@@ -28,51 +29,53 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Builder;
 
-use Knp\Menu\ItemInterface;
+use Exception;
+use InvalidArgumentException;
 use Knp\Menu\FactoryInterface;
+use Knp\Menu\ItemInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use whatwedo\CrudBundle\Enum\Page;
+use whatwedo\CrudBundle\Exception\ElementNotFoundException;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
-use whatwedo\CrudBundle\Enum\RouteEnum;
 
 class DefinitionMenuBuilder
 {
-    protected FactoryInterface $factory;
-    protected DefinitionManager $definitionManager;
-    protected AuthorizationCheckerInterface $authorizationChecker;
     protected Request $request;
 
     public function __construct(
-        FactoryInterface $factory,
-        DefinitionManager $definitionManager,
-        AuthorizationCheckerInterface $authorizationChecker,
+        protected FactoryInterface $factory,
+        protected DefinitionManager $definitionManager,
+        protected AuthorizationCheckerInterface $authorizationChecker,
         RequestStack $requestStack
     ) {
-        $this->factory = $factory;
-        $this->definitionManager = $definitionManager;
-        $this->authorizationChecker = $authorizationChecker;
         $this->request = $requestStack->getCurrentRequest();
     }
 
-    protected function addDefinition(ItemInterface $parent, string $definition, array $options = [], $title = null): ? ItemInterface {
+    protected function addDefinition(ItemInterface $parent, string $definition, array $options = [], $title = null): ? ItemInterface
+    {
         $definitionObject = $this->definitionManager->getDefinitionByClassName($definition);
 
         if ($definitionObject
-            && $this->authorizationChecker->isGranted(RouteEnum::INDEX, $definitionObject)) {
-            if (!$title) {
+            && $this->authorizationChecker->isGranted(Page::INDEX, $definitionObject)) {
+            if (! $title) {
                 $title = $definitionObject::getEntityTitle();
             }
 
-            if (!isset($options['route'])) {
-                $options['route'] = $definitionObject::getRouteNamePrefix().'_'.RouteEnum::INDEX;
+            if (! isset($options['route'])) {
+                $options['route'] = $definitionObject::getRoute(Page::INDEX);
             }
 
             $child = $parent->addChild($title, $options);
 
             if ($this->request) {
-                $current = $this->request->attributes->get('_resource') === get_class($definitionObject);
+                try {
+                    $current = $this->definitionManager->getDefinitionByRoute($this->request->attributes->get('_route')) === $definitionObject;
+                } catch (InvalidArgumentException) {
+                    $current = null;
+                }
+
                 if ($current
                     && isset($options['routeParameters'])
                     && $options['routeParameters']) {

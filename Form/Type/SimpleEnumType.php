@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * Copyright (c) 2017, whatwedo GmbH
  * All rights reserved
@@ -41,11 +43,11 @@ class SimpleEnumType extends AbstractType
             /** @var AbstractSimpleEnum|string $enumClass */
             $enumClass = $options['class'];
 
-            if (!is_subclass_of($enumClass, AbstractSimpleEnum::class)) {
-                throw new \InvalidArgumentException(sprintf('Option \'class\' needs to be subclass of %s', AbstractSimpleEnum::class));
+            if (! is_subclass_of($enumClass, AbstractSimpleEnum::class)) {
+                throw new \InvalidArgumentException(sprintf("Option 'class' needs to be subclass of %s", AbstractSimpleEnum::class));
             }
 
-            if (!$options['choice_values']) {
+            if (! $options['choice_values']) {
                 return $enumClass::getFormValues();
             }
 
@@ -63,6 +65,9 @@ class SimpleEnumType extends AbstractType
         $resolver->setAllowedTypes('class', ['string']);
     }
 
+    /**
+     * @return string
+     */
     public function getParent()
     {
         return ChoiceType::class;

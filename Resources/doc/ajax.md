@@ -19,12 +19,12 @@ Add the capability:
     public static function getCapabilities()
     {
         return [
-            RouteEnum::INDEX,
-            RouteEnum::SHOW,
-            RouteEnum::DELETE,
-            RouteEnum::EDIT,
-            RouteEnum::CREATE,
-            RouteEnum::AJAX
+            Page::INDEX,
+            Page::SHOW,
+            Page::DELETE,
+            Page::EDIT,
+            Page::CREATE,
+            Page::AJAX
         ];
     }
 ```

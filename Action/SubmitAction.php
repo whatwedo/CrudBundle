@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 /*
- * Copyright (c) 2017, whatwedo GmbH
+ * Copyright (c) 2021, whatwedo GmbH
  * All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,28 +26,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\DependencyInjection\Compiler;
+namespace whatwedo\CrudBundle\Action;
 
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
-
-class DefaultVoterPass implements CompilerPassInterface
+final class SubmitAction extends Action
 {
-    /**
-     * You can modify the container here before it is dumped to PHP code.
-     */
-    public function process(ContainerBuilder $container)
+    public function __construct(protected $acronym, array $options)
     {
-        if (!$container->has('whatwedo\CrudBundle\Security\Voter\DefaultDefinitionVoter')) {
-            return;
-        }
-        $definition = $container->findDefinition('whatwedo\CrudBundle\Security\Voter\DefaultDefinitionVoter');
+        unset($this->defaultOptions['route'], $this->defaultOptions['route_parameters']);
 
-        // Get services with security.voter tag
-        $taggedServices = $container->findTaggedServiceIds('security.voter');
-        foreach (array_keys($taggedServices) as $id) {
-            $definition->addMethodCall('addVoter', [new Reference($id)]);
-        }
+        parent::__construct($this->acronym, $options);
     }
 }
