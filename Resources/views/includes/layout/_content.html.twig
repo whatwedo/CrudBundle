@@ -3,7 +3,7 @@
     {# @var block \whatwedo\CrudBundle\Block\Block #}
     {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
     <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-        <dt class="text-sm font-medium text-gray-500">
+        <dt class="text-sm font-medium text-neutral-500">
             {{ content.option('label') }}
             {% if content.option('help') is not empty %}
                 {{ bootstrap_icon('info-circle-fill', {
@@ -12,7 +12,7 @@
                 }) }}
             {% endif %}
         </dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+        <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2">
             {% if form is defined %}
                 {{ form_widget(attribute(form, content.acronym)) }}
 
@@ -34,7 +34,7 @@
     {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
     <div class="bg-white px-4 py-5">
         {% if content.option('label') %}
-            <span class="text-sm font-medium text-gray-500">
+            <span class="text-sm font-medium text-neutral-500">
                 {{ content.option('label') }}
             </span>
         {% endif %}

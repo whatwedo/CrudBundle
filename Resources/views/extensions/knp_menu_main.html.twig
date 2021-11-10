@@ -38,14 +38,14 @@
         {% import _self as knp_menu %}
 
         {# classes for link/button item #}
-        {% set classes = 'group w-full flex items-center pl-11 pr-2 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-50' %}
+        {% set classes = 'group w-full flex items-center pl-11 pr-2 py-2 text-sm font-medium text-neutral-600 rounded-md hover:text-neutral-900 hover:bg-neutral-50' %}
         {% if item.parent.parent is null %}
             {# if its not a root element #}
-            {% set classes = 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 group w-full flex items-center pl-2 pr-1 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-primary' %}
+            {% set classes = 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 group w-full flex items-center pl-2 pr-1 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-primary' %}
         {% endif %}
 
         {% if matcher.isCurrent(item) or matcher.isAncestor(item, options.matchingDepth) %}
-            {% set classes = classes|replace({'text-gray-600': 'text-gray-900'}) %}
+            {% set classes = classes|replace({'text-neutral-600': 'text-neutral-900'}) %}
         {% endif %}
 
         {% set attributes = item.attributes|merge({
@@ -84,10 +84,10 @@
             {% apply spaceless %}
                 <{{ htmlElement }}{{ knp_menu.attributes(attributes) }}>
                     {% if icon %}
-                        {% set classes = 'text-gray-600 group-hover:text-gray-900 mr-3 h-6 w-6' %}
+                        {% set classes = 'text-neutral-600 group-hover:text-neutral-900 mr-3 h-6 w-6' %}
                         {% if matcher.isCurrent(item) or matcher.isAncestor(item, options.matchingDepth) %}
                             {% set classes = classes|replace({
-                                'text-gray-600': 'text-gray-900'
+                                'text-neutral-600': 'text-neutral-900'
                             }) %}
                         {% endif %}
                         {{ bootstrap_icon(icon, { 'class': classes }) }}
@@ -99,7 +99,7 @@
                     {% if item.children|length > 0 %}
                         {{ bootstrap_icon('caret-right-fill', {
                             'data-whatwedo--crud-bundle--navigation-target': 'arrow',
-                            'class': 'text-gray-300 ml-auto h-3 w-3 transform group-hover:text-gray-400 transition-colors ease-in-out duration-150'
+                            'class': 'text-neutral-300 ml-auto h-3 w-3 transform group-hover:text-neutral-400 transition-colors ease-in-out duration-150'
                         }) }}
                     {% endif %}
                 </{{ htmlElement }}>

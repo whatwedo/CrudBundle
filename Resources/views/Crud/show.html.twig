@@ -2,7 +2,7 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
-    <div class="bg-gray-50 p-4 flex flex-wrap items-baseline">
+    <div class="bg-neutral-50 p-4 flex flex-wrap items-baseline">
         {% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW'))|filter(c => is_granted(c.option('show_voter_attribute'), view.data)) %}
             {% set numberOfContentBlocks = 0 %}
             {% set block_content %}
