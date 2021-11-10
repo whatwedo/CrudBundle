@@ -1,7 +1,7 @@
 <div class="hidden lg:flex lg:flex-shrink-0 bg-gray-100">
     <div class="flex flex-col w-64 border-r border-gray-200 pt-5 pb-4">
-        <!-- Logo -->
-        <div class="flex items-center flex-shrink-0 px-6">
+
+        <div class="whatwedo_crud:logo flex items-center flex-shrink-0 px-6">
             {% block logo %}
                 <a href="{{ path('dashboard') }}">
                     <img class="h-6 w-auto" src="https://static.whatwedo.io/whatwedo-logo.svg" alt="whatwedo">
@@ -9,18 +9,15 @@
             {% endblock %}
         </div>
 
-        <!-- Navigation -->
-        <div class="mt-5 flex-grow flex flex-col">
+        <div class="whatwedo_crud:navigation mt-5 flex-grow flex flex-col">
             {{ knp_menu_render('main', { 'template': '@whatwedoCrud/extensions/knp_menu_main.html.twig' }) }}
             {{ knp_menu_render('sub', { 'template': '@whatwedoCrud/extensions/knp_menu_sub.html.twig' }) }}
         </div>
 
-        <!-- Sidebar Search -->
-        <div class="flex-shrink-0 flex border-t border-gray-200 p-4">
+        <div class="whatwedo_crud:sidedar flex-shrink-0 flex border-t border-gray-200 p-4">
             <label for="search" class="sr-only">Search</label>
             <div class="mt-1 relative rounded-md shadow-sm">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
-                    <!-- Heroicon name: solid/search -->
                     <svg class="mr-3 h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                         <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
                     </svg>
@@ -29,8 +26,7 @@
             </div>
         </div>
 
-        <!-- Profile -->
-        <div class="flex-shrink-0 flex border-t border-gray-200 p-4">
+        <div class="whatwedo_crud:profile flex-shrink-0 flex border-t border-gray-200 p-4">
             <a href="#" class="flex-shrink-0 group block">
                 <div class="flex items-center">
                     <div>
