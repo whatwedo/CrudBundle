@@ -6,10 +6,11 @@
         <dt class="text-sm font-medium text-neutral-500">
             {{ content.option('label') }}
             {% if content.option('help') is not empty %}
-                {{ bootstrap_icon('info-circle-fill', {
-                    class: 'inline',
-                    title: content.option('help')|e('html_attr')
-                }) }}
+                <span {{ stimulus_controller('whatwedo/crud-bundle/tooltip', { 'title': content.option('help') } ) }}>
+                    {{ bootstrap_icon('info-circle-fill', {
+                        class: 'inline cursor-help',
+                    }) }}
+                </span>
             {% endif %}
         </dt>
         <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2">
