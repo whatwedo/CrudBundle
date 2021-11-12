@@ -19,14 +19,14 @@
 </head>
 <body class="{% block body_class %}{% endblock %}">
 {% block content %}
-    <div class="whatwedo_crud:wrapper h-screen flex overflow-hidden">
+    <div class="whatwedo_crud-wrapper h-screen flex overflow-hidden">
         {% include "@whatwedoCrud/includes/_navigation.html.twig" %}
         <main
-            class="whatwedo_crud:main flex-1 relative z-0 overflow-y-auto focus:outline-none"
+            class="whatwedo_crud-main flex-1 relative z-0 overflow-y-auto focus:outline-none"
             data-whatwedo-crud="content"
             {{ stimulus_controller('whatwedo/table-bundle/filter') }}
         >
-            <nav class="whatwedo_crud:nav bg-white flex-auto border-b border-neutral-200 px-4 py-4 sm:flex sm:justify-between">
+            <nav class="whatwedo_crud-nav bg-white flex-auto border-b border-neutral-200 px-4 py-4 sm:flex sm:justify-between">
                 {% include "@whatwedoCrud/includes/main/_breadcrumbs.html.twig" %}
                 {% include "@whatwedoCrud/includes/main/_actions.html.twig" %}
             </nav>
