@@ -410,6 +410,11 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         return is_a(ClassUtils::getRealClass($entity), static::getEntity(), true);
     }
 
+    public static function getRoutePathPrefix(): string
+    {
+        return static::getAlias();
+    }
+
     public static function getRoutePrefix(): string
     {
         return static::getAlias();
