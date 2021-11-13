@@ -20,7 +20,7 @@ class CrudEvent extends Event
     public const CREATE_SHOW_PREFIX = 'whatwedo_crud.create_show';
     public const NEW_PREFIX = 'whatwedo_crud.new';
 
-    public function __construct(protected object|array $entity) { }
+    public function __construct(protected object $entity) { }
 
     public function getEntity(): object|array
     {

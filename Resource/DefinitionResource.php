@@ -44,7 +44,7 @@ class DefinitionResource implements ResourceInterface, SelfCheckingResourceInter
         $this->definitionClass = $definitionClass;
     }
 
-    public function isFresh($timestamp)
+    public function isFresh(int $timestamp): bool
     {
         try {
             $reflectionClass = new \ReflectionClass($this->definitionClass);

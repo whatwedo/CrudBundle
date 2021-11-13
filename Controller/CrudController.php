@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -32,6 +33,8 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 {
     protected ?DefinitionInterface $definition = null;
     protected DefinitionManager $definitionManager;
+    protected EventDispatcherInterface $eventDispatcher;
+    protected EntityManagerInterface $entityManager;
     protected Environment $twig;
 
     public function index(TableFactory $tableFactory): Response
@@ -94,7 +97,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
                 $this->dispatchEvent(CrudEvent::PRE_EDIT_PREFIX, $entity);
-                $this->getDoctrine()->getManager()->flush();
+                $this->entityManager->flush();
                 $this->dispatchEvent(CrudEvent::POST_EDIT_PREFIX, $entity);
 
                 $this->addFlash('success', sprintf('Erfolgreich gespeichert.'));
@@ -145,7 +148,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
                         if ($queryParameter
                             && $request->query->has($queryParameter)) {
-                            $value = $this->getDoctrine()
+                            $value = $this->entityManager
                                 ->getRepository(call_user_func([$content->getOption('preselect_definition'), 'getEntity']))
                                 ->find($request->query->getInt($queryParameter));
 
@@ -179,7 +182,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
                 $this->dispatchEvent(CrudEvent::POST_VALIDATE_PREFIX, $entity);
                 $this->dispatchEvent(CrudEvent::PRE_CREATE_PREFIX, $entity);
 
-                $objectManager = $this->getDoctrine()->getManager();
+                $objectManager = $this->entityManager;
                 $objectManager->persist($entity);
                 $objectManager->flush();
 
@@ -212,9 +215,9 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $this->denyAccessUnlessGrantedCrud(Page::DELETE, $entity);
 
         try {
-            $this->getDoctrine()->getManager()->remove($entity);
+            $this->entityManager->remove($entity);
             $this->dispatchEvent(CrudEvent::PRE_DELETE_PREFIX, $entity);
-            $this->getDoctrine()->getManager()->flush($entity);
+            $this->entityManager->flush($entity);
             $this->dispatchEvent(CrudEvent::POST_DELETE_PREFIX, $entity);
             $this->addFlash('success', 'Eintrag erfolgreich gelöscht.');
         } catch (\Exception $e) {
@@ -307,11 +310,8 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      */
     public function dispatchEvent($event, $entity)
     {
-        $this->get(EventDispatcherInterface::class)
-            ->dispatch(new CrudEvent($entity), $event);
-
-        $this->get(EventDispatcherInterface::class)
-            ->dispatch(new CrudEvent($entity), $event.'.'.$this->getDefinition()::getAlias());
+        $this->eventDispatcher->dispatch(new CrudEvent($entity), $event);
+        $this->eventDispatcher->dispatch(new CrudEvent($entity), $event.'.'.$this->getDefinition()::getAlias());
     }
 
     public function setDefinition(?DefinitionInterface $definition): void
@@ -333,6 +333,22 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     public function setDefinitionManager(DefinitionManager $definitionManager): void
     {
         $this->definitionManager = $definitionManager;
+    }
+
+    /**
+     * @required
+     */
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): void
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
+    /**
+     * @required
+     */
+    public function setEntityManager(EntityManagerInterface $entityManager): void
+    {
+        $this->entityManager = $entityManager;
     }
 
     protected function getDefinition(): DefinitionInterface
@@ -370,7 +386,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
             && ($definition = $this->definitionManager->getDefinitionByClassName($export['definition']))
             && ($content = $definition->getContent($export['acronym']))
             && $content instanceof RelationContent
-            && ($repository = $this->getDoctrine()->getRepository($export['class']))
+            && ($repository = $this->entityManager->getRepository($export['class']))
             && ($row = $repository->find($export['id']))
         ) {
             $table = $content->getTable($export['acronym'], $row);

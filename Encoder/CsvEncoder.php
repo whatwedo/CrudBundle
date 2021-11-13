@@ -67,7 +67,7 @@ class CsvEncoder extends BaseCsvEncoder
         $this->keySeparator = $keySeparator;
     }
 
-    public function encode($data, $format, array $context = [])
+    public function encode(mixed $data, string $format, array $context = []): string
     {
         $handle = fopen('php://temp,', 'w+');
 
