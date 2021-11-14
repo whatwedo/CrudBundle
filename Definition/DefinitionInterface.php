@@ -23,6 +23,8 @@ interface DefinitionInterface
 
     public static function getAlias(): string;
 
+    public static function getRoutePathPrefix(): string;
+
     public static function getRoutePrefix(): string;
 
     public static function getRoute(Page $route): string;
@@ -112,7 +114,7 @@ interface DefinitionInterface
      */
     public function configureView(DefinitionBuilder $builder, $data);
 
-    public function getRedirect(Page $route, object|array|null $entity = null): Response;
+    public function getRedirect(Page $routeFrom, ?object $entity = null): Response;
 
     public function getExportAttributes(): array;
 
