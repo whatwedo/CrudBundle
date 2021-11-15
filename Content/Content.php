@@ -6,9 +6,9 @@ namespace whatwedo\CrudBundle\Content;
 
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use whatwedo\CoreBundle\Formatter\DefaultFormatter;
 use whatwedo\CoreBundle\Manager\FormatterManager;
 use whatwedo\CrudBundle\Form\Type\EntityHiddenType;
+use whatwedo\CrudBundle\Formatter\CrudDefaultFormatter;
 
 class Content extends AbstractContent
 {
@@ -19,7 +19,7 @@ class Content extends AbstractContent
         $resolver->setDefaults([
             'accessor_path' => $this->acronym,
             'callable' => null,
-            'formatter' => DefaultFormatter::class,
+            'formatter' => CrudDefaultFormatter::class,
             'formatter_options' => [],
             'help' => null,
             'preselect_definition' => null,

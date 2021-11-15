@@ -23,7 +23,7 @@
                     </div>
                 {% endif %}
             {% else %}
-                {{ content.render(view.data) }}
+                {{ content.render(view.data)|raw }}
             {% endif %}
         </dd>
     </div>

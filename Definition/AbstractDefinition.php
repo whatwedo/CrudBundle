@@ -299,9 +299,9 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         return null;
     }
 
-    public function getRedirect(Page $route, object|array|null $entity = null): Response
+    public function getRedirect(Page $routeFrom, ?object $entity = null): Response
     {
-        return match($route) {
+        return match($routeFrom) {
             Page::CREATE, Page::EDIT => new RedirectResponse(
                 $this->container->get(RouterInterface::class)->generate(static::getRoute(Page::SHOW), [
                     'id' => $entity->getId(),
@@ -408,6 +408,11 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         }
 
         return is_a(ClassUtils::getRealClass($entity), static::getEntity(), true);
+    }
+
+    public static function getRoutePathPrefix(): string
+    {
+        return static::getAlias();
     }
 
     public static function getRoutePrefix(): string

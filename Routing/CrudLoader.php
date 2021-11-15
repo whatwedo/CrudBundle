@@ -31,7 +31,7 @@ class CrudLoader extends Loader
         foreach ($this->definitionManager->getDefinitions() as $definition) {
             foreach ($definition::getCapabilities() as $capability) {
                 $route = new Route(
-                    '/'.$definition::getRoutePrefix().'/',
+                    '/'.$definition::getRoutePathPrefix().'/',
                     [
                         '_resource' => $resource,
                         '_controller' => $definition::getController().'::'.$capability->toRoute(),
