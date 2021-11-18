@@ -44,7 +44,7 @@ class DateTimeTypeExtension extends AbstractTypeExtension
 
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['attr']['data-picker'] = 'datetime';
+        //$view->vars['attr']['data-picker'] = 'datetime';
     }
 
     public static function getExtendedTypes(): iterable
