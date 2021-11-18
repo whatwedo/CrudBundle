@@ -9,9 +9,16 @@
     {% set widget_errors_class = widget_errors_class|default('border-double border-red-500 bg-red-50 ...') %}
 #}
 
-
 {% block widget_attributes %}
-    {% set widget_class = widget_class|default('block w-full shadow-sm whatwedo_core-search') %}
+    {% set widget_class = widget_class|default('block w-full shadow-sm whatwedo_core-input') %}
     {{ parent() }}
 {% endblock widget_attributes %}
+
+{% block attributes %}
+    {% if choices is defined %}
+        {{ stimulus_controller('whatwedo/core-bundle/select') }}
+    {% endif %}
+
+    {{ parent() }}
+{% endblock attributes %}
 
