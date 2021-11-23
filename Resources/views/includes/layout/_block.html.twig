@@ -8,7 +8,7 @@
         class: (block.option('size') == constant('whatwedo\\CrudBundle\\Enum\\BlockSize::LARGE') ? 'w-full' : 'w-3/6'),
     }|merge(block.option('attr')|default([])) %}
     <div {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
-        <div class="bg-neutral-50 shadow overflow-hidden sm:rounded-lg m-4">
+        <div class="bg-neutral-50 shadow sm:rounded-lg m-4">
             {% if block.option('label') or block.option('description') %}
                 <div class="px-4 py-5 sm:px-6">
                     {% if block.option('label') %}
@@ -23,7 +23,7 @@
                     {% endif %}
                 </div>
             {% endif %}
-            <div class="{% if block.option('label') or block.option('description') %}border-t border-neutral-200{% endif%}">
+            <div class="{% if block.option('label') or block.option('description') %}border-t border-neutral-200 bg-white sm:rounded-b-lg{% endif%}">
                 <dl>
                     {{ content }}
                 </dl>
