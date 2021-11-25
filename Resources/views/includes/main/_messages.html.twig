@@ -1,6 +1,6 @@
 {% for label, messages in app.flashes %}
     {% for message in messages %}
-        <div class="whatwedo_crud-message relative {% if label == 'success' %}bg-success{% elseif label == 'warning' %}bg-warning{% elseif label == 'error' %}bg-danger{% else %}bg-primary{% endif %}" {{ stimulus_controller('whatwedo/crud-bundle/remove') }}>
+        <div class="whatwedo_crud-message relative {% if label == 'success' %}bg-success-500{% elseif label == 'warning' %}bg-warning-500{% elseif label == 'error' %}bg-danger-500{% else %}bg-primary{% endif %}" {{ stimulus_controller('whatwedo/crud-bundle/remove') }}>
             <div class="max-w-7xl mx-auto py-3 px-3 sm:px-6 lg:px-8">
                 <div class="pr-16 sm:text-center sm:px-16">
                     <p class="font-medium text-sm text-white">
