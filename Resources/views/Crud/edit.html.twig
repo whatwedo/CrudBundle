@@ -2,7 +2,7 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
-    {{ form_start(form, { attr: { id: 'crud_main_form', class: 'whatwedo_crud-form whatwedo_crud-form--edit flex-grow-1' } }) }}
+    {{ form_start(form, { attr: { id: 'crud_main_form', class: 'whatwedo_crud-form whatwedo_crud-form--edit flex-grow' } }) }}
 
     {% if form.vars.errors|length > 0 %}
         <div class="whatwedo_crud-alert whatwedo_crud-alert--error"> {# alert alert-error alert-dismissible #}
