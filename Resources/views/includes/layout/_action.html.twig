@@ -3,7 +3,7 @@
     {# @var link string #}
     {% set attr = {
         href: path(action.option('route'), action.option('route_parameters')),
-        class: 'inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3',
+        class: 'whatwedo-crud-button--action',
         role: 'menuitem',
         tabindex: '-1',
     }|merge(action.option('attr')|default([])) %}
@@ -21,7 +21,7 @@
     {# @var action \whatwedo\CrudBundle\Action\Action #}
     {# @var link string #}
     {% set attr = {
-        class: 'inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3',
+        class: 'whatwedo-crud-button--action',
         role: 'menuitem',
         tabindex: '-1',
         type: 'submit',
@@ -40,7 +40,7 @@
     {# @var action \whatwedo\CrudBundle\Action\Action #}
     {# @var link string #}
     {% set attr = {
-        class: 'inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3',
+        class: 'whatwedo-crud-button--action',
         role: 'menuitem',
         tabindex: '-1',
         type: 'submit',
