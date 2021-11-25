@@ -40,19 +40,59 @@
     {# @var action \whatwedo\CrudBundle\Action\Action #}
     {# @var link string #}
     {% set attr = {
-        class: 'whatwedo-crud-button--action',
+        class: 'inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-error-600 hover:bg-error-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-error-500',
         role: 'menuitem',
         tabindex: '-1',
         type: 'submit',
     }|merge(action.option('attr')|default([])) %}
-    <form class="inline" method="post" action="{{ path(action.option('route'), action.option('route_parameters')) }}">
-        <button {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
-            {% if action.option('icon') %}
-                {{ bootstrap_icon(action.option('icon'), {
-                    class: 'inline mr-1 h-4 w-4'
-                }) }}
-            {% endif %}
-            {{ action.option('label') }}
-        </button>
-    </form>
+
+        <div
+            {{ stimulus_controller('whatwedo/core-bundle/dropdown') }}
+            class="relative inline-block"
+        >
+            <button
+                class="whatwedo-crud-button--action",
+                {{ stimulus_action({'whatwedo/core-bundle/dropdown': ['toggle', {'click@window': 'hide'}]}) }}
+            >
+                {% if action.option('icon') %}
+                    {{ bootstrap_icon(action.option('icon'), {
+                        class: 'inline mr-1 h-4 w-4'
+                    }) }}
+                {% endif %}
+                {{ action.option('label') }}
+            </button>
+
+            <div
+                {{ stimulus_target('whatwedo/core-bundle/dropdown', 'menu') }}
+                class="hidden transition duration-300 transform w-72 origin-top-right absolute right-0 -bottom-3 transform translate-y-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5"
+                data-transition-enter-from="opacity-0 scale-95"
+                data-transition-enter-to="opacity-100 scale-100"
+                data-transition-leave-from="opacity-100 scale-100"
+                data-transition-leave-to="opacity-0 scale-95"
+                tabindex="-1"
+            >
+                <form
+                    class="flex items-center justify-between px-4 py-3"
+                    method="post"
+                    action="{{ path(action.option('route'), action.option('route_parameters')) }}"
+                >
+                    <p class="text-sm text-gray-500 mr-4">
+                        Wirklich löschen?
+                    </p>
+
+                    <div>
+                        <button {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
+                            Ja
+                        </button>
+                        <button
+                            {{ stimulus_action('whatwedo/core-bundle/dropdown', 'close') }}
+                            class="ml-3 inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                            type="button"
+                        >
+                            Nein
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
 {% endblock %}
