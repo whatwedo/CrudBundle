@@ -14,6 +14,16 @@
     {{ parent() }}
 {% endblock widget_attributes %}
 
+{%- block checkbox_widget -%}
+    {%- set widget_class = widget_class|default('mr-2 focus:ring-primary h-4 w-4 text-primary border-gray-300 rounded') -%}
+    {{- parent() -}}
+{%- endblock checkbox_widget -%}
+
+{%- block radio_widget -%}
+    {%- set widget_class = widget_class|default('mr-2 focus:ring-primary h-4 w-4 text-primary border-gray-300') -%}
+    {{- parent() -}}
+{%- endblock radio_widget -%}
+
 {% block attributes %}
     {% if type is defined %}
         {%  if type is same as('datetime-local') or type is same as('date') or type is same as('time') %}
