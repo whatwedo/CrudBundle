@@ -51,7 +51,7 @@ class RelationContent extends TableContent
      */
     public function render($row)
     {
-        return $this->getTable($this->acronym)->render();
+        return $this->getTable($row)->render();
     }
 
     public function getIndexRoute(): ?string
