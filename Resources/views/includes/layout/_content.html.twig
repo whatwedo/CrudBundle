@@ -33,7 +33,7 @@
     {# @var content \whatwedo\CrudBundle\Content\RelationContent #}
     {# @var block \whatwedo\CrudBundle\Block\Block #}
     {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
-    <div class="bg-white px-4 py-5">
+    <div class="bg-white px-4 py-5" {{ stimulus_controller('whatwedo/core-bundle/dropdown') }}>
         {% if content.option('label') %}
             <span class="text-sm font-medium text-neutral-500">
                 {{ content.option('label') }}
@@ -41,9 +41,78 @@
         {% endif %}
         {{ content.render(view.data)|raw }}
 
+        <div class="mt-4 flex-shrink-0 flex">
+            <a href="#" class="whatwedo-crud-button--neutral">
+                Alle anzeigen
+            </a>
 
-        [Alle anzeigen]
-        [Hinzufügen]
+            <button type="button" class="whatwedo-crud-button--neutral" {{ stimulus_action('whatwedo/core-bundle/dropdown', 'toggle') }}>
+                Hinzufügen
+            </button>
+        </div>
+
+        {{ block('createEntityModal') }}
+    </div>
+{% endblock %}
+
+{% block createEntityModal %}
+    <div
+        {{ stimulus_target('whatwedo/core-bundle/dropdown', 'menu') }}
+        class="hidden fixed z-10 duration-300 ease-in-out transform inset-0 overflow-y-auto"
+        data-transition-enter-from="opacity-0"
+        data-transition-enter-to="opacity-100"
+        data-transition-leave-from="opacity-100"
+        data-transition-leave-to="opacity-0"
+        role="dialog"
+        aria-modal="true"
+    >
+        <div class="flex min-h-screen text-center md:block md:px-2 lg:px-4" style="font-size: 0;">
+            <div class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity md:block"></div>
+
+            {# This element is to trick the browser into centering the modal contents. #}
+            <span class="hidden md:inline-block md:align-middle md:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div class="flex text-base text-left transform transition w-full md:inline-block md:max-w-2xl md:px-4 md:my-8 md:align-middle">
+                <div class="w-full relative flex items-center bg-white px-4 pt-14 pb-8 overflow-hidden shadow-2xl sm:px-6 sm:pt-8 md:p-6 lg:p-8">
+                    <button type="button" class="absolute top-4 right-4 text-gray-400 hover:text-gray-500 sm:top-8 sm:right-6 md:top-6 md:right-6 lg:top-8 lg:right-8 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary rounded transition-colors" {{ stimulus_action('whatwedo/core-bundle/dropdown', 'close') }}>
+                        <span class="sr-only">Close</span>
+                        {{ bootstrap_icon('x', { class: 'inline w-8 h-8' }) }}
+                    </button>
+
+                    <div class="w-full">
+                        <h2 class="text-2xl font-extrabold text-gray-900 sm:pr-12">Neue Entity hinzufügen</h2>
+
+                        <form class="space-y-6" action="#" method="POST">
+                            <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-gray-200 sm:mt-8">
+                                <label for="username" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+                                    Username
+                                </label>
+                                <div class="mt-1 sm:mt-0 sm:col-span-2">
+                                    <div class="flex rounded-md shadow-sm">
+                                        <input type="text" name="username" id="username" autocomplete="username" class="whatwedo_core-input">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                                <label for="about" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+                                    About
+                                </label>
+                                <div class="mt-1 sm:mt-0 sm:col-span-2">
+                                    <textarea id="about" name="about" rows="3" class="whatwedo_core-input"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="sm:grid sm:grid-cols-3 sm:gap-4">
+                                <button type="submit" class="col-start-2 col-end-4 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                                    Hinzufügen
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
 
