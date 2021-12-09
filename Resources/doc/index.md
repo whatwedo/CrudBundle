@@ -211,6 +211,7 @@ That's all.
 - [Events](events.md)
 - [Ajax](ajax.md)
 - [Exporting](exporting.md)
+- [Templating](templating.md)
 
 ### Extensions
 - [Breadcrumbs](extensions/breadcrumbs.md)
