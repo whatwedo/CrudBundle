@@ -5,6 +5,9 @@
     "license": "MIT",
     "homepage": "https://doc.whatwedo.ch/whatwedo/crudbundle",
     "minimum-stability": "dev",
+    "keywords": [
+        "symfony-ux"
+    ],
     "authors": [
         {
             "name": "whatwedo GmbH",
