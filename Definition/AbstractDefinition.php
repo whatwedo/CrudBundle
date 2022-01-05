@@ -12,6 +12,7 @@ use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Symfony\Component\Form\Util\StringUtil;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
@@ -62,6 +63,12 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
     public static function getEntityTitle(): string
     {
             return static::getPrefix() .  '.title';
+    }
+
+    public function createEntity(Request $request)
+    {
+        $className = self::getEntity();
+        return new $className();
     }
 
     public function addAction(string $acronym, array $options = [], $type = Action::class): static

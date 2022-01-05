@@ -6,6 +6,7 @@ namespace whatwedo\CrudBundle\Definition;
 
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
@@ -72,6 +73,8 @@ interface DefinitionInterface
      * @return string alias
      */
     public static function getQueryAlias(): string;
+    
+    public function createEntity(Request $request);
 
     /**
      * returns a query builder.

@@ -130,7 +130,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $this->denyAccessUnlessGrantedCrud(Page::CREATE, $this->getDefinition());
 
         $className = $this->getDefinition()->getEntity();
-        $entity = new $className();
+        $entity = $this->getDefinition()->createEntity($request);
 
         $this->dispatchEvent(CrudEvent::NEW_PREFIX, $entity);
 
