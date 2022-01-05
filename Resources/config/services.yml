@@ -48,3 +48,13 @@ services:
     whatwedo\CrudBundle\Manager\DefinitionManager:
         arguments:
             - !tagged_iterator 'whatwedo_crud.definition'
+
+
+    whatwedo\CrudBundle\Maker\MakeDefinition:
+        arguments:
+            - '@maker.doctrine_helper'
+            - '@maker.renderer.form_type_renderer'
+            - '%kernel.project_dir%'
+            - '@whatwedo\CoreBundle\Manager\FormatterManager'
+        tags:
+            - { name: maker.command }
