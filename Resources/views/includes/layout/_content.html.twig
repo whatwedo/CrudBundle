@@ -4,9 +4,9 @@
     {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
     <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
         <dt class="text-sm font-medium text-neutral-500">
-            {{ content.option('label') }}
+            {{ content.option('label')|trans }}
             {% if content.option('help') is not empty %}
-                <span {{ stimulus_controller('whatwedo/crud-bundle/tooltip', { 'title': content.option('help') } ) }}>
+                <span {{ stimulus_controller('whatwedo/crud-bundle/tooltip', { 'title': content.option('help')|trans } ) }}>
                     {{ bootstrap_icon('info-circle-fill', {
                         class: 'inline cursor-help',
                     }) }}
@@ -36,7 +36,7 @@
     <div class="bg-white px-4 py-5" {{ stimulus_controller('whatwedo/core-bundle/dropdown') }}>
         {% if content.option('label') %}
             <span class="text-sm font-medium text-neutral-500">
-                {{ content.option('label') }}
+                {{ content.option('label')|trans }}
             </span>
         {% endif %}
         {{ content.render(view.data)|raw }}

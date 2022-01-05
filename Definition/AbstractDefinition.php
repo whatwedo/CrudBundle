@@ -10,6 +10,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ObjectRepository;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
+use Symfony\Component\Form\Util\StringUtil;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
@@ -48,12 +49,20 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     protected array $templates;
 
-
+    public static function getEntity(): string
+    {
+       throw new \Exception('\whatwedo\CrudBundle\Definition\AbstractDefinition::getEntity must be implemented');
+    }
 
     /**
      * @var ExtensionInterface[]
      */
     protected array $extensions;
+
+    public static function getEntityTitle(): string
+    {
+            return static::getPrefix() .  '.title';
+    }
 
     public function addAction(string $acronym, array $options = [], $type = Action::class): static
     {
@@ -132,6 +141,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     public function configureTable(Table $table): void
     {
+        $table->setOption('definition', $this);
         $table->setOption('title', $this->getTitle(route: Page::INDEX));
         $table->setOption('primary_link', fn(object|array $row) => $this->container->get(RouterInterface::class)->generate(
             static::getRoute(Page::SHOW),
@@ -180,6 +190,10 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         );
     }
 
+    public static function getPrefix(): string
+    {
+        return StringUtil::fqcnToBlockPrefix(static::getEntity());
+    }
 
     public function getTitle($entity = null, ?Page $route = null): string
     {

@@ -62,6 +62,14 @@ public function configureView(DefinitionBuilder $builder, $data)
  - `help`: Helptext
  - `attr`: attributes
 
+
+### Translations
+
+If the options `label` or `help` are not set, the defaults are
+
+- `<enttyClassName>.<acronym>` for the `label` option
+- `<enttyClassName>.<acronym>.help` for the `help` 
+
 ## Add a relation
  
 A relation will render a custom table inside the show-View with add, view and edit buttons. This is how to configure this:

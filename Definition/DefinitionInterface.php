@@ -23,6 +23,8 @@ interface DefinitionInterface
 
     public static function getAlias(): string;
 
+    public static function getPrefix(): string;
+
     public static function getRoutePathPrefix(): string;
 
     public static function getRoutePrefix(): string;

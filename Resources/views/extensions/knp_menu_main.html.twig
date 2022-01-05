@@ -93,7 +93,7 @@
                         {{ bootstrap_icon(icon, { 'class': classes }) }}
                     {% endif %}
 
-                    {{ item.label }}
+                    {{ item.label|trans }}
 
                     {# if there are children: add caret icon #}
                     {% if item.children|length > 0 %}

@@ -63,9 +63,13 @@ abstract class AbstractContent implements ServiceSubscriberInterface
 
     public function setOptions(array $options): void
     {
+        $this->options = $this->getOptionsResolver()->resolve($options);
+    }
+
+    public function getOptionsResolver(): OptionsResolver {
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
-        $this->options = $resolver->resolve($options);
+        return $resolver;
     }
 
     public function setOption($name, $value): static

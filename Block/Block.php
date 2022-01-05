@@ -130,6 +130,14 @@ class Block implements ServiceSubscriberInterface
         /** @var AbstractContent $element */
         $element = $this->container->get(ContentManager::class)->getContent($type ?? $this->getType($acronym));
         $element->setDefinition($this->definition);
+
+        if ($element->getOptionsResolver()->isDefined('label') && !isset($options['label'])) {
+            $options['label'] = sprintf('%s.%s', $this->definition::getPrefix(), $acronym);
+        }
+        if ($element->getOptionsResolver()->isDefined('help') &&  !isset($options['help'])) {
+            $options['help'] = sprintf('%s.%s.help', $this->definition::getPrefix(), $acronym);
+        }
+
         $element->setAcronym($acronym);
         $element->setOptions($options);
 
