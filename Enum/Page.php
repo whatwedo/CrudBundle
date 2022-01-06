@@ -8,7 +8,9 @@ enum Page
 {
     case INDEX;
     case SHOW;
+    case RELOAD;
     case CREATE;
+    case CREATEMODAL;
     case EDIT;
     case DELETE;
     case BATCH;

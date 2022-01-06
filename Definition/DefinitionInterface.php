@@ -49,7 +49,7 @@ interface DefinitionInterface
      * - delete
      * - batch
      *
-     * @return string[] capabilities
+     * @return Page[] capabilities
      */
     public static function getCapabilities(): array;
 
@@ -73,7 +73,7 @@ interface DefinitionInterface
      * @return string alias
      */
     public static function getQueryAlias(): string;
-    
+
     public function createEntity(Request $request);
 
     /**
