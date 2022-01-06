@@ -18,11 +18,20 @@ class CrudDataCollector extends AbstractDataCollector
 
     public function collect(Request $request, Response $response, \Throwable $exception = null)
     {
-        $definition = $this->definitionManager->getDefinitionByRoute($request->attributes->get('_route'));
+
+        $definition = 'n/a';
+
+        try {
+            if ($request->attributes->has('_route')) {
+                $definitionInstance = $this->definitionManager->getDefinitionByRoute($request->attributes->get('_route'));
+                $definition = $definitionInstance::class;
+            }
+        } catch (\Exception $ex) {}
+
 
 
         $this->data = [
-            'definition' => $definition::class,
+            'definition' => $definition,
         ];
     }
 
