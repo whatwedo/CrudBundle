@@ -5,3 +5,6 @@ whatwedo_crud:
     delete: Löschen
     view: Ansehen
     show_all: Alle ansehen
+
+
+whatwedo_crud.relation.add: Hinzufügen

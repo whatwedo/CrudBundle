@@ -1,0 +1,16 @@
+{# @var view \whatwedo\CrudBundle\View\DefinitionView #}
+
+{% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW'))|filter(c => is_granted(c.option('show_voter_attribute'), view.data)) %}
+    {% for content in block.contents(constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW'))|filter(c => is_granted(c.option('show_voter_attribute'), view.data)) %}
+        {% if content.acronym == field %}
+            {% with {
+                content: content,
+                block: block,
+                view: view,
+                } %}
+                {{ block(content.option('block_prefix'), view.definition.layout) }}
+            {% endwith %}
+        {% endif %}
+    {% endfor %}
+{% endfor %}
+

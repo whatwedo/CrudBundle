@@ -67,7 +67,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     public function createEntity(Request $request)
     {
-        $className = self::getEntity();
+        $className = static::getEntity();
         return new $className();
     }
 

@@ -22,6 +22,7 @@ use whatwedo\CrudBundle\Content\RelationContent;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Encoder\CsvEncoder;
 use whatwedo\CrudBundle\Enum\Page;
+use whatwedo\CrudBundle\Enum\PageMode;
 use whatwedo\CrudBundle\Event\CrudEvent;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\Normalizer\ObjectNormalizer;
@@ -83,6 +84,29 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         );
     }
 
+    public function reload(Request $request): Response
+    {
+        $entity = $this->getEntityOr404($request);
+        $this->denyAccessUnlessGrantedCrud(Page::SHOW, $entity);
+
+        $field = $request->attributes->get('field');
+
+        $this->dispatchEvent(CrudEvent::PRE_SHOW_PREFIX, $entity);
+
+        return $this->render(
+            $this->getTemplate('reload.html.twig'),
+            $this->getDefinition()->getTemplateParameters(
+                Page::RELOAD,
+                [
+                    'view' => $this->getDefinition()->createView(Page::RELOAD, $entity),
+                    'field' => $field,
+                    '_route' => Page::RELOAD,
+                ],
+                $entity
+            )
+        );
+    }
+
     public function edit(Request $request): Response
     {
         $entity = $this->getEntityOr404($request);
@@ -125,14 +149,24 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         );
     }
 
-    public function create(Request $request): Response
+    public function createmodal(Request $request): Response
+    {
+        return $this->create($request, PageMode::MODAL);
+    }
+
+    public function create(Request $request, PageMode $mode = PageMode::NORMAL ): Response
     {
         $this->denyAccessUnlessGrantedCrud(Page::CREATE, $this->getDefinition());
 
-        $className = $this->getDefinition()->getEntity();
         $entity = $this->getDefinition()->createEntity($request);
 
         $this->dispatchEvent(CrudEvent::NEW_PREFIX, $entity);
+
+        match($mode) {
+            PageMode::NORMAL => $template = $this->getTemplate('create.html.twig'),
+            PageMode::MODAL => $template = $this->getTemplate('create_modal.html.twig'),
+        };
+
 
         $view = $this->getDefinition()->createView(Page::CREATE, $entity);
 
@@ -190,6 +224,9 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
                 $this->addFlash('success', sprintf('Erfolgreich gespeichert.'));
 
+                if ($mode === PageMode::MODAL) {
+                    return new Response('', 200);
+                }
                 return $this->getDefinition()->getRedirect(Page::CREATE, $entity);
             }
             $this->addFlash('error', 'Beim Speichern ist ein Fehler aufgetreten. Bitte überprüfe deine Eingaben.');
@@ -198,7 +235,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $this->definition->buildBreadcrumbs(null, Page::CREATE);
 
         return $this->render(
-            $this->getTemplate('create.html.twig'),
+            $template,
             $this->getDefinition()->getTemplateParameters(Page::CREATE, [
                 'view' => $view,
                 'title' => $this->getDefinition()->getTitle(null, Page::CREATE),

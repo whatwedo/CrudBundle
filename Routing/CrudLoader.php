@@ -45,8 +45,17 @@ class CrudLoader extends Loader
                         $route->setPath($route->getPath().'{id}');
                         $route->setRequirement('id', '\d+');
                         break;
+                    case Page::RELOAD:
+                        $route->setPath($route->getPath().'{id}/reload/{field}');
+                        $route->setRequirement('id', '\d+');
+                        $route->setRequirement('field', '\w+');
+                        break;
                     case Page::CREATE:
                         $route->setPath($route->getPath().'create');
+                        $route->setMethods(['GET', 'POST']);
+                        break;
+                    case Page::CREATEMODAL:
+                        $route->setPath($route->getPath().'createmodal');
                         $route->setMethods(['GET', 'POST']);
                         break;
                     case Page::EDIT:
