@@ -1,0 +1,37 @@
+{# templates/data_collector/template.html.twig #}
+{% extends '@WebProfiler/Profiler/layout.html.twig' %}
+
+{% block toolbar %}
+    {% set icon %}
+        {# this is the content displayed as a panel in the toolbar #}
+
+            <svg version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve">
+<style type="text/css">
+    .st0{fill:none;stroke:#ffffff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+</style>
+                <path class="st0" d="M11,13v16h7.8l-2-10l6.4-2.9c0.8-0.6,1-1.8,0.4-2.7l0,0c-0.5-0.8-1.6-1.1-2.5-0.7L17.8,14l-1.2-1.9
+	c-0.5-0.7-0.7-1.6-0.7-2.5v0c0-2,1.6-3.6,3.6-3.6h1.8c0.8,0,1.5-0.7,1.5-1.5v0c0-0.8-0.7-1.5-1.5-1.5h-1.8C14.8,3,11,6.9,11,11.7V13
+	"/>
+                <path class="st0" d="M16.9,11c0.8-1.1,2.1-1.5,3.3-1.1l0,0c0.6,0.2,1.4-0.1,1.7-0.7l0,0c0.3-0.6,0.1-1.4-0.5-1.7L19.3,6"/>
+                <line class="st0" x1="2" y1="29" x2="30" y2="29"/>
+</svg>
+
+
+        <span class="sf-toolbar-value">CRUD</span>
+    {% endset %}
+
+    {% set text %}
+        {# this is the content displayed when hovering the mouse over
+           the toolbar panel #}
+        <div class="sf-toolbar-info-piece">
+            <b>Definition</b>
+            <span>{{ collector.definition }}</span>
+        </div>
+
+    {% endset %}
+
+    {# the 'link' value set to 'false' means that this panel doesn't
+       show a section in the web profiler #}
+    {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: false }) }}
+{% endblock %}
