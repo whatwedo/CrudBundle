@@ -29,6 +29,7 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Security\Voter;
 
+use InvalidArgumentException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\TraceableVoter;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
@@ -80,7 +81,11 @@ class DefaultDefinitionVoter implements VoterInterface
         }
 
         // Check if base on definition
-        $definition = $subject instanceof DefinitionInterface ? $subject : $this->definitionManager->getDefinitionByEntity($subject);
+        try {
+            $definition = $subject instanceof DefinitionInterface ? $subject : $this->definitionManager->getDefinitionByEntity($subject);
+        } catch (InvalidArgumentException) {
+            $definition = null;
+        }
         if (null === $definition) {
             return static::ACCESS_ABSTAIN;
         }
