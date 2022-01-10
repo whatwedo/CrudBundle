@@ -49,12 +49,15 @@ use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Util\StringUtil;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Csrf\CsrfTokenManager;
 use Symfony\Component\Validator\Validation;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use whatwedo\CoreBundle\Formatter\DefaultFormatter;
 use whatwedo\CoreBundle\Manager\FormatterManager;
 use whatwedo\CrudBundle\Enum\VisibilityEnum;
@@ -69,8 +72,15 @@ final class MakeDefinition extends AbstractMaker
     private $inflector;
     private string $rootPath;
     private FormatterManager $formatterManager;
+    private TranslatorInterface $translator;
 
-    public function __construct(DoctrineHelper $doctrineHelper, FormTypeRenderer $formTypeRenderer, string $rootPath, FormatterManager $formatterManager)
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        FormTypeRenderer $formTypeRenderer,
+        string $rootPath,
+        FormatterManager $formatterManager,
+        TranslatorInterface $translator
+    )
     {
         $this->doctrineHelper = $doctrineHelper;
         $this->formTypeRenderer = $formTypeRenderer;
@@ -80,6 +90,7 @@ final class MakeDefinition extends AbstractMaker
         }
         $this->rootPath = $rootPath;
         $this->formatterManager = $formatterManager;
+        $this->translator = $translator;
     }
 
     public static function getCommandName(): string
@@ -95,6 +106,10 @@ final class MakeDefinition extends AbstractMaker
         $command
             ->setDescription('Creates Defintion for the wwd CrudBundle')
             ->addArgument('entity-class', InputArgument::OPTIONAL, sprintf('The class name of the entity to create CRUD (e.g. <fg=yellow>%s</>)', Str::asClassName(Str::getRandomTerm())))
+            ->addOption('no-translations', 't', InputOption::VALUE_NONE, sprintf(
+                'do not add translations in your messages.%s.yaml',
+                $this->translator->getLocale())
+            )
         ;
 
         $inputConfig->setArgumentAsNonInteractive('entity-class');
@@ -143,24 +158,34 @@ final class MakeDefinition extends AbstractMaker
 
         $generator->writeChanges();
 
+
+        if (!$input->getOption('no-translations')) {
+            $this->createTranslations(
+                $entityClassDetails,
+                $entityDoctrineMetaData
+            );
+        }
+
+
         $this->writeSuccessMessage($io);
 
         $io->text(sprintf('Next: Check your new Definition by going to <fg=yellow>%s/</>', Str::asRoutePath($definitionClassDetails->getRelativeNameWithoutSuffix())));
     }
-
-
 
     /**
      * {@inheritdoc}
      */
     public function configureDependencies(DependencyBuilder $dependencies)
     {
-
         $dependencies->addClassDependency(
             AbstractType::class,
             'form'
         );
-        
+
+        $dependencies->addClassDependency(
+            TranslatorInterface::class,
+            'translation'
+        );
 
         $dependencies->addClassDependency(
             TwigBundle::class,
@@ -176,7 +201,7 @@ final class MakeDefinition extends AbstractMaker
             CsrfTokenManager::class,
             'security-csrf'
         );
-        
+
     }
 
     private function singularize(string $word): string
@@ -255,5 +280,24 @@ final class MakeDefinition extends AbstractMaker
         }
 
         return $responses;
+    }
+
+    private function createTranslations($entityClassDetails, $entityDetails)
+    {
+
+        $fieldNames = $entityDetails->fieldNames;
+        foreach ($entityDetails->getIdentifierFieldNames() as $idField) {
+            unset($fieldNames[$idField]);
+        }
+
+        $data = '';
+        $data .= sprintf('%s.title: %s', StringUtil::fqcnToBlockPrefix($entityClassDetails->getFullName()), $entityClassDetails->getShortName()) . PHP_EOL;
+        $data .= sprintf('menu.%s.title: %s', StringUtil::fqcnToBlockPrefix($entityClassDetails->getFullName()), $entityClassDetails->getShortName()) . PHP_EOL;
+        foreach ($fieldNames as $fieldName) {
+            $data .= sprintf('%s.%s: %s', StringUtil::fqcnToBlockPrefix($entityClassDetails->getFullName()), $fieldName, $fieldName) . PHP_EOL;
+        }
+
+        file_put_contents( sprintf('%s/translations/messages.%s.yaml', $this->rootPath, $this->translator->getLocale()),
+            $data, FILE_APPEND);
     }
 }
