@@ -78,6 +78,15 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         return $this;
     }
 
+    public function removeAction(string $acronym): static
+    {
+        if (isset($this->actions[$acronym])) {
+            unset($this->actions[$acronym]);
+        }
+
+        return $this;
+    }
+
     public function getActions(): array
     {
         return $this->actions;
