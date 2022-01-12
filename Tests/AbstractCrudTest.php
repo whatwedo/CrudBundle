@@ -34,17 +34,29 @@ use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
+use whatwedo\CrudBundle\Tests\Data\CreateData;
+use whatwedo\CrudBundle\Tests\Data\EditData;
+use whatwedo\CrudBundle\Tests\Data\IndexData;
+use whatwedo\CrudBundle\Tests\Data\ShowData;
 
 abstract class AbstractCrudTest extends WebTestCase
 {
     abstract protected function getDefinitionClass(): string;
     abstract protected function getClient(): KernelBrowser;
 
-    public function testIndex(): void
+    /**
+     * @dataProvider indexData()
+     */
+    public function testIndex(IndexData $indexData): void
     {
+        if ($indexData->skip) {
+            $this->markTestSkipped('index Test Skipped');
+        }
+
         if ($this->getDefinition()::hasCapability(Page::INDEX)) {
             $this->getClient()->request('GET', $this->getRouter()->generate(
-                $this->getDefinition()::getRoute(Page::INDEX)
+                $this->getDefinition()::getRoute(Page::INDEX),
+                $indexData->queryParameters
             ));
             self::assertResponseIsSuccessful();
         } else {
@@ -52,41 +64,116 @@ abstract class AbstractCrudTest extends WebTestCase
         }
     }
 
-    public function testShow(): void
-    {
-        $this->getClient()->request('GET', $this->getRouter()->generate(
-            $this->getDefinition()::getRoute(Page::SHOW), [
-                'id' => $this->getTestEntityId(),
+    public function indexData() {
+        $testData = $this->getTestData();
+        if (isset($testData[Page::INDEX->name])) {
+            return $testData[Page::INDEX->name];
+        }
+
+        return [
+            [
+                IndexData::new()
             ]
+        ];
+    }
+
+    /**
+     * @dataProvider showData()
+     */
+    public function testShow(ShowData $showData): void
+    {
+        if ($showData->skip) {
+            $this->markTestSkipped('show Test Skipped');
+        }
+
+        $this->getClient()->request('GET', $this->getRouter()->generate(
+            $this->getDefinition()::getRoute(Page::SHOW),
+            array_merge(['id' => $showData->entityId], $showData->queryParameters)
         ));
         self::assertResponseIsSuccessful();
     }
 
-    public function testEdit(): string
-    {
-        $editLink = $this->getRouter()->generate(
-            $this->getDefinition()::getRoute(Page::EDIT), [
-                'id' => $this->getTestEntityId(),
+    public function showData() {
+        $testData = $this->getTestData();
+        if (isset($testData[Page::SHOW->name])) {
+            return $testData[Page::SHOW->name];
+        }
+
+        return [
+            [
+                ShowData::new()
             ]
+        ];
+    }
+
+    /**
+     * @dataProvider editData()
+     */
+    public function testEdit(EditData $editData): string
+    {
+        if ($editData->skip) {
+            $this->markTestSkipped('show Test Skipped');
+        }
+
+        $editLink = $this->getRouter()->generate(
+            $this->getDefinition()::getRoute(Page::EDIT),
+            array_merge([
+                'id' => $editData->entityId,
+            ], $editData->queryParameters)
         );
         $crawler = $this->getClient()->request('GET', $editLink);
         $form = $crawler->filter('#whatwedo-crud-submit')->form([], 'POST');
+        $this->fillForm($form, $editData->formData);
         $this->getClient()->submit($form);
         self::assertResponseIsSuccessful();
         return $editLink;
     }
 
-    public function testCreate(): string
+    public function editData() {
+        $testData = $this->getTestData();
+        if (isset($testData[Page::EDIT->name])) {
+            return $testData[Page::EDIT->name];
+        }
+
+        return [
+            [
+                EditData::new()
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider createData()
+     */
+    public function testCreate(CreateData $createData): string
     {
+        if ($createData->skip) {
+            $this->markTestSkipped('create Test Skipped');
+        }
+
         $createLink = $this->getRouter()->generate(
-            $this->getDefinition()::getRoute(Page::CREATE)
+            $this->getDefinition()::getRoute(Page::CREATE),
+            $createData->queryParameters
         );
         $crawler = $this->getClient()->request('GET', $createLink);
         $form = $crawler->filter('#whatwedo-crud-submit')->form([], 'POST');
-        $this->fillCreateForm($form, Page::CREATE);
+        $this->fillForm($form, $createData->formData);
         $this->getClient()->submit($form);
         self::assertResponseIsSuccessful();
         return $createLink;
+    }
+
+    public function createData() {
+        $testData = $this->getTestData();
+        if (isset($testData[Page::CREATE->name])) {
+            return $testData[Page::CREATE->name];
+        }
+
+        return [
+            [
+                CreateData::new()
+            ]
+        ];
     }
 
     protected function getDefinition(): DefinitionInterface
@@ -101,21 +188,14 @@ abstract class AbstractCrudTest extends WebTestCase
         return self::getContainer()->get(RouterInterface::class);
     }
 
-    protected function getTestEntityId(): int
+    protected function fillForm(Form $form, $formData)
     {
-        return 1;
-    }
-
-    protected function fillCreateForm(Form $form, Page $page)
-    {
-        $createFormData = $this->getFormData($page);
-        foreach ($createFormData as $field => $value) {
+        foreach ($formData as $field => $value) {
             $form['form['.$field.']'] = $value;
         }
     }
 
-    protected function getFormData(Page $page): array
-    {
+    public function getTestData(): array {
         return [];
     }
 }
