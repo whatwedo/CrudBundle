@@ -245,12 +245,9 @@ class DefinitionView
                 $builder->add(
                     $content->getAcronym(),
                     $formType,
-                    array_merge(
-                        $content->getOption('form_options'),
-                        [
-                            'required' => $this->isContentRequired($content),
-                        ]
-                    )
+                    $content->getFormOptions([
+                        'required' => $this->isContentRequired($content),
+                    ])
                 );
             }
         }
