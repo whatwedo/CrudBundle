@@ -94,64 +94,82 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     public function configureView(DefinitionBuilder $builder, $data): void
     {
-        $this->addAction('index', [
-            'label' => 'Übersicht',
-            'icon' => 'list',
-            'visibility' => [Page::CREATE, Page::SHOW, Page::EDIT],
-            'route' => static::getRoute(Page::INDEX),
-            'priority' => 10,
-        ]);
-        $this->addAction('create', [
-            'label' => 'Hinzufügen',
-            'icon' => 'plus',
-            'visibility' => [Page::INDEX],
-            'route' => static::getRoute(Page::CREATE),
-            'priority' => 20,
-        ]);
+        if ($this::hasCapability(Page::INDEX)) {
+            $this->addAction('index', [
+                'label' => 'Übersicht',
+                'icon' => 'list',
+                'visibility' => [Page::CREATE, Page::SHOW, Page::EDIT],
+                'route' => static::getRoute(Page::INDEX),
+                'priority' => 10,
+            ]);
+        }
+
+        if ($this::hasCapability(Page::CREATE)) {
+            $this->addAction('create', [
+                'label' => 'Hinzufügen',
+                'icon' => 'plus',
+                'visibility' => [Page::INDEX],
+                'route' => static::getRoute(Page::CREATE),
+                'priority' => 20,
+            ]);
+        }
 
         if ($data) {
-            $this->addAction('view', [
-                'label' => 'Ansehen',
-                'icon' => 'eye',
-                'visibility' => [Page::EDIT],
-                'route' => static::getRoute(Page::SHOW),
-                'route_parameters' => ['id' => $data->getId()],
-                'priority' => 30,
-            ]);
-            $this->addAction('edit', [
-                'label' => 'Bearbeiten',
-                'icon' => 'pencil',
-                'visibility' => [Page::SHOW],
-                'route' => static::getRoute(Page::EDIT),
-                'route_parameters' => ['id' => $data->getId()],
-                'priority' => 40,
-            ]);
-            $this->addAction('delete', [
-                'label' => 'Löschen',
-                'icon' => 'trash',
-                'visibility' => [Page::SHOW, Page::EDIT],
-                'route' => static::getRoute(Page::DELETE),
-                'route_parameters' => ['id' => $data->getId()],
-                'priority' => 50,
-            ], DeleteAction::class);
-            $this->addAction('edit_submit', [
-                'label' => 'Speichern',
-                'icon' => 'check-lg',
-                'visibility' => [Page::EDIT],
-                'priority' => 60,
-                'attr' => [
-                    'form' => 'crud_main_form',
-                ]
-            ], SubmitAction::class);
-            $this->addAction('create_submit', [
-                'label' => 'Hinzufügen',
-                'icon' => 'check-lg',
-                'visibility' => [Page::CREATE],
-                'priority' => 60,
-                'attr' => [
-                    'form' => 'crud_main_form',
-                ]
-            ], SubmitAction::class);
+            if ($this::hasCapability(Page::SHOW)) {
+                $this->addAction('view', [
+                    'label' => 'Ansehen',
+                    'icon' => 'eye',
+                    'visibility' => [Page::EDIT],
+                    'route' => static::getRoute(Page::SHOW),
+                    'route_parameters' => ['id' => $data->getId()],
+                    'priority' => 30,
+                ]);
+            }
+            if ($this::hasCapability(Page::EDIT)) {
+                $this->addAction('edit', [
+                    'label' => 'Bearbeiten',
+                    'icon' => 'pencil',
+                    'visibility' => [Page::SHOW],
+                    'route' => static::getRoute(Page::EDIT),
+                    'route_parameters' => ['id' => $data->getId()],
+                    'priority' => 40,
+                ]);
+            }
+
+            if ($this::hasCapability(Page::DELETE)) {
+                $this->addAction('delete', [
+                    'label' => 'Löschen',
+                    'icon' => 'trash',
+                    'visibility' => [Page::SHOW, Page::EDIT],
+                    'route' => static::getRoute(Page::DELETE),
+                    'route_parameters' => ['id' => $data->getId()],
+                    'priority' => 50,
+                ], DeleteAction::class);
+            }
+
+            if ($this::hasCapability(Page::EDIT)) {
+                $this->addAction('edit_submit', [
+                    'label' => 'Speichern',
+                    'icon' => 'check-lg',
+                    'visibility' => [Page::EDIT],
+                    'priority' => 60,
+                    'attr' => [
+                        'form' => 'crud_main_form',
+                    ]
+                ], SubmitAction::class);
+            }
+
+            if ($this::hasCapability(Page::CREATE)) {
+                $this->addAction('create_submit', [
+                    'label' => 'Hinzufügen',
+                    'icon' => 'check-lg',
+                    'visibility' => [Page::CREATE],
+                    'priority' => 60,
+                    'attr' => [
+                        'form' => 'crud_main_form',
+                    ]
+                ], SubmitAction::class);
+            }
         }
     }
 
@@ -164,29 +182,35 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
             ['id' => $row->getId()]
         ));
 
-        $table->addAction('show', [
-            'label' => 'Anzeigen',
-            'icon' => 'eye',
-            'route' => static::getRoute(Page::SHOW),
-            'route_parameters' => fn($row) => ['id' => $row->getId()],
-            'priority' => 100,
-        ]);
+        if ($this::hasCapability(Page::SHOW)) {
+            $table->addAction('show', [
+                'label' => 'Anzeigen',
+                'icon' => 'eye',
+                'route' => static::getRoute(Page::SHOW),
+                'route_parameters' => fn($row) => ['id' => $row->getId()],
+                'priority' => 100,
+            ]);
+        }
 
-        $table->addAction('edit', [
-            'label' => 'Bearbeiten',
-            'icon' => 'pencil',
-            'route' => static::getRoute(Page::EDIT),
-            'route_parameters' => fn($row) => ['id' => $row->getId()],
-            'priority' => 50,
-        ]);
+        if ($this::hasCapability(Page::EDIT)) {
+            $table->addAction('edit', [
+                'label' => 'Bearbeiten',
+                'icon' => 'pencil',
+                'route' => static::getRoute(Page::EDIT),
+                'route_parameters' => fn($row) => ['id' => $row->getId()],
+                'priority' => 50,
+            ]);
+        }
 
-        $table->addAction('delete', [
-            'label' => 'Löschen',
-            'icon' => 'trash',
-            'route' => static::getRoute(Page::DELETE),
-            'route_parameters' => fn($row) => ['id' => $row->getId()],
-            'priority' => 500,
-        ]);
+        if ($this::hasCapability(Page::DELETE)) {
+            $table->addAction('delete', [
+                'label' => 'Löschen',
+                'icon' => 'trash',
+                'route' => static::getRoute(Page::DELETE),
+                'route_parameters' => fn($row) => ['id' => $row->getId()],
+                'priority' => 500,
+            ]);
+        }
 
         if ($table->hasExtension(FilterExtension::class)) {
             $table->getFilterExtension()
