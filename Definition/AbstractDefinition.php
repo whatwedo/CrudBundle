@@ -232,7 +232,9 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     public static function getPrefix(): string
     {
-        return StringUtil::fqcnToBlockPrefix(static::getEntity());
+        if (preg_match('~([^\\\\]+?)?$~i', static::getEntity(), $matches)) {
+            return strtolower(preg_replace(['/([A-Z]+)([A-Z][a-z])/', '/([a-z\d])([A-Z])/'], ['\\1_\\2', '\\1_\\2'], $matches[1]));
+        }
     }
 
     public function getTitle($entity = null, ?Page $route = null): string
