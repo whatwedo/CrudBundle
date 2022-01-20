@@ -2,8 +2,8 @@
     {# @var content \whatwedo\CrudBundle\Content\Content #}
     {# @var block \whatwedo\CrudBundle\Block\Block #}
     {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
-    <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-        <dt class="text-sm font-medium text-neutral-500">
+    <div id="wwd-crud-block-{{ block.acronym }}-content-{{ content.acronym }}" class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+        <dt class="text-sm font-medium text-neutral-500" id="wwd-crud-block-{{ block.acronym }}-content-{{ content.acronym }}-label">
             {{ content.option('label')|trans }}
             {% if content.option('help') is not empty %}
                 <span {{ stimulus_controller('whatwedo/crud-bundle/tooltip', { 'title': content.option('help')|trans } ) }}>
@@ -13,7 +13,7 @@
                 </span>
             {% endif %}
         </dt>
-        <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2">
+        <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2" id="wwd-crud-block-{{ block.acronym }}-content-{{ content.acronym }}-content">
             {% if form is defined %}
                 {{ form_widget(attribute(form, content.acronym)) }}
 
@@ -33,7 +33,7 @@
     {# @var content \whatwedo\CrudBundle\Content\RelationContent #}
     {# @var block \whatwedo\CrudBundle\Block\Block #}
     {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
-    <div class="bg-white px-4 py-5" {{ stimulus_controller('whatwedo/core-bundle/dropdown') }}>
+    <div id="wwd-crud-block-{{ block.acronym }}-content-{{ content.acronym }}" class="bg-white px-4 py-5" {{ stimulus_controller('whatwedo/core-bundle/dropdown') }}>
         {% if content.option('label') %}
             <span class="text-sm font-medium text-neutral-500">
                 {{ content.option('label')|trans }}
