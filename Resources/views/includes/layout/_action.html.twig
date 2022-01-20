@@ -41,7 +41,7 @@
     {# @var action \whatwedo\CrudBundle\Action\Action #}
     {# @var link string #}
     {% set attr = {
-        class: 'inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-error-600 hover:bg-error-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-error-500',
+        class: 'whatwedo-crud-button--action-delete',
         role: 'menuitem',
         tabindex: '-1',
         type: 'submit',
@@ -52,7 +52,7 @@
             class="relative inline-block"
         >
             <button
-                class="whatwedo-crud-button--action",
+                {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}
                 {{ stimulus_action({'whatwedo/core-bundle/dropdown': ['toggle', {'click@window': 'hide'}]}) }}
             >
                 {% if action.option('icon') %}

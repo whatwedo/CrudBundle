@@ -96,17 +96,20 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
     {
         if ($this::hasCapability(Page::INDEX)) {
             $this->addAction('index', [
-                'label' => 'Übersicht',
+                'label' => 'whatwedo_crud.index',
                 'icon' => 'list',
                 'visibility' => [Page::CREATE, Page::SHOW, Page::EDIT],
                 'route' => static::getRoute(Page::INDEX),
+                'attr' => [
+                    'class' => 'whatwedo-crud-button--action-neutral',
+                ],
                 'priority' => 10,
             ]);
         }
 
         if ($this::hasCapability(Page::CREATE)) {
             $this->addAction('create', [
-                'label' => 'Hinzufügen',
+                'label' => 'whatwedo_crud.add',
                 'icon' => 'plus',
                 'visibility' => [Page::INDEX],
                 'route' => static::getRoute(Page::CREATE),
@@ -117,7 +120,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         if ($data) {
             if ($this::hasCapability(Page::SHOW)) {
                 $this->addAction('view', [
-                    'label' => 'Ansehen',
+                    'label' => 'whatwedo_crud.view',
                     'icon' => 'eye',
                     'visibility' => [Page::EDIT],
                     'route' => static::getRoute(Page::SHOW),
@@ -127,7 +130,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
             }
             if ($this::hasCapability(Page::EDIT)) {
                 $this->addAction('edit', [
-                    'label' => 'Bearbeiten',
+                    'label' => 'whatwedo_crud.edit',
                     'icon' => 'pencil',
                     'visibility' => [Page::SHOW],
                     'route' => static::getRoute(Page::EDIT),
@@ -138,18 +141,21 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
             if ($this::hasCapability(Page::DELETE)) {
                 $this->addAction('delete', [
-                    'label' => 'Löschen',
+                    'label' => 'whatwedo_crud.delete',
                     'icon' => 'trash',
                     'visibility' => [Page::SHOW, Page::EDIT],
                     'route' => static::getRoute(Page::DELETE),
                     'route_parameters' => ['id' => $data->getId()],
+                    'attr' => [
+                        'class' => 'whatwedo-crud-button--action-warning',
+                    ],
                     'priority' => 50,
                 ], DeleteAction::class);
             }
 
             if ($this::hasCapability(Page::EDIT)) {
                 $this->addAction('edit_submit', [
-                    'label' => 'Speichern',
+                    'label' => 'whatwedo_crud.save',
                     'icon' => 'check-lg',
                     'visibility' => [Page::EDIT],
                     'priority' => 60,
@@ -161,7 +167,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
             if ($this::hasCapability(Page::CREATE)) {
                 $this->addAction('create_submit', [
-                    'label' => 'Hinzufügen',
+                    'label' => 'whatwedo_crud.add',
                     'icon' => 'check-lg',
                     'visibility' => [Page::CREATE],
                     'priority' => 60,
@@ -184,7 +190,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
         if ($this::hasCapability(Page::SHOW)) {
             $table->addAction('show', [
-                'label' => 'Anzeigen',
+                'label' => 'whatwedo_crud.view',
                 'icon' => 'eye',
                 'route' => static::getRoute(Page::SHOW),
                 'route_parameters' => fn($row) => ['id' => $row->getId()],
@@ -194,7 +200,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
         if ($this::hasCapability(Page::EDIT)) {
             $table->addAction('edit', [
-                'label' => 'Bearbeiten',
+                'label' => 'whatwedo_crud.edit',
                 'icon' => 'pencil',
                 'route' => static::getRoute(Page::EDIT),
                 'route_parameters' => fn($row) => ['id' => $row->getId()],
@@ -204,7 +210,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
         if ($this::hasCapability(Page::DELETE)) {
             $table->addAction('delete', [
-                'label' => 'Löschen',
+                'label' => 'whatwedo_crud.delete',
                 'icon' => 'trash',
                 'route' => static::getRoute(Page::DELETE),
                 'route_parameters' => fn($row) => ['id' => $row->getId()],

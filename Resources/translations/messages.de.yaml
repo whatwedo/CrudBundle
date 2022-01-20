@@ -1,5 +1,6 @@
 whatwedo_crud:
     add: Hinzufügen
+    save: Speichern
     index: Übersicht
     edit: Bearbeiten
     delete: Löschen
