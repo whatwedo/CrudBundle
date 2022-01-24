@@ -21,11 +21,11 @@ add this repository to you composer.json: (Sadly composer cannot load repositori
         "type": "package",
         "package": {
             "name": "twbs/icons",
-            "version": "1.4.1",
+            "version": "1.6.1",
             "source": {
                 "url": "https://github.com/twbs/icons",
                 "type": "git",
-                "reference": "tags/v1.4.1"
+                "reference": "tags/v1.6.1"
             }
         }
     }
@@ -243,7 +243,7 @@ class User
 }
 ```
 
-### Step 2: Create a definition
+### Create a definition
 
 In the definition file, you explain and configure your entity. 
 
@@ -267,7 +267,7 @@ class UserDefinition extends AbstractDefinition
 ```
 
 
-### Step 3: Definition Configuration
+### Definition Configuration
 Per default the entry point of the definition will be `/{wwd-crud-prefix}/{namespace_entity}`.
 In our case `/app_user` (as we defined an empty prefix). However you can change this by 
 overriding the method `getRoutePathPrefix`:
@@ -282,15 +282,55 @@ class UserDefinition extends AbstractDefinition
 ```
 Now the entry point is at `/user`.
 
-### Step 5: configure whatwedoTableBundle
-
+### configure whatwedoTableBundle
+How to list the entities on their index page is defined with the table bundle.  
+Example:
+```php
+...
+    public function configureTable(Table $table): void
+    {
+        parent::configureTable($table);
+        $table
+            ->addColumn('firstname')
+            ->addColumn('lastname')
+            ->addColumn('email')
+        ;
+    }
+...
+```
+Full documentation can be found here: 
 [whatwedoTableBundle](https://github.com/whatwedo/TableBundle)
 
-### Step 6: Try it
+### configure create & update
+To define which fields can be edited and how you override the `configureView` method. It could look like this:
+```php
+public function configureView(DefinitionBuilder $builder, $data): void
+{
+    parent::configureView($builder, $data);
+    $builder
+        ->addBlock('base')
+        ->addContent('firstname', null, [
+            'help' => false,
+        ])
+        ->addContent('lastname', null, [
+            'help' => false,
+        ])
+        ->addContent('email')
+    ;
 
+    $builder
+        ->addBlock('security')
+        ->addContent('plainPassword', null, [
+            'form_type' => PasswordType::class,
+        ])
+    ;
+}
+```
+
+### try it
 That's all.
 
-```http://127.0.0.1:8000/location```
+```http://127.0.0.1:8000/app_user```
 
 ### More resources
 

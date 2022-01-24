@@ -119,7 +119,9 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
+            $this->dispatchEvent(CrudEvent::PRE_VALIDATE_PREFIX, $entity);
             if ($form->isValid()) {
+                $this->dispatchEvent(CrudEvent::POST_VALIDATE_PREFIX, $entity);
                 $this->dispatchEvent(CrudEvent::PRE_EDIT_PREFIX, $entity);
                 $this->entityManager->flush();
                 $this->dispatchEvent(CrudEvent::POST_EDIT_PREFIX, $entity);
