@@ -107,6 +107,25 @@ class MenuBuilder extends DefinitionMenuBuilder
 }
 ```
 
+### Configure Tailwind
+Be sure to include this config in the `tailwind.config.js`:
+````js
+...
+content: [
+    './assets/**/*.js',
+    './templates/**/*.{html,html.twig}',
+    './vendor/whatwedo/**/*.{html,html.twig,js}',
+    './var/cache/twig/**/*.php',
+    './src/Definition/*.php',
+],
+...
+plugins: [
+    require('@tailwindcss/forms'),
+],
+...
+````
+The `@tailwindcss/forms` can be added to your project like `yarn add @tailwindcss/forms` 
+
 ### Create an entity
 
 First, you need to create a new entity for your data.
