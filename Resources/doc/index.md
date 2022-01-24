@@ -13,8 +13,25 @@ We don't guarantee that it works on lower versions.
 The views of this template are based on [Tailwind CSS](https://tailwindcss.com/) layout. You can overwrite them at any time. 
 
 ## Installation
-
-First, add the bundle to your dependencies and install it.
+The bundle depends on bootstrap icons. To get them running smoothly in your project
+add this repository to you composer.json: (Sadly composer cannot load repositories recursively)
+```
+"repositories": [
+    {
+        "type": "package",
+        "package": {
+            "name": "twbs/icons",
+            "version": "1.4.1",
+            "source": {
+                "url": "https://github.com/twbs/icons",
+                "type": "git",
+                "reference": "tags/v1.4.1"
+            }
+        }
+    }
+]
+```
+Then, add the bundle to your dependencies and install it.
 ```
 composer require whatwedo/crud-bundle
 ```
@@ -31,7 +48,7 @@ so you need to add these lines manually to the composer.json to get the version 
 After successfully installing the bundle, you should see changes in the files
 `assets/controller.js`, `config/bundles.php`, `package.json`, `symfony.lock`, `composer.json` and `composer.lock`.
 
-Secondly, add our routes to your ```config/routes.yaml```
+Then, add our routes to your ```config/routes.yaml```
 ```
 whatwedo_crud_bundle:
     resource: "@whatwedoCrudBundle/Resources/config/routing.yml"
@@ -46,46 +63,125 @@ whatwedo_table_bundle:
 
 ## Use the bundle
 
-### Step 1: Create an entity
+### Prepare UI
+Your base template needs to extend `'@whatwedoCrud/base.html.twig'` or contain the same blocks
+and stimulus controllers. 
 
-First, you need to create a new entity for your data. In our example, we want to store all locations of our company.
+### Create an entity
 
-```
+First, you need to create a new entity for your data.
+In our example, we want to create a User management system. 
 
+Use your existing `User.php` entity or create a new one with `php bin/console make:entity`. 
+Our class looks like this:
+```php
 <?php
-// src/Agency/LocationBundle/Entity/Location.php
 
-namespace Agency\LocationBundle\Entity;
+namespace App\Entity;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="location")
- */
-class Location
+use App\Repository\UserRepository;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+class User
 {
-    /**
-     * @var integer
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
 
-    /**
-     * @var string
-     * @ORM\Column(name="name", type="string", length=120)
-     * @Assert\NotBlank();
-     */
-    protected $name;
+    public const ROLE_USER = 'ROLE_USER';
+    public const ROLE_ADMIN = 'ROLE_ADMIN';
 
-// ...
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    private $id;
 
-    public function __toString()
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\Email]
+    #[Assert\NotNull]
+    private $email;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotNull]
+    private $firstname;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotNull]
+    private $lastname;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotNull]
+    private $password;
+
+    #[ORM\Column(type: 'array')]
+    #[Assert\NotNull]
+    #[Assert\Count(min: 1)]
+    private $roles = [self::ROLE_USER,];
+
+    public function getId(): ?int
     {
-        return $this->getName();
+        return $this->id;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getFirstname(): ?string
+    {
+        return $this->firstname;
+    }
+
+    public function setFirstname(string $firstname): self
+    {
+        $this->firstname = $firstname;
+
+        return $this;
+    }
+
+    public function getLastname(): ?string
+    {
+        return $this->lastname;
+    }
+
+    public function setLastname(string $lastname): self
+    {
+        $this->lastname = $lastname;
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function getRoles(): ?array
+    {
+        return $this->roles;
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
     }
 }
-
 ```
 
 ### Step 2: Create a definition
@@ -94,109 +190,38 @@ In the definition file, you explain and configure your entity.
 
 It contains all information to create your CRUD view.
 
-```
+```php
 <?php
-// src/Agency/LocationBundle/Definition/LocationDefinition.php
 
-namespace Agency\LocationBundle\Definition;
+namespace App\Definition;
 
-use Agency\LocationBundle\Entity\Location;
-use whatwedo\CrudBundle\Builder\DefinitionBuilder;
+use App\Entity\User;
 use whatwedo\CrudBundle\Definition\AbstractDefinition;
-use whatwedo\TableBundle\Table\Table;
 
-class LocationDefinition extends AbstractDefinition
+class UserDefinition extends AbstractDefinition
 {
-    /**
-     * an alias for your entity. also used for routing (alias_show, alias_create, ...)
-     */
-    public static function getAlias()
+    public static function getEntity(): string
     {
-        return 'oepfelchasper_location_location';
-    }
-
-    /**
-     * the fqdn of the entity
-     */
-    public static function getEntity()
-    {
-        return Location::class;
-    }
-
-    /**
-     * the query alias to be used when query data
-     */
-    public static function getQueryAlias()
-    {
-        return 'location';
-    }
-
-    /**
-     * table (list) configuration
-     */
-    public function configureTable(Table $table)
-    {
-        // Your Table Configuration
-    }
-
-    /**
-     * interface (create, edit, view) configuration
-     */
-    public function configureView(DefinitionBuilder $builder, $data)
-    {
-        // Your View Configuration
+        return User::class;
     }
 }
-
 ```
 
-You can read more about the Table configuration in the [whatwedoTableBundle](https://github.com/whatwedo/TableBundle). 
 
-Check out our documentation for the [view configuration](view-configuration.md).
-
-### Step 3: Create a service
-
-Now, create a new service is your ```config/services.yaml```. Important: the alias given here is the same as defined in your definition-file!
-For Symfony with autowiring not needed.
-
+### Step 3: Definition Configuration
+Per default the entry point of the definition will be `/{wwd-crud-prefix}/{namespace_entity}`.
+In our case `/app_user` (as we defined an empty prefix). However you can change this by 
+overriding the method `getRoutePathPrefix`:
+```php
+class UserDefinition extends AbstractDefinition
+{
+    public static function getRoutePathPrefix(): string
+    {
+        return 'user';
+    }
+}
 ```
-# config/services.yaml
-services:
-    # Definitions
-    agency_location.definition.location:
-        class: Agency\LocationBundle\Definition\LocationDefinition
-        parent: whatwedo_crud.definition.abstract_definition
-        public: false
-        tags:
-            - { name: crud.definition, alias: agency_user_user } # put in the alias of your definition
-
-```
-
-### Step 4: Create routing
-
-Now we need to tell our router that there are new routes. In our projects, we always create new routing-files for every controller - you can just put it in one file if you want.
-
-
-```
-
-# config/routes/crud.yaml
-
-agency_location_location_import:
-    prefix: /location
-    resource: "@AgencyLocationBundle/Resources/config/routing/location.yml"
-
-# src/Agency/LocationBundle/Resources/config/routing/location.yml
-agency_location_location_crud:
-    resource: 'agency_location_location' # put in the alias of your definition
-    type: crud
-    prefix: /location
-
-trainer_crud:
-    resource: App\Definition\TrainerDefinition # put in the alias of your definition
-    type: crud
-    prefix: /trainer
-
-```
+Now the entry point is at `/user`.
 
 ### Step 5: configure whatwedoTableBundle
 

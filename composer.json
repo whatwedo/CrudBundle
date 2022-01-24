@@ -24,7 +24,8 @@
         "symfony/twig-bundle":      "~5.3|~6.0",
         "whatwedo/core-bundle":     "^1.0",
         "whatwedo/table-bundle":    "^1.0",
-        "phpspec/prophecy":         "~1.0|~6.0"
+        "phpspec/prophecy":         "~1.0|~6.0",
+        "knplabs/knp-menu-bundle":  "~v3.2.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.2"
