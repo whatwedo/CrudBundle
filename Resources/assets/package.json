@@ -30,7 +30,6 @@
         "@hotwired/stimulus": "^3.0.0"
     },
     "dependencies": {
-        "tippy.js": "^6.3.7",
-        "@tailwindcss/forms": "^0.3.2"
+        "tippy.js": "^6.3.7"
     }
 }
