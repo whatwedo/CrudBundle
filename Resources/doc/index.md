@@ -65,7 +65,47 @@ whatwedo_table_bundle:
 
 ### Prepare UI
 Your base template needs to extend `'@whatwedoCrud/base.html.twig'` or contain the same blocks
-and stimulus controllers. 
+and stimulus controllers.
+
+If you are using our template, you will need a route named `dashboard`. You also will need two menus (main and sub). 
+You can configure them like this:  
+
+`services.yaml`  
+```yaml
+App\Menu\MenuBuilder:
+    tags:
+        - { name: knp_menu.menu_builder, method: createMainMenu, alias: main }
+        - { name: knp_menu.menu_builder, method: createSubMenu, alias: sub }
+```
+
+`App\Menu\MenuBuilder.php`
+```php
+namespace App\Menu;
+
+use Knp\Menu\ItemInterface;
+use whatwedo\CrudBundle\Builder\DefinitionMenuBuilder;
+
+class MenuBuilder extends DefinitionMenuBuilder
+{
+    public function createMainMenu(): ItemInterface
+    {
+        $menu = $this->factory->createItem('');
+        $menu->addChild('Dashboard', [
+            'route' => 'dashboard',
+            'attributes' => [
+                'icon' => 'house-door',
+            ],
+        ]);
+        return $menu;
+    }
+
+    public function createSubMenu(): ItemInterface
+    {
+        $menu = $this->factory->createItem('');
+        return $menu;
+    }
+}
+```
 
 ### Create an entity
 
