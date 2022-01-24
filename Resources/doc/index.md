@@ -5,40 +5,45 @@ The documentation will be extended while developing the bundle.
 
 ## Requirements
 
-This bundle has been tested on PHP >= 7.0 and Symfony >= 3.0. 
+This bundle has been tested on PHP >= 8.0 and Symfony >= 6.0. 
 We don't guarantee that it works on lower versions.
 
 ## Templates
 
-The views of this template are based on [AdminLTE](https://almsaeedstudio.com/) boxes. You can overwrite them at any time. 
+The views of this template are based on [Tailwind CSS](https://tailwindcss.com/) layout. You can overwrite them at any time. 
 
 ## Installation
 
 First, add the bundle to your dependencies and install it.
-
 ```
 composer require whatwedo/crud-bundle
 ```
-
-Secondly, enable this bundle and the whatwedoTableBundle in your ```config/bundles.php```. Normaly not needed for Symfony 4. 
+The v1 version is still in developing,
+so you need to add these lines manually to the composer.json to get the version constraint right:
 ```
-<?php
-return [
-// ...
-    whatwedo\TableBundle\whatwedoTableBundle::class => ['all' => true],
-    whatwedo\CrudBundle\whatwedoCrudBundle::class => ['all' => true],
-// ...
-];
-
+    ...
+    "whatwedo/core-bundle": "dev-1.0-dev as v1.0.0",
+    "whatwedo/crud-bundle": "dev-1.0-dev as v1.0.0",
+    "whatwedo/search-bundle": "dev-3.0-dev as v3.0.0",
+    "whatwedo/table-bundle": "dev-1.0-dev as v1.0.0",
+    ...
 ```
+After successfully installing the bundle, you should see changes in the files
+`assets/controller.js`, `config/bundles.php`, `package.json`, `symfony.lock`, `composer.json` and `composer.lock`.
 
-Thirdly, add our routes to your ```config/routes.yaml```
+Secondly, add our routes to your ```config/routes.yaml```
 ```
 whatwedo_crud_bundle:
     resource: "@whatwedoCrudBundle/Resources/config/routing.yml"
     prefix: /
 ```
-    
+As the CrudBundle needs the TableBundle you also need to include the routes of the TableBundle:
+```
+whatwedo_table_bundle:
+    resource: "@whatwedoTableBundle/Resources/config/routing.yml"
+    prefix: /
+```
+
 ## Use the bundle
 
 ### Step 1: Create an entity

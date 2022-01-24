@@ -28,5 +28,8 @@
     },
     "devDependencies": {
         "@hotwired/stimulus": "^3.0.0"
+    },
+    "dependencies": {
+        "tippy.js": "^6.3.7"
     }
 }
