@@ -49,19 +49,15 @@ abstract class AbstractCrudTest extends WebTestCase
      */
     public function testIndex(IndexData $indexData): void
     {
-        if ($indexData->skip) {
+        if ($indexData->isSkip()) {
             $this->markTestSkipped('index Test Skipped');
         }
 
-        if ($this->getDefinition()::hasCapability(Page::INDEX)) {
-            $this->getClient()->request('GET', $this->getRouter()->generate(
-                $this->getDefinition()::getRoute(Page::INDEX),
-                $indexData->queryParameters
-            ));
-            self::assertResponseIsSuccessful();
-        } else {
-            self::assertTrue(true);
-        }
+        $this->getClient()->request('GET', $this->getRouter()->generate(
+            $this->getDefinition()::getRoute(Page::INDEX),
+            $indexData->getQueryParameters()
+        ));
+        $this->assertResponseStatusCodeSame($indexData->getExpectedStatusCode());
     }
 
     public function indexData() {
@@ -82,15 +78,15 @@ abstract class AbstractCrudTest extends WebTestCase
      */
     public function testShow(ShowData $showData): void
     {
-        if ($showData->skip) {
+        if ($showData->isSkip()) {
             $this->markTestSkipped('show Test Skipped');
         }
 
         $this->getClient()->request('GET', $this->getRouter()->generate(
             $this->getDefinition()::getRoute(Page::SHOW),
-            array_merge(['id' => $showData->entityId], $showData->queryParameters)
+            array_merge(['id' => $showData->getEntityId()], $showData->getQueryParameters())
         ));
-        self::assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame($showData->getExpectedStatusCode());
     }
 
     public function showData() {
@@ -111,21 +107,21 @@ abstract class AbstractCrudTest extends WebTestCase
      */
     public function testEdit(EditData $editData): string
     {
-        if ($editData->skip) {
+        if ($editData->isSkip()) {
             $this->markTestSkipped('show Test Skipped');
         }
 
         $editLink = $this->getRouter()->generate(
             $this->getDefinition()::getRoute(Page::EDIT),
             array_merge([
-                'id' => $editData->entityId,
-            ], $editData->queryParameters)
+                'id' => $editData->getEntityId(),
+            ], $editData->getQueryParameters())
         );
         $crawler = $this->getClient()->request('GET', $editLink);
         $form = $crawler->filter('#whatwedo-crud-submit')->form([], 'POST');
-        $this->fillForm($form, $editData->formData);
+        $this->fillForm($form, $editData->getFormData());
         $this->getClient()->submit($form);
-        self::assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame($editData->getExpectedStatusCode());
         return $editLink;
     }
 
@@ -147,19 +143,20 @@ abstract class AbstractCrudTest extends WebTestCase
      */
     public function testCreate(CreateData $createData): string
     {
-        if ($createData->skip) {
+        if ($createData->isSkip()) {
             $this->markTestSkipped('create Test Skipped');
         }
 
         $createLink = $this->getRouter()->generate(
             $this->getDefinition()::getRoute(Page::CREATE),
-            $createData->queryParameters
+            $createData->getQueryParameters()
         );
         $crawler = $this->getClient()->request('GET', $createLink);
         $form = $crawler->filter('#whatwedo-crud-submit')->form([], 'POST');
-        $this->fillForm($form, $createData->formData);
+        $this->fillForm($form, $createData->getFormData());
         $this->getClient()->submit($form);
-        self::assertResponseIsSuccessful();
+
+        $this->assertResponseStatusCodeSame($createData->getExpectedStatusCode());
         return $createLink;
     }
 

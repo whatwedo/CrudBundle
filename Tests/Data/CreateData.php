@@ -5,10 +5,11 @@ namespace whatwedo\CrudBundle\Tests\Data;
 class CreateData
 {
     public function __construct(
-        public bool $skip = false,
-        public array $queryParameters = [],
-        public bool $fillForm = true,
-        public array $formData = []
+        protected bool $skip = false,
+        protected array $queryParameters = [],
+        protected bool $fillForm = true,
+        protected array $formData = [],
+        protected int $expectedStatusCode = 200
     )
     {
     }
@@ -40,5 +41,36 @@ class CreateData
     {
         $this->formData = $formData;
         return $this;
+    }
+
+    public function setExpectedStatusCode(int $expectedStatusCode): self
+    {
+        $this->expectedStatusCode = $expectedStatusCode;
+        return $this;
+    }
+
+    public function isSkip(): bool
+    {
+        return $this->skip;
+    }
+
+    public function getQueryParameters(): array
+    {
+        return $this->queryParameters;
+    }
+
+    public function isFillForm(): bool
+    {
+        return $this->fillForm;
+    }
+
+    public function getFormData(): array
+    {
+        return $this->formData;
+    }
+
+    public function getExpectedStatusCode(): int
+    {
+        return $this->expectedStatusCode;
     }
 }

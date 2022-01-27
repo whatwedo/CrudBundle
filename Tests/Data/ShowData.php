@@ -5,9 +5,10 @@ namespace whatwedo\CrudBundle\Tests\Data;
 class ShowData
 {
     public function __construct(
-        public bool $skip = false,
-        public array $queryParameters = [],
-        public string $entityId = '1'
+        protected bool $skip = false,
+        protected array $queryParameters = [],
+        protected string $entityId = '1',
+        protected int $expectedStatusCode = 200
     )
     {
     }
@@ -32,6 +33,32 @@ class ShowData
     public function setEntityId(string $entityId): self
     {
         $this->entityId = $entityId;
+        return $this;
+    }
+
+    public function isSkip(): bool
+    {
+        return $this->skip;
+    }
+
+    public function getQueryParameters(): array
+    {
+        return $this->queryParameters;
+    }
+
+    public function getEntityId(): string
+    {
+        return $this->entityId;
+    }
+
+    public function getExpectedStatusCode(): int
+    {
+        return $this->expectedStatusCode;
+    }
+
+    public function setExpectedStatusCode(int $expectedStatusCode): self
+    {
+        $this->expectedStatusCode = $expectedStatusCode;
         return $this;
     }
 }

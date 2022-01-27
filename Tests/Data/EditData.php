@@ -5,11 +5,12 @@ namespace whatwedo\CrudBundle\Tests\Data;
 class EditData
 {
     public function __construct(
-        public bool $skip = false,
-        public array $queryParameters = [],
-        public string $entityId = '1',
-        public bool $fillForm = true,
-        public array $formData = []
+        protected bool $skip = false,
+        protected array $queryParameters = [],
+        protected string $entityId = '1',
+        protected bool $fillForm = true,
+        protected array $formData = [],
+        protected int $expectedStatusCode = 200
     )
     {
     }
@@ -48,4 +49,42 @@ class EditData
         $this->formData = $formData;
         return $this;
     }
+
+    public function setExpectedStatusCode(int $expectedStatusCode): self
+    {
+        $this->expectedStatusCode = $expectedStatusCode;
+        return $this;
+    }
+
+    public function isSkip(): bool
+    {
+        return $this->skip;
+    }
+
+    public function getQueryParameters(): array
+    {
+        return $this->queryParameters;
+    }
+
+    public function getEntityId(): string
+    {
+        return $this->entityId;
+    }
+
+    public function isFillForm(): bool
+    {
+        return $this->fillForm;
+    }
+
+    public function getFormData(): array
+    {
+        return $this->formData;
+    }
+
+    public function getExpectedStatusCode(): int
+    {
+        return $this->expectedStatusCode;
+    }
+
+
 }
