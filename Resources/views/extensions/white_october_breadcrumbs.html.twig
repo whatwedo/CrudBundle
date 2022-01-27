@@ -1,0 +1,27 @@
+<ol class="whatwedo_crud-breadcrumbs flex items-center space-x-4" aria-label="Breadcrumb" id="{{ listId }}" itemscope itemtype="http://schema.org/BreadcrumbList">
+    {% for crumb in breadcrumbs %}
+    <li{% if itemClass is defined and itemClass|length %} class="{{ itemClass }}"{% endif %} itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+        <div class="flex items-center">
+            {% if loop.first %}
+                <svg class="flex-shrink-0 h-5 w-5 text-neutral-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                </svg>
+            {% else %}
+                <svg class="flex-shrink-0 h-5 w-5 text-neutral-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+            {% endif %}
+            {% if crumb.url %}
+                <a href="{{ crumb.url }}" class="ml-4 text-sm font-medium text-neutral-500 hover:text-neutral-700">
+                    {{- crumb.text | trans(crumb.translationParameters, translation_domain, locale) -}}
+                </a>
+            {% else %}
+                <span class="ml-4 text-sm font-medium text-neutral-500">
+                    {{- crumb.text | trans(crumb.translationParameters, translation_domain, locale) -}}
+                </span>
+            {% endif %}
+            <meta itemprop="position" content="{{ loop.index }}" />
+        </div>
+    </li>
+    {% endfor %}
+</ol>

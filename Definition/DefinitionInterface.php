@@ -150,6 +150,8 @@ interface DefinitionInterface
      */
     public function getExtension($extension): ExtensionInterface;
 
+    public function getParentDefinitionProperty(): ?string;
+
     /**
      * @param string $class
      * @param string $property

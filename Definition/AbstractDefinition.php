@@ -14,6 +14,7 @@ use Symfony\Component\Form\Util\StringUtil;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -431,17 +432,53 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
      * @param object|null $entity
      * @param string|null $route
      */
-    public function buildBreadcrumbs($entity = null, $route = null): void
+    public function buildBreadcrumbs($entity = null, $route = null, ?Breadcrumbs $breadcrumbs = null): void
     {
         if (! $this->hasExtension(BreadcrumbsExtension::class)) {
             return;
         }
-
-        if (static::hasCapability(Page::INDEX)) {
-            $this->getBreadcrumbs()->addRouteItem(static::getEntityTitle(), static::getRoute(Page::INDEX), $this->getIndexBreadcrumbParameters([], $entity));
-        } else {
-            $this->getBreadcrumbs()->addItem(static::getEntityTitle());
+        if ($breadcrumbs === null) {
+            $breadcrumbs = $this->getBreadcrumbs();
         }
+        if ($this->getParentDefinitionProperty() && $entity) {
+            $parentEntity = PropertyAccess::createPropertyAccessor()->getValue($entity, $this->getParentDefinitionProperty());
+            if ($parentEntity) {
+                $this
+                    ->container->get(DefinitionManager::class)
+                    ->getDefinitionByEntity($parentEntity)
+                    ->buildBreadcrumbs($parentEntity, Page::SHOW, $breadcrumbs)
+                ;
+            }
+        }
+
+        if (in_array($route, [Page::INDEX, Page::EDIT, Page::SHOW], true)) {
+            if (static::hasCapability(Page::INDEX)) {
+                $this->getBreadcrumbs()->addRouteItem(static::getEntityTitle(), static::getRoute(Page::INDEX));
+            } else {
+                $this->getBreadcrumbs()->addItem(static::getEntityTitle());
+            }
+        }
+
+        if (in_array($route, [Page::EDIT, Page::SHOW], true)) {
+            if (static::hasCapability(Page::SHOW)) {
+                $this->getBreadcrumbs()->addRouteItem($this->getTitle($entity, Page::SHOW), static::getRoute(Page::SHOW), [
+                    'id' => $entity->getId(),
+                ]);
+            } else {
+                $this->getBreadcrumbs()->addItem($this->getTitle($entity, Page::SHOW));
+            }
+        }
+
+        if ($route === Page::EDIT) {
+            if (static::hasCapability(Page::EDIT)) {
+                $this->getBreadcrumbs()->addRouteItem($this->getTitle($entity, Page::EDIT), static::getRoute(Page::EDIT), [
+                    'id' => $entity->getId(),
+                ]);
+            } else {
+                $this->getBreadcrumbs()->addItem($this->getTitle($entity, Page::EDIT));
+            }
+        }
+
     }
 
     public function getTemplateParameters(Page $route, array $parameters = [], $entity = null): array
@@ -530,6 +567,11 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
     public function setTranslator(TranslatorInterface $translator): void
     {
         $this->translator = $translator;
+    }
+
+    public function getParentDefinitionProperty(): ?string
+    {
+        return null;
     }
 
     public static function getSubscribedServices(): array
