@@ -188,14 +188,6 @@ class CrudController extends AbstractController implements CrudDefinitionControl
                                 ->getRepository(call_user_func([$content->getOption('preselect_definition'), 'getEntity']))
                                 ->find($request->query->getInt($queryParameter));
 
-                            if (null !== $value) {
-                                $this->get(RouterInterface::class)->generate(
-                                    call_user_func([$content->getOption('preselect_definition'), 'getRouteName'], Page::SHOW),
-                                    [
-                                        'id' => $value->getId(),
-                                    ]
-                                );
-                            }
                             if (! $propertyAccessor->getValue($entity, $content->getOption('accessor_path'))
                                 && $request->isMethod('get')) {
                                 $propertyAccessor->setValue($entity, $content->getOption('accessor_path'), $value);

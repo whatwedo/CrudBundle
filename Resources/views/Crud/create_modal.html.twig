@@ -1,6 +1,6 @@
 {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
-<h2>{{ title|default('')|trans }}</h2>
-{{ form_start(form, { attr: { id: 'crud_main_form', class: 'whatwedo_crud-form whatwedo_crud-form--create flex-grow' } }) }}
+<h2 class="text-lg leading-6 font-medium text-neutral-900">{{ title|default('')|trans }}</h2>
+{{ form_start(form, { attr: { id: 'crud_main_form', class: 'whatwedo_crud-form whatwedo_crud-form--create flex-grow mt-5' } }) }}
 
     {% if form.vars.errors|length > 0 %}
         <div class="whatwedo_crud-alert whatwedo_crud-alert--error"> {# alert alert-error alert-dismissible #}
@@ -40,9 +40,10 @@
 </div>
 
 <button type="submit"
-        class="whatwedo-crud-button--action"
+        class="whatwedo-crud-button--action mt-5"
     {{ stimulus_action('whatwedo/core-bundle/modal-form', 'submitForm') }}
->Send
+>
+    {{ 'whatwedo_crud.add' | trans }}
 </button>
 
 {{ form_end(form) }}

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Content;
 
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use whatwedo\TableBundle\Extension\FilterExtension;
 use whatwedo\TableBundle\Extension\SearchExtension;
 use function array_keys;
@@ -40,7 +41,8 @@ class RelationContent extends TableContent
         protected AuthorizationCheckerInterface $authorizationChecker,
         protected DefinitionManager $definitionManager,
         protected RequestStack $requestStack,
-        protected ManagerRegistry $doctrine
+        protected ManagerRegistry $doctrine,
+        protected UrlGeneratorInterface $urlGenerator
     ) {
     }
 
@@ -122,19 +124,32 @@ class RelationContent extends TableContent
             'route_addition_key' => $this->definition::getAlias(),
             'show_index_button' => false,
             'add_voter_attribute' => Page::EDIT,
-            /*
-            'actions' => [
-                Action::new('create')
-                    ->setClass('btn btn-success')
-                    ->setIcon('fa fa-plus')
-                    ->setRoute((new $this->definition())->getRouteName(Page::CREATE)),
-            ],*/
+            'create_url' => null,
+            'reload_url' => null,
+            'visibility' => [Page::SHOW,]
         ]);
 
+        $resolver->setRequired('create_url');
+        $resolver->setRequired('reload_url');
+
         $resolver->setDefault('definition', fn (Options $options) => $this->getTargetDefinition($options['accessor_path'])::class);
-
         $resolver->setDefault('class', fn (Options $options) => $this->getTargetDefinition($options['accessor_path'])::getEntity());
+        $resolver->setDefault('reload_url', fn ($data) => $this->urlGenerator->generate(
+            $this->getDefinition()::getRoute(Page::RELOAD), [
+                'id' => $data->getId(),
+                'field' => $this->acronym,
+            ]
+        ));
+        $resolver->setDefault('create_url', fn (Options $options) => function ($data) use ($options) {
+            return $this->urlGenerator->generate(
+                $options['definition']::getRoute(Page::CREATEMODAL), [
+                    $this->getDefinition()::getAlias() => $data->getId(),
+                ],
+            );
+        });
 
+        $resolver->setAllowedTypes('create_url', ['callable', 'null']);
+        $resolver->setAllowedTypes('reload_url', ['callable', 'null']);
         $resolver->setAllowedTypes('table_options', ['array']);
         $resolver->setAllowedTypes('form_options', ['array']);
         $resolver->setAllowedTypes('table_configuration', ['callable', 'null']);
@@ -153,7 +168,7 @@ class RelationContent extends TableContent
     public function getFormOptions(array $options = []): array
     {
         if (! isset($options['label'])) {
-            $this->options['label'] = $this->getLabel();
+            $this->options['label'] = false;
         }
 
         if ($this->getOption('form_type') instanceof EntityHiddenType
@@ -392,5 +407,21 @@ class RelationContent extends TableContent
         return $this->doctrine
             ->getManager()
             ->getMetadataFactory();
+    }
+
+    public function getCreateUrl($data)
+    {
+        if (is_callable($this->options['create_url'])) {
+            return $this->options['create_url']($data);
+        }
+        return $this->options['create_url'];
+    }
+
+    public function getReloadUrl($data)
+    {
+        if (is_callable($this->options['reload_url'])) {
+            return $this->options['reload_url']($data);
+        }
+        return $this->options['reload_url'];
     }
 }

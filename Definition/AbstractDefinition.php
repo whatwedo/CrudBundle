@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use whatwedo\CrudBundle\Action\Action;
 use whatwedo\CrudBundle\Action\DeleteAction;
 use whatwedo\CrudBundle\Action\SubmitAction;
@@ -37,6 +38,7 @@ use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscriberInterface
 {
     protected ContainerInterface $container;
+    protected TranslatorInterface $translator;
     protected array $actions = [];
 
     public const AJAX_LISTEN = 1;
@@ -245,10 +247,13 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     public function getTitle($entity = null, ?Page $route = null): string
     {
+        $title = $this->translator->trans(static::getEntityTitle());
+        $add = $this->translator->trans('whatwedo_crud.add');
+        $delete = $this->translator->trans('whatwedo_crud.delete');
         return match ($route) {
             Page::INDEX => static::getEntityTitle(),
-            Page::DELETE => $entity.' löschen',
-            Page::CREATE => 'Hinzufügen',
+            Page::DELETE => $entity . ' ' . $delete,
+            Page::CREATE => $title . ' ' . $add,
             default => (string)$entity,
         };
     }
@@ -517,6 +522,14 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
     public function setContainer(ContainerInterface $container): void
     {
         $this->container = $container;
+    }
+
+    /**
+     * @required
+     */
+    public function setTranslator(TranslatorInterface $translator): void
+    {
+        $this->translator = $translator;
     }
 
     public static function getSubscribedServices(): array
