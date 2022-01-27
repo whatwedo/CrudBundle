@@ -38,6 +38,7 @@ use whatwedo\CrudBundle\Tests\Data\CreateData;
 use whatwedo\CrudBundle\Tests\Data\EditData;
 use whatwedo\CrudBundle\Tests\Data\IndexData;
 use whatwedo\CrudBundle\Tests\Data\ShowData;
+use whatwedo\CrudBundle\Tests\Data\Form\Upload;
 
 abstract class AbstractCrudTest extends WebTestCase
 {
@@ -188,7 +189,12 @@ abstract class AbstractCrudTest extends WebTestCase
     protected function fillForm(Form $form, $formData)
     {
         foreach ($formData as $field => $value) {
-            $form['form['.$field.']'] = $value;
+            if ($value instanceof Upload) {
+                $form['form['.$field.']['.$value->getField().']']->upload($value->getPath());
+            } else {
+                $form['form['.$field.']'] = $value;
+            }
+
         }
     }
 
