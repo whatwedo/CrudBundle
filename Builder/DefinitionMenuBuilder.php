@@ -60,7 +60,7 @@ class DefinitionMenuBuilder
         if ($definitionObject
             && $this->authorizationChecker->isGranted(Page::INDEX, $definitionObject)) {
             if (! $title) {
-                $title = sprintf('menu.%s', $definitionObject::getEntityTitle());
+                $title = $definitionObject::getEntityTitlePlural();
             }
 
             if (! isset($options['route'])) {

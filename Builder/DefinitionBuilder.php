@@ -36,7 +36,7 @@ class DefinitionBuilder
         $element->setAcronym($acronym);
 
         if (!isset($options['label'])) {
-            $options['label'] = sprintf('%s.block.%s', $this->definition::getPrefix(), $acronym);
+            $options['label'] = sprintf('wwd.%s.block.%s', $this->definition::getPrefix(), $acronym);
         }
 
         $element->setOptions($options);

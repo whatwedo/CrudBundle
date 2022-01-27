@@ -65,7 +65,12 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     public static function getEntityTitle(): string
     {
-            return static::getPrefix() .  '.title';
+            return 'wwd.' . static::getPrefix() .  '.title';
+    }
+
+    public static function getEntityTitlePlural(): string
+    {
+        return 'wwd.' . static::getPrefix() .  '.title_plural';
     }
 
     public function createEntity(Request $request)
@@ -251,10 +256,12 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         $title = $this->translator->trans(static::getEntityTitle());
         $add = $this->translator->trans('whatwedo_crud.add');
         $delete = $this->translator->trans('whatwedo_crud.delete');
+        $edit = $this->translator->trans('whatwedo_crud.edit');
         return match ($route) {
-            Page::INDEX => static::getEntityTitle(),
+            Page::INDEX => static::getEntityTitlePlural(),
             Page::DELETE => $entity . ' ' . $delete,
             Page::CREATE => $title . ' ' . $add,
+            Page::EDIT => $title . ' ' . $edit,
             default => (string)$entity,
         };
     }
@@ -453,9 +460,9 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
         if (in_array($route, [Page::INDEX, Page::EDIT, Page::SHOW], true)) {
             if (static::hasCapability(Page::INDEX)) {
-                $this->getBreadcrumbs()->addRouteItem(static::getEntityTitle(), static::getRoute(Page::INDEX));
+                $this->getBreadcrumbs()->addRouteItem(static::getEntityTitlePlural(), static::getRoute(Page::INDEX));
             } else {
-                $this->getBreadcrumbs()->addItem(static::getEntityTitle());
+                $this->getBreadcrumbs()->addItem(static::getEntityTitlePlural());
             }
         }
 

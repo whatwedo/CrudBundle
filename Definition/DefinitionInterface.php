@@ -22,6 +22,8 @@ interface DefinitionInterface
 
     public static function getEntityTitle(): string;
 
+    public static function getEntityTitlePlural(): string;
+
     public static function getAlias(): string;
 
     public static function getPrefix(): string;

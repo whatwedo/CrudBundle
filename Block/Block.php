@@ -132,10 +132,10 @@ class Block implements ServiceSubscriberInterface
         $element->setDefinition($this->definition);
 
         if ($element->getOptionsResolver()->isDefined('label') && !isset($options['label'])) {
-            $options['label'] = sprintf('%s.%s', $this->definition::getPrefix(), $acronym);
+            $options['label'] = sprintf('wwd.%s.property.%s', $this->definition::getPrefix(), $acronym);
         }
         if ($element->getOptionsResolver()->isDefined('help') &&  !isset($options['help'])) {
-            $options['help'] = sprintf('%s.%s.help', $this->definition::getPrefix(), $acronym);
+            $options['help'] = sprintf('wwd.%s.help.%s', $this->definition::getPrefix(), $acronym);
         }
 
         $element->setAcronym($acronym);
