@@ -48,13 +48,11 @@ class RelationContent extends TableContent
     }
 
     /**
-     * @param $row
-     *
-     * @return string
+     * @deprecated  use twig function whatwedo_table_render(content.table(view.data))
      */
     public function render($row)
     {
-        return $this->getTable($row)->render();
+        throw new \Exception('\whatwedo\CrudBundle\Content\RelationContent::render is deprecated, use twig function whatwedo_table_render(content.table(view.data))');
     }
 
     public function getIndexRoute(): ?string
@@ -209,16 +207,16 @@ class RelationContent extends TableContent
     }
 
     /**
-     * @param $row
+     * @param $entity
      */
-    public function getTable($row): \whatwedo\TableBundle\Table\DoctrineTable
+    public function getTable($entity): \whatwedo\TableBundle\Table\DoctrineTable
     {
         $options = $this->options['table_options'];
 
         /*
          * $row = Lesson
          */
-        $reverseMapping = $this->getReverseMapping($row);
+        $reverseMapping = $this->getReverseMapping($entity);
         $targetDefinition = $this->definitionManager->getDefinitionByClassName($this->getOption('definition'));
 
         $queryBuilder = $targetDefinition->getQueryBuilder();
