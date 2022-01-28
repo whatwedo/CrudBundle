@@ -134,18 +134,25 @@ class RelationContent extends TableContent
 
         $resolver->setDefault('definition', fn (Options $options) => $this->getTargetDefinition($options['accessor_path'])::class);
         $resolver->setDefault('class', fn (Options $options) => $this->getTargetDefinition($options['accessor_path'])::getEntity());
-        $resolver->setDefault('reload_url', fn ($data) => $this->urlGenerator->generate(
-            $this->getDefinition()::getRoute(Page::RELOAD), [
-                'id' => $data->getId(),
-                'field' => $this->acronym,
-            ]
-        ));
-        $resolver->setDefault('create_url', fn (Options $options) => function ($data) use ($options) {
-            return $this->urlGenerator->generate(
-                $options['definition']::getRoute(Page::CREATEMODAL), [
-                    $this->getDefinition()::getAlias() => $data->getId(),
-                ],
-            );
+        $resolver->setDefault('reload_url', function ($entity) {
+            if ($this->getDefinition()::hasCapability(Page::RELOAD)) {
+                return $this->urlGenerator->generate(
+                    $this->getDefinition()::getRoute(Page::RELOAD), [
+                        'id' => $entity->getId(),
+                        'field' => $this->acronym,
+                    ]
+                );
+            }
+            return null;
+        });
+        $resolver->setDefault('create_url', function ($entity) {
+            if ($this->getOption('definition')::hasCapability(Page::CREATEMODAL)) {
+                return $this->urlGenerator->generate(
+                    $this->getOption('definition')::getRoute(Page::CREATEMODAL), [
+                    $this->getDefinition()::getAlias() => $entity->getId(),
+                ],);
+            }
+            return null;
         });
 
         $resolver->setAllowedTypes('create_url', ['callable', 'null']);
@@ -409,18 +416,18 @@ class RelationContent extends TableContent
             ->getMetadataFactory();
     }
 
-    public function getCreateUrl($data)
+    public function getCreateUrl($entity)
     {
         if (is_callable($this->options['create_url'])) {
-            return $this->options['create_url']($data);
+            return $this->options['create_url']($entity);
         }
         return $this->options['create_url'];
     }
 
-    public function getReloadUrl($data)
+    public function getReloadUrl($entity)
     {
         if (is_callable($this->options['reload_url'])) {
-            return $this->options['reload_url']($data);
+            return $this->options['reload_url']($entity);
         }
         return $this->options['reload_url'];
     }

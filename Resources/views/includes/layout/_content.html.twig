@@ -37,8 +37,11 @@
     {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
     {% if view.route == constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW') %}
         <div class="bg-white px-4 py-5"
-        {{ stimulus_controller('whatwedo/core-bundle/reload-content', { url: content.reloadUrl(view.data)}) }}
+        {% set reloadUrl = content.reloadUrl(view.data) %}
+        {% if reloadUrl %}
+        {{ stimulus_controller('whatwedo/core-bundle/reload-content', { url: reloadUrl }) }}
         {{ stimulus_action('whatwedo/core-bundle/reload-content', 'refreshContent', 'success') }}
+        {% endif %}
         >
     {% endif %}
     {% if content.option('label') %}
@@ -49,7 +52,9 @@
 
     {{ content.render(view.data)|raw }}
 
-    <div {{ stimulus_controller('whatwedo/core-bundle/modal-form', { formUrl: content.createUrl(view.data) }) }} class="float-end mb-3">
+    {% set createUrl = content.createUrl(view.data) %}
+    {% if createUrl %}
+    <div {{ stimulus_controller('whatwedo/core-bundle/modal-form', { formUrl: createUrl }) }} class="float-end mb-3">
         <button type="button" class="whatwedo-crud-button--action" {{ stimulus_action('whatwedo/core-bundle/modal-form', 'openModal') }}>
             {{ 'whatwedo_crud.relation.add'|trans }}
         </button>
@@ -84,6 +89,7 @@
             </div>
         </div>
     </div>
+    {% endif %}
     {% if view.route == constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW') %}
         </div>
     {% endif %}
