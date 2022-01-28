@@ -191,10 +191,15 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
     {
         $table->setOption('definition', $this);
         $table->setOption('title', $this->getTitle(route: Page::INDEX));
-        $table->setOption('primary_link', fn(object|array $row) => $this->container->get(RouterInterface::class)->generate(
-            static::getRoute(Page::SHOW),
-            ['id' => $row->getId()]
-        ));
+        $table->setOption('primary_link', function (object|array $row) {
+            if (static::hasCapability(Page::SHOW)) {
+                return $this->container->get(RouterInterface::class)->generate(
+                    static::getRoute(Page::SHOW),
+                    ['id' => $row->getId()]
+                );
+            }
+            return null;
+        });
 
         if ($this::hasCapability(Page::SHOW)) {
             $table->addAction('show', [
