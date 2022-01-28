@@ -275,7 +275,14 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     public static function getCapabilities(): array
     {
-        return Page::cases();
+        return [
+            Page::INDEX,
+            Page::SHOW,
+            Page::RELOAD,
+            Page::CREATE,
+            Page::EDIT,
+            Page::DELETE,
+        ];
     }
 
     public static function hasCapability($string): bool
