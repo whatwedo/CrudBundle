@@ -65,12 +65,12 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     public static function getEntityTitle(): string
     {
-            return 'wwd.' . static::getPrefix() .  '.title';
+            return 'wwd.' . static::getEntityAlias() .  '.title';
     }
 
     public static function getEntityTitlePlural(): string
     {
-        return 'wwd.' . static::getPrefix() .  '.title_plural';
+        return 'wwd.' . static::getEntityAlias() .  '.title_plural';
     }
 
     public function createEntity(Request $request)
@@ -244,11 +244,13 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         );
     }
 
-    public static function getPrefix(): string
+    public static function getEntityAlias(): string
     {
-        if (preg_match('~([^\\\\]+?)?$~i', static::getEntity(), $matches)) {
-            return strtolower(preg_replace(['/([A-Z]+)([A-Z][a-z])/', '/([a-z\d])([A-Z])/'], ['\\1_\\2', '\\1_\\2'], $matches[1]));
-        }
+        return str_replace(
+            ['\\', '_definition', '_bundle'],
+            ['_', '', ''],
+            strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', static::getEntity()))
+        );
     }
 
     public function getTitle($entity = null, ?Page $route = null): string
