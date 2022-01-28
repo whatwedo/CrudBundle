@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace whatwedo\CrudBundle\Content;
 
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use whatwedo\CrudBundle\Enum\PageMode;
 use whatwedo\TableBundle\Extension\FilterExtension;
 use whatwedo\TableBundle\Extension\SearchExtension;
 use function array_keys;
@@ -146,10 +147,11 @@ class RelationContent extends TableContent
             return null;
         });
         $resolver->setDefault('create_url', function ($entity) {
-            if ($this->getOption('definition')::hasCapability(Page::CREATEMODAL)) {
+            if ($this->getOption('definition')::hasCapability(Page::CREATE)) {
                 return $this->urlGenerator->generate(
-                    $this->getOption('definition')::getRoute(Page::CREATEMODAL), [
+                    $this->getOption('definition')::getRoute(Page::CREATE), [
                     $this->getDefinition()::getAlias() => $entity->getId(),
+                    'mode' => PageMode::MODAL->value
                 ],);
             }
             return null;

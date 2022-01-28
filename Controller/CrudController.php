@@ -112,6 +112,11 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $entity = $this->getEntityOr404($request);
         $this->denyAccessUnlessGrantedCrud(Page::EDIT, $entity);
 
+        $mode = PageMode::NORMAL;
+        if ($request->query->has('mode')) {
+            $mode = PageMode::from($request->query->get('mode'));
+        }
+
         $view = $this->getDefinition()->createView(Page::EDIT, $entity);
 
         $form = $view->getEditForm();
@@ -127,6 +132,10 @@ class CrudController extends AbstractController implements CrudDefinitionControl
                 $this->dispatchEvent(CrudEvent::POST_EDIT_PREFIX, $entity);
 
                 $this->addFlash('success', sprintf('Erfolgreich gespeichert.'));
+
+                if ($mode == PageMode::MODAL) {
+                    return new Response('', 200);
+                }
 
                 return $this->getDefinition()->getRedirect(Page::EDIT, $entity);
             }
@@ -151,24 +160,18 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         );
     }
 
-    public function createmodal(Request $request): Response
+    public function create(Request $request): Response
     {
-        return $this->create($request, PageMode::MODAL);
-    }
+        $mode = PageMode::NORMAL;
+        if ($request->query->has('mode')) {
+            $mode = PageMode::from($request->query->get('mode'));
+        }
 
-    public function create(Request $request, PageMode $mode = PageMode::NORMAL ): Response
-    {
         $this->denyAccessUnlessGrantedCrud(Page::CREATE, $this->getDefinition());
 
         $entity = $this->getDefinition()->createEntity($request);
 
         $this->dispatchEvent(CrudEvent::NEW_PREFIX, $entity);
-
-        match($mode) {
-            PageMode::NORMAL => $template = $this->getTemplate('create.html.twig'),
-            PageMode::MODAL => $template = $this->getTemplate('create_modal.html.twig'),
-        };
-
 
         $view = $this->getDefinition()->createView(Page::CREATE, $entity);
 
@@ -227,6 +230,11 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         }
 
         $this->definition->buildBreadcrumbs(null, Page::CREATE);
+
+        match($mode) {
+            PageMode::NORMAL => $template = $this->getTemplate('create.html.twig'),
+            PageMode::MODAL => $template = $this->getTemplate('create_modal.html.twig'),
+        };
 
         return $this->render(
             $template,
