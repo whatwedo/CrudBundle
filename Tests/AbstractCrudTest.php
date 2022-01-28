@@ -50,6 +50,10 @@ abstract class AbstractCrudTest extends WebTestCase
      */
     public function testIndex(IndexData $indexData): void
     {
+        if (!$this->getDefinition()::hasCapability(Page::INDEX)) {
+            $this->markTestSkipped('no index capability, skip test');
+        }
+
         if ($indexData->isSkip()) {
             $this->markTestSkipped('index Test Skipped');
         }
@@ -79,6 +83,10 @@ abstract class AbstractCrudTest extends WebTestCase
      */
     public function testShow(ShowData $showData): void
     {
+        if (!$this->getDefinition()::hasCapability(Page::SHOW)) {
+            $this->markTestSkipped('no show capability, skip test');
+        }
+
         if ($showData->isSkip()) {
             $this->markTestSkipped('show Test Skipped');
         }
@@ -108,6 +116,10 @@ abstract class AbstractCrudTest extends WebTestCase
      */
     public function testEdit(EditData $editData): string
     {
+        if (!$this->getDefinition()::hasCapability(Page::EDIT)) {
+            $this->markTestSkipped('no edit capability, skip test');
+        }
+
         if ($editData->isSkip()) {
             $this->markTestSkipped('show Test Skipped');
         }
@@ -119,7 +131,7 @@ abstract class AbstractCrudTest extends WebTestCase
             ], $editData->getQueryParameters())
         );
         $crawler = $this->getClient()->request('GET', $editLink);
-        $form = $crawler->filter('#whatwedo-crud-submit')->form([], 'POST');
+        $form = $crawler->filter('#crud_main_form')->form([], 'POST');
         $this->fillForm($form, $editData->getFormData());
         $this->getClient()->submit($form);
         $this->assertResponseStatusCodeSame($editData->getExpectedStatusCode());
@@ -144,6 +156,10 @@ abstract class AbstractCrudTest extends WebTestCase
      */
     public function testCreate(CreateData $createData): string
     {
+        if (!$this->getDefinition()::hasCapability(Page::CREATE)) {
+            $this->markTestSkipped('no create capability, skip test');
+        }
+
         if ($createData->isSkip()) {
             $this->markTestSkipped('create Test Skipped');
         }
@@ -153,7 +169,7 @@ abstract class AbstractCrudTest extends WebTestCase
             $createData->getQueryParameters()
         );
         $crawler = $this->getClient()->request('GET', $createLink);
-        $form = $crawler->filter('#whatwedo-crud-submit')->form([], 'POST');
+        $form = $crawler->filter('#crud_main_form')->form([], 'POST');
         $this->fillForm($form, $createData->getFormData());
         $this->getClient()->submit($form);
 
