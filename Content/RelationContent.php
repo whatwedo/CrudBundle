@@ -116,9 +116,12 @@ class RelationContent extends TableContent
             'accessor_path' => $this->acronym,
             'table_options' => [],
             'form_type' => EntityAjaxType::class,
-            'form_options' => [
-                'definition' => $this->definition,
+            'form_options' => fn (Options $options) => [
+                'definition' => $this->getTargetDefinition($options['accessor_path'])::class,
+                'multiple' => true,
             ],
+            'help' => null,
+            'ajax_form_trigger' => false,
             'query_builder_configuration' => null,
             'table_configuration' => null,
             'action_configuration' => null,
@@ -127,7 +130,8 @@ class RelationContent extends TableContent
             'add_voter_attribute' => Page::EDIT,
             'create_url' => null,
             'reload_url' => null,
-            'visibility' => [Page::SHOW,]
+            'visibility' => [Page::SHOW, Page::EDIT, Page::CREATE, ],
+            'show_table_in_form' => false,
         ]);
 
         $resolver->setRequired('create_url');
@@ -141,7 +145,7 @@ class RelationContent extends TableContent
                     $this->getDefinition()::getRoute(Page::RELOAD), [
                         'id' => $entity->getId(),
                         'field' => $this->acronym,
-                    ]
+                    ],
                 );
             }
             return null;
@@ -150,9 +154,10 @@ class RelationContent extends TableContent
             if ($this->getOption('definition')::hasCapability(Page::CREATE)) {
                 return $this->urlGenerator->generate(
                     $this->getOption('definition')::getRoute(Page::CREATE), [
-                    $this->getDefinition()::getAlias() => $entity->getId(),
-                    'mode' => PageMode::MODAL->value
-                ],);
+                        $this->getDefinition()::getAlias() => $entity->getId(),
+                        'mode' => PageMode::MODAL->value
+                    ],
+                );
             }
             return null;
         });
@@ -176,10 +181,6 @@ class RelationContent extends TableContent
      */
     public function getFormOptions(array $options = []): array
     {
-        if (! isset($options['label'])) {
-            $this->options['label'] = false;
-        }
-
         if ($this->getOption('form_type') instanceof EntityHiddenType
             || $this->getOption('form_type') instanceof HiddenType) {
             $this->options['label'] = false;
@@ -257,6 +258,7 @@ class RelationContent extends TableContent
         $table->removeExtension(FilterExtension::class);
         $table->removeExtension(SearchExtension::class);
         $targetDefinition->configureTable($table);
+        $table->setOption('title', null); // no h1 for relation content
         //$targetDefinition->overrideTableConfiguration($table);
 
         if (is_callable($this->options['table_configuration'])) {

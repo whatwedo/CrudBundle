@@ -16,6 +16,7 @@ enum Page
     case BATCH;
     case EXPORT;
     case AJAXFORM;
+    case JSONSEARCH;
 
     public function toRoute(): string
     {

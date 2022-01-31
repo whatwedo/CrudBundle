@@ -9,6 +9,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -304,6 +305,21 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $response->headers->set('Content-Disposition', 'attachment; filename="export.csv"');
 
         return $response;
+    }
+
+    public function jsonsearch(Request $request): Response
+    {
+        $array = $this->definition->jsonSearch($request->query->get('q', ''));
+        $items = [];
+        foreach ($array as $value) {
+            $items[] = (object) [
+                'id' => $value->getId(),
+                'label' => (string) $value,
+            ];
+        }
+        return new JsonResponse((object) [
+            'items' => $items,
+        ]);
     }
 
     public static function convertToWindowsCharset($string)

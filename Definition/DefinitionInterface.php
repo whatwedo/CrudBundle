@@ -145,6 +145,8 @@ interface DefinitionInterface
 
     public function getParentDefinitionProperty(): ?string;
 
+    public function jsonSearch(string $q): iterable;
+
     /**
      * @param string $class
      * @param string $property

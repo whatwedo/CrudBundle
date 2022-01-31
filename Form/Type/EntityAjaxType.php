@@ -31,6 +31,8 @@ namespace whatwedo\CrudBundle\Form\Type;
 
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\ChoiceList\Factory\Cache\ChoiceLoader;
+use Symfony\Component\Form\ChoiceList\Loader\CallbackChoiceLoader;
 use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
@@ -39,23 +41,14 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
+use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Form\ChoiceLoader\AjaxDoctrineChoiceLoader;
 
 class EntityAjaxType extends AbstractType
 {
-    private $router;
 
-    public function __construct(RouterInterface $router)
+    public function __construct(protected RouterInterface $router)
     {
-        $this->router = $router;
-    }
-
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        $view->vars['attr']['data-ajax-select'] = true;
-        // prefer definition over entity class for ajax search (uses definition querybuilder for results)
-        $view->vars['attr']['data-ajax-entity'] = $options['definition'] ?: $options['class'];
-        $view->vars['attr']['data-ajax-url'] = $this->router->generate('whatwedo_crud_crud_select_ajax');
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -69,6 +62,15 @@ class EntityAjaxType extends AbstractType
             FormEvents::POST_SUBMIT,
             [$options['choice_loader'], 'onFormPostSetData']
         );
+    }
+
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        if ($options['definition'] && $options['definition']::hasCapability(Page::JSONSEARCH)) {
+            $view->vars['attr']['data-whatwedo--core-bundle--select-url-value'] = $this->router->generate(
+                $options['definition']::getRoute(Page::JSONSEARCH)
+            );
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver)

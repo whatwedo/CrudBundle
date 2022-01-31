@@ -28,9 +28,11 @@ use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Enum\VisibilityEnum;
 use whatwedo\CrudBundle\Extension\BreadcrumbsExtension;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
+use whatwedo\CrudBundle\Extension\JsonSearchExtension;
 use whatwedo\CrudBundle\Manager\BlockManager;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\View\DefinitionView;
+use whatwedo\SearchBundle\Repository\IndexRepository;
 use whatwedo\TableBundle\Extension\FilterExtension;
 use whatwedo\TableBundle\Table\DoctrineTable;
 use whatwedo\TableBundle\Table\Table;
@@ -436,6 +438,20 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
     {
     }
 
+    public function jsonSearch(string $q): iterable
+    {
+        if (!$this->hasExtension(JsonSearchExtension::class)) {
+            throw new \Exception('either install whatwedo search bundle or override your jsonSearch function in the definition.');
+        }
+        $ids = $this->container->get(IndexRepository::class)->search($q, static::getEntity());
+        return $this->getRepository()
+            ->createQueryBuilder('xxx')
+            ->where('xxx.id IN (:ids)')->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     /**
      * build breadcrumbs according to route.
      *
@@ -593,6 +609,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
             DefinitionView::class,
             DefinitionBuilder::class,
             RouterInterface::class,
+            IndexRepository::class,
         ];
     }
 }

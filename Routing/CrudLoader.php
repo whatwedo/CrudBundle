@@ -81,6 +81,10 @@ class CrudLoader extends Loader
                             $route->setPath($route->getPath() . 'ajax-form');
                             $route->setMethods(['POST']);
                             break;
+                        case Page::JSONSEARCH:
+                            $route->setPath($route->getPath().'json-search');
+                            $route->setMethods(['GET']);
+                            break;
                     }
 
                     $routes->add($definition::getRoutePrefix() . '_' . $capability->toRoute(), $route);
