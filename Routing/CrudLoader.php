@@ -76,8 +76,8 @@ class CrudLoader extends Loader
                         $route->setPath($route->getPath().'export');
                         $route->setMethods(['GET']);
                         break;
-                    case Page::AJAX:
-                        $route->setPath($route->getPath().'ajax');
+                    case Page::AJAXFORM:
+                        $route->setPath($route->getPath().'ajax-form');
                         $route->setMethods(['POST']);
                         break;
                 }

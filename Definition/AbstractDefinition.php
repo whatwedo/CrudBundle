@@ -38,12 +38,10 @@ use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
 abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscriberInterface
 {
+
     protected ContainerInterface $container;
     protected TranslatorInterface $translator;
     protected array $actions = [];
-
-    public const AJAX_LISTEN = 1;
-    public const AJAX = 2;
 
     /**
      * TODO: is this required?
@@ -434,17 +432,8 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         ];
     }
 
-    public function addAjaxOnChangeListener(): array
+    public function ajaxForm(object $entity, Page $page): void
     {
-        return [];
-    }
-
-    /**
-     * @param array $data
-     */
-    public function ajaxOnDataChanged($data): ? \stdClass
-    {
-        return null;
     }
 
     /**

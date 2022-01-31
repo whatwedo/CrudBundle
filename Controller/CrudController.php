@@ -26,6 +26,7 @@ use whatwedo\CrudBundle\Enum\PageMode;
 use whatwedo\CrudBundle\Event\CrudEvent;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\Normalizer\ObjectNormalizer;
+use whatwedo\CrudBundle\View\DefinitionView;
 use whatwedo\TableBundle\Factory\TableFactory;
 use whatwedo\TableBundle\Table\DoctrineTable;
 
@@ -175,31 +176,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
         $view = $this->getDefinition()->createView(Page::CREATE, $entity);
 
-        if ($request->isMethod('get') || $request->isMethod('post')) {
-            // set preselected entities
-            $propertyAccessor = PropertyAccess::createPropertyAccessor();
-
-            foreach ($view->getBlocks() as $block) {
-                foreach ($block->getContents() as $content) {
-                    if ($content->hasOption('preselect_definition')
-                        && $content->getOption('preselect_definition')) {
-                        $queryParameter = call_user_func([$content->getOption('preselect_definition'), 'getAlias']);
-
-                        if ($queryParameter
-                            && $request->query->has($queryParameter)) {
-                            $value = $this->entityManager
-                                ->getRepository(call_user_func([$content->getOption('preselect_definition'), 'getEntity']))
-                                ->find($request->query->getInt($queryParameter));
-
-                            if (! $propertyAccessor->getValue($entity, $content->getOption('accessor_path'))
-                                && $request->isMethod('get')) {
-                                $propertyAccessor->setValue($entity, $content->getOption('accessor_path'), $value);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        $this->preselectEntities($request, $view, $entity);
 
         $this->dispatchEvent(CrudEvent::CREATE_SHOW_PREFIX, $entity);
 
@@ -246,6 +223,35 @@ class CrudController extends AbstractController implements CrudDefinitionControl
             ], $entity),
             new Response(null, $form->isSubmitted() && !$form->isValid() ? 422 : 200)
         );
+    }
+
+    protected function preselectEntities(Request $request, DefinitionView $view, object $entity)
+    {
+        if ($request->isMethod('get') || $request->isMethod('post')) {
+            // set preselected entities
+            $propertyAccessor = PropertyAccess::createPropertyAccessor();
+
+            foreach ($view->getBlocks() as $block) {
+                foreach ($block->getContents() as $content) {
+                    if ($content->hasOption('preselect_definition')
+                        && $content->getOption('preselect_definition')) {
+                        $queryParameter = call_user_func([$content->getOption('preselect_definition'), 'getAlias']);
+
+                        if ($queryParameter
+                            && $request->query->has($queryParameter)) {
+                            $value = $this->entityManager
+                                ->getRepository(call_user_func([$content->getOption('preselect_definition'), 'getEntity']))
+                                ->find($request->query->getInt($queryParameter));
+
+                            if (! $propertyAccessor->getValue($entity, $content->getOption('accessor_path'))
+                                && $request->isMethod('get')) {
+                                $propertyAccessor->setValue($entity, $content->getOption('accessor_path'), $value);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public function delete(Request $request): Response
@@ -313,22 +319,47 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         return $string;
     }
 
-    /**
-     * @return Response
-     */
-    public function ajax(Request $request): Request
+    public function ajaxForm(Request $request): Response
     {
-        $this->denyAccessUnlessGrantedCrud(Page::AJAX, $this->getDefinition());
-
-        $data = [];
-        foreach ($request->request->get('data') as $pair) {
-            $data[$pair['key']] = $pair['value'];
+        $this->denyAccessUnlessGrantedCrud(Page::AJAXFORM, $this->getDefinition());
+        $case = $request->query->get('case', 'create');
+        $entity = $this->getDefinition()->createEntity($request);
+        if (str_starts_with($case, 'create')) {
+            $this->dispatchEvent(CrudEvent::NEW_PREFIX, $entity);
+            $view = $this->getDefinition()->createView(Page::CREATE, $entity);
+            $this->preselectEntities($request, $view, $entity);
+            $this->dispatchEvent(CrudEvent::CREATE_SHOW_PREFIX, $entity);
+            $form = $view->getCreateForm();
+            $toRenderPage = Page::CREATE;
+            $uneditedEntity = null;
+        } else {
+            $view = $this->getDefinition()->createView(Page::EDIT, $entity);
+            $form = $view->getEditForm();
+            $toRenderPage = Page::EDIT;
+            $uneditedEntity = $this->getEntityOr404($request);
         }
-        $obj = $this->definition->ajaxOnDataChanged($data);
-        $response = new Response(json_encode($obj));
-        $response->headers->set('Content-Type', 'text/json');
 
-        return $response;
+        $form->handleRequest($request);
+        $data = $form->getData();
+        $this->definition->ajaxForm($data, $toRenderPage);
+        $view = $this->getDefinition()->createView($toRenderPage, $data);
+        $form = $toRenderPage === Page::CREATE ? $view->getCreateForm() : $view->getEditForm();
+        $context = [
+            'view' => $view,
+            'title' => $this->getDefinition()->getTitle(null, $toRenderPage),
+            'form' => $form->createView(),
+            '_route' => $toRenderPage,
+        ];
+        if ($case === 'createmodal') {
+            $template = $this->twig->load($this->getTemplate('create_modal.html.twig'));
+            $html = $template->render($this->twig->mergeGlobals($context));
+        } else {
+            $templatePath = $this->getTemplate($toRenderPage === Page::CREATE ? 'create.html.twig' : 'edit.html.twig');
+            $template = $this->twig->load($templatePath);
+            $html = $template->renderBlock('main', $this->twig->mergeGlobals($context));
+        }
+
+        return new Response($html);
     }
 
     /**

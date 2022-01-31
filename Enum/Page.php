@@ -15,7 +15,7 @@ enum Page
     case DELETE;
     case BATCH;
     case EXPORT;
-    case AJAX;
+    case AJAXFORM;
 
     public function toRoute(): string
     {

@@ -11,7 +11,15 @@
         </div>
     {% endif %}
 
-    <div class="whatwedo_crud-blocks whatwedo_crud-blocks--create h-full bg-neutral-50 p-4 flex flex-wrap items-baseline">
+    <div
+        {% if view.definition.hasCapability(constant('whatwedo\\CrudBundle\\Enum\\Page::AJAXFORM')) %}
+            {{ stimulus_controller('whatwedo/crud-bundle/ajax-form') }}
+            data-ajax-url="{{ path(view.definition.getRoute(constant('whatwedo\\CrudBundle\\Enum\\Page::AJAXFORM')), {
+                'case' : 'create'
+            }) }}"
+        {% endif %}
+        class="whatwedo_crud-blocks whatwedo_crud-blocks--create h-full bg-neutral-50 p-4 flex flex-wrap items-baseline"
+    >
         {% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\Page::CREATE'))|filter(c => is_granted(c.option('create_voter_attribute'), view.data)) %}
             {% set numberOfContentBlocks = 0 %}
             {% set block_content %}

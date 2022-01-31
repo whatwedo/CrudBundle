@@ -26,6 +26,7 @@ class Content extends AbstractContent
             'attr' => [],
             'form_type' => null,
             'form_options' => [],
+            'ajax_form_trigger' => false,
         ]);
     }
 

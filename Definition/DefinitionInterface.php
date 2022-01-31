@@ -131,16 +131,7 @@ interface DefinitionInterface
 
     public function getExportOptions(): array;
 
-    public function addAjaxOnChangeListener(): array;
-
-    /**
-     * @param $data
-     *
-     * @return \stdClass
-     */
-    public function ajaxOnDataChanged($data): ? \stdClass;
-
-    public function addExtension(ExtensionInterface $extension): void;
+    public function ajaxForm(object $entity, Page $page): void;
 
     /**
      * @param string $extension FQDN of extension

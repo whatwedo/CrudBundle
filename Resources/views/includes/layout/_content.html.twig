@@ -17,8 +17,14 @@
         </dt>
         <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2" id="wwd-crud-block-{{ block.acronym }}-content-{{ content.acronym }}-content">
             {% if form is defined %}
-                {{ form_widget(attribute(form, content.acronym)) }}
-
+                <div
+                    {% if content.options['ajax_form_trigger'] %}
+                        {{ stimulus_target('whatwedo/crud-bundle/ajax-form', 'ajax') }}
+                        class="wwd-ajax-div"
+                    {% endif %}
+                >
+                    {{ form_widget(attribute(form, content.acronym)) }}
+                </div>
                 {% if attribute(form, content.acronym).vars.errors|length %}
                     <div class="help-block">
                         {{ form_errors(attribute(form, content.acronym)) }}
