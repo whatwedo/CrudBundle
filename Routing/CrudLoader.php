@@ -30,59 +30,61 @@ class CrudLoader extends Loader
 
         foreach ($this->definitionManager->getDefinitions() as $definition) {
             foreach ($definition::getCapabilities() as $capability) {
-                $route = new Route(
-                    '/'.$definition::getRoutePathPrefix().'/',
-                    [
-                        '_resource' => $resource,
-                        '_controller' => $definition::getController().'::'.$capability->toRoute(),
-                    ]
-                );
+                if ($capability instanceof Page) {
+                    $route = new Route(
+                        '/' . $definition::getRoutePathPrefix() . '/',
+                        [
+                            '_resource' => $resource,
+                            '_controller' => $definition::getController() . '::' . $capability->toRoute(),
+                        ]
+                    );
 
-                switch ($capability) {
-                    case Page::INDEX:
-                        break;
-                    case Page::SHOW:
-                        $route->setPath($route->getPath().'{id}');
-                        $route->setRequirement('id', '\d+');
-                        break;
-                    case Page::RELOAD:
-                        $route->setPath($route->getPath().'{id}/reload/{field}');
-                        $route->setRequirement('id', '\d+');
-                        $route->setRequirement('field', '\w+');
-                        break;
-                    case Page::CREATE:
-                        $route->setPath($route->getPath().'create');
-                        $route->setMethods(['GET', 'POST']);
-                        break;
-                    case Page::CREATEMODAL:
-                        $route->setPath($route->getPath().'createmodal');
-                        $route->setMethods(['GET', 'POST']);
-                        break;
-                    case Page::EDIT:
-                        $route->setPath($route->getPath().'{id}/edit');
-                        $route->setMethods(['GET', 'POST', 'PUT', 'PATCH']);
-                        $route->setRequirement('id', '\d+');
-                        break;
-                    case Page::DELETE:
-                        $route->setPath($route->getPath().'{id}/delete');
-                        $route->setMethods(['POST']);
-                        $route->setRequirement('id', '\d+');
-                        break;
-                    case Page::BATCH:
-                        $route->setPath($route->getPath().'batch');
-                        $route->setMethods(['POST']);
-                        break;
-                    case Page::EXPORT:
-                        $route->setPath($route->getPath().'export');
-                        $route->setMethods(['GET']);
-                        break;
-                    case Page::AJAXFORM:
-                        $route->setPath($route->getPath().'ajax-form');
-                        $route->setMethods(['POST']);
-                        break;
+                    switch ($capability) {
+                        case Page::INDEX:
+                            break;
+                        case Page::SHOW:
+                            $route->setPath($route->getPath() . '{id}');
+                            $route->setRequirement('id', '\d+');
+                            break;
+                        case Page::RELOAD:
+                            $route->setPath($route->getPath() . '{id}/reload/{field}');
+                            $route->setRequirement('id', '\d+');
+                            $route->setRequirement('field', '\w+');
+                            break;
+                        case Page::CREATE:
+                            $route->setPath($route->getPath() . 'create');
+                            $route->setMethods(['GET', 'POST']);
+                            break;
+                        case Page::CREATEMODAL:
+                            $route->setPath($route->getPath() . 'createmodal');
+                            $route->setMethods(['GET', 'POST']);
+                            break;
+                        case Page::EDIT:
+                            $route->setPath($route->getPath() . '{id}/edit');
+                            $route->setMethods(['GET', 'POST', 'PUT', 'PATCH']);
+                            $route->setRequirement('id', '\d+');
+                            break;
+                        case Page::DELETE:
+                            $route->setPath($route->getPath() . '{id}/delete');
+                            $route->setMethods(['POST']);
+                            $route->setRequirement('id', '\d+');
+                            break;
+                        case Page::BATCH:
+                            $route->setPath($route->getPath() . 'batch');
+                            $route->setMethods(['POST']);
+                            break;
+                        case Page::EXPORT:
+                            $route->setPath($route->getPath() . 'export');
+                            $route->setMethods(['GET']);
+                            break;
+                        case Page::AJAXFORM:
+                            $route->setPath($route->getPath() . 'ajax-form');
+                            $route->setMethods(['POST']);
+                            break;
+                    }
+
+                    $routes->add($definition::getRoutePrefix() . '_' . $capability->toRoute(), $route);
                 }
-
-                $routes->add($definition::getRoutePrefix().'_'.$capability->toRoute(), $route);
             }
         }
 
