@@ -141,25 +141,7 @@ class Block implements ServiceSubscriberInterface
         $element->setAcronym($acronym);
         $element->setOptions($options);
 
-        if ($position === null) {
-            $this->elements->set($acronym, $element);
-        } else {
-            $new = new ContentCollection();
-            $i = 0;
-            $added = false;
-            foreach ($this->elements as $elementsAcronym => $elementsElement) {
-                if ($position === $i) {
-                    $new->set($acronym, $element);
-                    $added = true;
-                }
-                $new->set($elementsAcronym, $elementsElement);
-                $i++;
-            }
-            if (!$added) {
-                $this->elements->set($acronym, $element);
-            }
-            $this->elements = $new;
-        }
+        $this->elements->set($acronym, $element, $position);
 
         return $this;
     }

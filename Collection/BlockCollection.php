@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Collection;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use whatwedo\CrudBundle\Block\Block;
 use whatwedo\CrudBundle\Enum\Page;
 
