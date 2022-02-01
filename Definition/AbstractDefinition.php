@@ -111,6 +111,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                 'attr' => [
                     'class' => 'whatwedo-crud-button--action-neutral',
                 ],
+                'voter_attribute' => Page::INDEX->toVoterAttribute(),
                 'priority' => 10,
             ]);
         }
@@ -122,6 +123,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                 'visibility' => [Page::INDEX],
                 'route' => static::getRoute(Page::CREATE),
                 'priority' => 20,
+                'voter_attribute' => Page::CREATE->toVoterAttribute(),
             ]);
         }
 
@@ -134,6 +136,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                     'route' => static::getRoute(Page::SHOW),
                     'route_parameters' => ['id' => $data->getId()],
                     'priority' => 30,
+                    'voter_attribute' => Page::SHOW->toVoterAttribute(),
                 ]);
             }
             if ($this::hasCapability(Page::EDIT)) {
@@ -144,6 +147,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                     'route' => static::getRoute(Page::EDIT),
                     'route_parameters' => ['id' => $data->getId()],
                     'priority' => 40,
+                    'voter_attribute' => Page::EDIT->toVoterAttribute(),
                 ]);
             }
 
@@ -158,6 +162,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                         'class' => 'whatwedo-crud-button--action-warning',
                     ],
                     'priority' => 50,
+                    'voter_attribute' => Page::DELETE->toVoterAttribute(),
                 ], DeleteAction::class);
             }
 
@@ -169,7 +174,8 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                     'priority' => 60,
                     'attr' => [
                         'form' => 'crud_main_form',
-                    ]
+                    ],
+                    'voter_attribute' => Page::EDIT->toVoterAttribute(),
                 ], SubmitAction::class);
             }
 
@@ -181,7 +187,8 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                     'priority' => 60,
                     'attr' => [
                         'form' => 'crud_main_form',
-                    ]
+                    ],
+                    'voter_attribute' => Page::CREATE->toVoterAttribute(),
                 ], SubmitAction::class);
             }
         }
@@ -208,6 +215,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                 'route' => static::getRoute(Page::SHOW),
                 'route_parameters' => fn($row) => ['id' => $row->getId()],
                 'priority' => 100,
+                'voter_attribute' => Page::SHOW->toVoterAttribute(),
             ]);
         }
 
@@ -218,6 +226,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                 'route' => static::getRoute(Page::EDIT),
                 'route_parameters' => fn($row) => ['id' => $row->getId()],
                 'priority' => 50,
+                'voter_attribute' => Page::EDIT->toVoterAttribute(),
             ]);
         }
 
@@ -228,6 +237,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                 'route' => static::getRoute(Page::DELETE),
                 'route_parameters' => fn($row) => ['id' => $row->getId()],
                 'priority' => 500,
+                'voter_attribute' => Page::DELETE->toVoterAttribute(),
             ]);
         }
 

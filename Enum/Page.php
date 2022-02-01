@@ -22,4 +22,10 @@ enum Page
     {
         return strtolower($this->name);
     }
+
+    public function toVoterAttribute(): string
+    {
+        return strtolower($this->name);
+    }
+
 }

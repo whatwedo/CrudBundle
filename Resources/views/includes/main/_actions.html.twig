@@ -1,6 +1,6 @@
 {% if view is defined and view.actions|length > 0 %}
     <div aria-label="Aktionen">
-        {% for action in view.actions %}
+        {% for action in view.actions | filter (action => is_granted(action.getOption('voter_attribute'), view.data)) %}
             {% with {
                 action: action,
                 view: view,
