@@ -3,8 +3,7 @@
 <h2 class="text-lg leading-6 font-medium text-neutral-900 mb-5">{{ title|default('')|trans }}</h2>
 
     {% if form.vars.errors|length > 0 %}
-        <div class="whatwedo_crud-alert whatwedo_crud-alert--error"> {# alert alert-error alert-dismissible #}
-            <i class="icon fa fa-ban"></i>
+        <div class="mb-5 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
             {{ form_errors(form) }}
         </div>
     {% endif %}
