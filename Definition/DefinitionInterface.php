@@ -143,7 +143,7 @@ interface DefinitionInterface
      */
     public function getExtension($extension): ExtensionInterface;
 
-    public function getParentDefinitionProperty(): ?string;
+    public function getParentDefinitionProperty(object $data): ?string;
 
     public function jsonSearch(string $q): iterable;
 

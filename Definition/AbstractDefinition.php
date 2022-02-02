@@ -476,8 +476,8 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         if ($breadcrumbs === null) {
             $breadcrumbs = $this->getBreadcrumbs();
         }
-        if ($this->getParentDefinitionProperty() && $entity) {
-            $parentEntity = PropertyAccess::createPropertyAccessor()->getValue($entity, $this->getParentDefinitionProperty());
+        if ($entity && ($property = $this->getParentDefinitionProperty($entity))) {
+            $parentEntity = PropertyAccess::createPropertyAccessor()->getValue($entity, $property);
             if ($parentEntity) {
                 $this
                     ->container->get(DefinitionManager::class)
@@ -605,7 +605,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         $this->translator = $translator;
     }
 
-    public function getParentDefinitionProperty(): ?string
+    public function getParentDefinitionProperty(object $data): ?string
     {
         return null;
     }
