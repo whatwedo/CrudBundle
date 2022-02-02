@@ -6,6 +6,10 @@ whatwedo_crud:
     delete: Löschen
     view: Ansehen
     show_all: Alle ansehen
-
-
-whatwedo_crud.relation.add: Hinzufügen
+    relation:
+        add: Hinzufügen
+    actions:
+        delete:
+            confirm_delete: Wirklich löschen?
+            yes: Ja
+            no: Nein

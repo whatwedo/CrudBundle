@@ -28,4 +28,13 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Action;
 
-final class DeleteAction extends Action { }
+final class DeleteAction extends Action
+{
+    public function __construct(protected $acronym, array $options)
+    {
+        $this->defaultOptions['confirm_label'] = 'whatwedo_crud.actions.delete.confirm_delete';
+        $this->defaultOptions['yes_label'] = 'whatwedo_crud.actions.delete.yes';
+        $this->defaultOptions['no_label'] = 'whatwedo_crud.actions.delete.no';
+        parent::__construct($this->acronym, $options);
+    }
+}

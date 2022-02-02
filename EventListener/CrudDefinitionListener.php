@@ -8,6 +8,7 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use whatwedo\CrudBundle\Controller\CrudDefinitionController;
 use whatwedo\CrudBundle\Exception\ElementNotFoundException;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
+use InvalidArgumentException;
 
 class CrudDefinitionListener
 {
@@ -31,7 +32,7 @@ class CrudDefinitionListener
                 $controller[0]->setDefinition(
                     $this->definitionManager->getDefinitionByRoute($event->getRequest()->attributes->get('_route'))
                 );
-            } catch (ElementNotFoundException $e) {
+            } catch (InvalidArgumentException $e) {
             }
         }
     }
