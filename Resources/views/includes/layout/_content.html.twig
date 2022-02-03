@@ -59,7 +59,7 @@
                 </span>
         {% endif %}
 
-        {{ content.render(view.data)|raw }}
+        {{ whatwedo_table_render(content.table(view.data)) }}
 
         {% set createUrl = content.createUrl(view.data) %}
         {% if createUrl %}
