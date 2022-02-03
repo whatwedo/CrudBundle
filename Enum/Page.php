@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Enum;
 
-enum Page
+enum Page: string implements PageInterface
 {
-    case INDEX;
-    case SHOW;
-    case RELOAD;
-    case CREATE;
-    case CREATEMODAL;
-    case EDIT;
-    case DELETE;
-    case BATCH;
-    case EXPORT;
-    case AJAX;
+    case INDEX = 'index';
+    case SHOW = 'show';
+    case RELOAD = 'reload';
+    case CREATE = 'create';
+    case CREATEMODAL = 'create_modal';
+    case EDIT = 'edit';
+    case DELETE = 'delete';
+    case BATCH = 'batch';
+    case EXPORT = 'export';
+    case AJAXFORM = 'ajaxform';
+    case JSONSEARCH = 'jsonseach';
 
     public function toRoute(): string
     {

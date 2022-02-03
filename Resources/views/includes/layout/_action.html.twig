@@ -78,19 +78,19 @@
                     action="{{ path(action.option('route'), action.option('route_parameters')) }}"
                 >
                     <p class="text-sm text-gray-500 mr-4">
-                        Wirklich löschen?
+                        {{ action.getOption('confirm_label') | trans }}
                     </p>
 
                     <div>
                         <button {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
-                            Ja
+                            {{ action.getOption('yes_label') | trans }}
                         </button>
                         <button
                             {{ stimulus_action('whatwedo/core-bundle/dropdown', 'close') }}
                             class="ml-3 inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                             type="button"
                         >
-                            Nein
+                            {{ action.getOption('no_label') | trans }}
                         </button>
                     </div>
                 </form>

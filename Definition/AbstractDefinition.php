@@ -25,12 +25,15 @@ use whatwedo\CrudBundle\Builder\DefinitionBuilder;
 use whatwedo\CrudBundle\Content\AbstractContent;
 use whatwedo\CrudBundle\Controller\CrudController;
 use whatwedo\CrudBundle\Enum\Page;
+use whatwedo\CrudBundle\Enum\PageInterface;
 use whatwedo\CrudBundle\Enum\VisibilityEnum;
 use whatwedo\CrudBundle\Extension\BreadcrumbsExtension;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
+use whatwedo\CrudBundle\Extension\JsonSearchExtension;
 use whatwedo\CrudBundle\Manager\BlockManager;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\View\DefinitionView;
+use whatwedo\SearchBundle\Repository\IndexRepository;
 use whatwedo\TableBundle\Extension\FilterExtension;
 use whatwedo\TableBundle\Table\DoctrineTable;
 use whatwedo\TableBundle\Table\Table;
@@ -38,12 +41,10 @@ use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
 abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscriberInterface
 {
+
     protected ContainerInterface $container;
     protected TranslatorInterface $translator;
     protected array $actions = [];
-
-    public const AJAX_LISTEN = 1;
-    public const AJAX = 2;
 
     /**
      * TODO: is this required?
@@ -111,6 +112,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                 'attr' => [
                     'class' => 'whatwedo-crud-button--action-neutral',
                 ],
+                'voter_attribute' => Page::INDEX,
                 'priority' => 10,
             ]);
         }
@@ -122,6 +124,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                 'visibility' => [Page::INDEX],
                 'route' => static::getRoute(Page::CREATE),
                 'priority' => 20,
+                'voter_attribute' => Page::CREATE,
             ]);
         }
 
@@ -134,6 +137,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                     'route' => static::getRoute(Page::SHOW),
                     'route_parameters' => ['id' => $data->getId()],
                     'priority' => 30,
+                    'voter_attribute' => Page::SHOW,
                 ]);
             }
             if ($this::hasCapability(Page::EDIT)) {
@@ -144,6 +148,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                     'route' => static::getRoute(Page::EDIT),
                     'route_parameters' => ['id' => $data->getId()],
                     'priority' => 40,
+                    'voter_attribute' => Page::EDIT,
                 ]);
             }
 
@@ -158,6 +163,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                         'class' => 'whatwedo-crud-button--action-warning',
                     ],
                     'priority' => 50,
+                    'voter_attribute' => Page::DELETE,
                 ], DeleteAction::class);
             }
 
@@ -169,7 +175,8 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                     'priority' => 60,
                     'attr' => [
                         'form' => 'crud_main_form',
-                    ]
+                    ],
+                    'voter_attribute' => Page::EDIT,
                 ], SubmitAction::class);
             }
 
@@ -181,7 +188,8 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                     'priority' => 60,
                     'attr' => [
                         'form' => 'crud_main_form',
-                    ]
+                    ],
+                    'voter_attribute' => Page::CREATE,
                 ], SubmitAction::class);
             }
         }
@@ -208,6 +216,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                 'route' => static::getRoute(Page::SHOW),
                 'route_parameters' => fn($row) => ['id' => $row->getId()],
                 'priority' => 100,
+                'voter_attribute' => Page::SHOW,
             ]);
         }
 
@@ -218,6 +227,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                 'route' => static::getRoute(Page::EDIT),
                 'route_parameters' => fn($row) => ['id' => $row->getId()],
                 'priority' => 50,
+                'voter_attribute' => Page::EDIT,
             ]);
         }
 
@@ -228,6 +238,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                 'route' => static::getRoute(Page::DELETE),
                 'route_parameters' => fn($row) => ['id' => $row->getId()],
                 'priority' => 500,
+                'voter_attribute' => Page::DELETE,
             ]);
         }
 
@@ -285,9 +296,9 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         ];
     }
 
-    public static function hasCapability($string): bool
+    public static function hasCapability(PageInterface $page): bool
     {
-        return in_array($string, static::getCapabilities(), true);
+        return in_array($page, static::getCapabilities(), true);
     }
 
     public static function getController(): string
@@ -434,17 +445,22 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         ];
     }
 
-    public function addAjaxOnChangeListener(): array
+    public function ajaxForm(object $entity, Page $page): void
     {
-        return [];
     }
 
-    /**
-     * @param array $data
-     */
-    public function ajaxOnDataChanged($data): ? \stdClass
+    public function jsonSearch(string $q): iterable
     {
-        return null;
+        if (!$this->hasExtension(JsonSearchExtension::class)) {
+            throw new \Exception('either install whatwedo search bundle or override your jsonSearch function in the definition.');
+        }
+        $ids = $this->container->get(IndexRepository::class)->search($q, static::getEntity());
+        return $this->getRepository()
+            ->createQueryBuilder('xxx')
+            ->where('xxx.id IN (:ids)')->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     /**
@@ -461,8 +477,8 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         if ($breadcrumbs === null) {
             $breadcrumbs = $this->getBreadcrumbs();
         }
-        if ($this->getParentDefinitionProperty() && $entity) {
-            $parentEntity = PropertyAccess::createPropertyAccessor()->getValue($entity, $this->getParentDefinitionProperty());
+        if ($entity && ($property = $this->getParentDefinitionProperty($entity))) {
+            $parentEntity = PropertyAccess::createPropertyAccessor()->getValue($entity, $property);
             if ($parentEntity) {
                 $this
                     ->container->get(DefinitionManager::class)
@@ -590,7 +606,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         $this->translator = $translator;
     }
 
-    public function getParentDefinitionProperty(): ?string
+    public function getParentDefinitionProperty(object $data): ?string
     {
         return null;
     }
@@ -604,6 +620,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
             DefinitionView::class,
             DefinitionBuilder::class,
             RouterInterface::class,
+            IndexRepository::class,
         ];
     }
 }

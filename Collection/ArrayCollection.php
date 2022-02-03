@@ -1,7 +1,6 @@
 <?php
-declare(strict_types=1);
 /*
- * Copyright (c) 2021, whatwedo GmbH
+ * Copyright (c) 2022, whatwedo GmbH
  * All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,15 +25,38 @@ declare(strict_types=1);
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Action;
+namespace whatwedo\CrudBundle\Collection;
 
-final class DeleteAction extends Action
+class ArrayCollection extends \Doctrine\Common\Collections\ArrayCollection
 {
-    public function __construct(protected $acronym, array $options)
+    public function set($key, $value, ?int $position = null)
     {
-        $this->defaultOptions['confirm_label'] = 'whatwedo_crud.actions.delete.confirm_delete';
-        $this->defaultOptions['yes_label'] = 'whatwedo_crud.actions.delete.yes';
-        $this->defaultOptions['no_label'] = 'whatwedo_crud.actions.delete.no';
-        parent::__construct($this->acronym, $options);
+        if ($position === null) {
+            parent::set($key, $value);
+        } else {
+            $newArray = [];
+            $added = false;
+            $i = 0;
+            foreach ($this->toArray() as $elementsAcronym => $elementsElement) {
+                if ($position === $i) {
+                    $newArray[$key] = $value;
+                    $added = true;
+                }
+                $newArray[$elementsAcronym] = $elementsElement;
+                $i++;
+            }
+            if (!$added) {
+                $newArray[$key] = $value;
+            }
+            $this->clear();
+            $this->addAll($newArray);
+        }
+    }
+    
+    public function addAll($values)
+    {
+        foreach ($values as $key => $value) {
+            $this->set($key, $value);
+        }
     }
 }

@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
 use whatwedo\CrudBundle\Enum\Page;
+use whatwedo\CrudBundle\Enum\PageInterface;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
 use whatwedo\CrudBundle\View\DefinitionView;
 use whatwedo\TableBundle\Table\Table;
@@ -93,9 +94,7 @@ interface DefinitionInterface
     /**
      * check if this definition has specific capability.
      *
-     * @param $string
-     */
-    public static function hasCapability($string): bool;
+    public static function hasCapability(PageInterface $page): bool;
 
     /**
      * get template directory of this definition.
@@ -131,16 +130,7 @@ interface DefinitionInterface
 
     public function getExportOptions(): array;
 
-    public function addAjaxOnChangeListener(): array;
-
-    /**
-     * @param $data
-     *
-     * @return \stdClass
-     */
-    public function ajaxOnDataChanged($data): ? \stdClass;
-
-    public function addExtension(ExtensionInterface $extension): void;
+    public function ajaxForm(object $entity, Page $page): void;
 
     /**
      * @param string $extension FQDN of extension
@@ -152,7 +142,9 @@ interface DefinitionInterface
      */
     public function getExtension($extension): ExtensionInterface;
 
-    public function getParentDefinitionProperty(): ?string;
+    public function getParentDefinitionProperty(object $data): ?string;
+
+    public function jsonSearch(string $q): iterable;
 
     /**
      * @param string $class

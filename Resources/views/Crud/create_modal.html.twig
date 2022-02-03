@@ -1,15 +1,22 @@
 {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
-<h2 class="text-lg leading-6 font-medium text-neutral-900">{{ title|default('')|trans }}</h2>
 {{ form_start(form, { attr: { id: 'crud_main_form', class: 'whatwedo_crud-form whatwedo_crud-form--create flex-grow mt-5' } }) }}
+<h2 class="text-lg leading-6 font-medium text-neutral-900 mb-5">{{ title|default('')|trans }}</h2>
 
     {% if form.vars.errors|length > 0 %}
-        <div class="whatwedo_crud-alert whatwedo_crud-alert--error"> {# alert alert-error alert-dismissible #}
-            <i class="icon fa fa-ban"></i>
+        <div class="mb-5 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
             {{ form_errors(form) }}
         </div>
     {% endif %}
 
-<div class="whatwedo_crud-blocks whatwedo_crud-blocks--create h-full bg-neutral-50 p-4 flex flex-wrap items-baseline">
+<div
+    {% if view.definition.hasCapability(constant('whatwedo\\CrudBundle\\Enum\\Page::AJAXFORM')) %}
+        {{ stimulus_controller('whatwedo/crud-bundle/ajax-form') }}
+        data-ajax-url="{{ path(view.definition.getRoute(constant('whatwedo\\CrudBundle\\Enum\\Page::AJAXFORM')), {
+            'case' : 'createmodal'
+        }) }}"
+    {% endif %}
+    class="whatwedo_crud-blocks whatwedo_crud-blocks--create h-full bg-neutral-50 p-4 flex flex-wrap items-baseline"
+>
     {% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\Page::CREATE'))|filter(c => is_granted(c.option('create_voter_attribute'), view.data)) %}
         {% set numberOfContentBlocks = 0 %}
         {% set block_content %}

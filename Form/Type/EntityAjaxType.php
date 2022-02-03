@@ -29,9 +29,15 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Form\Type;
 
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\ChoiceList\Factory\Cache\ChoiceLoader;
+use Symfony\Component\Form\ChoiceList\Loader\CallbackChoiceLoader;
 use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
+use Symfony\Component\Form\Event\PreSetDataEvent;
+use Symfony\Component\Form\Event\PreSubmitEvent;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
@@ -39,36 +45,29 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
+use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Form\ChoiceLoader\AjaxDoctrineChoiceLoader;
 
 class EntityAjaxType extends AbstractType
 {
-    private $router;
 
-    public function __construct(RouterInterface $router)
+    public function __construct(protected RouterInterface $router, protected EntityManagerInterface $entityManager)
     {
-        $this->router = $router;
-    }
-
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        $view->vars['attr']['data-ajax-select'] = true;
-        // prefer definition over entity class for ajax search (uses definition querybuilder for results)
-        $view->vars['attr']['data-ajax-entity'] = $options['definition'] ?: $options['class'];
-        $view->vars['attr']['data-ajax-url'] = $this->router->generate('whatwedo_crud_crud_select_ajax');
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventListener(
-            FormEvents::POST_SET_DATA,
-            [$options['choice_loader'], 'onFormPostSetData']
-        );
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit'], 50);
+    }
 
-        $builder->addEventListener(
-            FormEvents::POST_SUBMIT,
-            [$options['choice_loader'], 'onFormPostSetData']
-        );
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        if ($options['definition'] && $options['definition']::hasCapability(Page::JSONSEARCH)) {
+            $view->vars['attr']['data-whatwedo--core-bundle--select-url-value'] = $this->router->generate(
+                $options['definition']::getRoute(Page::JSONSEARCH)
+            );
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -78,10 +77,48 @@ class EntityAjaxType extends AbstractType
                 return new AjaxDoctrineChoiceLoader($doctrineChoiceLoader);
             }
         });
+        $resolver->setDefaults([
+            'pre_set_called' => false,
+            'pre_submit_called' => false,
+        ]);
         $resolver->setDefault('definition', null);
         $resolver->setDefault('class', function (Options $options, ?string $className) {
             return $className ?: $options['definition']::getEntity();
         });
+    }
+
+    public function preSetData(PreSetDataEvent $event)
+    {
+        $form = $event->getForm();
+        $parent = $event->getForm()->getParent();
+        $options = $form->getConfig()->getOptions();
+        if (!$options['pre_set_called']) {
+            $options['pre_set_called'] = true;
+            $options['choices'] = $this->getChoices($options, $event->getData());
+            $parent->add($form->getName(), get_class($this), $options);
+        }
+    }
+
+    public function preSubmit(PreSubmitEvent $event)
+    {
+        $form = $event->getForm();
+        $parent = $event->getForm()->getParent();
+        $options = $form->getConfig()->getOptions();
+        if (!$options['pre_submit_called']) {
+            $options['pre_submit_called'] = true;
+            $options['choices'] = $this->getChoices($options, $event->getData());
+            $parent->add($form->getName(), get_class($this), $options);
+            $newForm = $parent->get($form->getName());
+            $newForm->submit($event->getData());
+        }
+    }
+
+    public function getChoices(array $options, $data)
+    {
+        if ($data instanceof Collection) {
+            return $data->toArray();
+        }
+        return $this->entityManager->getRepository($options['class'])->findBy(['id' => $data]);
     }
 
     public function getParent()

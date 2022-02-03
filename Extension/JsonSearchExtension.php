@@ -1,7 +1,6 @@
 <?php
-declare(strict_types=1);
 /*
- * Copyright (c) 2021, whatwedo GmbH
+ * Copyright (c) 2022, whatwedo GmbH
  * All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,15 +25,22 @@ declare(strict_types=1);
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Action;
+namespace whatwedo\CrudBundle\Extension;
 
-final class DeleteAction extends Action
+use whatwedo\SearchBundle\whatwedoSearchBundle;
+
+class JsonSearchExtension implements ExtensionInterface
 {
-    public function __construct(protected $acronym, array $options)
+
+    public static function isEnabled($enabledBundles)
     {
-        $this->defaultOptions['confirm_label'] = 'whatwedo_crud.actions.delete.confirm_delete';
-        $this->defaultOptions['yes_label'] = 'whatwedo_crud.actions.delete.yes';
-        $this->defaultOptions['no_label'] = 'whatwedo_crud.actions.delete.no';
-        parent::__construct($this->acronym, $options);
+        foreach ($enabledBundles as $bundles) {
+            if (in_array(whatwedoSearchBundle::class, $bundles, true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
+
 }

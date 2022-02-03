@@ -125,7 +125,7 @@ class Block implements ServiceSubscriberInterface
      * @param string|null $type    type of the block (class name)
      * @param array       $options options
      */
-    public function addContent(string $acronym, ?string $type = null, array $options = []): static
+    public function addContent(string $acronym, ?string $type = null, array $options = [], ?int $position = null): static
     {
         /** @var AbstractContent $element */
         $element = $this->container->get(ContentManager::class)->getContent($type ?? $this->getType($acronym));
@@ -141,7 +141,7 @@ class Block implements ServiceSubscriberInterface
         $element->setAcronym($acronym);
         $element->setOptions($options);
 
-        $this->elements->set($acronym, $element);
+        $this->elements->set($acronym, $element, $position);
 
         return $this;
     }

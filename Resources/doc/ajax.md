@@ -24,7 +24,7 @@ Add the capability:
             Page::DELETE,
             Page::EDIT,
             Page::CREATE,
-            Page::AJAX
+            Page::AJAXFORM
         ];
     }
 ```

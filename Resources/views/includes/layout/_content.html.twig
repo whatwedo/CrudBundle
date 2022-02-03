@@ -17,8 +17,14 @@
         </dt>
         <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2" id="wwd-crud-block-{{ block.acronym }}-content-{{ content.acronym }}-content">
             {% if form is defined %}
-                {{ form_widget(attribute(form, content.acronym)) }}
-
+                <div
+                    {% if content.options['ajax_form_trigger'] %}
+                        {{ stimulus_target('whatwedo/crud-bundle/ajax-form', 'ajax') }}
+                        class="wwd-ajax-div"
+                    {% endif %}
+                >
+                    {{ form_widget(attribute(form, content.acronym)) }}
+                </div>
                 {% if attribute(form, content.acronym).vars.errors|length %}
                     <div class="help-block">
                         {{ form_errors(attribute(form, content.acronym)) }}
@@ -35,63 +41,67 @@
     {# @var content \whatwedo\CrudBundle\Content\RelationContent #}
     {# @var block \whatwedo\CrudBundle\Block\Block #}
     {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
-    {% if view.route == constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW') %}
-        <div class="bg-white px-4 py-5"
-        {% set reloadUrl = content.reloadUrl(view.data) %}
-        {% if reloadUrl %}
-        {{ stimulus_controller('whatwedo/core-bundle/reload-content', { url: reloadUrl }) }}
-        {{ stimulus_action('whatwedo/core-bundle/reload-content', 'refreshContent', 'success') }}
+    {% if form is defined and not content.option('show_table_in_form') %}
+        {{ block('content') }}
+    {% else %}
+        {% if view.route == constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW') %}
+            <div class="bg-white px-4 py-5"
+            {% set reloadUrl = content.reloadUrl(view.data) %}
+            {% if reloadUrl %}
+            {{ stimulus_controller('whatwedo/core-bundle/reload-content', { url: reloadUrl }) }}
+            {{ stimulus_action('whatwedo/core-bundle/reload-content', 'refreshContent', 'success') }}
+            {% endif %}
+            >
         {% endif %}
-        >
-    {% endif %}
-    {% if content.option('label') %}
-        <span class="text-sm font-medium text-neutral-500">
-                {{ content.option('label')|trans }}
-            </span>
-    {% endif %}
+        {% if content.option('label') %}
+            <span class="text-sm font-medium text-neutral-500">
+                    {{ content.option('label')|trans }}
+                </span>
+        {% endif %}
 
-    {{ whatwedo_table_render(content.table(view.data)) }}
+        {{ whatwedo_table_render(content.table(view.data)) }}
 
-    {% set createUrl = content.createUrl(view.data) %}
-    {% if createUrl %}
-    <div {{ stimulus_controller('whatwedo/core-bundle/modal-form', { formUrl: createUrl }) }} class="float-end mb-3">
-        <button type="button" class="whatwedo-crud-button--action" {{ stimulus_action('whatwedo/core-bundle/modal-form', 'openModal') }}>
-            {{ 'whatwedo_crud.relation.add'|trans }}
-        </button>
+        {% set createUrl = content.createUrl(view.data) %}
+        {% if createUrl %}
+        <div {{ stimulus_controller('whatwedo/core-bundle/modal-form', { formUrl: createUrl }) }} class="float-end mb-3">
+            <button type="button" class="whatwedo-crud-button--action" {{ stimulus_action('whatwedo/core-bundle/modal-form', 'openModal') }}>
+                {{ 'whatwedo_crud.relation.add'|trans }}
+            </button>
 
-        <div
-            {{ stimulus_target('whatwedo/core-bundle/modal-form', 'menu') }}
-            class="hidden fixed z-10 duration-300 ease-in-out transform inset-0 overflow-y-auto"
-            data-transition-enter-from="opacity-0"
-            data-transition-enter-to="opacity-100"
-            data-transition-leave-from="opacity-100"
-            data-transition-leave-to="opacity-0"
-            role="dialog"
-            aria-modal="true"
-        >
-            <div class="flex min-h-screen text-center md:block md:px-2 lg:px-4" style="font-size: 0;">
-                <div class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity md:block"></div>
+            <div
+                {{ stimulus_target('whatwedo/core-bundle/modal-form', 'menu') }}
+                class="hidden fixed z-10 duration-300 ease-in-out transform inset-0 overflow-y-auto"
+                data-transition-enter-from="opacity-0"
+                data-transition-enter-to="opacity-100"
+                data-transition-leave-from="opacity-100"
+                data-transition-leave-to="opacity-0"
+                role="dialog"
+                aria-modal="true"
+            >
+                <div class="flex min-h-screen text-center md:block md:px-2 lg:px-4" style="font-size: 0;">
+                    <div class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity md:block"></div>
 
-                {# This element is to trick the browser into centering the modal contents. #}
-                <span class="hidden md:inline-block md:align-middle md:h-screen" aria-hidden="true">&#8203;</span>
+                    {# This element is to trick the browser into centering the modal contents. #}
+                    <span class="hidden md:inline-block md:align-middle md:h-screen" aria-hidden="true">&#8203;</span>
 
-                <div class="flex text-base text-left transform transition w-full md:inline-block md:px-4 md:my-8 md:align-middle">
-                    <div class="w-full relative flex items-center bg-white px-4 pt-14 pb-8 overflow-hidden shadow-2xl sm:px-6 sm:pt-8 md:p-6 lg:p-8">
-                        <button type="button" class="absolute top-4 right-4 text-gray-400 hover:text-gray-500 sm:top-8 sm:right-6 md:top-6 md:right-6 lg:top-8 lg:right-8 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary rounded transition-colors" {{ stimulus_action('whatwedo/core-bundle/modal-form', 'close') }}>
-                            <span class="sr-only">Close</span>
-                            {{ bootstrap_icon('x', { class: 'inline w-8 h-8' }) }}
-                        </button>
+                    <div class="flex text-base text-left transform transition w-full md:inline-block md:px-4 md:my-8 md:align-middle">
+                        <div class="w-full relative flex items-center bg-white px-4 pt-14 pb-8 overflow-hidden shadow-2xl sm:px-6 sm:pt-8 md:p-6 lg:p-8">
+                            <button type="button" class="absolute top-4 right-4 text-gray-400 hover:text-gray-500 sm:top-8 sm:right-6 md:top-6 md:right-6 lg:top-8 lg:right-8 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary rounded transition-colors" {{ stimulus_action('whatwedo/core-bundle/modal-form', 'close') }}>
+                                <span class="sr-only">Close</span>
+                                {{ bootstrap_icon('x', { class: 'inline w-8 h-8' }) }}
+                            </button>
 
-                        <div class="w-full" {{ stimulus_target('whatwedo/core-bundle/modal-form', 'modalBody') }}>
+                            <div class="w-full" {{ stimulus_target('whatwedo/core-bundle/modal-form', 'modalBody') }}>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    {% endif %}
-    {% if view.route == constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW') %}
-        </div>
+        {% endif %}
+        {% if view.route == constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW') %}
+            </div>
+        {% endif %}
     {% endif %}
 {% endblock %}
 

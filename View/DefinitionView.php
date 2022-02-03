@@ -189,7 +189,7 @@ class DefinitionView
                             'id' => $this->data->getId(),
                         ], $params)
                     );
-                case Page::AJAX:
+                case Page::AJAXFORM:
                     if (! $this->data) {
                         return $this->router->generate(
                             $this->definition::getRouteName($route),

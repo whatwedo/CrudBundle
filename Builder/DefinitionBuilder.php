@@ -28,7 +28,7 @@ class DefinitionBuilder
      * @param string|null $type    block type (class name)
      * @param array       $options options
      */
-    public function addBlock(string $acronym, ?string $type = Block::class, array $options = []): Block
+    public function addBlock(string $acronym, ?string $type = Block::class, array $options = [], ?int $position = null): Block
     {
         $element = $this->blockManager->getBlock($type ?? Block::class);
 
@@ -40,7 +40,7 @@ class DefinitionBuilder
         }
 
         $element->setOptions($options);
-        $this->blocks->set($acronym, $element);
+        $this->blocks->set($acronym, $element, $position);
 
         return $element;
     }
