@@ -101,7 +101,7 @@ class DefaultDefinitionVoter implements VoterInterface
 
         // Check attributes
         foreach ($attributes as $attribute) {
-            if ($definition::hasCapability($attribute)) {
+            if ($attribute instanceof PageInterface && $definition::hasCapability($attribute)) {
                 return static::ACCESS_GRANTED;
             }
         }
