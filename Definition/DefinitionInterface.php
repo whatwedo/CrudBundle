@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
 use whatwedo\CrudBundle\Enum\Page;
+use whatwedo\CrudBundle\Enum\PageInterface;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
 use whatwedo\CrudBundle\View\DefinitionView;
 use whatwedo\TableBundle\Table\Table;
@@ -93,9 +94,7 @@ interface DefinitionInterface
     /**
      * check if this definition has specific capability.
      *
-     * @param $string
-     */
-    public static function hasCapability($string): bool;
+    public static function hasCapability(PageInterface $page): bool;
 
     /**
      * get template directory of this definition.

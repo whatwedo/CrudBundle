@@ -520,9 +520,6 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         if (! $this->getUser()) {
             return;
         }
-        if ($attributes instanceof Page) {
-            $attributes = $attributes->toVoterAttribute();
-        }
         $this->denyAccessUnlessGranted($attributes, $subject, $message);
     }
 
