@@ -1,5 +1,5 @@
 {% if (wwd_crud_enable_breadcrumbs is defined and wwd_crud_enable_breadcrumbs) or (view is defined and view.definition.hasExtension('whatwedo\\CrudBundle\\Extension\\BreadcrumbsExtension')) %}
-    {{ wo_render_breadcrumbs({
+    {{ wwd_crud_render_breadcrumbs({
         separator: null,
         viewTemplate: '@whatwedoCrud/extensions/white_october_breadcrumbs.html.twig'
     }) }}
