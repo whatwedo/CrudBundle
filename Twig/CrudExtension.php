@@ -7,12 +7,17 @@ namespace whatwedo\CrudBundle\Twig;
 use Twig\Environment;
 use Twig\Extension\AbstractExtension;
 use Twig\TemplateWrapper;
+use Twig\TwigFilter;
 use Twig\TwigFunction;
+use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 class CrudExtension extends AbstractExtension
 {
 
-    public function __construct(protected Environment $environment)
+    public function __construct(
+        protected Environment $environment,
+        protected DefinitionManager $definitionManager
+    )
     {
     }
 
@@ -25,6 +30,13 @@ class CrudExtension extends AbstractExtension
         ];
     }
 
+    public function getFilters()
+    {
+        return [
+            new TwigFilter('wwd_crud_entity_alias', fn ($entityOrClass) => $this->getEntityAlias($entityOrClass)),
+        ];
+    }
+
     public function renderBreadcrumbs(array $options)
     {
         $fn = $this->environment->getFunction('wo_render_breadcrumbs');
@@ -32,5 +44,12 @@ class CrudExtension extends AbstractExtension
             return $fn->getCallable()($options);
         }
         return '';
+    }
+
+    public function getEntityAlias($entityOrClass) {
+
+        $defnition = $this->definitionManager->getDefinitionByEntity($entityOrClass);
+
+        return $defnition::getEntityAlias();
     }
 }

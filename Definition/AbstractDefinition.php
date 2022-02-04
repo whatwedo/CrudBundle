@@ -545,7 +545,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
     public static function supports($entity): bool
     {
         if (is_object($entity)) {
-            $entity = get_class($entity);
+            $entity = ClassUtils::getClass($entity);
         }
 
         return is_a(ClassUtils::getRealClass($entity), static::getEntity(), true);
