@@ -36,11 +36,11 @@ use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
-use whatwedo\CrudBundle\Tests\Data\CreateData;
-use whatwedo\CrudBundle\Tests\Data\EditData;
-use whatwedo\CrudBundle\Tests\Data\Form\Upload;
-use whatwedo\CrudBundle\Tests\Data\IndexData;
-use whatwedo\CrudBundle\Tests\Data\ShowData;
+use whatwedo\CrudBundle\Test\Data\CreateData;
+use whatwedo\CrudBundle\Test\Data\EditData;
+use whatwedo\CrudBundle\Test\Data\Form\Upload;
+use whatwedo\CrudBundle\Test\Data\IndexData;
+use whatwedo\CrudBundle\Test\Data\ShowData;
 
 abstract class AbstractCrudTest extends WebTestCase
 {
