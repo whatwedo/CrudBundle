@@ -1,6 +1,0 @@
-parameters:
-    skip:
-        SlevomatCodingStandard\Sniffs\Variables\UnusedVariableSniff.UnusedVariable:
-            # Unused variable $channel.
-            - 'View/DefinitionView.php'
-
