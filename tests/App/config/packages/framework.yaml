@@ -6,3 +6,6 @@ framework:
     default_path: '%kernel.project_dir%/translations'
   router:
     utf8: true
+
+  annotations: true
+

@@ -6,15 +6,3 @@ services:
         autowire: true
         autoconfigure: true
 
-    whatwedo\CrudBundle\Tests\App\Repository\:
-        resource: '../Repository/*'
-
-    whatwedo\CrudBundle\Tests\App\Factory\:
-        resource: '../Factory/*'
-
-    whatwedo\CrudBundle\Manager\SearchManager:
-        public: true
-
-    whatwedo\CrudBundle\Manager\FilterManager:
-        public: true
-

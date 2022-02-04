@@ -37,7 +37,6 @@ use whatwedo\TableBundle\Event\ResultRequestEvent;
 
 class RelationController extends AbstractController
 {
-    
     public function __construct(
         protected EventDispatcherInterface $eventDispatcher,
         private DefinitionManager $definitionManager

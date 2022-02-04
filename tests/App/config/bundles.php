@@ -24,4 +24,7 @@ return [
     whatwedo\TableBundle\whatwedoTableBundle::class => [
         'all' => true,
     ],
+    \whatwedo\SearchBundle\whatwedoSearchBundle::class => [
+        'all' => true,
+    ],
 ];
