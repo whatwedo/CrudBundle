@@ -11,6 +11,7 @@ use Doctrine\Persistence\ObjectRepository;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Routing\RouterInterface;
@@ -82,6 +83,9 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     public function addAction(string $acronym, array $options = [], $type = Action::class): static
     {
+        if (! isset($options['label'])) {
+            $options['label'] = sprintf('wwd.%s.action.%s', self::getEntityAlias(), $acronym);
+        }
         $this->actions[$acronym] = new $type($acronym, $options);
 
         return $this;
@@ -613,6 +617,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
             DefinitionBuilder::class,
             RouterInterface::class,
             IndexRepository::class,
+            RequestStack::class,
         ];
     }
 
@@ -638,5 +643,17 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
     protected function getRepository(): ObjectRepository
     {
         return $this->container->get(EntityManagerInterface::class)->getRepository(static::getEntity());
+    }
+
+    public function getPage(): ?Page
+    {
+        $exploded = explode('_', $this->container->get(RequestStack::class)->getCurrentRequest()->attributes->get('_route'));
+        $route = end($exploded);
+        foreach (Page::cases() as $page) {
+            if ($page->toRoute() === $route) {
+                return $page;
+            }
+        }
+        return null;
     }
 }

@@ -143,6 +143,8 @@ interface DefinitionInterface
 
     public function jsonSearch(string $q): iterable;
 
+    public function getPage(): ?Page;
+
     /*
      * @param string $class
      * @param string $property
