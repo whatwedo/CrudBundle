@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ObjectRepository;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -265,7 +266,8 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
             $table->getFilterExtension()
                 ->addFiltersAutomatically(
                     $table,
-                    [$this, 'getLabelFor']
+                    [$this, 'getLabelFor'],
+                    [$this, 'getJsonSearchUrl'],
                 );
         }
     }
@@ -313,6 +315,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
             Page::CREATE,
             Page::EDIT,
             Page::DELETE,
+            Page::JSONSEARCH,
         ];
     }
 
@@ -371,6 +374,24 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         $this->builder = $this->getDefinitionBuilder($data);
 
         return $this->container->get(DefinitionView::class)->create($this, $route, $data);
+    }
+
+    public function getJsonSearchUrl($entityClass)
+    {
+        /** @var DefinitionInterface $definition */
+        $definition = $this
+            ->container->get(DefinitionManager::class)
+            ->getDefinitionByEntityClass($entityClass)
+        ;
+        if ($definition::hasCapability(Page::JSONSEARCH)) {
+            return $this->container->get(RouterInterface::class)
+                ->generate($definition::getRoute(Page::JSONSEARCH))
+            ;
+        }
+        $this->container->get(LoggerInterface::class)
+            ->warning('you need to enable Page::JSONSEARCH Capability on the "'.get_class($definition). '" definition to allow ajax filtering.')
+        ;
+        return '';
     }
 
     /**
@@ -618,6 +639,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
             RouterInterface::class,
             IndexRepository::class,
             RequestStack::class,
+            LoggerInterface::class,
         ];
     }
 

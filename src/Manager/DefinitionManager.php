@@ -26,6 +26,17 @@ class DefinitionManager
             ?? throw new \InvalidArgumentException(sprintf('definition with the alias "%s" not found.', $alias));
     }
 
+    public function getDefinitionByEntityClass($entityClass): DefinitionInterface
+    {
+        foreach ($this->definitions as $definition) {
+            if ($definition::getEntity() === $entityClass) {
+                return $definition;
+            }
+        }
+
+        throw new \InvalidArgumentException(sprintf('definition for entity class "%s" not found.', $entityClass));
+    }
+
     public function getDefinitionByEntity($entity): DefinitionInterface
     {
         foreach ($this->definitions as $definition) {
