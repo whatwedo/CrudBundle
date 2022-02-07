@@ -13,3 +13,19 @@ whatwedo_crud:
             confirm_delete: Wirklich löschen?
             yes: Ja
             no: Nein
+
+wwd:
+    whatwedo_table_entity_filter:
+        title: Filter
+        title_plural: Filters
+        block:
+            base: Grundkonfiguration
+        property:
+            name: Name
+            createdBy: Erstellt von
+            description: Beschreibung
+            route: Anwendungsort
+            type: Typ
+        type:
+            public: Öffentlich
+            private: Privat
