@@ -57,7 +57,7 @@ abstract class AbstractCrudTest extends WebTestCase
             $this->markTestSkipped('index Test Skipped');
         }
 
-        $this->getClient()->request('GET', $this->getRouter()->generate(
+        $this->getBrowser()->request('GET', $this->getRouter()->generate(
             $this->getDefinition()::getRoute(Page::INDEX),
             $indexData->getQueryParameters()
         ));
@@ -91,7 +91,7 @@ abstract class AbstractCrudTest extends WebTestCase
             $this->markTestSkipped('show Test Skipped');
         }
 
-        $this->getClient()->request('GET', $this->getRouter()->generate(
+        $this->getBrowser()->request('GET', $this->getRouter()->generate(
             $this->getDefinition()::getRoute(Page::SHOW),
             array_merge([
                 'id' => $showData->getEntityId(),
@@ -133,10 +133,10 @@ abstract class AbstractCrudTest extends WebTestCase
                 'id' => $editData->getEntityId(),
             ], $editData->getQueryParameters())
         );
-        $crawler = $this->getClient()->request('GET', $editLink);
+        $crawler = $this->getBrowser()->request('GET', $editLink);
         $form = $crawler->filter('#crud_main_form')->form([], 'POST');
         $this->fillForm($form, $editData->getFormData());
-        $this->getClient()->submit($form);
+        $this->getBrowser()->submit($form);
         $this->assertResponseStatusCodeSame($editData->getExpectedStatusCode());
 
         return $editLink;
@@ -173,10 +173,10 @@ abstract class AbstractCrudTest extends WebTestCase
             $this->getDefinition()::getRoute(Page::CREATE),
             $createData->getQueryParameters()
         );
-        $crawler = $this->getClient()->request('GET', $createLink);
+        $crawler = $this->getBrowser()->request('GET', $createLink);
         $form = $crawler->filter('#crud_main_form')->form([], 'POST');
         $this->fillForm($form, $createData->getFormData());
-        $this->getClient()->submit($form);
+        $this->getBrowser()->submit($form);
 
         $this->assertResponseStatusCodeSame($createData->getExpectedStatusCode());
 
@@ -204,7 +204,7 @@ abstract class AbstractCrudTest extends WebTestCase
 
     abstract protected function getDefinitionClass(): string;
 
-    abstract protected function getClient(): KernelBrowser;
+    abstract protected function getBrowser(): KernelBrowser;
 
     protected function getDefinition(): DefinitionInterface
     {
