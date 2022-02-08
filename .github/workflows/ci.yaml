@@ -2,9 +2,9 @@ name: crudBundle
 
 on:
     push:
-        branches: [ main ]
+        branches: [ 1.0-dev ]
     pull_request:
-        branches: [ main ]
+        branches: [ 1.0-dev ]
 
 jobs:
     phpunit:
@@ -17,6 +17,4 @@ jobs:
             - name: Install Dependencies
               run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
             - name: Execute tests (Unit and Feature tests) via PHPUnit
-              env:
-                  DATABASE_URL: sqlite:///%kernel.project_dir%/var/app.db
               run: vendor/bin/simple-phpunit
