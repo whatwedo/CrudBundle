@@ -25,4 +25,5 @@ doctrine:
             dir: '%kernel.project_dir%/Entity'
             prefix: 'whatwedo\CrudBundle\Tests\App\Entity'
             alias: App
-
+    resolve_target_entities:
+        whatwedo\TableBundle\Entity\UserInterface: whatwedo\CrudBundle\Tests\App\Entity\Person
