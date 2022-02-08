@@ -6,7 +6,7 @@ namespace whatwedo\CrudBundle\Tests\App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use whatwedo\CrudBundle\Annotation\Index;
+use whatwedo\SearchBundle\Annotation\Index;
 
 /**
  * @ORM\Table(name="contact")
