@@ -625,7 +625,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         $this->translator = $translator;
     }
 
-    public function getParentDefinitionProperty(object $data): ?string
+    public function getParentDefinitionProperty(?object $data): ?string
     {
         return null;
     }
