@@ -26,10 +26,25 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         => [
             __DIR__ . '/src/whatwedoCrudBundle.php',
             __DIR__ . '/src/DependencyInjection/whatwedoCrudExtension.php',
+        ],
+        \PhpCsFixer\Fixer\ControlStructure\TrailingCommaInMultilineFixer::class => [
+            __DIR__ . '/tests/App/config/bundles.php',
+        ],
+        \PhpCsFixer\Fixer\Whitespace\ArrayIndentationFixer::class => [
+            __DIR__ . '/tests/App/config/bundles.php',
+        ],
+        \Symplify\CodingStandard\Fixer\ArrayNotation\ArrayListItemNewlineFixer::class => [
+            __DIR__ . '/tests/App/config/bundles.php',
+        ],
+        \Symplify\CodingStandard\Fixer\ArrayNotation\StandaloneLineInMultilineArrayFixer::class => [
+            __DIR__ . '/tests/App/config/bundles.php',
+        ],
+
+        \Symplify\CodingStandard\Fixer\ArrayNotation\ArrayOpenerAndCloserNewlineFixer::class => [
+            __DIR__ . '/tests/App/config/bundles.php',
         ]
 
     ]);
-
 
     $parameters->set(Option::PARALLEL, true);
 };

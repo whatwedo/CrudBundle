@@ -389,8 +389,9 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
             ;
         }
         $this->container->get(LoggerInterface::class)
-            ->warning('you need to enable Page::JSONSEARCH Capability on the "'.get_class($definition). '" definition to allow ajax filtering.')
+            ->warning('you need to enable Page::JSONSEARCH Capability on the "' . get_class($definition) . '" definition to allow ajax filtering.')
         ;
+
         return '';
     }
 
@@ -519,7 +520,8 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         if ($breadcrumbs === null) {
             $breadcrumbs = $this->getBreadcrumbs();
         }
-        if ($entity && ($property = $this->getParentDefinitionProperty($entity))) {
+        $property = $this->getParentDefinitionProperty($entity);
+        if ($entity && $property) {
             $parentEntity = PropertyAccess::createPropertyAccessor()->getValue($entity, $property);
             if ($parentEntity) {
                 $this
@@ -643,6 +645,19 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         ];
     }
 
+    public function getPage(): ?Page
+    {
+        $exploded = explode('_', $this->container->get(RequestStack::class)->getCurrentRequest()->attributes->get('_route'));
+        $route = end($exploded);
+        foreach (Page::cases() as $page) {
+            if ($page->toRoute() === $route) {
+                return $page;
+            }
+        }
+
+        return null;
+    }
+
     protected function getDefinitionBuilder(object|array|null $data = null): DefinitionBuilder
     {
         static $cache;
@@ -665,17 +680,5 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
     protected function getRepository(): ObjectRepository
     {
         return $this->container->get(EntityManagerInterface::class)->getRepository(static::getEntity());
-    }
-
-    public function getPage(): ?Page
-    {
-        $exploded = explode('_', $this->container->get(RequestStack::class)->getCurrentRequest()->attributes->get('_route'));
-        $route = end($exploded);
-        foreach (Page::cases() as $page) {
-            if ($page->toRoute() === $route) {
-                return $page;
-            }
-        }
-        return null;
     }
 }

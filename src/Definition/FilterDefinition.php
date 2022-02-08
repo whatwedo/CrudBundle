@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * Copyright (c) 2022, whatwedo GmbH
  * All rights reserved
@@ -28,24 +30,20 @@
 namespace whatwedo\CrudBundle\Definition;
 
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Security;
-use whatwedo\CoreBundle\Formatter\EnumFormatter;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
 use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\TableBundle\Entity\Filter;
 use whatwedo\TableBundle\Entity\UserInterface;
-use whatwedo\TableBundle\Enum\FilterType;
 use whatwedo\TableBundle\Repository\FilterRepository;
 use whatwedo\TableBundle\Table\Table;
 
 class FilterDefinition extends AbstractDefinition
 {
-
     public function __construct(
         protected Security $security,
         protected FilterRepository $filterRepository
@@ -63,6 +61,7 @@ class FilterDefinition extends AbstractDefinition
         if ($user instanceof UserInterface) {
             return $this->filterRepository->getMineQB(self::getQueryAlias(), $user);
         }
+
         return $this->filterRepository->getMineQB(self::getQueryAlias());
     }
 
@@ -101,7 +100,7 @@ class FilterDefinition extends AbstractDefinition
                 'form_type' => TextareaType::class,
             ])
             ->addContent('createdBy', null, [
-                'visibility' => [Page::SHOW,],
+                'visibility' => [Page::SHOW],
                 'help' => false,
             ])
         ;
@@ -111,11 +110,13 @@ class FilterDefinition extends AbstractDefinition
     {
         if ($entity instanceof Filter) {
             $router = $this->container->get(RouterInterface::class);
+
             return new RedirectResponse($router->generate($entity->getRoute(), array_merge(
                 $entity->getArguments(),
                 $entity->getConditions()
             )));
         }
+
         return parent::getRedirect($routeFrom, $entity);
     }
 }

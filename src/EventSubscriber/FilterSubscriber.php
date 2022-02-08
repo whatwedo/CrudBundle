@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * Copyright (c) 2022, whatwedo GmbH
  * All rights reserved
@@ -38,7 +40,6 @@ use whatwedo\TableBundle\Entity\UserInterface;
 
 class FilterSubscriber implements EventSubscriberInterface
 {
-
     public function __construct(
         protected RequestStack $requestStack,
         protected Security $security
@@ -48,7 +49,7 @@ class FilterSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            CrudEvent::CREATE_SHOW_PREFIX.'.'.FilterDefinition::getAlias() => [
+            CrudEvent::CREATE_SHOW_PREFIX . '.' . FilterDefinition::getAlias() => [
                 ['createShow', 10],
             ],
         ];
@@ -69,5 +70,4 @@ class FilterSubscriber implements EventSubscriberInterface
             $filter->setCreatedBy($user);
         }
     }
-
 }
