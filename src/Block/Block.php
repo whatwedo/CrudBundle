@@ -139,6 +139,7 @@ class Block implements ServiceSubscriberInterface
 
         $element->setAcronym($acronym);
         $element->setOptions($options);
+        $element->setBlock($this);
 
         $this->elements->set($acronym, $element, $position);
 

@@ -142,6 +142,7 @@ class RelationContent extends TableContent
                     $this->getDefinition()::getRoute(Page::RELOAD),
                     [
                         'id' => $entity->getId(),
+                        'block' => $this->getBlock()->getAcronym(),
                         'field' => $this->acronym,
                     ],
                 );

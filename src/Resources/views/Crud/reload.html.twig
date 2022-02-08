@@ -1,16 +1,41 @@
 {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
 
 {% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW'))|filter(c => is_granted(c.option('show_voter_attribute'), view.data)) %}
-    {% for content in block.contents(constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW'))|filter(c => is_granted(c.option('show_voter_attribute'), view.data)) %}
-        {% if content.acronym == field %}
+    {% if block.acronym == blockAcronym and fieldAcronym is null%}
+        {% set numberOfContentBlocks = 0 %}
+        {% set block_content %}
+            {% for content in block.contents(constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW'))|filter(c => is_granted(c.option('show_voter_attribute'), view.data)) %}
+                {% set numberOfContentBlocks = numberOfContentBlocks + 1 %}
+                {% with {
+                    content: content,
+                    block: block,
+                    view: view,
+                    } %}
+                    {{ block(content.option('block_prefix'), view.definition.layout) }}
+                {% endwith %}
+            {% endfor %}
+        {% endset %}
+        {% if numberOfContentBlocks > 0 %}
             {% with {
-                content: content,
+                content: block_content,
                 block: block,
                 view: view,
                 } %}
-                {{ block(content.option('block_prefix'), view.definition.layout) }}
+                {{ block(block.option('block_prefix'), view.definition.layout) }}
             {% endwith %}
         {% endif %}
-    {% endfor %}
+    {% elseif block.acronym == blockAcronym and fieldAcronym is not null %}
+        {% for content in block.contents(constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW'))|filter(c => is_granted(c.option('show_voter_attribute'), view.data)) %}
+            {% if content.acronym == fieldAcronym %}
+                {% with {
+                    content: content,
+                    block: block,
+                    view: view,
+                    } %}
+                    {{ block(content.option('block_prefix'), view.definition.layout) }}
+                {% endwith %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 {% endfor %}
 

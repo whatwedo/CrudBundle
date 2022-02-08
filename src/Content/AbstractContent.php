@@ -16,6 +16,7 @@ use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Traits\VisibilityTrait;
 use whatwedo\CrudBundle\Traits\VoterAttributeTrait;
+use whatwedo\CrudBundle\Block\Block;
 
 #[Autoconfigure(tags: ['whatwedo_crud.content'])]
 abstract class AbstractContent implements ServiceSubscriberInterface
@@ -30,6 +31,8 @@ abstract class AbstractContent implements ServiceSubscriberInterface
     protected array $options = [];
 
     protected ?DefinitionInterface $definition = null;
+
+    protected ?Block $block = null;
 
     public function setAcronym(string $acronym): static
     {
@@ -146,6 +149,16 @@ abstract class AbstractContent implements ServiceSubscriberInterface
     public function setContainer(ContainerInterface $container): void
     {
         $this->container = $container;
+    }
+
+    public function getBlock(): ?Block
+    {
+        return $this->block;
+    }
+
+    public function setBlock(?Block $block): void
+    {
+        $this->block = $block;
     }
 
     public static function getSubscribedServices(): array

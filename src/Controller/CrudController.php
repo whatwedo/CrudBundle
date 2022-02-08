@@ -93,6 +93,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $entity = $this->getEntityOr404($request);
         $this->denyAccessUnlessGrantedCrud(Page::SHOW, $entity);
 
+        $block = $request->attributes->get('block');
         $field = $request->attributes->get('field');
 
         $this->dispatchEvent(CrudEvent::PRE_SHOW_PREFIX, $entity);
@@ -103,7 +104,8 @@ class CrudController extends AbstractController implements CrudDefinitionControl
                 Page::RELOAD,
                 [
                     'view' => $this->getDefinition()->createView(Page::RELOAD, $entity),
-                    'field' => $field,
+                    'blockAcronym' => $block,
+                    'fieldAcronym' => $field,
                     '_route' => Page::RELOAD,
                 ],
                 $entity
