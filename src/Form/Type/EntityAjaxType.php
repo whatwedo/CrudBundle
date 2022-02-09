@@ -58,6 +58,8 @@ class EntityAjaxType extends AbstractType
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit'], 50);
+        $builder->addEventListener(FormEvents::POST_SET_DATA, [$options['choice_loader'], 'onFormPostSetData']);
+        $builder->addEventListener(FormEvents::POST_SUBMIT, [$options['choice_loader'], 'onFormPostSetData']);
     }
 
     public function finishView(FormView $view, FormInterface $form, array $options)
