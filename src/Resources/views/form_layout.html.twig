@@ -48,3 +48,13 @@
     {%- endif -%}
 {%- endblock form_errors -%}
 
+{%- block money_widget -%}
+    <div class="space-x-4 hidden sm:flex">
+        <div class="w-5/6 px-4 py-2">
+            {{ block('form_widget_simple') }}
+        </div>
+        <div class="w-1/6 px-4 py-2">
+            {{ money_pattern|form_encode_currency }}
+        </div>
+    </div>
+{%- endblock money_widget -%}
