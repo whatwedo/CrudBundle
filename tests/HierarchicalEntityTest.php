@@ -30,17 +30,14 @@ class HierarchicalEntityTest extends KernelTestCase
         ])->object();
 
         $this->assertSame($category, $subcategory->getParent());
-        $this->assertSame(1, $category->getLevel());
-        $this->assertSame('Level 1', $category->getHierarchicalSorting());
-        $this->assertSame(2, $subcategory->getLevel());
-        $this->assertSame('Level 1Level 2', $subcategory->getHierarchicalSorting());
+        $this->assertSame(0, $category->getLevel());
+        $this->assertSame(1, $subcategory->getLevel());
         $this->assertCount(1, $category->getChildren());
 
 
         $subcategory->setName('Level Zwei');
         self::getContainer()->get(EntityManagerInterface::class)->flush();
 
-        $this->assertSame('Level 1Level Zwei', $subcategory->getHierarchicalSorting());
 
 
     }
