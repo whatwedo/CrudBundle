@@ -16,6 +16,8 @@ class CrudEvent extends Event
 
     public const POST_DELETE_PREFIX = 'whatwedo_crud.post_delete';
 
+    public const PRE_EDIT_FORM_CREATION_PREFIX = 'whatwedo_crud.pre_edit_form_creation';
+    
     public const PRE_EDIT_PREFIX = 'whatwedo_crud.pre_edit';
 
     public const POST_EDIT_PREFIX = 'whatwedo_crud.post_edit';
@@ -29,7 +31,7 @@ class CrudEvent extends Event
     public const CREATE_SHOW_PREFIX = 'whatwedo_crud.create_show';
 
     public const NEW_PREFIX = 'whatwedo_crud.new';
-
+    
     public function __construct(
         protected object $entity
     ) {

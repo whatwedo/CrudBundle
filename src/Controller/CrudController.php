@@ -123,6 +123,8 @@ class CrudController extends AbstractController implements CrudDefinitionControl
             $mode = PageMode::from($request->query->get('mode'));
         }
 
+        $this->dispatchEvent(CrudEvent::PRE_EDIT_FORM_CREATION_PREFIX, $entity);
+
         $view = $this->getDefinition()->createView(Page::EDIT, $entity);
 
         $form = $view->getEditForm();
