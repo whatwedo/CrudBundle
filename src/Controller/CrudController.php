@@ -28,6 +28,8 @@ use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\Normalizer\ObjectNormalizer;
 use whatwedo\CrudBundle\View\DefinitionView;
 use whatwedo\TableBundle\DataLoader\DoctrineDataLoader;
+use whatwedo\TableBundle\DataLoader\DoctrineTreeDataLoader;
+use whatwedo\TableBundle\Entity\TreeInterface;
 use whatwedo\TableBundle\Factory\TableFactory;
 
 #[AsController]
@@ -47,7 +49,12 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     {
         $this->denyAccessUnlessGrantedCrud(Page::INDEX, $this->getDefinition());
 
-        $table = $tableFactory->createTable('index', DoctrineDataLoader::class, [
+        $dataLoader = DoctrineDataLoader::class;
+        if (is_subclass_of($this->getDefinition()::getEntity(), TreeInterface::class)) {
+            $dataLoader = DoctrineTreeDataLoader::class;
+        }
+
+        $table = $tableFactory->createTable('index', $dataLoader, [
             'dataloader_options' => [
                 DoctrineDataLoader::OPTION_QUERY_BUILDER => $this->getDefinition()->getQueryBuilder(),
             ]
