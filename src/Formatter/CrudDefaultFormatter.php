@@ -22,14 +22,15 @@ class CrudDefaultFormatter extends DefaultFormatter
         if (is_object($value)
             && ($this->definitionManager->getDefinitionByEntity($value))) {
             $definition = $this->definitionManager->getDefinitionByEntity($value);
-
-            return sprintf(
-                '<a href="%s">%s</a>',
-                $this->router->generate($definition::getRoute(Page::SHOW), [
-                    'id' => $value->getId(),
-                ]),
-                (string) $value
-            );
+            if ($definition::hasCapability(Page::SHOW)) {
+                return sprintf(
+                    '<a href="%s">%s</a>',
+                    $this->router->generate($definition::getRoute(Page::SHOW), [
+                        'id' => $value->getId(),
+                    ]),
+                    (string) $value
+                );
+            }
         }
 
         return parent::getHtml($value);
