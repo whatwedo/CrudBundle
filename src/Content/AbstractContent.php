@@ -12,11 +12,11 @@ use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
+use whatwedo\CrudBundle\Block\Block;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Traits\VisibilityTrait;
 use whatwedo\CrudBundle\Traits\VoterAttributeTrait;
-use whatwedo\CrudBundle\Block\Block;
 
 #[Autoconfigure(tags: ['whatwedo_crud.content'])]
 abstract class AbstractContent implements ServiceSubscriberInterface

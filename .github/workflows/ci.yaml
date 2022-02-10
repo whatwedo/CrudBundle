@@ -2,9 +2,13 @@ name: crudBundle
 
 on:
     push:
-        branches: [ 1.0-dev ]
+        branches:
+            - 1.0-dev
+            - feature/1.0-dev-tree
     pull_request:
-        branches: [ 1.0-dev ]
+        branches:
+            - 1.0-dev
+            - feature/1.0-dev-tree
 
 jobs:
     phpunit:
@@ -21,3 +25,5 @@ jobs:
               run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
             - name: Execute tests (Unit and Feature tests) via PHPUnit
               run: vendor/bin/simple-phpunit
+#            - name: Check Code Styles
+#              run: vendor/bin/ecs
