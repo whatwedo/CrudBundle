@@ -6,9 +6,6 @@ services:
         autowire: true
         autoconfigure: true
 
-    whatwedo\CrudBundle\Tests\App\Definition\:
-        resource: '../Definition'
-
     gedmo.listener.tree:
         class: Gedmo\Tree\TreeListener
         tags:
