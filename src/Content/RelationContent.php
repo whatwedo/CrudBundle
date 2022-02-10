@@ -22,6 +22,7 @@ use whatwedo\CrudBundle\Enum\PageMode;
 use whatwedo\CrudBundle\Form\Type\EntityAjaxType;
 use whatwedo\CrudBundle\Form\Type\EntityHiddenType;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
+use whatwedo\TableBundle\DataLoader\DoctrineDataLoader;
 use whatwedo\TableBundle\Extension\FilterExtension;
 use whatwedo\TableBundle\Extension\SearchExtension;
 use whatwedo\TableBundle\Factory\TableFactory;
@@ -214,7 +215,7 @@ class RelationContent extends TableContent
     /**
      * @param $entity
      */
-    public function getTable($entity): \whatwedo\TableBundle\Table\DoctrineTable
+    public function getTable($entity): \whatwedo\TableBundle\Table\Table
     {
         $options = $this->options['table_options'];
 
@@ -250,13 +251,13 @@ class RelationContent extends TableContent
             $rootAlias = $newAlias;
         }
 
-        $options['query_builder'] = $queryBuilder;
+        $options['dataloader_options']['query_builder'] = $queryBuilder;
 
         if (is_callable($this->options['query_builder_configuration'])) {
             $this->options['query_builder_configuration']($queryBuilder, $targetDefinition);
         }
 
-        $table = $this->tableFactory->createDoctrineTable($this->acronym, $options);
+        $table = $this->tableFactory->createTable($this->acronym, DoctrineDataLoader::class, $options);
         $table->removeExtension(FilterExtension::class);
         $table->removeExtension(SearchExtension::class);
         $targetDefinition->configureTable($table);
