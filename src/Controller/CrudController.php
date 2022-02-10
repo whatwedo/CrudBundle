@@ -54,10 +54,10 @@ class CrudController extends AbstractController implements CrudDefinitionControl
             $dataLoader = DoctrineTreeDataLoader::class;
         }
 
-        $table = $tableFactory->createTable('index', $dataLoader, [
+        $table = $tableFactory->create('index', $dataLoader, [
             'dataloader_options' => [
                 DoctrineDataLoader::OPTION_QUERY_BUILDER => $this->getDefinition()->getQueryBuilder(),
-            ]
+            ],
         ]);
 
         $this->getDefinition()->configureTable($table);
@@ -512,9 +512,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
             $this->getDefinition()->overrideTableConfiguration($table);
         }
 
-        $table->loadData();
-
-        return $table->getResults();
+        return $table->getRows();
     }
 
     protected function getIdentifierColumn()

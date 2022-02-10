@@ -257,7 +257,7 @@ class RelationContent extends TableContent
             $this->options['query_builder_configuration']($queryBuilder, $targetDefinition);
         }
 
-        $table = $this->tableFactory->createTable($this->acronym, DoctrineDataLoader::class, $options);
+        $table = $this->tableFactory->create($this->acronym, DoctrineDataLoader::class, $options);
         $table->removeExtension(FilterExtension::class);
         $table->removeExtension(SearchExtension::class);
         $targetDefinition->configureTable($table);
