@@ -9,7 +9,6 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
-use Gedmo\Tree\Traits\NestedSetEntity;
 
 /**
  * @Gedmo\Tree(type="nested")
@@ -69,7 +68,7 @@ class Category
      * @ORM\JoinColumn(name="tree_root", referencedColumnName="id", onDelete="CASCADE")
      */
     #[Gedmo\TreeRoot]
-    #[ORM\ManyToOne(targetEntity: Category::class)]
+    #[ORM\ManyToOne(targetEntity: self::class)]
     #[ORM\JoinColumn(name: 'tree_root', referencedColumnName: 'id', onDelete: 'CASCADE')]
     private $root;
 
@@ -81,26 +80,26 @@ class Category
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
      */
     #[Gedmo\TreeParent]
-    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'children')]
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
     #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     private $parent;
 
     /**
-     * @var Collection<int, Category>
+     * @var Collection<int, self>
      *
      * @ORM\OneToMany(targetEntity="Category", mappedBy="parent")
      * @ORM\OrderBy({"lft" = "ASC"})
      */
-    #[ORM\OneToMany(targetEntity: Category::class, mappedBy: 'parent')]
-    #[ORM\OrderBy(['lft' => 'ASC'])]
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent')]
+    #[ORM\OrderBy([
+        'lft' => 'ASC',
+    ])]
     private $children;
-
 
     public function getRoot(): ?self
     {
         return $this->root;
     }
-
 
     public function getLevel(): int
     {
@@ -116,7 +115,6 @@ class Category
     {
         return $this->parent;
     }
-
 
     public function getId(): ?int
     {
