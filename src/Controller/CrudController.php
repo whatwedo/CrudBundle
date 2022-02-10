@@ -27,6 +27,7 @@ use whatwedo\CrudBundle\Event\CrudEvent;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\Normalizer\ObjectNormalizer;
 use whatwedo\CrudBundle\View\DefinitionView;
+use whatwedo\TableBundle\DataLoader\DoctrineDataLoader;
 use whatwedo\TableBundle\Factory\TableFactory;
 
 #[AsController]
@@ -46,8 +47,10 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     {
         $this->denyAccessUnlessGrantedCrud(Page::INDEX, $this->getDefinition());
 
-        $table = $tableFactory->createDoctrineTable('index', [
-            'query_builder' => $this->getDefinition()->getQueryBuilder(),
+        $table = $tableFactory->createTable('index', DoctrineDataLoader::class, [
+            'dataloader_options' => [
+                DoctrineDataLoader::OPTION_QUERY_BUILDER => $this->getDefinition()->getQueryBuilder(),
+            ]
         ]);
 
         $this->getDefinition()->configureTable($table);
