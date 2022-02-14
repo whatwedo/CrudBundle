@@ -24,7 +24,7 @@ class AjaxDoctrineChoiceLoader implements ChoiceLoaderInterface
 
     public function onFormPostSetData(FormEvent $event)
     {
-        $data = $event->getData();
+        $data = $event->getForm()->getData();
         if ($data) {
             $this->selected = is_iterable($data) ? $data : [$data];
         } else {
