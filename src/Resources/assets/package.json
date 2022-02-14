@@ -3,6 +3,12 @@
     "version": "1.0.0",
     "symfony": {
         "controllers": {
+            "notification": {
+                "main": "controllers/notification_controller.js",
+                "webpackMode": "eager",
+                "fetch": "eager",
+                "enabled": true
+            },
             "navigation": {
                 "main": "controllers/navigation_controller.js",
                 "webpackMode": "eager",
@@ -36,6 +42,7 @@
         "@hotwired/stimulus": "^3.0.0"
     },
     "dependencies": {
-        "tippy.js": "^6.3.7"
+        "tippy.js": "^6.3.7",
+        "stimulus-notification": "^2.0.0"
     }
 }
