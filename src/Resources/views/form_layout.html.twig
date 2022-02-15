@@ -42,7 +42,7 @@
     {%- if errors|length > 0 -%}
         <ul>
             {%- for error in errors -%}
-                <li>{{ error.message|trans }}</li>
+                <li class="mb-3 mt-3 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">{{ error.message|trans }}</li>
             {%- endfor -%}
         </ul>
     {%- endif -%}
