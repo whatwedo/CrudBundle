@@ -58,3 +58,15 @@
         </div>
     </div>
 {%- endblock money_widget -%}
+
+{%- block percent_widget -%}
+    {%- set type = type|default('text') -%}
+    <div class="space-x-4 hidden sm:flex">
+        <div class="w-5/6 px-4 py-2">
+            {{ block('form_widget_simple') }}
+        </div>
+        <div class="w-1/6 px-4 py-2">
+            {% if symbol %} {{ symbol|default('%') }}{% endif %}
+        </div>
+    </div>
+{%- endblock percent_widget -%}

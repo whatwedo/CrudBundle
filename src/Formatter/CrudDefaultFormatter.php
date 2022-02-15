@@ -19,17 +19,20 @@ class CrudDefaultFormatter extends DefaultFormatter
 
     public function getHtml($value): string
     {
-        if (is_object($value)
-            && ($this->definitionManager->getDefinitionByEntity($value))) {
-            $definition = $this->definitionManager->getDefinitionByEntity($value);
-            if ($definition::hasCapability(Page::SHOW)) {
-                return sprintf(
-                    '<a href="%s">%s</a>',
-                    $this->router->generate($definition::getRoute(Page::SHOW), [
-                        'id' => $value->getId(),
-                    ]),
-                    (string) $value
-                );
+        if (is_object($value)) {
+            try {
+                $definition = $this->definitionManager->getDefinitionByEntity($value);
+                if ($definition::hasCapability(Page::SHOW)) {
+                    return sprintf(
+                        '<a href="%s">%s</a>',
+                        $this->router->generate($definition::getRoute(Page::SHOW), [
+                            'id' => $value->getId(),
+                        ]),
+                        (string) $value
+                    );
+                }
+            } catch (\InvalidArgumentException $e) {
+                // no definition found ...
             }
         }
 

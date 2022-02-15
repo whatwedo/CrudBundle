@@ -20,12 +20,18 @@ class DefinitionManager
         }
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     */
     public function getDefinitionByAlias(string $alias): DefinitionInterface
     {
         return $this->definitions[$alias]
             ?? throw new \InvalidArgumentException(sprintf('definition with the alias "%s" not found.', $alias));
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     */
     public function getDefinitionByEntityClass($entityClass): DefinitionInterface
     {
         foreach ($this->definitions as $definition) {
@@ -37,6 +43,9 @@ class DefinitionManager
         throw new \InvalidArgumentException(sprintf('definition for entity class "%s" not found.', $entityClass));
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     */
     public function getDefinitionByEntity($entity): DefinitionInterface
     {
         foreach ($this->definitions as $definition) {
@@ -48,6 +57,9 @@ class DefinitionManager
         throw new \InvalidArgumentException(sprintf('definition for entity "%s" not found.', is_string($entity) ? $entity : $entity::class));
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     */
     public function getDefinitionByClassName(string $class): \whatwedo\CrudBundle\Definition\DefinitionInterface
     {
         foreach ($this->definitions as $definition) {
