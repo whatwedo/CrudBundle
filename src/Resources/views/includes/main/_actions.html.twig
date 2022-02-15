@@ -1,6 +1,10 @@
 {% if view is defined and view.actions|length > 0 %}
     <div aria-label="Aktionen">
-        {% for action in view.actions | filter (action => action.getOption('voter_attribute') is null or is_granted(action.getOption('voter_attribute'), view.data)) %}
+        {% set voterSubject = view.data %}
+        {% if not voterSubject %}
+            {% set voterSubject = view.definition.entity %}
+        {% endif  %}
+        {% for action in view.actions | filter (action => action.getOption('voter_attribute') is null or is_granted(action.getOption('voter_attribute'), voterSubject)) %}
             {% with {
                 action: action,
                 view: view,
