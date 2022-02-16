@@ -26,7 +26,7 @@ class Action
      * TODO: create docs.
      */
     public function __construct(
-        protected $acronym,
+        protected string $acronym,
         protected array $options
     ) {
         $resolver = new OptionsResolver();
@@ -61,4 +61,38 @@ class Action
     {
         return isset($this->options[$name]) || array_key_exists($name, $this->options);
     }
+
+    public function getAcronym(): string
+    {
+        return $this->acronym;
+    }
+
+    public function getRoute(): ?string
+    {
+        return $this->getOption('route');
+    }
+
+    public function getRouteParameters(): array
+    {
+        return $this->getOption('route_parameters');
+    }
+
+    public function getIcon(): ?string
+    {
+        return $this->getOption('icon');
+    }
+
+    public function getLabel(): ?string
+    {
+        return $this->getOption('label');
+    }
+
+    public function getVoterAttribute(): ?string
+    {
+        return $this->getOption('voter_attribute');
+    }
+
+
+
+
 }

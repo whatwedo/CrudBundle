@@ -32,7 +32,7 @@ namespace whatwedo\CrudBundle\Action;
 final class SubmitAction extends Action
 {
     public function __construct(
-        protected $acronym,
+        protected string $acronym,
         array $options
     ) {
         unset($this->defaultOptions['route'], $this->defaultOptions['route_parameters']);

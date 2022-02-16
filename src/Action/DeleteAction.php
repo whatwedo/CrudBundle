@@ -32,7 +32,7 @@ namespace whatwedo\CrudBundle\Action;
 final class DeleteAction extends Action
 {
     public function __construct(
-        protected $acronym,
+        protected string $acronym,
         array $options
     ) {
         $this->defaultOptions['confirm_label'] = 'whatwedo_crud.actions.delete.confirm_delete';
