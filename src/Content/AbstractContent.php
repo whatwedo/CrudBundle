@@ -127,7 +127,10 @@ abstract class AbstractContent implements ServiceSubscriberInterface
             return $this->options['callable']($row);
         }
 
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $propertyAccessor = PropertyAccess::createPropertyAccessorBuilder()
+            ->enableMagicCall()
+            ->getPropertyAccessor()
+        ;
 
         try {
             return $propertyAccessor->getValue($row, $this->options['accessor_path']);
