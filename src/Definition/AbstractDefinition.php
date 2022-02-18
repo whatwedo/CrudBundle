@@ -46,6 +46,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     protected array $actions = [];
 
+    protected array $batchActions = [];
     /**
      * TODO: is this required?
      */
@@ -104,6 +105,30 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
     public function getActions(): array
     {
         return $this->actions;
+    }
+
+    public function addBatchAction(string $acronym, array $options = [], $type = Action::class): static
+    {
+        if (!isset($options['voter_attribute'])) {
+            $options['voter_attribute'] = 'batch_action';
+        }
+        $this->batchActions[$acronym] = new $type($acronym, $options);
+
+        return $this;
+    }
+
+    public function removeBatchAction(string $acronym): static
+    {
+        if (isset($this->batchActions[$acronym])) {
+            unset($this->batchActions[$acronym]);
+        }
+
+        return $this;
+    }
+
+    public function getBatchActions(): array
+    {
+        return $this->batchActions;
     }
 
     public function configureView(DefinitionBuilder $builder, $data): void

@@ -145,6 +145,8 @@ interface DefinitionInterface
 
     public function getPage(): ?Page;
 
+    public function getBatchActions(): array;
+
     /*
      * @param string $class
      * @param string $property
