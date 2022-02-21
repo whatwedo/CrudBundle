@@ -4,7 +4,7 @@
     {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
     {% set isHiddenType = content.options['form_type'] in ['whatwedo\\CrudBundle\\Form\\Type\\EntityHiddenType', 'Symfony\\Component\\Form\\Extension\\Core\\Type\\HiddenType'] %}
     {% set isFormCase = form is defined %}
-    <div id="wwd-crud-block-{{ block.acronym }}-content-{{ content.acronym }}" class="{% if (not isHiddenType and isFormCase) or not isFormCase %}px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6{% endif %}">
+    <div id="wwd-crud-block-{{ block.acronym }}-content-{{ content.acronym }}" class="{% if (not isHiddenType and isFormCase) or not isFormCase %}px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6{% endif %} {{ content.getOption('attr')['class'] is defined ? content.getOption('attr')['class'] : '' }}">
         <dt class="text-sm font-medium text-neutral-500" id="wwd-crud-block-{{ block.acronym }}-content-{{ content.acronym }}-label">
             {{ content.option('label')|trans }}
             {% if content.option('help') is not empty %}
@@ -62,7 +62,7 @@
         {{ whatwedo_table_render(content.table(view.data)) }}
 
         {% set createUrl = content.createUrl(view.data) %}
-        {% if createUrl %}
+        {% if createUrl and is_granted(content.addVoterAttribute, view.data) %}
         <div {{ stimulus_controller('whatwedo/core-bundle/modal-form', { formUrl: createUrl }) }} class="float-end mb-3">
             <button type="button" class="whatwedo-crud-button--action" {{ stimulus_action('whatwedo/core-bundle/modal-form', 'openModal') }}>
                 {{ 'whatwedo_crud.relation.add'|trans }}
