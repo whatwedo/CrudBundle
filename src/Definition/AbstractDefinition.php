@@ -284,6 +284,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                 ],
                 'priority' => 500,
                 'voter_attribute' => Page::DELETE,
+                'type' => 'post',
             ]);
         }
 

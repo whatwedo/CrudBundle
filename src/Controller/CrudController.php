@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -256,7 +257,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
             $this->addFlash('success', 'Eintrag erfolgreich gelöscht.');
         } catch (\Exception $e) {
             $this->addFlash('error', sprintf('Eintrag konnte nicht gelöscht werden: ' . $e->getMessage()));
-            $this->logger->warning('Error while deleting: ' . $e->getMessage(), [
+            $this->container->get(LoggerInterface::class)->warning('Error while deleting: ' . $e->getMessage(), [
                 'entity' => get_class($entity),
                 'id' => $entity->getId(),
             ]);
@@ -418,6 +419,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     {
         return array_merge(parent::getSubscribedServices(), [
             EventDispatcherInterface::class,
+            LoggerInterface::class,
         ]);
     }
 
