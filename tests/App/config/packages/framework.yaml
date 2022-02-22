@@ -1,11 +1,16 @@
 framework:
-  secret: 'S3CRET'
-  test: true
-  default_locale: 'en'
-  translator:
-    default_path: '%kernel.project_dir%/translations'
-  router:
-    utf8: true
+    secret: 'S3CRET'
+    test: true
+    default_locale: 'en'
+    translator:
+        default_path: '%kernel.project_dir%/translations'
+    router:
+        utf8: true
 
-  annotations: true
+    annotations: true
 
+    session:
+        handler_id: null
+        cookie_secure: auto
+        cookie_samesite: lax
+        storage_factory_id: session.storage.factory.native

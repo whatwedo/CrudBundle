@@ -26,7 +26,8 @@
         "whatwedo/core-bundle":     "^1.0",
         "whatwedo/table-bundle":    "^1.0",
         "phpspec/prophecy":         "~1.0|~6.0",
-        "knplabs/knp-menu-bundle":  "~v3.2.0"
+        "knplabs/knp-menu-bundle":  "~v3.2.0",
+        "symfony/webpack-encore-bundle": "^1.14"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^v6.0",
@@ -36,6 +37,7 @@
         "symfony/yaml": "^v6.0",
         "symfony/framework-bundle": "^6.0",
         "symfony/validator": "^6.0",
+        "symfony/maker-bundle": "^1.0.0",
         "nyholm/symfony-bundle-test": "^1.8",
         "doctrine/doctrine-bundle": "^2.5",
         "doctrine/orm": "^2.11",
@@ -47,9 +49,10 @@
         "symfony/translation": "^6.0",
         "symfony/twig-bundle": "^6.0",
         "whatwedo/core-bundle":     "dev-1.0-dev as 1.0",
-        "whatwedo/table-bundle":    "dev-feature/1.0-dev-tree as 1.0",
+        "whatwedo/table-bundle":    "dev-1.0-dev as 1.0",
         "whatwedo/search-bundle":    "dev-3.0-dev as 3.0",
-        "gedmo/doctrine-extensions": "^3.5"
+        "gedmo/doctrine-extensions": "^3.5",
+        "symfony/dotenv": "^6.0"
     },
 
     "suggest": {

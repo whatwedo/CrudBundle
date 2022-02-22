@@ -1,0 +1,69 @@
+{
+    "controllers": {
+        "@symfony/ux-turbo": {
+            "turbo-core": {
+                "enabled": true,
+                "fetch": "eager"
+            }
+        },
+        "@whatwedo/core-bundle": {
+            "select": {
+                "enabled": true,
+                "fetch": "eager"
+            },
+            "datetime": {
+                "enabled": true,
+                "fetch": "eager"
+            },
+            "dropdown": {
+                "enabled": true,
+                "fetch": "eager"
+            },
+            "modal-form": {
+                "enabled": true,
+                "fetch": "eager"
+            },
+            "reload-content": {
+                "enabled": true,
+                "fetch": "eager"
+            }
+        },
+        "@whatwedo/crud-bundle": {
+            "notification": {
+                "enabled": true,
+                "fetch": "eager"
+            },
+            "navigation": {
+                "enabled": true,
+                "fetch": "eager"
+            },
+            "remove": {
+                "enabled": true,
+                "fetch": "eager"
+            },
+            "tooltip": {
+                "enabled": true,
+                "fetch": "eager"
+            },
+            "ajax-form": {
+                "enabled": true,
+                "fetch": "eager"
+            }
+        },
+        "@whatwedo/table-bundle": {
+            "table": {
+                "enabled": true,
+                "fetch": "eager"
+            },
+            "table_select": {
+                "enabled": true,
+                "fetch": "eager"
+            },
+            "filter": {
+                "enabled": true,
+                "fetch": "eager"
+            }
+        }
+    },
+    "entrypoints": []
+}

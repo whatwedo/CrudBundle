@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="{{ app.request.locale }}">
+<head>
+    {% block header %}
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <title>{% block title %}{{ title|default('')|trans }}{% endblock %}</title>
+
+        {% block favicons %}{% endblock %}
+
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+        {% endblock %}
+    {% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}" data-turbo="false">
+{% block content %}
+    <div class="whatwedo_crud-wrapper h-screen flex overflow-hidden" {{ stimulus_controller('hallo') }}>
+        <div class="hidden lg:flex lg:flex-shrink-0 bg-neutral-100">
+            <div class="flex flex-col w-64 border-r border-neutral-200 pt-5 pb-4">
+
+                <div class="whatwedo_crud-logo flex items-center flex-shrink-0 px-6">
+                    {% block logo %}
+                    {% endblock %}
+                </div>
+
+{#                {% block navigation %}#}
+{#                <div class="whatwedo_crud-navigation mt-5 flex-grow flex flex-col">#}
+{#                    {{ knp_menu_render('main', { 'template': '@whatwedoCrud/extensions/knp_menu_main.html.twig' }) }}#}
+{#                    {{ knp_menu_render('sub', { 'template': '@whatwedoCrud/extensions/knp_menu_sub.html.twig' }) }}#}
+{#                </div>#}
+{#                {% endblock %}#}
+
+                {% block search_box %}
+                <div class="whatwedo_crud-sidedar flex-shrink-0 flex border-t border-neutral-200 p-4">
+                    <label for="search" class="sr-only">Search</label>
+                    <div class="relative rounded-md shadow-sm w-full mt-1 z-0">
+                        <form action="#" method="get">
+                            <input
+                                class="whatwedo_core-input"
+                                name="query"
+                                value=""
+                                autocomplete="off"
+                                placeholder="Suche ..."
+                                type="text"
+                            >
+                        </form>
+                    </div>
+                </div>
+                {% endblock %}
+
+                {% block profile %}
+                    {% include "@whatwedoCrud/includes/navigation/_footer.html.twig" %}
+                {% endblock %}
+            </div>
+        </div>
+        <main
+            class="whatwedo_crud-main flex flex-col flex-1 relative z-0 overflow-y-auto focus:outline-none"
+            {{ stimulus_controller({'whatwedo/table-bundle/filter': {}, 'whatwedo/table-bundle/table': {}}) }}
+        >
+            <nav class="whatwedo_crud-nav flex-grow-0 bg-white flex-auto border-b border-neutral-200 px-4 py-4 sm:flex sm:justify-between">
+                {% block breadcrumbs %}
+                    {% include "@whatwedoCrud/includes/main/_breadcrumbs.html.twig" %}
+                {% endblock %}
+                {% block actions %}
+                    {% include "@whatwedoCrud/includes/main/_actions.html.twig" %}
+                {% endblock %}
+            </nav>
+            {% block messages %}
+                {% include "@whatwedoCrud/includes/main/_messages.html.twig" %}
+            {% endblock %}
+            {% block main %}
+            {% endblock %}
+        </main>
+
+    </div>
+{% endblock %}
+</body>
+</html>
