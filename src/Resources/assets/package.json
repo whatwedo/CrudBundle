@@ -32,6 +32,12 @@
                 "webpackMode": "eager",
                 "featch": "eager",
                 "enabled": true
+            },
+            "knp-menu-sub": {
+                "main": "controllers/knp_menu_sub_controller.js",
+                "webpackMode": "eager",
+                "featch": "eager",
+                "enabled": true
             }
         }
     },
