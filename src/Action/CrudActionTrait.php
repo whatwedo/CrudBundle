@@ -1,8 +1,6 @@
 <?php
-
-declare(strict_types=1);
 /*
- * Copyright (c) 2021, whatwedo GmbH
+ * Copyright (c) 2022, whatwedo GmbH
  * All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,13 +27,12 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Action;
 
-class SubmitAction extends Action
+use whatwedo\CrudBundle\Enum\Page;
+
+trait CrudActionTrait
 {
-    public function __construct(
-        protected string $acronym,
-        array $options
-    ) {
-        unset($this->defaultOptions['route'], $this->defaultOptions['route_parameters']);
-        parent::__construct($this->acronym, $options);
+    private function setDefaultOptions(): void
+    {
+        $this->defaultOptions['visibility'] = [Page::INDEX, Page::SHOW, Page::EDIT, Page::CREATE];
     }
 }
