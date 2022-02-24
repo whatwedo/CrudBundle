@@ -29,8 +29,13 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Action;
 
-final class DeleteAction extends Action
+use whatwedo\CoreBundle\Action\PostAction as BasePostAction;
+
+class PostAction extends BasePostAction
 {
+
+    use CrudActionTrait;
+
     public function __construct(
         protected string $acronym,
         array $options
@@ -38,6 +43,7 @@ final class DeleteAction extends Action
         $this->defaultOptions['confirm_label'] = 'whatwedo_crud.actions.delete.confirm_delete';
         $this->defaultOptions['yes_label'] = 'whatwedo_crud.actions.delete.yes';
         $this->defaultOptions['no_label'] = 'whatwedo_crud.actions.delete.no';
+        $this->setDefaultOptions();
         parent::__construct($this->acronym, $options);
     }
 }

@@ -19,7 +19,7 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use whatwedo\CrudBundle\Action\Action;
-use whatwedo\CrudBundle\Action\DeleteAction;
+use whatwedo\CrudBundle\Action\PostAction;
 use whatwedo\CrudBundle\Action\SubmitAction;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
 use whatwedo\CrudBundle\Content\AbstractContent;
@@ -200,7 +200,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                     ],
                     'priority' => 50,
                     'voter_attribute' => Page::DELETE,
-                ], DeleteAction::class);
+                ], PostAction::class);
             }
 
             if ($this::hasCapability(Page::EDIT)) {
@@ -284,8 +284,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                 ],
                 'priority' => 500,
                 'voter_attribute' => Page::DELETE,
-                'type' => 'post',
-            ]);
+            ], PostAction::class);
         }
 
         if ($table->hasExtension(FilterExtension::class)) {
