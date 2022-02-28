@@ -52,7 +52,8 @@
         "whatwedo/table-bundle":    "dev-1.0-dev as 1.0",
         "whatwedo/search-bundle":    "dev-3.0-dev as 3.0",
         "gedmo/doctrine-extensions": "^3.5",
-        "symfony/dotenv": "^6.0"
+        "symfony/dotenv": "^6.0",
+        "symfony/test-pack": "^1.0"
     },
 
     "suggest": {
