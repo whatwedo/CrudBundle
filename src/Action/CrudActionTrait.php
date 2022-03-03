@@ -1,8 +1,6 @@
 <?php
-
-declare(strict_types=1);
 /*
- * Copyright (c) 2021, whatwedo GmbH
+ * Copyright (c) 2022, whatwedo GmbH
  * All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,15 +27,12 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Action;
 
-final class DeleteAction extends Action
+use whatwedo\CrudBundle\Enum\Page;
+
+trait CrudActionTrait
 {
-    public function __construct(
-        protected string $acronym,
-        array $options
-    ) {
-        $this->defaultOptions['confirm_label'] = 'whatwedo_crud.actions.delete.confirm_delete';
-        $this->defaultOptions['yes_label'] = 'whatwedo_crud.actions.delete.yes';
-        $this->defaultOptions['no_label'] = 'whatwedo_crud.actions.delete.no';
-        parent::__construct($this->acronym, $options);
+    private function setDefaultOptions(): void
+    {
+        $this->defaultOptions['visibility'] = [Page::INDEX, Page::SHOW, Page::EDIT, Page::CREATE];
     }
 }

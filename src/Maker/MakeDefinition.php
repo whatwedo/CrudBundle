@@ -89,6 +89,11 @@ final class MakeDefinition extends AbstractMaker
         $this->translator = $translator;
     }
 
+    public static function getCommandDescription(): string
+    {
+        return 'Creates Defintion for the wwd CrudBundle';
+    }
+
     public static function getCommandName(): string
     {
         return 'make:definition';
@@ -97,7 +102,7 @@ final class MakeDefinition extends AbstractMaker
     public function configureCommand(Command $command, InputConfiguration $inputConfig)
     {
         $command
-            ->setDescription('Creates Defintion for the wwd CrudBundle')
+            ->setDescription(self::getCommandDescription())
             ->addArgument('entity-class', InputArgument::OPTIONAL, sprintf('The class name of the entity to create CRUD (e.g. <fg=yellow>%s</>)', Str::asClassName(Str::getRandomTerm())))
             ->addOption(
                 'no-translations',

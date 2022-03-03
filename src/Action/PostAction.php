@@ -29,13 +29,25 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Action;
 
-class SubmitAction extends Action
+use whatwedo\CoreBundle\Action\PostAction as BasePostAction;
+
+class PostAction extends BasePostAction
 {
+
+    use CrudActionTrait;
+
     public function __construct(
         protected string $acronym,
         array $options
     ) {
-        unset($this->defaultOptions['route'], $this->defaultOptions['route_parameters']);
+        $this->setDefaultOptions();
+        if (!array_key_exists('confirmation', $options)) {
+            $options['confirmation'] = [
+                'label' => 'whatwedo_crud.actions.delete.confirm_delete',
+                'yes' => 'whatwedo_crud.actions.delete.yes',
+                'no' => 'whatwedo_crud.actions.delete.no',
+            ];
+        }
         parent::__construct($this->acronym, $options);
     }
 }
