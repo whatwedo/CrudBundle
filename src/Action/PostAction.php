@@ -40,10 +40,14 @@ class PostAction extends BasePostAction
         protected string $acronym,
         array $options
     ) {
-        $this->defaultOptions['confirm_label'] = 'whatwedo_crud.actions.delete.confirm_delete';
-        $this->defaultOptions['yes_label'] = 'whatwedo_crud.actions.delete.yes';
-        $this->defaultOptions['no_label'] = 'whatwedo_crud.actions.delete.no';
         $this->setDefaultOptions();
+        if (!array_key_exists('confirmation', $options)) {
+            $options['confirmation'] = [
+                'label' => 'whatwedo_crud.actions.delete.confirm_delete',
+                'yes' => 'whatwedo_crud.actions.delete.yes',
+                'no' => 'whatwedo_crud.actions.delete.no',
+            ];
+        }
         parent::__construct($this->acronym, $options);
     }
 }

@@ -78,14 +78,14 @@ class CRUDTest extends AbstractCrudTest
         return [
             Page::CREATE->name => [
                 [
-                    CreateData::new()->setFormData([
+                    'with-data' => CreateData::new()->setFormData([
                         'name' => 'whatwedo GmbH',
                         'city' => 'Bern',
                         'country' => 'CH',
                         'taxIdentificationNumber' => 'CH-036.4.059.123-4',
                     ]),
                 ], [
-                    CreateData::new()->setExpectedStatusCode(422),
+                    'empty' => CreateData::new()->setExpectedStatusCode(422),
                 ],
             ],
         ];
