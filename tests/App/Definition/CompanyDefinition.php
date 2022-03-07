@@ -7,6 +7,7 @@ namespace whatwedo\CrudBundle\Tests\App\Definition;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
 use whatwedo\CrudBundle\Definition\AbstractDefinition;
 use whatwedo\CrudBundle\Tests\App\Entity\Company;
+use whatwedo\CrudBundle\Tests\App\Enum\Status;
 use whatwedo\TableBundle\Table\Table;
 
 class CompanyDefinition extends AbstractDefinition
@@ -32,6 +33,12 @@ class CompanyDefinition extends AbstractDefinition
             ->addContent('country', null, [
             ])
             ->addContent('taxIdentificationNumber', null, [
+            ])
+            ->addContent('status', null, [
+                'class' => Status::class,
+                'formatter_options' => [
+                    'translation_key_prefix' => 'enum.status.'
+                ],
             ])
         ;
     }

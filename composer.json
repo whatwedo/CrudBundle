@@ -53,7 +53,8 @@
         "whatwedo/search-bundle":    "dev-3.0-dev as 3.0",
         "gedmo/doctrine-extensions": "^3.5",
         "symfony/dotenv": "^6.0",
-        "symfony/test-pack": "^1.0"
+        "symfony/test-pack": "^1.0",
+        "symfony/runtime": "^6.0"
     },
 
     "suggest": {
@@ -72,11 +73,11 @@
             "type": "package",
             "package": {
                 "name": "twbs/icons",
-                "version": "1.6.1",
+                "version": "1.8.1",
                 "source": {
                     "url": "https://github.com/twbs/icons",
                     "type": "git",
-                    "reference": "tags/v1.6.1"
+                    "reference": "tags/v1.8.1"
                 }
             }
         }

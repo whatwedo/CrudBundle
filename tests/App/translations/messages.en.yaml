@@ -16,3 +16,9 @@ category.name: name
 category.lft: lft
 category.lvl: lvl
 category.rgt: rgt
+
+enum:
+    status:
+        draft: Entwurf
+        published: Veröffentlicht
+        archived: Archiviert

@@ -33,4 +33,7 @@ ecs:
 phpunit:
 	vendor/bin/simple-phpunit
 
+## server start
+server:
+	symfony server:start --dir=tests/App
 

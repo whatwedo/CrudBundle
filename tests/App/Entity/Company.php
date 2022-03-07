@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use whatwedo\CrudBundle\Tests\App\Enum\Status;
 use whatwedo\SearchBundle\Annotation\Index;
 
 /**
@@ -61,9 +62,16 @@ class Company
      */
     private $contacts;
 
+    /**
+     * @var Status $status
+     * @ORM\Column(type="string", enumType=Status::class)
+     */
+    private Status $status;
+
     public function __construct()
     {
         $this->contacts = new ArrayCollection();
+        $this->status = Status::DRAFT;
     }
 
     public function getId(): ?int
@@ -132,6 +140,18 @@ class Company
         if ($this->contacts->contains($department)) {
             $this->contacts->removeElement($department);
         }
+
+        return $this;
+    }
+
+    public function getStatus(): Status
+    {
+        return $this->status;
+    }
+
+    public function setStatus(Status $status): self
+    {
+        $this->status = $status;
 
         return $this;
     }

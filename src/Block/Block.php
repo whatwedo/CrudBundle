@@ -15,6 +15,7 @@ use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use whatwedo\CrudBundle\Collection\ContentCollection;
 use whatwedo\CrudBundle\Content\AbstractContent;
 use whatwedo\CrudBundle\Content\Content;
+use whatwedo\CrudBundle\Content\EnumContent;
 use whatwedo\CrudBundle\Content\RelationContent;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\BlockSize;
@@ -127,7 +128,7 @@ class Block implements ServiceSubscriberInterface
     public function addContent(string $acronym, ?string $type = null, array $options = [], ?int $position = null): static
     {
         /** @var AbstractContent $element */
-        $element = $this->container->get(ContentManager::class)->getContent($type ?? $this->getType($acronym));
+        $element = $this->container->get(ContentManager::class)->getContent($type ?? $this->getType($acronym, $options));
         $element->setDefinition($this->definition);
 
         if ($element->getOptionsResolver()->isDefined('label') && ! isset($options['label'])) {
@@ -184,7 +185,7 @@ class Block implements ServiceSubscriberInterface
         ];
     }
 
-    private function getType($acronym): string
+    private function getType(string $acronym, array $options): string
     {
         /** @var TypeGuess $typeGuess */
         $typeGuess = $this->container->get(FormRegistryInterface::class)->getTypeGuesser()->guessType(
@@ -195,6 +196,10 @@ class Block implements ServiceSubscriberInterface
         if ($typeGuess->getType() === EntityType::class
             && $typeGuess->getOptions()['multiple'] === true) {
             return RelationContent::class;
+        }
+
+        if (isset($options['class']) && enum_exists($options['class'])) {
+            return EnumContent::class;
         }
 
         return Content::class;

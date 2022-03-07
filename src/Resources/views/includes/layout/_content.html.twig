@@ -105,6 +105,10 @@
     {% endif %}
 {% endblock %}
 
+{% block enum_content %}
+    {{ block('content') }}
+{% endblock %}
+
 {% block twig_content %}
     {# @var content \whatwedo\CrudBundle\Content\RelationContent #}
     {# @var block \whatwedo\CrudBundle\Block\Block #}
