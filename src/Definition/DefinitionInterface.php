@@ -147,6 +147,8 @@ interface DefinitionInterface
 
     public function getBatchActions(): array;
 
+    public function getFormOptions(Page $page, object $data): array;
+
     /*
      * @param string $class
      * @param string $property

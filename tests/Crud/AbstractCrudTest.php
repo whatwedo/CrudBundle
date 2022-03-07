@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 /*
  * Copyright (c) 2022, whatwedo GmbH
  * All rights reserved
@@ -26,68 +27,26 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Tests;
+namespace whatwedo\CrudBundle\Tests\Crud;
 
-use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use whatwedo\CrudBundle\Enum\Page;
-use whatwedo\CrudBundle\Test\AbstractCrudTest;
-use whatwedo\CrudBundle\Test\Data\CreateData;
-use whatwedo\CrudBundle\Tests\App\Definition\CompanyDefinition;
-use whatwedo\CrudBundle\Tests\App\Entity\Company;
+use whatwedo\CrudBundle\Test\AbstractCrudTest as BaseAbstractCrudTest;
 
-class CRUDTest extends AbstractCrudTest
+abstract class AbstractCrudTest extends BaseAbstractCrudTest
 {
-
     protected ?KernelBrowser $client = null;
 
     protected function getBrowser(): KernelBrowser
     {
-        if (!$this->client) {
-            if (!self::$booted) {
+        if (! $this->client) {
+            if (! self::$booted) {
                 $this->client = static::createClient();
             } else {
                 $this->client = self::getContainer()->get('test.client');
             }
             $this->client->followRedirects(true);
         }
+
         return $this->client;
-    }
-
-    protected function setUp(): void
-    {
-        $this->getBrowser();
-        $testCompany = new Company();
-        $testCompany->setName('TEST name');
-        $testCompany->setCity('TEST city');
-        $testCompany->setCountry('TEST country');
-        $testCompany->setTaxIdentificationNumber('TEST tax');
-        $em = self::getContainer()->get(EntityManagerInterface::class);
-        $em->persist($testCompany);
-        $em->flush($testCompany);
-    }
-
-    protected function getDefinitionClass(): string
-    {
-        return CompanyDefinition::class;
-    }
-
-    public function getTestData(): array
-    {
-        return [
-            Page::CREATE->name => [
-                [
-                    'with-data' => CreateData::new()->setFormData([
-                        'name' => 'whatwedo GmbH',
-                        'city' => 'Bern',
-                        'country' => 'CH',
-                        'taxIdentificationNumber' => 'CH-036.4.059.123-4',
-                    ]),
-                ], [
-                    'empty' => CreateData::new()->setExpectedStatusCode(422),
-                ],
-            ],
-        ];
     }
 }

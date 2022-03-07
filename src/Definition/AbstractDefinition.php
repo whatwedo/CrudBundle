@@ -47,6 +47,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
     protected array $actions = [];
 
     protected array $batchActions = [];
+
     /**
      * TODO: is this required?
      */
@@ -109,7 +110,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     public function addBatchAction(string $acronym, array $options = [], $type = Action::class): static
     {
-        if (!isset($options['voter_attribute'])) {
+        if (! isset($options['voter_attribute'])) {
             $options['voter_attribute'] = 'batch_action';
         }
         $this->batchActions[$acronym] = new $type($acronym, $options);
@@ -326,7 +327,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
             Page::INDEX => static::getEntityTitlePlural(),
             Page::DELETE => $entity . ' ' . $delete,
             Page::CREATE => $title . ' ' . $add,
-            Page::EDIT => '"' .  (string) $entity . '" ' . $edit,
+            Page::EDIT => '"' . (string) $entity . '" ' . $edit,
             default => (string) $entity,
         };
     }
@@ -653,6 +654,11 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
     public function getParentDefinitionProperty(?object $data): ?string
     {
         return null;
+    }
+
+    public function getFormOptions(Page $page, object $data): array
+    {
+        return [];
     }
 
     public static function getSubscribedServices(): array

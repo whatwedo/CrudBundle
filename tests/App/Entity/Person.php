@@ -6,6 +6,7 @@ namespace whatwedo\CrudBundle\Tests\App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Table(name="person")
@@ -22,10 +23,24 @@ class Person
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank
+     * @Assert\NotBlank()
      * @Assert\NotNull()
      */
     private ?string $name = null;
+
+    /**
+     * @Assert\Callback(groups={"check-not-valid"})
+     */
+    public function validate(ExecutionContextInterface $context, $payload)
+    {
+        if ($this->name === 'not-valid') {
+            $context
+                ->buildViolation('This name sounds totally fake!')
+                ->atPath('name')
+                ->addViolation()
+            ;
+        }
+    }
 
     public function getId(): ?int
     {

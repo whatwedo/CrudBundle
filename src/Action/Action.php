@@ -8,7 +8,6 @@ use whatwedo\CoreBundle\Action\Action as BaseAction;
 
 class Action extends BaseAction
 {
-
     use CrudActionTrait;
 
     public function __construct(string $acronym, array $options)

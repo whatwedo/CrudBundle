@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * Copyright (c) 2022, whatwedo GmbH
  * All rights reserved
@@ -31,7 +33,6 @@ use whatwedo\CoreBundle\Action\ModalAction as BaseModalAction;
 
 class ModalAction extends BaseModalAction
 {
-
     use CrudActionTrait;
 
     public function __construct(string $acronym, array $options)

@@ -33,7 +33,6 @@ use whatwedo\CoreBundle\Action\PostAction as BasePostAction;
 
 class PostAction extends BasePostAction
 {
-
     use CrudActionTrait;
 
     public function __construct(
@@ -41,7 +40,7 @@ class PostAction extends BasePostAction
         array $options
     ) {
         $this->setDefaultOptions();
-        if (!array_key_exists('confirmation', $options)) {
+        if (! array_key_exists('confirmation', $options)) {
             $options['confirmation'] = [
                 'label' => 'whatwedo_crud.actions.delete.confirm_delete',
                 'yes' => 'whatwedo_crud.actions.delete.yes',

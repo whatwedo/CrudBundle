@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * Copyright (c) 2022, whatwedo GmbH
  * All rights reserved
@@ -27,14 +28,50 @@ declare(strict_types=1);
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Action;
+namespace whatwedo\CrudBundle\Tests\Crud;
 
+use Doctrine\ORM\EntityManagerInterface;
 use whatwedo\CrudBundle\Enum\Page;
+use whatwedo\CrudBundle\Test\Data\CreateData;
+use whatwedo\CrudBundle\Tests\App\Definition\CompanyDefinition;
+use whatwedo\CrudBundle\Tests\App\Entity\Company;
 
-trait CrudActionTrait
+class CRUDTest extends AbstractCrudTest
 {
-    private function setDefaultOptions(): void
+    public function getTestData(): array
     {
-        $this->defaultOptions['visibility'] = [Page::INDEX, Page::SHOW, Page::EDIT, Page::CREATE];
+        return [
+            Page::CREATE->name => [
+                'with-data' => [
+                    CreateData::new()->setFormData([
+                        'name' => 'whatwedo GmbH',
+                        'city' => 'Bern',
+                        'country' => 'CH',
+                        'taxIdentificationNumber' => 'CH-036.4.059.123-4',
+                    ]),
+                ],
+                'empty' => [
+                    CreateData::new()->setExpectedStatusCode(422),
+                ],
+            ],
+        ];
+    }
+
+    protected function getDefinitionClass(): string
+    {
+        return CompanyDefinition::class;
+    }
+
+    protected function setUp(): void
+    {
+        $this->getBrowser();
+        $testCompany = new Company();
+        $testCompany->setName('TEST name');
+        $testCompany->setCity('TEST city');
+        $testCompany->setCountry('TEST country');
+        $testCompany->setTaxIdentificationNumber('TEST tax');
+        $em = self::getContainer()->get(EntityManagerInterface::class);
+        $em->persist($testCompany);
+        $em->flush($testCompany);
     }
 }

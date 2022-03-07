@@ -218,7 +218,11 @@ class DefinitionView
             return $this->form;
         }
 
-        $builder = $this->formFactory->createBuilder(FormType::class, $this->data, []);
+        $builder = $this->formFactory->createBuilder(
+            FormType::class,
+            $this->data,
+            $this->definition->getFormOptions(Page::EDIT, $this->data)
+        );
 
         foreach ($this->getBlocks() as $block) {
             if (! $block->isVisibleOnEdit()
@@ -256,7 +260,11 @@ class DefinitionView
             return $this->form;
         }
 
-        $builder = $this->formFactory->createBuilder(FormType::class, $this->data);
+        $builder = $this->formFactory->createBuilder(
+            FormType::class,
+            $this->data,
+            $this->definition->getFormOptions(Page::CREATE, $this->data)
+        );
 
         foreach ($this->getBlocks() as $block) {
             if (! $block->isVisibleOnCreate()
