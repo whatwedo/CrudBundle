@@ -326,7 +326,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
             Page::INDEX => static::getEntityTitlePlural(),
             Page::DELETE => $entity . ' ' . $delete,
             Page::CREATE => $title . ' ' . $add,
-            Page::EDIT => $title . ' ' . $edit,
+            Page::EDIT => '"' .  (string) $entity . '" ' . $edit,
             default => (string) $entity,
         };
     }
