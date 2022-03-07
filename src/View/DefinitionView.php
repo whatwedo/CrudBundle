@@ -119,48 +119,6 @@ class DefinitionView
     }
 
     /**
-     * @param string $value text to be rendered
-     *
-     * @return string html
-     */
-    public function linkIt($value, Content $content)
-    {
-        return (string) $value;
-        // TODO refactor
-        $entity = $content->getContents($this->data);
-        $def = $this->definitionManager->getDefinitionByEntity($entity);
-
-        if ($def !== null) {
-            if ($this->authorizationChecker->isGranted(Page::SHOW, $entity)
-                && $def::hasCapability(Page::SHOW)) {
-                $path = $this->router->generate($def::getRouteName(Page::SHOW), [
-                    'id' => $entity->getId(),
-                ]);
-
-                $granted = false;
-                if (! $this->authorizationChecker->isGranted('IS_AUTHENTICATED_ANONYMOUSLY')) {
-                    // if the user is not authenticated, we link it because a
-                    // login form is shown if the user tries to access the resource
-                    // otherwise there would happens a InsufficientAuthenticationException
-                    $fakeRequest = Request::create($path, 'GET');
-                    [$roles, $channel] = (new AccessMap())->getPatterns($fakeRequest);
-                    foreach ($roles as $role) {
-                        $granted = $granted || $this->authorizationChecker->isGranted($role);
-                    }
-                } else {
-                    $granted = true;
-                }
-
-                if ($granted) {
-                    return sprintf('<a href="%s">%s</a>', $path, $value);
-                }
-            }
-        }
-
-        return $value;
-    }
-
-    /**
      * @param array $params
      *
      * @return string
