@@ -32,17 +32,16 @@ namespace whatwedo\CrudBundle\Tests\App\Enum;
 
 enum Status: string
 {
-    case DRAFT = 'draft';
-    case PUBLISHED = 'published';
-    case ARCHIVED = 'archived';
-
     public function color(): string
     {
-        return match($this)
-        {
+        return match ($this) {
             Status::DRAFT => 'grey',
             Status::PUBLISHED => 'green',
             Status::ARCHIVED => 'red',
         };
     }
+
+    case DRAFT = 'draft';
+    case PUBLISHED = 'published';
+    case ARCHIVED = 'archived';
 }

@@ -63,7 +63,6 @@ class Company
     private $contacts;
 
     /**
-     * @var Status $status
      * @ORM\Column(type="string", enumType=Status::class)
      */
     private Status $status;

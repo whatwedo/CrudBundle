@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * Copyright (c) 2022, whatwedo GmbH
  * All rights reserved
@@ -28,13 +30,12 @@
 namespace whatwedo\CrudBundle\Content;
 
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CoreBundle\Formatter\EnumFormatter;
-use Symfony\Component\OptionsResolver\Options;
 
 class EnumContent extends Content
 {
-
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
@@ -47,6 +48,5 @@ class EnumContent extends Content
                 'class' => $option['class'],
             ],
         ]);
-    
     }
 }

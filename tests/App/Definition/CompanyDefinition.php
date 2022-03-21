@@ -37,7 +37,7 @@ class CompanyDefinition extends AbstractDefinition
             ->addContent('status', null, [
                 'class' => Status::class,
                 'formatter_options' => [
-                    'translation_key_prefix' => 'enum.status.'
+                    'translation_key_prefix' => 'enum.status.',
                 ],
             ])
         ;

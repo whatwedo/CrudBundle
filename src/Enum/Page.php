@@ -6,6 +6,11 @@ namespace whatwedo\CrudBundle\Enum;
 
 enum Page: string implements PageInterface
 {
+    public function toRoute(): string
+    {
+        return strtolower($this->name);
+    }
+
     case INDEX = 'index';
     case SHOW = 'show';
     case RELOAD = 'reload';
@@ -17,9 +22,4 @@ enum Page: string implements PageInterface
     case EXPORT = 'export';
     case AJAXFORM = 'ajaxform';
     case JSONSEARCH = 'jsonseach';
-
-    public function toRoute(): string
-    {
-        return strtolower($this->name);
-    }
 }

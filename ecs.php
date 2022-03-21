@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use PHP_CodeSniffer\Standards\Squiz\Sniffs\Classes\ValidClassNameSniff;
@@ -22,8 +23,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         FileCommentSniff::class,
         ClassCommentSniff::class,
         FunctionCommentThrowTagSniff::class,
-        ValidClassNameSniff::class
-        => [
+        ValidClassNameSniff::class => [
             __DIR__ . '/src/whatwedoCrudBundle.php',
             __DIR__ . '/src/DependencyInjection/whatwedoCrudExtension.php',
         ],
@@ -42,8 +42,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 
         \Symplify\CodingStandard\Fixer\ArrayNotation\ArrayOpenerAndCloserNewlineFixer::class => [
             __DIR__ . '/tests/App/config/bundles.php',
-        ]
-
+        ],
     ]);
 
     $parameters->set(Option::PARALLEL, true);

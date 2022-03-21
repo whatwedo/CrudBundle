@@ -553,7 +553,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      */
     protected function denyAccessUnlessGranted(mixed $attribute, mixed $subject = null, string $message = 'Access Denied.'): void
     {
-        if (!$this->isGranted($attribute, $subject)) {
+        if (! $this->isGranted($attribute, $subject)) {
             $exception = $this->createAccessDeniedException($message);
             if (is_object($attribute) && enum_exists(get_class($attribute))) {
                 $attribute = $attribute->value;
