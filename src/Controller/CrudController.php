@@ -548,6 +548,23 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $this->denyAccessUnlessGranted($attributes, $subject, $message);
     }
 
+    /**
+     * @override
+     */
+    protected function denyAccessUnlessGranted(mixed $attribute, mixed $subject = null, string $message = 'Access Denied.'): void
+    {
+        if (!$this->isGranted($attribute, $subject)) {
+            $exception = $this->createAccessDeniedException($message);
+            if (is_object($attribute) && enum_exists(get_class($attribute))) {
+                $attribute = $attribute->value;
+            }
+            $exception->setAttributes((string) $attribute);
+            $exception->setSubject($subject);
+
+            throw $exception;
+        }
+    }
+
     private function redirectToDefinitionObject(DefinitionInterface $definition, string $capability, array $parameters = [], int $status = 302): RedirectResponse
     {
         $route = $definition::getRoutePrefix() . '_' . $capability;
