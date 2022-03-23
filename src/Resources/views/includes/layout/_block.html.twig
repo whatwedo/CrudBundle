@@ -1,3 +1,52 @@
+{% block block_block %}
+    {% set attr = {
+        class: (block.option('size') == constant('whatwedo\\CrudBundle\\Enum\\BlockSize::LARGE') ? 'w-full' : 'w-3/6') ~ ' wwd-block-block',
+    }|merge(block.option('attr')|default([])) %}
+    <div id="wwd-crud-block-{{ block.acronym }}" {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
+        <div class="bg-neutral-50 shadow sm:rounded-lg m-4">
+        {% if block.option('label') or block.option('description') %}
+            <div class="wwd-crud-block-header px-4 pt-5 sm:px-6">
+                {% if block.option('label') %}
+                    <h3 class="text-lg leading-6 font-medium text-neutral-900">
+                        {{ block.option('label')|trans }}
+                    </h3>
+                {% endif %}
+                {% if block.option('description') %}
+                    <p class="mt-1 max-w-2xl text-sm text-neutral-500">
+                        {{ block.option('description')|trans }}
+                    </p>
+                {% endif %}
+            </div>
+        {% endif %}
+        <div class="wwd-block-block-content">
+            {{ content | raw }}
+        </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block block_block_content %}
+    {% for block in block.blocks(constant(page))|filter(c => is_granted(c.option(voter), view.data)) %}
+        {% set block_content %}
+            {% with {
+                block: block,
+                view: view,
+                } %}
+                {{ block(block.option('block_prefix') ~ '_content', view.definition.layout) }}
+            {% endwith %}
+        {% endset %}
+        {% if block_content|trim != '' %}
+            {% with {
+                content: block_content,
+                block: block,
+                view: view,
+                } %}
+                {{ block(block.option('block_prefix'), view.definition.layout) }}
+            {% endwith %}
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
 {% block block %}
     {# @var block \whatwedo\CrudBundle\Block\Block #}
     {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
@@ -30,4 +79,16 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block block_content %}
+    {% for content in block.contents(constant(page))|filter(c => is_granted(c.option(voter), view.data)) %}
+        {% with {
+            content: content,
+            block: block,
+            view: view,
+            } %}
+            {{ block(content.option('block_prefix'), view.definition.layout) }}
+        {% endwith %}
+    {% endfor %}
 {% endblock %}

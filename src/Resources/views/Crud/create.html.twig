@@ -21,27 +21,21 @@
         class="whatwedo_crud-blocks whatwedo_crud-blocks--create h-full bg-neutral-50 p-4 flex flex-wrap items-baseline"
     >
         {% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\Page::CREATE'))|filter(c => is_granted(c.option('create_voter_attribute'), view.data)) %}
-            {% set numberOfContentBlocks = 0 %}
             {% set block_content %}
-                {% for content in block.contents(constant('whatwedo\\CrudBundle\\Enum\\Page::CREATE'))|filter(c => is_granted(c.option('create_voter_attribute'), view.data)) %}
-                    {% set numberOfContentBlocks = numberOfContentBlocks + 1 %}
-                    {% with {
-                        content: content,
-                        block: block,
-                        view: view,
-                        form: form,
-                        } %}
-                        {{ block(content.option('block_prefix'), view.definition.layout) }}
-                    {% endwith %}
-                {% endfor %}
-            {% endset %}
-
-            {% if numberOfContentBlocks > 0 %}
                 {% with {
+                    block: block,
+                    view: view,
+                    page: 'whatwedo\\CrudBundle\\Enum\\Page::CREATE',
+                    voter: 'create_voter_attribute',
+                    } %}
+                {{ block(block.option('block_prefix') ~ '_content', view.definition.layout) }}
+                {% endwith %}
+            {% endset %}
+            {% if block_content|trim != '' %}
+            {% with {
                     content: block_content,
                     block: block,
                     view: view,
-                    form: form,
                     } %}
                     {{ block(block.option('block_prefix'), view.definition.layout) }}
                 {% endwith %}
