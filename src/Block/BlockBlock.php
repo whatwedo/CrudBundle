@@ -46,12 +46,6 @@ class BlockBlock extends Block
         $this->blocks = new BlockCollection();
     }
 
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        parent::configureOptions($resolver);
-        $resolver->setDefault('block_prefix', StringUtil::fqcnToBlockPrefix(static::class));
-    }
-
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [

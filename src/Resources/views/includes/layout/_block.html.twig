@@ -92,3 +92,11 @@
         {% endwith %}
     {% endfor %}
 {% endblock %}
+
+{% block definition_block %}
+    {{ content | raw }}
+{% endblock %}
+
+{% block definition_block_content %}
+    {{ block.render(view.data) | raw }}
+{% endblock %}

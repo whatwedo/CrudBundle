@@ -5,25 +5,27 @@
     {% include '@whatwedoCrud/includes/main/_site_title.html.twig' with {'title':title} only %}
     <div class="whatwedo_crud-blocks whatwedo_crud-blocks--show h-full bg-neutral-50 p-4 flex flex-wrap items-baseline">
         {% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW'))|filter(c => is_granted(c.option('show_voter_attribute'), view.data)) %}
-            {% set block_content %}
-                {% with {
-                    block: block,
-                    view: view,
-                    page: 'whatwedo\\CrudBundle\\Enum\\Page::SHOW',
-                    voter: 'show_voter_attribute',
+            {% block block_definition_single_block %}
+                {% set block_content %}
+                    {% with {
+                        block: block,
+                        view: view,
+                        page: 'whatwedo\\CrudBundle\\Enum\\Page::SHOW',
+                        voter: 'show_voter_attribute',
+                        } %}
+                    {{ block(block.option('block_prefix') ~ '_content', view.definition.layout) }}
+                    {% endwith %}
+                {% endset %}
+                {% if block_content|trim != '' %}
+                    {% with {
+                        content: block_content,
+                        block: block,
+                        view: view,
                     } %}
-                {{ block(block.option('block_prefix') ~ '_content', view.definition.layout) }}
-                {% endwith %}
-            {% endset %}
-            {% if block_content|trim != '' %}
-                {% with {
-                    content: block_content,
-                    block: block,
-                    view: view,
-                } %}
-                    {{ block(block.option('block_prefix'), view.definition.layout) }}
-                {% endwith %}
-            {% endif %}
+                        {{ block(block.option('block_prefix'), view.definition.layout) }}
+                    {% endwith %}
+                {% endif %}
+            {% endblock %}
         {% endfor %}
     </div>
 {% endblock %}
