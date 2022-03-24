@@ -95,9 +95,10 @@
 {% endblock %}
 
 {% block definition_block %}
-    {{ content | raw }}
+    {{ content }}
 {% endblock %}
 
 {% block definition_block_content %}
-    {{ block.render(view.data) | raw }}
+    {{ wwd_definition_block_render(block) }}
 {% endblock %}
+
