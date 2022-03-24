@@ -22,6 +22,7 @@ use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\BlockSize;
 use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Enum\PageInterface;
+use whatwedo\CrudBundle\Exception\BlockNotFoundException;
 use whatwedo\CrudBundle\Manager\ContentManager;
 use whatwedo\CrudBundle\Traits\VisibilityTrait;
 use whatwedo\CrudBundle\Traits\VoterAttributeTrait;
@@ -54,6 +55,8 @@ class Block implements ServiceSubscriberInterface
     public const OPT_CUSTOM_OPTIONS = 'custom_options';
 
     protected ContainerInterface $container;
+
+    protected ?Block $parentBlock = null;
 
     protected string $acronym = '';
 
@@ -253,6 +256,20 @@ class Block implements ServiceSubscriberInterface
         }
 
         return Content::class;
+    }
+
+
+    protected function setParentBlock(?Block $parentBlock): void
+    {
+        $this->parentBlock = $parentBlock;
+    }
+
+    public function getParentBlock(): Block
+    {
+        if (!$this->parentBlock) {
+            throw new BlockNotFoundException('no Parent Block available');
+        }
+        return $this->parentBlock;
     }
 
     public function __clone(): void

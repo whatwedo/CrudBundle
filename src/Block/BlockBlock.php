@@ -75,6 +75,7 @@ class BlockBlock extends Block
         $element = $this->container->get(BlockManager::class)->getBlock($type ?? Block::class);
         $element->setDefinition($this->getDefinition());
         $element->setAcronym($acronym);
+        $element->setParentBlock($this);
         if (! isset($options['label'])) {
             $options['label'] = sprintf('wwd.%s.block_block.%s', $this->definition::getEntityAlias(), $acronym);
         }
@@ -87,5 +88,9 @@ class BlockBlock extends Block
     {
         throw new \Exception('cannot be used in BlockBlock');
     }
+
+
+
+
 
 }
