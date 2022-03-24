@@ -54,40 +54,7 @@ class DefinitionBlock extends Block
         $resolver->setAllowedTypes('block', 'string');
     }
 
-    public static function getSubscribedServices(): array
-    {
-        return array_merge(parent::getSubscribedServices(), [
-            DefinitionManager::class,
-            Environment::class,
-        ]);
-    }
-
-    public function render($row): string
-    {
-        $data = $this->getData($row);
-        if ($data === null) {
-            return '';
-        }
-        $definitionManager = $this->container->get(DefinitionManager::class);
-        if ($this->options['definition'] === null) {
-            $definition = $definitionManager->getDefinitionByEntity($data);
-        } else {
-            $definition = $definitionManager->getDefinitionByClassName($this->options['definition']);
-        }
-        $view = $definition->createView(Page::SHOW, $data);
-        $block = $view->getBlocks(Page::SHOW)->filter(fn (Block $block) => $block->getAcronym() === $this->options['block'])->first();
-        if ($block === false) {
-            throw new BlockNotFoundException('Block "'.$this->options['block'].'" does not exist in definition "'.get_class($definition).'".');
-        }
-        $twig = $this->container->get(Environment::class);
-        $template = $twig->load($definition->getTemplateDirectory().'show.html.twig');
-        return $template->renderBlock('block_definition_single_block', [
-            'view' => $view,
-            'block' => $block,
-        ]);
-    }
-
-    private function getData($row): mixed
+    public function getData($row): mixed
     {
         if (is_callable($this->options['callable'])) {
             if (is_array($this->options['callable'])) {
