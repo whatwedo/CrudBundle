@@ -8,6 +8,7 @@ use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use whatwedo\CoreBundle\Manager\FormatterManager;
 use whatwedo\TableBundle\Table\Column;
 use whatwedo\TableBundle\Table\Table;
@@ -17,7 +18,9 @@ class ExportManager
     private array $reports = [];
 
     public function __construct(
-        protected FormatterManager $formatterManager
+        protected FormatterManager $formatterManager,
+        protected TranslatorInterface $translator
+
     ) {
     }
 
@@ -100,7 +103,9 @@ class ExportManager
 
         foreach ($table->getColumns() as $column) {
             if ($column->getOption(Column::OPTION_LABEL)) {
-                $headerItem[] = $column->getOption(Column::OPTION_LABEL);
+                $headerItem[] = $this->translator->trans(
+                    $column->getOption(Column::OPTION_LABEL)
+                );
             } else {
                 $headerItem[] = '';
             }

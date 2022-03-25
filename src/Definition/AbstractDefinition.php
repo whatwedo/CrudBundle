@@ -298,6 +298,12 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         }
     }
 
+
+    public function configureExport(Table $table)
+    {
+        $this->configureTable($table);
+    }
+
     public static function getAlias(): string
     {
         return str_replace(

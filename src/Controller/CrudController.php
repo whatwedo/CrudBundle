@@ -31,6 +31,7 @@ use whatwedo\TableBundle\DataLoader\DoctrineDataLoader;
 use whatwedo\TableBundle\DataLoader\DoctrineTreeDataLoader;
 use whatwedo\TableBundle\Entity\TreeInterface;
 use whatwedo\TableBundle\Factory\TableFactory;
+use whatwedo\TableBundle\Table\Table;
 
 #[AsController]
 class CrudController extends AbstractController implements CrudDefinitionController
@@ -271,23 +272,17 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
         $table = $tableFactory
             ->create('index', DoctrineDataLoader::class, [
-                'dataloader_options' => [
+                Table::OPTION_DEFAULT_LIMIT => 0,
+                Table::OPTION_DATALOADER_OPTIONS => [
                     DoctrineDataLoader::OPTION_QUERY_BUILDER => $this->getDefinition()->getQueryBuilder(),
                 ],
             ]);
 
-        // to respect column sort order
-        $this->getDefinition()->configureTable($table);
-//        $this->getDefinition()->overrideTableConfiguration($table);
-
-        $data = $table->getRows();
+        $this->getDefinition()->configureExport($table);
 
         $exportArray = $exportManager->prepareData($table);
-
         $spreadsheet = $exportManager->createSpreadsheet($table, $exportArray);
-
         $writer = new Xlsx($spreadsheet);
-
         $response = new StreamedResponse();
         $response->setCallback(
             function () use ($writer) {

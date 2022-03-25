@@ -86,10 +86,14 @@ interface DefinitionInterface
 
     /**
      * table configuration.
-     *
-     * @return
      */
     public function configureTable(Table $table): void;
+
+
+    /**
+     * table export configuration.
+     */
+    public function configureExport(Table $table);
 
     /**
      * check if this definition has specific capability.
@@ -149,4 +153,5 @@ interface DefinitionInterface
      *
     public function guessType($class, $property);
      * */
+
 }
