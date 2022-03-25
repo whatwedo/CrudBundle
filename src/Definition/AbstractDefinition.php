@@ -486,33 +486,6 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         return static::getQueryAlias();
     }
 
-    public function getExportAttributes(): array
-    {
-        return [];
-    }
-
-    public function getExportCallbacks(): array
-    {
-        return [];
-    }
-
-    public function getExportHeaders(): array
-    {
-        return [];
-    }
-
-    public function getExportOptions(): array
-    {
-        return [
-            'csv' => [
-                'delimiter' => ';',
-                'enclosure' => '"',
-                'escapeChar' => '\\',
-                'keySeparator' => '.',
-            ],
-        ];
-    }
-
     public function ajaxForm(object $entity, Page $page): void
     {
     }

@@ -119,14 +119,6 @@ interface DefinitionInterface
 
     public function getRedirect(Page $routeFrom, ?object $entity = null): Response;
 
-    public function getExportAttributes(): array;
-
-    public function getExportCallbacks(): array;
-
-    public function getExportHeaders(): array;
-
-    public function getExportOptions(): array;
-
     public function ajaxForm(object $entity, Page $page): void;
 
     /**
