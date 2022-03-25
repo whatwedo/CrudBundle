@@ -31,6 +31,11 @@ class PersonDefinition extends AbstractDefinition
         ;
     }
 
+    public static function getCapabilities(): array
+    {
+        return array_merge(parent::getCapabilities(), [Page::EXPORT]);
+    }
+
     public function getFormOptions(Page $page, object $data): array
     {
         if ($page === Page::EDIT) {

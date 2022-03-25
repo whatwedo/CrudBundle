@@ -27,7 +27,8 @@
         "whatwedo/table-bundle":    "^1.0",
         "phpspec/prophecy":         "~1.0|~6.0",
         "knplabs/knp-menu-bundle":  "~v3.2.0",
-        "symfony/webpack-encore-bundle": "^1.14"
+        "symfony/webpack-encore-bundle": "^1.14",
+        "phpoffice/phpspreadsheet": "^1.22"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^v6.0",
@@ -84,7 +85,8 @@
     ],
     "config": {
         "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "symfony/runtime": true
         }
     }
 }
