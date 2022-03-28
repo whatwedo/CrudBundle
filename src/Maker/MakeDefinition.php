@@ -30,7 +30,6 @@ declare(strict_types=1);
 namespace  whatwedo\CrudBundle\Maker;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
-use Doctrine\Common\Inflector\Inflector as LegacyInflector;
 use Doctrine\Inflector\InflectorFactory;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
@@ -80,10 +79,7 @@ final class MakeDefinition extends AbstractMaker
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->formTypeRenderer = $formTypeRenderer;
-
-        if (class_exists(InflectorFactory::class)) {
-            $this->inflector = InflectorFactory::create()->build();
-        }
+        $this->inflector = InflectorFactory::create()->build();
         $this->rootPath = $rootPath;
         $this->formatterManager = $formatterManager;
         $this->translator = $translator;
@@ -245,11 +241,7 @@ final class MakeDefinition extends AbstractMaker
 
     private function singularize(string $word): string
     {
-        if ($this->inflector !== null) {
-            return $this->inflector->singularize($word);
-        }
-
-        return LegacyInflector::singularize($word);
+        return $this->inflector->singularize($word);
     }
 
     private function generateDefition(

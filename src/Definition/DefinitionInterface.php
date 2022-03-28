@@ -89,7 +89,6 @@ interface DefinitionInterface
      */
     public function configureTable(Table $table): void;
 
-
     /**
      * table export configuration.
      */
@@ -153,5 +152,4 @@ interface DefinitionInterface
      *
     public function guessType($class, $property);
      * */
-
 }

@@ -26,11 +26,11 @@ use whatwedo\CrudBundle\Enum\PageMode;
 use whatwedo\CrudBundle\Event\CrudEvent;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\View\DefinitionView;
-use whatwedo\TableBundle\Manager\ExportManager;
 use whatwedo\TableBundle\DataLoader\DoctrineDataLoader;
 use whatwedo\TableBundle\DataLoader\DoctrineTreeDataLoader;
 use whatwedo\TableBundle\Entity\TreeInterface;
 use whatwedo\TableBundle\Factory\TableFactory;
+use whatwedo\TableBundle\Manager\ExportManager;
 use whatwedo\TableBundle\Table\Table;
 
 #[AsController]

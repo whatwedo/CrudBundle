@@ -8,6 +8,8 @@ class Upload
 {
     private string $path;
 
+    private string $field;
+
     public function __construct(string $path, string $fieldName = 'file')
     {
         $this->path = $path;

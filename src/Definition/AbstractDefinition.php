@@ -34,7 +34,6 @@ use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\View\DefinitionView;
 use whatwedo\SearchBundle\Repository\IndexRepository;
 use whatwedo\TableBundle\Extension\FilterExtension;
-use whatwedo\TableBundle\Table\DoctrineTable;
 use whatwedo\TableBundle\Table\Table;
 use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
@@ -298,7 +297,6 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         }
     }
 
-
     public function configureExport(Table $table)
     {
         $this->configureTable($table);
@@ -428,12 +426,12 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
     }
 
     /**
-     * @param DoctrineTable $table
-     * @param               $property
+     * @param Table $table
+     * @param       $property
      */
     public function getLabelFor($table, $property): string
     {
-        if ($table instanceof DoctrineTable) {
+        if ($table instanceof Table) {
             foreach ($table->getColumns() as $column) {
                 if ($column->getAcronym() === $property) {
                     $label = $column->getOption('label');

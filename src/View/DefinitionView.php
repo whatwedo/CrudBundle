@@ -17,7 +17,6 @@ use whatwedo\CoreBundle\Action\Action;
 use whatwedo\CrudBundle\Block\Block;
 use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Content\AbstractContent;
-use whatwedo\CrudBundle\Definition\AbstractDefinition;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Form\Type\EntityAjaxType;
@@ -249,33 +248,6 @@ class DefinitionView
         $this->form = $builder->getForm();
 
         return $this->form;
-    }
-
-    /**
-     * @param bool $onlylisten
-     *
-     * @return string
-     */
-    public function getAjaxListen($onlylisten = false)
-    {
-        $data = $this->definition->addAjaxOnChangeListener();
-        if ($onlylisten) {
-            $data = array_filter($data, function ($item) {
-                return $item === AbstractDefinition::AJAX_LISTEN;
-            });
-        }
-        $ret = '[';
-        $i = 0;
-        foreach (array_keys($data) as $key) {
-            $ret .= '\'' . $key . '\'';
-            if ($i !== \count($data) - 1) {
-                $ret .= ',';
-            }
-            ++$i;
-        }
-        $ret .= ']';
-
-        return $ret;
     }
 
     public function hasCapability(Page $route): bool

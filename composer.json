@@ -27,7 +27,8 @@
         "whatwedo/table-bundle":    "^1.0",
         "phpspec/prophecy":         "~1.0|~6.0",
         "knplabs/knp-menu-bundle":  "~v3.2.0",
-        "symfony/webpack-encore-bundle": "^1.14"
+        "symfony/webpack-encore-bundle": "^1.14",
+        "doctrine/inflector": "^2.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^v6.0",
@@ -54,12 +55,14 @@
         "gedmo/doctrine-extensions": "^3.5",
         "symfony/dotenv": "^6.0",
         "symfony/test-pack": "^1.0",
-        "symfony/runtime": "^6.0"
+        "symfony/runtime": "^6.0",
+        "phpstan/phpstan": "^1.5",
+        "mhujer/breadcrumbs-bundle": "^1.5",
+        "whatwedo/twig-bootstrap-icons": "^1.0"
     },
 
     "suggest": {
         "mhujer/breadcrumbs-bundle": "Allows creation of breadcrumbs",
-        "knplabs/knp-menu-bundle": "Allows creation of breadcrumbs",
         "whatwedo/twig-bootstrap-icons": "For using icons in the templates"
     },
     "autoload": {
