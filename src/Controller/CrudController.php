@@ -280,8 +280,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
         $this->getDefinition()->configureExport($table);
 
-        $exportArray = $exportManager->prepareData($table);
-        $spreadsheet = $exportManager->createSpreadsheet($table, $exportArray);
+        $spreadsheet = $exportManager->createSpreadsheet($table);
         $writer = new Xlsx($spreadsheet);
         $response = new StreamedResponse();
         $response->setCallback(
