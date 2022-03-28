@@ -27,8 +27,7 @@
         "whatwedo/table-bundle":    "^1.0",
         "phpspec/prophecy":         "~1.0|~6.0",
         "knplabs/knp-menu-bundle":  "~v3.2.0",
-        "symfony/webpack-encore-bundle": "^1.14",
-        "phpoffice/phpspreadsheet": "^1.22"
+        "symfony/webpack-encore-bundle": "^1.14"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^v6.0",
