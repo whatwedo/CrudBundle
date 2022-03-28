@@ -298,6 +298,12 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         }
     }
 
+
+    public function configureExport(Table $table)
+    {
+        $this->configureTable($table);
+    }
+
     public static function getAlias(): string
     {
         return str_replace(
@@ -484,33 +490,6 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
     public static function getChildRouteAddition(): string
     {
         return static::getQueryAlias();
-    }
-
-    public function getExportAttributes(): array
-    {
-        return [];
-    }
-
-    public function getExportCallbacks(): array
-    {
-        return [];
-    }
-
-    public function getExportHeaders(): array
-    {
-        return [];
-    }
-
-    public function getExportOptions(): array
-    {
-        return [
-            'csv' => [
-                'delimiter' => ';',
-                'enclosure' => '"',
-                'escapeChar' => '\\',
-                'keySeparator' => '.',
-            ],
-        ];
     }
 
     public function ajaxForm(object $entity, Page $page): void

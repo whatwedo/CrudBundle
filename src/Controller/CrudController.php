@@ -7,6 +7,7 @@ namespace whatwedo\CrudBundle\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,24 +15,23 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\Serializer\Serializer;
 use Twig\Environment;
-use whatwedo\CrudBundle\Content\RelationContent;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
-use whatwedo\CrudBundle\Encoder\CsvEncoder;
 use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Enum\PageMode;
 use whatwedo\CrudBundle\Event\CrudEvent;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
-use whatwedo\CrudBundle\Normalizer\ObjectNormalizer;
 use whatwedo\CrudBundle\View\DefinitionView;
+use whatwedo\TableBundle\Manager\ExportManager;
 use whatwedo\TableBundle\DataLoader\DoctrineDataLoader;
 use whatwedo\TableBundle\DataLoader\DoctrineTreeDataLoader;
 use whatwedo\TableBundle\Entity\TreeInterface;
 use whatwedo\TableBundle\Factory\TableFactory;
+use whatwedo\TableBundle\Table\Table;
 
 #[AsController]
 class CrudController extends AbstractController implements CrudDefinitionController
@@ -266,32 +266,31 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         return $this->getDefinition()->getRedirect(Page::DELETE, $entity);
     }
 
-    /**
-     * TODO: migrate to excel export.
-     */
-    public function export(Request $request): Request
+    public function export(Request $request, ExportManager $exportManager, TableFactory $tableFactory): Response
     {
         $this->denyAccessUnlessGrantedCrud(Page::EXPORT, $this->getDefinition());
 
-        $entities = $this->getExportEntities($request);
-        if (! $entities) {
-            $this->addFlash('warning', 'Nichts zu exportieren');
+        $table = $tableFactory
+            ->create('index', DoctrineDataLoader::class, [
+                Table::OPTION_DEFAULT_LIMIT => 0,
+                Table::OPTION_DATALOADER_OPTIONS => [
+                    DoctrineDataLoader::OPTION_QUERY_BUILDER => $this->getDefinition()->getQueryBuilder(),
+                ],
+            ]);
 
-            return $this->redirectToRoute($this->getDefinition()::getRoutePrefix() . '_' . Page::INDEX);
-        }
+        $this->getDefinition()->configureExport($table);
 
-        $objectNormalizer = new ObjectNormalizer($this->definition);
-        $objectNormalizer->setCustomCallbacks($this->definition->getExportCallbacks());
-        $exportOptions = $this->definition->getExportOptions()['csv'];
-        $csvEncoder = new CsvEncoder($exportOptions['delimiter'], $exportOptions['enclosure'], $exportOptions['escapeChar'], $exportOptions['keySeparator']);
-        /** @var Serializer $serializer */
-        $serializer = new Serializer([$objectNormalizer], [$csvEncoder->setHeaderTransformation($this->definition->getExportHeaders())]);
-        $normalized = $serializer->normalize($entities);
-        $csv = $serializer->encode($normalized, 'csv');
-        $csv = static::convertToWindowsCharset($csv);
-        $response = new Response($csv);
-        $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set('Content-Disposition', 'attachment; filename="export.csv"');
+        $spreadsheet = $exportManager->createSpreadsheet($table);
+        $writer = new Xlsx($spreadsheet);
+        $response = new StreamedResponse();
+        $response->setCallback(
+            function () use ($writer) {
+                $writer->save('php://output');
+            }
+        );
+
+        $response->headers->set('Content-Type', 'application/vnd.ms-excel');
+        $response->headers->set('Content-Disposition', 'attachment; filename="export.xls"');
 
         return $response;
     }
@@ -485,36 +484,6 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         } catch (NoResultException | NonUniqueResultException $e) {
             throw new NotFoundHttpException(sprintf('Der gewünschte Datensatz existiert in %s nicht.', $this->getDefinition()->getTitle()));
         }
-    }
-
-    /**
-     * @return array
-     *
-     * @throws \whatwedo\TableBundle\Exception\DataLoaderNotAvailableException
-     */
-    protected function getExportEntities(Request $request)
-    {
-        $export = $request->query->get('export', []);
-        if (isset($export['definition']) && isset($export['acronym']) && isset($export['class']) && isset($export['id'])
-            && ($definition = $this->definitionManager->getDefinitionByClassName($export['definition']))
-            && ($content = $definition->getContent($export['acronym']))
-            && $content instanceof RelationContent
-            && ($repository = $this->entityManager->getRepository($export['class']))
-            && ($row = $repository->find($export['id']))
-        ) {
-            $table = $content->getTable($export['acronym'], $row);
-        } else {
-            $table = $this->tableFactory
-                ->createDoctrineTable('index', [
-                    'query_builder' => $this->getDefinition()->getQueryBuilder(),
-                ]);
-
-            // to respect column sort order
-            $this->getDefinition()->configureTable($table);
-            $this->getDefinition()->overrideTableConfiguration($table);
-        }
-
-        return $table->getRows();
     }
 
     protected function getIdentifierColumn()

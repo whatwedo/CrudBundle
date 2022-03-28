@@ -38,6 +38,7 @@ use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\Test\Data\CreateData;
 use whatwedo\CrudBundle\Test\Data\EditData;
+use whatwedo\CrudBundle\Test\Data\ExportData;
 use whatwedo\CrudBundle\Test\Data\Form\Upload;
 use whatwedo\CrudBundle\Test\Data\IndexData;
 use whatwedo\CrudBundle\Test\Data\ShowData;
@@ -74,6 +75,40 @@ abstract class AbstractCrudTest extends WebTestCase
         return [
             [
                 IndexData::new(),
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider exportData()
+     */
+    public function testExport(ExportData $indexData): void
+    {
+        if (! $this->getDefinition()::hasCapability(Page::EXPORT)) {
+            $this->markTestSkipped('no export capability, skip test');
+        }
+
+        if ($indexData->isSkip()) {
+            $this->markTestSkipped('index Test Skipped');
+        }
+
+        $this->getBrowser()->request('GET', $this->getRouter()->generate(
+            $this->getDefinition()::getRoute(Page::EXPORT),
+            $indexData->getQueryParameters()
+        ));
+        $this->assertResponseStatusCodeSame($indexData->getExpectedStatusCode());
+    }
+
+    public function exportData()
+    {
+        $testData = $this->getTestData();
+        if (isset($testData[Page::EXPORT->name])) {
+            return $testData[Page::EXPORT->name];
+        }
+
+        return [
+            [
+                ExportData::new(),
             ],
         ];
     }
