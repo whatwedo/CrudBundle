@@ -32,6 +32,7 @@ final class PersonFactory extends ModelFactory
     {
         return [
             'name' => self::faker()->name(),
+            'jobTitle' => self::faker()->jobTitle(),
         ];
     }
 

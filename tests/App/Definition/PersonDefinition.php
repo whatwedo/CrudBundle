@@ -8,6 +8,7 @@ use whatwedo\CrudBundle\Builder\DefinitionBuilder;
 use whatwedo\CrudBundle\Definition\AbstractDefinition;
 use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Tests\App\Entity\Person;
+use whatwedo\TableBundle\Table\Column;
 use whatwedo\TableBundle\Table\Table;
 
 class PersonDefinition extends AbstractDefinition
@@ -26,8 +27,8 @@ class PersonDefinition extends AbstractDefinition
 
         $builder
             ->addBlock('base')
-            ->addContent('name', null, [
-            ])
+            ->addContent('name', null, [])
+            ->addContent('jobTitle', null, [])
         ;
     }
 
@@ -52,8 +53,20 @@ class PersonDefinition extends AbstractDefinition
     {
         parent::configureTable($table);
         $table
-            ->addColumn('name', null, [
-            ])
+            ->addColumn('name', null, [])
         ;
+    }
+
+
+    public function configureExport(Table $table)
+    {
+        $this->configureTable($table);
+
+        $table->addColumn('id', null, [
+            Column::OPTION_PRIORITY => 200
+        ])
+        ->addColumn('jobTitle');
+
+
     }
 }

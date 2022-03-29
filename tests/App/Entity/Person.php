@@ -29,6 +29,13 @@ class Person
     private ?string $name = null;
 
     /**
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank()
+     * @Assert\NotNull()
+     */
+    private ?string $jobTitle = null;
+
+    /**
      * @Assert\Callback(groups={"check-not-valid"})
      */
     public function validate(ExecutionContextInterface $context, $payload)
@@ -57,6 +64,22 @@ class Person
         $this->name = $name;
 
         return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getJobTitle(): ?string
+    {
+        return $this->jobTitle;
+    }
+
+    /**
+     * @param string|null $jobTitle
+     */
+    public function setJobTitle(?string $jobTitle): void
+    {
+        $this->jobTitle = $jobTitle;
     }
 
     public function __toString(): string

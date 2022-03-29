@@ -35,6 +35,7 @@ use whatwedo\CrudBundle\Test\Data\CreateData;
 use whatwedo\CrudBundle\Test\Data\EditData;
 use whatwedo\CrudBundle\Tests\App\Definition\PersonDefinition;
 use whatwedo\CrudBundle\Tests\App\Entity\Person;
+use whatwedo\CrudBundle\Tests\App\Factory\PersonFactory;
 
 class FormOptionsTest extends AbstractCrudTest
 {
@@ -45,6 +46,7 @@ class FormOptionsTest extends AbstractCrudTest
                 'with-data' => [
                     CreateData::new()->setFormData([
                         'name' => 'not-valid',
+                        'jobTitle' => 'Joker',
                     ]),
                 ],
                 'empty' => [
@@ -74,10 +76,6 @@ class FormOptionsTest extends AbstractCrudTest
     protected function setUp(): void
     {
         $this->getBrowser();
-        $person = new Person();
-        $person->setName('TEST name');
-        $em = self::getContainer()->get(EntityManagerInterface::class);
-        $em->persist($person);
-        $em->flush($person);
+        PersonFactory::createOne();
     }
 }
