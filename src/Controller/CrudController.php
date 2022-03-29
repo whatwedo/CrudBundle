@@ -289,8 +289,8 @@ class CrudController extends AbstractController implements CrudDefinitionControl
             }
         );
 
-        $response->headers->set('Content-Type', 'application/vnd.ms-excel');
-        $response->headers->set('Content-Disposition', 'attachment; filename="export.xls"');
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', 'attachment; filename="export.xlsx"');
 
         return $response;
     }
