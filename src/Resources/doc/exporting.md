@@ -19,61 +19,42 @@ The CrudBundle allows you to easily export your data to CSV files. For doing so 
     }
 ```
 
-2: Choose which attributes to export. Override `getExportAttributes()` in your Definition: (Attributes need to have a getter in your entity class)
-```
-    public function getExportAttributes()
-    {
-        return ['attrname', 'attrname2'];
-    }
-```
-
 You now see a export button at the bottom of your table.
 
+By default the Table configuration will be exported.
 
 ## Customization
 
-To format your output like a DateTime use Export Callbacks like follwing:
-```
-    public function getExportCallbacks()
+To export define your custom export, just override the `configureExport` method. Column as you need.
+
+```   
+    public function configureExport(Table $table)
     {
-        return [
-            'attrname' => function ($attr, $entity) {
-            	// TODO: customize
-                return $attr;
-            }
-        ];
+        $this->configureTable($table);
+
+        $table->addColumn('id', null, [
+            Column::OPTION_PRIORITY => 200
+        ])
+        ->addColumn('jobTitle');
     }
 ```
 
-To override the headers use Export Headers:
-```
-    public function getExportHeaders()
-    {
-        return [
-            'attrname' => 'Label Attrname',
-            'attrname2' => 'Label Attrname 2'
-        ];
-    }
-```
 
-To override specific Csv Options like delimiter use Export Options:
-```
-    /**
-     * @return array
-     */
-    public function getExportOptions()
+
+## Export Column options
+
+```   
+    public function configureTable(Table $table): void
     {
-        return array_merge([
-            'csv' => [
-                'delimiter' => "\t"			<--- use tabs instead of ";" 
-            ]
-        ], parent::getExportOptions());
+        parent::configureTable($table);
+        $table
+            ->addColumn('name', null, [
+                Column::OPTION_EXPORT => [
+                    Column::OPTION_EXPORT_EXPORTABLE => false
+                ]
+            ])
+        ;
     }
-```
-You can override following options (these are also the default values):
-```
-	'delimiter'     => ';',
-	'enclosure'     => '"',
-	'escapeChar'    => '\\',
-	'keySeparator'  => '.'
-```
+```   
+
+
