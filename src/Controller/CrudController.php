@@ -252,7 +252,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         try {
             $this->entityManager->remove($entity);
             $this->dispatchEvent(CrudEvent::PRE_DELETE_PREFIX, $entity);
-            $this->entityManager->flush($entity);
+            $this->entityManager->flush();
             $this->dispatchEvent(CrudEvent::POST_DELETE_PREFIX, $entity);
             $this->addFlash('success', 'Eintrag erfolgreich gelöscht.');
         } catch (\Exception $e) {
