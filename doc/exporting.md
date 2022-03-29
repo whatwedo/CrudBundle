@@ -51,6 +51,7 @@ To export define your custom export, just override the `configureExport` method.
             ->addColumn('name', null, [
                 Column::OPTION_EXPORT => [
                     Column::OPTION_EXPORT_EXPORTABLE => false
+                    Column::OPTION_EXPORT_TEXTWRAP => true
                 ]
             ])
         ;

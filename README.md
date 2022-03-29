@@ -16,7 +16,7 @@ Features include:
 
 ## Documentation
 
-The source of the documentation is stored in the `Resources/doc` folder. [Jump to the master documentation](Resources/doc/index.md)
+The source of the documentation is stored in the `Resources/doc` folder. [Jump to the master documentation](doc/index.md)
 
 ## Dependencies
 
