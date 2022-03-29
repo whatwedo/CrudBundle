@@ -31,7 +31,7 @@ ecs:
 
 ## check code with phpstan
 phpstan:
-	vendor/bin/phpstan analyse src/ tests/
+	vendor/bin/phpstan
 
 ## check code with all tools
 styles:
