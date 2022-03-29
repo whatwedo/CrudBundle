@@ -57,16 +57,13 @@ class PersonDefinition extends AbstractDefinition
         ;
     }
 
-
     public function configureExport(Table $table)
     {
         $this->configureTable($table);
 
         $table->addColumn('id', null, [
-            Column::OPTION_PRIORITY => 200
+            Column::OPTION_PRIORITY => 200,
         ])
-        ->addColumn('jobTitle');
-
-
+            ->addColumn('jobTitle');
     }
 }

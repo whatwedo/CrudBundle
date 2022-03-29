@@ -29,12 +29,10 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Tests\Crud;
 
-use Doctrine\ORM\EntityManagerInterface;
 use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Test\Data\CreateData;
 use whatwedo\CrudBundle\Test\Data\EditData;
 use whatwedo\CrudBundle\Tests\App\Definition\PersonDefinition;
-use whatwedo\CrudBundle\Tests\App\Entity\Person;
 use whatwedo\CrudBundle\Tests\App\Factory\PersonFactory;
 
 class FormOptionsTest extends AbstractCrudTest

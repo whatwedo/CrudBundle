@@ -66,17 +66,11 @@ class Person
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getJobTitle(): ?string
     {
         return $this->jobTitle;
     }
 
-    /**
-     * @param string|null $jobTitle
-     */
     public function setJobTitle(?string $jobTitle): void
     {
         $this->jobTitle = $jobTitle;
