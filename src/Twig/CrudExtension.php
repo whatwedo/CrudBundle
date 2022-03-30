@@ -4,17 +4,20 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Twig;
 
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
+use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 class CrudExtension extends AbstractExtension
 {
     public function __construct(
         protected Environment $environment,
-        protected DefinitionManager $definitionManager
+        protected DefinitionManager $definitionManager,
+        protected UrlGeneratorInterface $urlGenerator
     ) {
     }
 
@@ -24,6 +27,7 @@ class CrudExtension extends AbstractExtension
             new TwigFunction('wwd_crud_render_breadcrumbs', [$this, 'renderBreadcrumbs'], [
                 'is_safe' => ['html'],
             ]),
+            new TwigFunction('wwd_crud_entity_path', fn ($entityOrClass, Page $page) => $this->getEntityPath($entityOrClass, $page)),
         ];
     }
 
@@ -31,6 +35,7 @@ class CrudExtension extends AbstractExtension
     {
         return [
             new TwigFilter('wwd_crud_entity_alias', fn ($entityOrClass) => $this->getEntityAlias($entityOrClass)),
+            new TwigFilter('wwd_crud_entity_has_definition', fn ($entityOrClass) => $this->hasDefinition($entityOrClass)),
         ];
     }
 
@@ -44,10 +49,42 @@ class CrudExtension extends AbstractExtension
         return '';
     }
 
+    public function hasDefinition($entityOrClass)
+    {
+        try {
+            $this->definitionManager->getDefinitionByEntity($entityOrClass);
+
+            return true;
+        } catch (\Exception $ex) {
+        }
+
+        return false;
+    }
+
     public function getEntityAlias($entityOrClass)
     {
         $defnition = $this->definitionManager->getDefinitionByEntity($entityOrClass);
 
         return $defnition::getEntityAlias();
+    }
+
+    public function getEntityPath($entityOrClass, Page $page)
+    {
+        $defnition = $this->definitionManager->getDefinitionByEntity($entityOrClass);
+
+        $route = $defnition::getRoute($page);
+
+        $routeOptions = [];
+        if (
+            is_object($entityOrClass)
+            && method_exists($entityOrClass, 'getId')
+            && ($page === Page::SHOW
+            || $page === Page::EDIT
+            || $page === Page::DELETE)
+        ) {
+            $routeOptions['id'] = $entityOrClass->getId();
+        }
+
+        return $this->urlGenerator->generate($route, $routeOptions);
     }
 }
