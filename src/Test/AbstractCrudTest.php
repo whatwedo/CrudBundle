@@ -102,14 +102,11 @@ abstract class AbstractCrudTest extends WebTestCase
             $indexData->getQueryParameters()
         ));
         $this->assertResponseStatusCodeSame($indexData->getExpectedStatusCode());
-
     }
 
     public function indexSortData()
     {
         $testData = $this->getTestData();
-
-
 
         if (isset($testData[Page::INDEX->name])) {
             $testData = $testData[Page::INDEX->name];
@@ -147,11 +144,12 @@ abstract class AbstractCrudTest extends WebTestCase
                         /** @var IndexData $indexData */
                         $indexData = clone $testItem[0];
                         $indexData->setQueryParameters(
-                            array_merge($indexData->getQueryParameters(),
+                            array_merge(
+                                $indexData->getQueryParameters(),
                                 $sortQueryData
                             )
                         );
-                        $sortTestData[$column->getIdentifier() . '-asc'] = [  $indexData ];
+                        $sortTestData[$column->getIdentifier() . '-asc'] = [$indexData];
                     }
                 }
             }
