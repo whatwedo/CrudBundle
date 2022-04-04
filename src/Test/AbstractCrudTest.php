@@ -42,6 +42,11 @@ use whatwedo\CrudBundle\Test\Data\ExportData;
 use whatwedo\CrudBundle\Test\Data\Form\Upload;
 use whatwedo\CrudBundle\Test\Data\IndexData;
 use whatwedo\CrudBundle\Test\Data\ShowData;
+use whatwedo\TableBundle\DataLoader\DoctrineDataLoader;
+use whatwedo\TableBundle\DataLoader\DoctrineTreeDataLoader;
+use whatwedo\TableBundle\Entity\TreeInterface;
+use whatwedo\TableBundle\Factory\TableFactory;
+use whatwedo\TableBundle\Table\Column;
 
 abstract class AbstractCrudTest extends WebTestCase
 {
@@ -77,6 +82,82 @@ abstract class AbstractCrudTest extends WebTestCase
                 IndexData::new(),
             ],
         ];
+    }
+
+    /**
+     * @dataProvider indexSortData()
+     */
+    public function testIndexSort(IndexData $indexData): void
+    {
+        if (! $this->getDefinition()::hasCapability(Page::INDEX)) {
+            $this->markTestSkipped('no index capability, skip test');
+        }
+
+        if ($indexData->isSkip()) {
+            $this->markTestSkipped('index Test Skipped');
+        }
+
+        $this->getBrowser()->request('GET', $this->getRouter()->generate(
+            $this->getDefinition()::getRoute(Page::INDEX),
+            $indexData->getQueryParameters()
+        ));
+        $this->assertResponseStatusCodeSame($indexData->getExpectedStatusCode());
+
+    }
+
+    public function indexSortData()
+    {
+        $testData = $this->getTestData();
+
+
+
+        if (isset($testData[Page::INDEX->name])) {
+            $testData = $testData[Page::INDEX->name];
+        }
+
+        $testData = [
+            [
+                IndexData::new(),
+            ],
+        ];
+
+        $sortTestData = [];
+
+        $tableFactory = self::getContainer()->get(TableFactory::class);
+        $dataLoader = DoctrineDataLoader::class;
+        if (is_subclass_of($this->getDefinition()::getEntity(), TreeInterface::class)) {
+            $dataLoader = DoctrineTreeDataLoader::class;
+        }
+
+        $table = $tableFactory->create('index', $dataLoader, [
+            'dataloader_options' => [
+                DoctrineDataLoader::OPTION_QUERY_BUILDER => $this->getDefinition()->getQueryBuilder(),
+            ],
+        ]);
+
+        $this->getDefinition()->configureTable($table);
+
+        if ($table->getSortExtension()) {
+            $sortExtension = $table->getSortExtension();
+
+            foreach ($table->getColumns() as $column) {
+                if ($column->getOption(Column::OPTION_SORTABLE)) {
+                    $sortQueryData = $sortExtension->getOrderParameters($column, 'asc');
+                    foreach ($testData as $testKey => $testItem) {
+                        /** @var IndexData $indexData */
+                        $indexData = clone $testItem[0];
+                        $indexData->setQueryParameters(
+                            array_merge($indexData->getQueryParameters(),
+                                $sortQueryData
+                            )
+                        );
+                        $sortTestData[$column->getIdentifier() . '-asc'] = [  $indexData ];
+                    }
+                }
+            }
+        }
+
+        return $sortTestData;
     }
 
     /**
