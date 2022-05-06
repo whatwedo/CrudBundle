@@ -21,11 +21,11 @@ add this repository to you composer.json: (Sadly composer cannot load repositori
         "type": "package",
         "package": {
             "name": "twbs/icons",
-            "version": "1.6.1",
+            "version": "1.8.1",
             "source": {
                 "url": "https://github.com/twbs/icons",
                 "type": "git",
-                "reference": "tags/v1.6.1"
+                "reference": "tags/v1.8.1"
             }
         }
     }
@@ -46,7 +46,7 @@ so you need to add these lines manually to the composer.json to get the version 
     ...
 ```
 After successfully installing the bundle, you should see changes in the files
-`assets/controller.js`, `config/bundles.php`, `package.json`, `symfony.lock`, `composer.json` and `composer.lock`.
+`assets/controller.json`, `config/bundles.php`, `package.json`, `symfony.lock`, `composer.json` and `composer.lock`.
 
 Then, add our routes to your ```config/routes.yaml```
 ```
