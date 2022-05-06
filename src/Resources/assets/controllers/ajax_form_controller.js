@@ -34,6 +34,7 @@ export default class extends Controller {
             .then(async response => {
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(await response.text(), 'text/html');
+                doc.querySelectorAll('h1').forEach((element) => element.remove());
                 form.parentNode.replaceChild(doc.body, form);
             })
         ;

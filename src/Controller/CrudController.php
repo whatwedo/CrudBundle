@@ -336,12 +336,10 @@ class CrudController extends AbstractController implements CrudDefinitionControl
             $this->dispatchEvent(CrudEvent::CREATE_SHOW_PREFIX, $entity);
             $form = $view->getCreateForm();
             $toRenderPage = Page::CREATE;
-            $uneditedEntity = null;
         } else {
             $view = $this->getDefinition()->createView(Page::EDIT, $entity);
             $form = $view->getEditForm();
             $toRenderPage = Page::EDIT;
-            $uneditedEntity = $this->getEntityOr404($request);
         }
 
         $form->handleRequest($request);
@@ -351,7 +349,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $form = $toRenderPage === Page::CREATE ? $view->getCreateForm() : $view->getEditForm();
         $context = [
             'view' => $view,
-            'title' => $this->getDefinition()->getTitle(null, $toRenderPage),
+            'title' => $this->getDefinition()->getTitle($data, $toRenderPage),
             'form' => $form->createView(),
             '_route' => $toRenderPage,
         ];
