@@ -54,12 +54,6 @@ whatwedo_crud_bundle:
     resource: "@whatwedoCrudBundle/Resources/config/routing.yml"
     prefix: /
 ```
-As the CrudBundle needs the TableBundle you also need to include the routes of the TableBundle:
-```
-whatwedo_table_bundle:
-    resource: "@whatwedoTableBundle/Resources/config/routing.yml"
-    prefix: /
-```
 
 ## Use the bundle
 
