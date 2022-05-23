@@ -167,7 +167,7 @@ final class MakeDefinition extends AbstractMaker
 
         $this->writeSuccessMessage($io);
 
-        $io->text(sprintf('Next: Check your new Definition by going to <fg=yellow>%s/</>', Str::asRoutePath($definitionClassDetails->getRelativeNameWithoutSuffix())));
+        $io->text(sprintf('Next: Check your new Definition by going to <fg=yellow>%s/</>', Str::asRoutePath('app_'.$definitionClassDetails->getRelativeNameWithoutSuffix())));
     }
 
     public function configureDependencies(DependencyBuilder $dependencies)
@@ -279,10 +279,11 @@ final class MakeDefinition extends AbstractMaker
         }
 
         $data = '';
-        $data .= sprintf('%s.title: %s', StringUtil::fqcnToBlockPrefix($entityClassDetails->getFullName()), $entityClassDetails->getShortName()) . PHP_EOL;
-        $data .= sprintf('menu.%s.title: %s', StringUtil::fqcnToBlockPrefix($entityClassDetails->getFullName()), $entityClassDetails->getShortName()) . PHP_EOL;
+        $data .= sprintf('wwd.app_entity_%s.title: %s', StringUtil::fqcnToBlockPrefix($entityClassDetails->getFullName()), $entityClassDetails->getShortName()) . PHP_EOL;
+        $data .= sprintf('wwd.app_entity_%s.title_plural: %s', StringUtil::fqcnToBlockPrefix($entityClassDetails->getFullName()), $entityClassDetails->getShortName()) . PHP_EOL;
+        $data .= sprintf('wwd.app_entity_%s.block.base: %s', StringUtil::fqcnToBlockPrefix($entityClassDetails->getFullName()), 'Base' . PHP_EOL);
         foreach ($fieldNames as $fieldName) {
-            $data .= sprintf('%s.%s: %s', StringUtil::fqcnToBlockPrefix($entityClassDetails->getFullName()), $fieldName, $fieldName) . PHP_EOL;
+            $data .= sprintf('wwd.app_entity_%s.property.%s: %s', StringUtil::fqcnToBlockPrefix($entityClassDetails->getFullName()), $fieldName, $fieldName) . PHP_EOL;
         }
 
         file_put_contents(
