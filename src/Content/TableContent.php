@@ -11,6 +11,32 @@ use whatwedo\TableBundle\Table\Table;
 
 class TableContent extends AbstractContent
 {
+    public const OPT_ACCESSOR_PATH = 'accessor_path';
+
+    public const OPT_TABLE_CONFIGURATION = 'table_configuration';
+
+    public const OPT_DEFINITION = 'definition';
+
+    public const OPT_ROUTE_ADDITION_KEY = 'route_addition_key';
+
+    public const OPT_SHOW_INDEX_BUTTON = 'show_index_button';
+
+    public const OPT_LABEL = 'label';
+
+    public const OPT_CALLABLE = 'callable';
+
+    public const OPT_ATTR = 'attr';
+
+    public const OPT_VISIBILITY = 'visibility';
+
+    public const OPT_SHOW_VOTER_ATTRIBUTE = 'show_voter_attribute';
+
+    public const OPT_EDIT_VOTER_ATTRIBUTE = 'edit_voter_attribute';
+
+    public const OPT_CREATE_VOTER_ATTRIBUTE = 'create_voter_attribute';
+
+    public const OPT_BLOCK_PREFIX = 'block_prefix';
+
     public function isTable(): bool
     {
         return true;
@@ -18,13 +44,13 @@ class TableContent extends AbstractContent
 
     public function renderTable(Table $table, $row)
     {
-        if (is_callable($this->options['table_configuration'])) {
-            $this->options['table_configuration']($table);
+        if (is_callable($this->options[self::OPT_TABLE_CONFIGURATION])) {
+            $this->options[self::OPT_TABLE_CONFIGURATION]($table);
         }
 
         $actionColumnItems = [];
 
-        if ($this->getOption('definition')
+        if ($this->getOption(self::OPT_DEFINITION)
             && $this->hasCapability(Page::SHOW)) {
             $showRoute = $this->getRoute(Page::SHOW);
 
@@ -68,11 +94,11 @@ class TableContent extends AbstractContent
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'accessor_path' => $this->acronym,
-            'table_configuration' => null,
-            'definition' => null,
-            'route_addition_key' => null,
-            'show_index_button' => false,
+            self::OPT_ACCESSOR_PATH => $this->acronym,
+            self::OPT_TABLE_CONFIGURATION => null,
+            self::OPT_DEFINITION => null,
+            self::OPT_ROUTE_ADDITION_KEY => null,
+            self::OPT_SHOW_INDEX_BUTTON => false,
         ]);
     }
 
@@ -81,7 +107,7 @@ class TableContent extends AbstractContent
      */
     protected function hasCapability($capability): bool
     {
-        return call_user_func([$this->getOption('definition'), 'hasCapability'], $capability);
+        return call_user_func([$this->getOption(self::OPT_DEFINITION), 'hasCapability'], $capability);
     }
 
     /**
@@ -89,6 +115,6 @@ class TableContent extends AbstractContent
      */
     protected function getRoute($suffix): string
     {
-        return call_user_func([$this->options['definition'], 'getRoute'], $suffix);
+        return call_user_func([$this->options[self::OPT_DEFINITION], 'getRoute'], $suffix);
     }
 }

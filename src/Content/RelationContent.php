@@ -34,6 +34,60 @@ use function implode;
 
 class RelationContent extends TableContent
 {
+    public const OPT_ACCESSOR_PATH = 'accessor_path';
+
+    public const OPT_TABLE_OPTIONS = 'table_options';
+
+    public const OPT_FORM_TYPE = 'form_type';
+
+    public const OPT_FORM_OPTIONS = 'form_options';
+
+    public const OPT_FORM_OPTIONS_MULTIPLE = 'multiple';
+
+    public const OPT_FORM_OPTIONS_DEFINITTION = self::OPT_DEFINITION;
+
+    public const OPT_HELP = 'help';
+
+    public const OPT_AJAX_FORM_TRIGGER = 'ajax_form_trigger';
+
+    public const OPT_QUERY_BUILDER_CONFIGURATION = 'query_builder_configuration';
+
+    public const OPT_TABLE_CONFIGURATION = 'table_configuration';
+
+    public const OPT_ACTION_CONFIGURATION = 'action_configuration';
+
+    public const OPT_ROUTE_ADDITION_KEY = 'route_addition_key';
+
+    public const OPT_SHOW_INDEX_BUTTON = 'show_index_button';
+
+    public const OPT_ADD_VOTER_ATTRIBUTE = 'add_voter_attribute';
+
+    public const OPT_CREATE_URL = 'create_url';
+
+    public const OPT_RELOAD_URL = 'reload_url';
+
+    public const OPT_VISIBILITY = 'visibility';
+
+    public const OPT_SHOW_TABLE_IN_FORM = 'show_table_in_form';
+
+    public const OPT_DEFINITION = 'definition';
+
+    public const OPT_CLASS = 'class';
+
+    public const OPT_LABEL = 'label';
+
+    public const OPT_CALLABLE = 'callable';
+
+    public const OPT_ATTR = 'attr';
+
+    public const OPT_SHOW_VOTER_ATTRIBUTE = 'show_voter_attribute';
+
+    public const OPT_EDIT_VOTER_ATTRIBUTE = 'edit_voter_attribute';
+
+    public const OPT_CREATE_VOTER_ATTRIBUTE = 'create_voter_attribute';
+
+    public const OPT_BLOCK_PREFIX = 'block_prefix';
+
     protected array $accessorPathDefinitionCacheMap = [];
 
     public function __construct(
@@ -57,7 +111,7 @@ class RelationContent extends TableContent
 
     public function getIndexRoute(): ?string
     {
-        if (! $this->options['show_index_button']) {
+        if (! $this->options[self::OPT_SHOW_INDEX_BUTTON]) {
             return null;
         }
 
@@ -86,9 +140,9 @@ class RelationContent extends TableContent
     {
         $parameters = [];
 
-        if ($this->options['route_addition_key'] !== null
+        if ($this->options[self::OPT_ROUTE_ADDITION_KEY] !== null
             && $data) {
-            $parameters[$this->options['route_addition_key']] = $data->getId();
+            $parameters[$this->options[self::OPT_ROUTE_ADDITION_KEY]] = $data->getId();
         }
 
         return $parameters;
@@ -96,14 +150,14 @@ class RelationContent extends TableContent
 
     public function isAddAllowed(): bool
     {
-        $definition = $this->definitionManager->getDefinitionByClassName($this->getOption('definition'));
+        $definition = $this->definitionManager->getDefinitionByClassName($this->getOption(self::OPT_DEFINITION));
 
         return $this->authorizationChecker->isGranted(Page::CREATE, $definition);
     }
 
     public function getAddVoterAttribute()
     {
-        return $this->options['add_voter_attribute'];
+        return $this->options[self::OPT_ADD_VOTER_ATTRIBUTE];
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -111,33 +165,33 @@ class RelationContent extends TableContent
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'accessor_path' => $this->acronym,
-            'table_options' => [],
-            'form_type' => EntityAjaxType::class,
-            'form_options' => fn (Options $options) => [
-                'definition' => $this->getTargetDefinition($options['accessor_path'])::class,
-                'multiple' => true,
+            self::OPT_ACCESSOR_PATH => $this->acronym,
+            self::OPT_TABLE_OPTIONS => [],
+            self::OPT_FORM_TYPE => EntityAjaxType::class,
+            self::OPT_FORM_OPTIONS => fn (Options $options) => [
+                self::OPT_FORM_OPTIONS_DEFINITTION => $this->getTargetDefinition($options[self::OPT_ACCESSOR_PATH])::class,
+                self::OPT_FORM_OPTIONS_MULTIPLE => true,
             ],
-            'help' => null,
-            'ajax_form_trigger' => false,
-            'query_builder_configuration' => null,
-            'table_configuration' => null,
-            'action_configuration' => null,
-            'route_addition_key' => $this->definition::getAlias(),
-            'show_index_button' => false,
-            'add_voter_attribute' => Page::EDIT,
-            'create_url' => null,
-            'reload_url' => null,
-            'visibility' => [Page::SHOW, Page::EDIT, Page::CREATE],
-            'show_table_in_form' => false,
+            self::OPT_HELP => null,
+            self::OPT_AJAX_FORM_TRIGGER => false,
+            self::OPT_QUERY_BUILDER_CONFIGURATION => null,
+            self::OPT_TABLE_CONFIGURATION => null,
+            self::OPT_ACTION_CONFIGURATION => null,
+            self::OPT_ROUTE_ADDITION_KEY => $this->definition::getAlias(),
+            self::OPT_SHOW_INDEX_BUTTON => false,
+            self::OPT_ADD_VOTER_ATTRIBUTE => Page::EDIT,
+            self::OPT_CREATE_URL => null,
+            self::OPT_RELOAD_URL => null,
+            self::OPT_VISIBILITY => [Page::SHOW, Page::EDIT, Page::CREATE],
+            self::OPT_SHOW_TABLE_IN_FORM => false,
         ]);
 
-        $resolver->setRequired('create_url');
-        $resolver->setRequired('reload_url');
+        $resolver->setRequired(self::OPT_CREATE_URL);
+        $resolver->setRequired(self::OPT_RELOAD_URL);
 
-        $resolver->setDefault('definition', fn (Options $options) => $this->getTargetDefinition($options['accessor_path'])::class);
-        $resolver->setDefault('class', fn (Options $options) => $this->getTargetDefinition($options['accessor_path'])::getEntity());
-        $resolver->setDefault('reload_url', function ($entity) {
+        $resolver->setDefault(self::OPT_DEFINITION, fn (Options $options) => $this->getTargetDefinition($options['accessor_path'])::class);
+        $resolver->setDefault(self::OPT_CLASS, fn (Options $options) => $this->getTargetDefinition($options['accessor_path'])::getEntity());
+        $resolver->setDefault(self::OPT_RELOAD_URL, function ($entity) {
             if ($this->getDefinition()::hasCapability(Page::RELOAD)) {
                 return $this->urlGenerator->generate(
                     $this->getDefinition()::getRoute(Page::RELOAD),
@@ -151,10 +205,10 @@ class RelationContent extends TableContent
 
             return null;
         });
-        $resolver->setDefault('create_url', function ($entity) {
-            if ($this->getOption('definition')::hasCapability(Page::CREATE)) {
+        $resolver->setDefault(self::OPT_CREATE_URL, function ($entity) {
+            if ($this->getOption(self::OPT_DEFINITION)::hasCapability(Page::CREATE)) {
                 return $this->urlGenerator->generate(
-                    $this->getOption('definition')::getRoute(Page::CREATE),
+                    $this->getOption(self::OPT_DEFINITION)::getRoute(Page::CREATE),
                     [
                         $this->getDefinition()::getAlias() => $entity->getId(),
                         'mode' => PageMode::MODAL->value,
@@ -165,13 +219,13 @@ class RelationContent extends TableContent
             return null;
         });
 
-        $resolver->setAllowedTypes('create_url', ['callable', 'null']);
-        $resolver->setAllowedTypes('reload_url', ['callable', 'null']);
-        $resolver->setAllowedTypes('table_options', ['array']);
-        $resolver->setAllowedTypes('form_options', ['array']);
-        $resolver->setAllowedTypes('table_configuration', ['callable', 'null']);
-        $resolver->setAllowedTypes('action_configuration', ['callable', 'null']);
-        $resolver->setAllowedTypes('query_builder_configuration', ['callable', 'null']);
+        $resolver->setAllowedTypes(self::OPT_CREATE_URL, ['callable', 'null']);
+        $resolver->setAllowedTypes(self::OPT_RELOAD_URL, ['callable', 'null']);
+        $resolver->setAllowedTypes(self::OPT_TABLE_OPTIONS, ['array']);
+        $resolver->setAllowedTypes(self::OPT_FORM_OPTIONS, ['array']);
+        $resolver->setAllowedTypes(self::OPT_TABLE_CONFIGURATION, ['callable', 'null']);
+        $resolver->setAllowedTypes(self::OPT_ACTION_CONFIGURATION, ['callable', 'null']);
+        $resolver->setAllowedTypes(self::OPT_QUERY_BUILDER_CONFIGURATION, ['callable', 'null']);
     }
 
     public function getRequest(): ?\Symfony\Component\HttpFoundation\Request
@@ -184,22 +238,22 @@ class RelationContent extends TableContent
      */
     public function getFormOptions(array $options = []): array
     {
-        if ($this->getOption('form_type') instanceof EntityHiddenType
-            || $this->getOption('form_type') instanceof HiddenType) {
+        if ($this->getOption(self::OPT_FORM_TYPE) instanceof EntityHiddenType
+            || $this->getOption(self::OPT_FORM_TYPE) instanceof HiddenType) {
             $this->options['label'] = false;
         }
 
-        if ($this->getOption('form_type') instanceof ChoiceType
-            && ! isset($options['class'])) {
-            $options['class'] = $this->getOption('class');
+        if ($this->getOption(self::OPT_FORM_TYPE) instanceof ChoiceType
+            && ! isset($options[self::OPT_CLASS])) {
+            $options[self::OPT_CLASS] = $this->getOption(self::OPT_CLASS);
         }
 
-        if ($this->getOption('form_type') instanceof ChoiceType
+        if ($this->getOption(self::OPT_FORM_TYPE) instanceof ChoiceType
             && ! isset($options['multiple'])) {
             $options['multiple'] = true;
         }
 
-        return array_merge($options, $this->options['form_options']);
+        return array_merge($options, $this->options[self::OPT_FORM_OPTIONS]);
     }
 
     /**
@@ -209,7 +263,7 @@ class RelationContent extends TableContent
      */
     public function getPreselectDefinition()
     {
-        return $this->getOption('definition');
+        return $this->getOption(self::OPT_DEFINITION);
     }
 
     /**
@@ -217,13 +271,13 @@ class RelationContent extends TableContent
      */
     public function getTable($entity): \whatwedo\TableBundle\Table\Table
     {
-        $options = $this->options['table_options'];
+        $options = $this->options[self::OPT_TABLE_OPTIONS];
 
         /*
          * $row = Lesson
          */
         $reverseMapping = $this->getReverseMapping($entity);
-        $targetDefinition = $this->definitionManager->getDefinitionByClassName($this->getOption('definition'));
+        $targetDefinition = $this->definitionManager->getDefinitionByClassName($this->getOption(self::OPT_DEFINITION));
 
         $queryBuilder = $targetDefinition->getQueryBuilder();
 
@@ -253,8 +307,8 @@ class RelationContent extends TableContent
 
         $options['dataloader_options']['query_builder'] = $queryBuilder;
 
-        if (is_callable($this->options['query_builder_configuration'])) {
-            $this->options['query_builder_configuration']($queryBuilder, $targetDefinition);
+        if (is_callable($this->options[self::OPT_QUERY_BUILDER_CONFIGURATION])) {
+            $this->options[self::OPT_QUERY_BUILDER_CONFIGURATION]($queryBuilder, $targetDefinition);
         }
 
         $table = $this->tableFactory->create($this->acronym, DoctrineDataLoader::class, $options);
@@ -264,8 +318,8 @@ class RelationContent extends TableContent
         $table->setOption('title', null); // no h1 for relation content
         //$targetDefinition->overrideTableConfiguration($table);
 
-        if (is_callable($this->options['table_configuration'])) {
-            $this->options['table_configuration']($table);
+        if (is_callable($this->options[self::OPT_TABLE_CONFIGURATION])) {
+            $this->options[self::OPT_TABLE_CONFIGURATION]($table);
         }
 
         $actionColumnItems = [];
@@ -298,8 +352,8 @@ class RelationContent extends TableContent
             //$table->setExportRoute($this->getRoute(Page::EXPORT));
         }
 
-        if (is_callable($this->options['action_configuration'])) {
-            $actionColumnItems = $this->options['action_configuration']($actionColumnItems);
+        if (is_callable($this->options[self::OPT_ACTION_CONFIGURATION])) {
+            $actionColumnItems = $this->options[self::OPT_ACTION_CONFIGURATION]($actionColumnItems);
         }
         /*
                 $table->addColumn('actions', ActionColumn::class, [
@@ -338,27 +392,27 @@ class RelationContent extends TableContent
 
     public function getCreateUrl($entity)
     {
-        if (is_callable($this->options['create_url'])) {
-            return $this->options['create_url']($entity);
+        if (is_callable($this->options[self::OPT_CREATE_URL])) {
+            return $this->options[self::OPT_CREATE_URL]($entity);
         }
 
-        return $this->options['create_url'];
+        return $this->options[self::OPT_CREATE_URL];
     }
 
     public function getReloadUrl($entity)
     {
-        if (is_callable($this->options['reload_url'])) {
-            return $this->options['reload_url']($entity);
+        if (is_callable($this->options[self::OPT_RELOAD_URL])) {
+            return $this->options[self::OPT_RELOAD_URL]($entity);
         }
 
-        return $this->options['reload_url'];
+        return $this->options[self::OPT_RELOAD_URL];
     }
 
     private function getTargetDefinition($accessorPath = null): \whatwedo\CrudBundle\Definition\DefinitionInterface
     {
         $metadataFactory = $this->getMetadataFactory();
 
-        $associations = explode('.', $accessorPath ?: $this->getOption('accessor_path'));
+        $associations = explode('.', $accessorPath ?: $this->getOption(self::OPT_ACCESSOR_PATH));
 
         /*
          * 1:
@@ -407,7 +461,7 @@ class RelationContent extends TableContent
          */
         $stack = [];
 
-        foreach (explode('.', $this->getOption('accessor_path')) as $part) {
+        foreach (explode('.', $this->getOption(self::OPT_ACCESSOR_PATH)) as $part) {
             $targetEntity = empty($stack) ? $this->definition::getEntity() : end($stack)['_mapping']['targetEntity'];
 
             $mapping = $this->getMetadataFactory()->getMetadataFor($targetEntity)->getAssociationMapping($part);
