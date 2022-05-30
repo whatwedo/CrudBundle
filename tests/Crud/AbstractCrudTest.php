@@ -39,12 +39,9 @@ abstract class AbstractCrudTest extends BaseAbstractCrudTest
     protected function getBrowser(): KernelBrowser
     {
         if (! $this->client) {
-            if (! self::$booted) {
-                $this->client = static::createClient();
-            } else {
-                $this->client = self::getContainer()->get('test.client');
-            }
-            $this->client->followRedirects(true);
+            static::ensureKernelShutdown();
+            $this->client = static::createClient();
+            $this->client->followRedirects();
         }
 
         return $this->client;
