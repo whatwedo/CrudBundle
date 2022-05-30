@@ -12,15 +12,9 @@ Features include:
 - Automatic form generation
 - Formatters to help display the entity properties
 
-**Note:** this bundle is currently under heavy development
-
 ## Documentation
 
-The source of the documentation is stored in the `Resources/doc` folder. [Jump to the master documentation](doc/index.md)
-
-## Dependencies
-
-This bundle depends heavily on the [whatwedoTableBundle](https://github.com/whatwedo/TableBundle) for displaying list views. 
+https://whatwedo.github.io/CrudBundle/#/
 
 ## License
 
