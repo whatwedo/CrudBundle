@@ -3,7 +3,7 @@
     "type": "symfony-bundle",
     "description": "Very simple CRUD operations",
     "license": "MIT",
-    "homepage": "https://doc.whatwedo.ch/whatwedo/crudbundle",
+    "homepage": "https://whatwedo.github.io/CrudBundle/#/",
 
     "keywords": [
         "symfony-ux"
