@@ -166,8 +166,6 @@ final class MakeDefinition extends AbstractMaker
         }
 
         $this->writeSuccessMessage($io);
-
-        $io->text(sprintf('Next: Check your new Definition by going to <fg=yellow>%s/</>', Str::asRoutePath('app_'.$definitionClassDetails->getRelativeNameWithoutSuffix())));
     }
 
     public function configureDependencies(DependencyBuilder $dependencies)
