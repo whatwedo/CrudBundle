@@ -250,7 +250,7 @@ final class MakeDefinition extends AbstractMaker
         string $entityVarSingular,
         array $fieldFormatters
     ) {
-        $templatePath = __DIR__ . '/../Resources/skeleton/definition/Definition.tpl.php';
+        $templatePath = $this->rootPath . '/vendor/whatwedo/crud-bundle/src/Resources/skeleton/definition/Definition.tpl.php';
         $fieldNames = $entityDetails->fieldNames;
         foreach ($entityDetails->getIdentifierFieldNames() as $idField) {
             unset($fieldNames[$idField]);
