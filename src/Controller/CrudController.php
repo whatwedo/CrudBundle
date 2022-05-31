@@ -46,7 +46,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
     protected Environment $twig;
 
-    public function index(TableFactory $tableFactory): Response
+    public function indexAction(TableFactory $tableFactory): Response
     {
         $this->denyAccessUnlessGrantedCrud(Page::INDEX, $this->getDefinition());
 
@@ -76,7 +76,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         );
     }
 
-    public function show(Request $request): Response
+    public function showAction(Request $request): Response
     {
         $entity = $this->getEntityOr404($request);
         $this->denyAccessUnlessGrantedCrud(Page::SHOW, $entity);
@@ -99,7 +99,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         );
     }
 
-    public function reload(Request $request): Response
+    public function reloadAction(Request $request): Response
     {
         $entity = $this->getEntityOr404($request);
         $this->denyAccessUnlessGrantedCrud(Page::SHOW, $entity);
@@ -124,7 +124,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         );
     }
 
-    public function edit(Request $request): Response
+    public function editAction(Request $request): Response
     {
         $entity = $this->getEntityOr404($request);
         $this->denyAccessUnlessGrantedCrud(Page::EDIT, $entity);
@@ -179,7 +179,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         );
     }
 
-    public function create(Request $request): Response
+    public function createAction(Request $request): Response
     {
         $mode = PageMode::NORMAL;
         if ($request->query->has('mode')) {
@@ -244,7 +244,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         );
     }
 
-    public function delete(Request $request): Response
+    public function deleteAction(Request $request): Response
     {
         $entity = $this->getEntityOr404($request);
         $this->denyAccessUnlessGrantedCrud(Page::DELETE, $entity);
@@ -266,7 +266,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         return $this->getDefinition()->getRedirect(Page::DELETE, $entity);
     }
 
-    public function export(Request $request, ExportManager $exportManager, TableFactory $tableFactory): Response
+    public function exportAction(Request $request, ExportManager $exportManager, TableFactory $tableFactory): Response
     {
         $this->denyAccessUnlessGrantedCrud(Page::EXPORT, $this->getDefinition());
 
@@ -295,7 +295,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         return $response;
     }
 
-    public function jsonsearch(Request $request): Response
+    public function jsonsearchAction(Request $request): Response
     {
         $array = $this->definition->jsonSearch($request->query->get('q', ''));
         $items = [];
@@ -324,7 +324,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         return $string;
     }
 
-    public function ajaxForm(Request $request): Response
+    public function ajaxFormAction(Request $request): Response
     {
         $this->denyAccessUnlessGrantedCrud(Page::AJAXFORM, $this->getDefinition());
         $case = $request->query->get('case', 'create');
@@ -369,7 +369,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      * @param $event
      * @param $entity
      */
-    public function dispatchEvent($event, $entity)
+    protected function dispatchEvent($event, $entity)
     {
         $this->eventDispatcher->dispatch(new CrudEvent($entity), $event);
         $this->eventDispatcher->dispatch(new CrudEvent($entity), $event . '.' . $this->getDefinition()::getAlias());

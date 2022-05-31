@@ -35,7 +35,7 @@ class CrudLoader extends Loader
                         '/' . $definition::getRoutePathPrefix() . '/',
                         [
                             '_resource' => $resource,
-                            '_controller' => $definition::getController() . '::' . $capability->toRoute(),
+                            '_controller' => $definition::getController() . '::' . $capability->toRoute() . 'Action',
                         ]
                     );
 
