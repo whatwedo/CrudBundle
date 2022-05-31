@@ -145,18 +145,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         if ($form->isSubmitted()) {
             $this->dispatchEvent(CrudEvent::PRE_VALIDATE_PREFIX, $entity);
             if ($form->isValid()) {
-                $this->dispatchEvent(CrudEvent::POST_VALIDATE_PREFIX, $entity);
-                $this->dispatchEvent(CrudEvent::PRE_EDIT_PREFIX, $entity);
-                $this->entityManager->flush();
-                $this->dispatchEvent(CrudEvent::POST_EDIT_PREFIX, $entity);
-
-                $this->addFlash('success', sprintf('Erfolgreich gespeichert.'));
-
-                if ($mode === PageMode::MODAL) {
-                    return new Response('', 200);
-                }
-
-                return $this->getDefinition()->getRedirect(Page::EDIT, $entity);
+                return $this->formSubmittedAndValid($entity, $mode, Page::EDIT);
             }
             $this->addFlash('error', sprintf('Beim Speichern ist ein Fehler aufgetreten. Bitte überprüfe deine Eingaben.'));
         }
@@ -205,22 +194,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         if ($form->isSubmitted()) {
             $this->dispatchEvent(CrudEvent::PRE_VALIDATE_PREFIX, $entity);
             if ($form->isValid()) {
-                $this->dispatchEvent(CrudEvent::POST_VALIDATE_PREFIX, $entity);
-                $this->dispatchEvent(CrudEvent::PRE_CREATE_PREFIX, $entity);
-
-                $objectManager = $this->entityManager;
-                $objectManager->persist($entity);
-                $objectManager->flush();
-
-                $this->dispatchEvent(CrudEvent::POST_CREATE_PREFIX, $entity);
-
-                $this->addFlash('success', sprintf('Erfolgreich gespeichert.'));
-
-                if ($mode === PageMode::MODAL) {
-                    return new Response('', 200);
-                }
-
-                return $this->getDefinition()->getRedirect(Page::CREATE, $entity);
+                return $this->formSubmittedAndValid($entity, $mode, Page::CREATE);
             }
             $this->addFlash('error', 'Beim Speichern ist ein Fehler aufgetreten. Bitte überprüfe deine Eingaben.');
         }
@@ -530,6 +504,35 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
             throw $exception;
         }
+    }
+
+    private function formSubmittedAndValid(object $entity, PageMode $mode, Page $page): Response
+    {
+        $this->dispatchEvent(CrudEvent::POST_VALIDATE_PREFIX, $entity);
+        $isCreate = $page === Page::CREATE;
+        $isEdit = $page === Page::EDIT;
+        if ($isCreate) {
+            $this->dispatchEvent(CrudEvent::PRE_CREATE_PREFIX, $entity);
+        }
+        if ($isEdit) {
+            $this->dispatchEvent(CrudEvent::PRE_EDIT_PREFIX, $entity);
+        }
+        if ($isCreate) {
+            $this->entityManager->persist($entity);
+        }
+        $this->entityManager->flush();
+        if ($isCreate) {
+            $this->dispatchEvent(CrudEvent::POST_CREATE_PREFIX, $entity);
+        }
+        if ($isEdit) {
+            $this->dispatchEvent(CrudEvent::POST_EDIT_PREFIX, $entity);
+        }
+        $this->addFlash('success', sprintf('Erfolgreich gespeichert.'));
+        if ($mode === PageMode::MODAL) {
+            return new Response('', 200);
+        }
+
+        return $this->getDefinition()->getRedirect(Page::CREATE, $entity);
     }
 
     private function redirectToDefinitionObject(DefinitionInterface $definition, string $capability, array $parameters = [], int $status = 302): RedirectResponse
