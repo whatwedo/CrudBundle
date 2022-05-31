@@ -47,9 +47,6 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     protected array $batchActions = [];
 
-    /**
-     * TODO: is this required?
-     */
     protected DefinitionBuilder $builder;
 
     protected Breadcrumbs $breadcrumbs;

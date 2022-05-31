@@ -73,7 +73,7 @@ class DefinitionManager
 
     public function getDefinitionByRoute($route): \whatwedo\CrudBundle\Definition\DefinitionInterface
     {
-        // TODO: use Page-Enum for the matching of the Definition
+        // could be changed to use Page-Enum for the matching of the Definition
         if (preg_match('#([\w\_\-]+)\_(\w+)#', $route, $routeMatches)) {
             foreach ($this->definitions as $definition) {
                 if ($routeMatches[1] === $definition::getRoutePrefix()) {

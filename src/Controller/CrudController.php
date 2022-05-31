@@ -365,16 +365,6 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         return new Response($html);
     }
 
-    /**
-     * @param $event
-     * @param $entity
-     */
-    protected function dispatchEvent($event, $entity)
-    {
-        $this->eventDispatcher->dispatch(new CrudEvent($entity), $event);
-        $this->eventDispatcher->dispatch(new CrudEvent($entity), $event . '.' . $this->getDefinition()::getAlias());
-    }
-
     public function setDefinition(?DefinitionInterface $definition): void
     {
         $this->definition = $definition;
@@ -418,6 +408,16 @@ class CrudController extends AbstractController implements CrudDefinitionControl
             EventDispatcherInterface::class,
             LoggerInterface::class,
         ]);
+    }
+
+    /**
+     * @param $event
+     * @param $entity
+     */
+    protected function dispatchEvent($event, $entity)
+    {
+        $this->eventDispatcher->dispatch(new CrudEvent($entity), $event);
+        $this->eventDispatcher->dispatch(new CrudEvent($entity), $event . '.' . $this->getDefinition()::getAlias());
     }
 
     protected function preselectEntities(Request $request, DefinitionView $view, object $entity)

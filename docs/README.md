@@ -38,7 +38,7 @@ Then, add the bundle to your dependencies and install it.
 ```
 composer require whatwedo/crud-bundle
 ```
-**TODO: remove after release**  
+**remove after release**  
 
 The v1 version is still in developing,
 so you need to add these lines manually to the `composer.json` `require` to get the version constraint right:

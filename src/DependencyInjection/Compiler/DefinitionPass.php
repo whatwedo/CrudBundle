@@ -42,8 +42,6 @@ class DefinitionPass implements CompilerPassInterface
         /*
          * Load definitions
          */
-        $crudManager = $container->findDefinition('whatwedo\CrudBundle\Manager\DefinitionManager');
-
         foreach ($container->findTaggedServiceIds('whatwedo_crud.definition') as $id => $tags) {
             $crudDefinition = $container->getDefinition($id);
 
@@ -51,7 +49,6 @@ class DefinitionPass implements CompilerPassInterface
                 continue;
             }
 
-            // todo replace
             $crudDefinition->addMethodCall('setTemplates', [$container->getParameter('whatwedo_crud.config.templates')]);
 
             // add available extensions to all Definitions
