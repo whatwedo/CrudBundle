@@ -31,7 +31,7 @@
                     </div>
                 {% endif %}
             {% else %}
-                {{ content.render(view.data)|raw }}
+                {{ wwd_crud_render_content_value(content) }}
             {% endif %}
         </dd>
     </div>
