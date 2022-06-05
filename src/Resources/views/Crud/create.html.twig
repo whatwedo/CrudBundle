@@ -21,7 +21,7 @@
         class="whatwedo_crud-blocks whatwedo_crud-blocks--create bg-neutral-50 p-4 flex flex-wrap items-baseline"
     >
         {% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\Page::CREATE'))|filter(c => is_granted(c.option('create_voter_attribute'), view.data)) %}
-            {{ wwd_crud_render_block(block, view, form) }}
+            {{ wwd_crud_render_block(block, view, constant('whatwedo\\CrudBundle\\Enum\\Page::CREATE'), form) }}
         {% endfor %}
     </div>
     {{ form_end(form) }}

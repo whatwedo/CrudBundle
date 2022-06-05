@@ -24,7 +24,7 @@
             {% endif %}
             <div class="{% if block.option('label') or block.option('description') %}border-t border-neutral-200 bg-white sm:rounded-b-lg{% endif%}">
                 <dl>
-                    {% for content in block.contents(constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW'))|filter(c => is_granted(c.option('show_voter_attribute'), view.data)) %}
+                    {% for content in block.contents(page)|filter(c => is_granted(c.option('show_voter_attribute'), view.data)) %}
                         {{ wwd_crud_render_content(content, block, view, form) }}
                     {% endfor %}
                 </dl>

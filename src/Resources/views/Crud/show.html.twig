@@ -5,7 +5,7 @@
     {% include '@whatwedoCrud/includes/main/_site_title.html.twig' with {'title':title} only %}
     <div class="whatwedo_crud-blocks whatwedo_crud-blocks--show bg-neutral-50 p-4 flex flex-wrap items-baseline">
         {% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW'))|filter(c => is_granted(c.option('show_voter_attribute'), view.data)) %}
-            {{ wwd_crud_render_block(block, view) }}
+            {{ wwd_crud_render_block(block, view, constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW')) }}
         {% endfor %}
     </div>
 {% endblock %}
