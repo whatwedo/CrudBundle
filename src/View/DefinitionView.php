@@ -12,7 +12,6 @@ use Symfony\Component\Form\FormRegistryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Twig\Environment;
 use whatwedo\CoreBundle\Action\Action;
 use whatwedo\CrudBundle\Block\Block;
 use whatwedo\CrudBundle\Collection\BlockCollection;
@@ -39,7 +38,6 @@ class DefinitionView
 
     public function __construct(
         protected DefinitionManager $definitionManager,
-        protected Environment $templating,
         protected FormRegistryInterface $formRegistry,
         protected FormFactoryInterface $formFactory,
         protected RouterInterface $router,
@@ -105,14 +103,6 @@ class DefinitionView
         return $page
             ? $this->definition->getBuilder()->getBlocks()->filterVisibility($page)
             : $this->definition->getBuilder()->getBlocks();
-    }
-
-    public function render(): string
-    {
-        return $this->templating->render($this->getTemplatePath('_boxes/' . $this->getRoute() . '.html.twig'), [
-            'data' => $this->data,
-            'helper' => $this,
-        ]);
     }
 
     /**
@@ -259,15 +249,6 @@ class DefinitionView
     public function getDefinition(): DefinitionInterface
     {
         return $this->definition;
-    }
-
-    public function getTemplatePath(string $templatePath): string
-    {
-        if ($this->templating->getLoader()->exists($this->getDefinition()->getTemplateDirectory() . '/' . $templatePath)) {
-            return $this->getDefinition()->getTemplateDirectory() . '/' . $templatePath;
-        }
-
-        return '@whatwedoCrud/Crud/' . $templatePath;
     }
 
     protected function isContentRequired(AbstractContent $content): bool

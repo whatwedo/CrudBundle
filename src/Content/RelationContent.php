@@ -96,14 +96,6 @@ class RelationContent extends TableContent
     ) {
     }
 
-    /**
-     * @deprecated  use twig function whatwedo_table_render(content.table(view.data))
-     */
-    public function render($row)
-    {
-        throw new \Exception('\whatwedo\CrudBundle\Content\RelationContent::render is deprecated, use twig function whatwedo_table_render(content.table(view.data))');
-    }
-
     public function getIndexRoute(): ?string
     {
         if (! $this->options[self::OPT_SHOW_INDEX_BUTTON]) {
