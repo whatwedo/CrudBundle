@@ -90,6 +90,11 @@ interface DefinitionInterface
     public function configureTable(Table $table): void;
 
     /**
+     * table configuration.
+     */
+    public function configureTableActions(Table $table): void;
+
+    /**
      * table export configuration.
      */
     public function configureExport(Table $table);
@@ -115,10 +120,13 @@ interface DefinitionInterface
 
     /**
      * builds the interface.
-     *
-     * @param $data
      */
-    public function configureView(DefinitionBuilder $builder, $data);
+    public function configureView(DefinitionBuilder $builder, object $data);
+
+    /**
+     * configure Actions.
+     */
+    public function configureActions(object $data);
 
     public function getRedirect(Page $routeFrom, ?object $entity = null): Response;
 
