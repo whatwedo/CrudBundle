@@ -25,8 +25,8 @@ class Contact implements \Stringable
      * @ORM\Column(type="string", length=50)
      * @Assert\NotBlank
      * @Assert\NotNull()
-     * @Index()
      */
+    #[Index]
     private ?string $name = null;
 
     /**

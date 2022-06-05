@@ -7,9 +7,10 @@ use PHP_CodeSniffer\Standards\Squiz\Sniffs\Commenting\ClassCommentSniff;
 use PHP_CodeSniffer\Standards\Squiz\Sniffs\Commenting\FileCommentSniff;
 use PHP_CodeSniffer\Standards\Squiz\Sniffs\Commenting\FunctionCommentThrowTagSniff;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symplify\EasyCodingStandard\Config\ECSConfig;
 use Symplify\EasyCodingStandard\ValueObject\Option;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
+return static function (ECSConfig $containerConfigurator): void {
     $parameters = $containerConfigurator->parameters();
     $parameters->set(Option::PATHS, [
         __DIR__ . '/src',
