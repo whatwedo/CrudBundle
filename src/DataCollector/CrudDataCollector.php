@@ -18,19 +18,32 @@ class CrudDataCollector extends AbstractDataCollector
 
     public function collect(Request $request, Response $response, \Throwable $exception = null)
     {
-        $definition = 'n/a';
+        $definition = null;
+        $route = null;
+        $page = null;
 
         try {
             if ($request->attributes->has('_route')) {
-                $definitionInstance = $this->definitionManager->getDefinitionByRoute($request->attributes->get('_route'));
+                $route = $request->attributes->get('_route');
+                $definitionInstance = $this->definitionManager->getDefinitionByRoute($route);
                 $definition = $definitionInstance::class;
             }
         } catch (\Exception $ex) {
         }
 
-        $this->data = [
-            'definition' => $definition,
-        ];
+        if ($definition) {
+            if ($route) {
+                $page = $this->getPageName($definitionInstance, $route);
+            }
+
+            if ($definition) {
+                $this->data = [
+                    'definition' => $definition,
+                    'layout' => $definitionInstance->getLayout(),
+                    'page' => $page,
+                ];
+            }
+        }
     }
 
     public static function getTemplate(): ?string
@@ -38,8 +51,40 @@ class CrudDataCollector extends AbstractDataCollector
         return '@whatwedoCrud/data_collector/template.html.twig';
     }
 
+    public function getLayout()
+    {
+        return $this->data['layout'] ?? '';
+    }
+
+    public function getPage()
+    {
+        return $this->data['page'] ?? '';
+    }
+
     public function getDefinition()
     {
-        return $this->data['definition'];
+        return $this->data['definition'] ?? '';
+    }
+
+    /**
+     * @param mixed $route
+     */
+    protected function getPageName(\whatwedo\CrudBundle\Definition\DefinitionInterface $definitionInstance, string $route): string
+    {
+        $pageValue = str_replace($definitionInstance::getRoutePathPrefix() . '_', '', $route);
+
+        try {
+            $page = \whatwedo\CrudBundle\Enum\Page::tryFrom($pageValue);
+            $page = serialize($page);
+            $pageItem = explode('"', $page);
+            if (count($pageItem) === 3) {
+                $page = $pageItem[1];
+
+                return $page;
+            }
+        } catch (\Throwable $exception) {
+        }
+
+        return $pageValue;
     }
 }
