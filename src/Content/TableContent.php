@@ -53,14 +53,6 @@ class TableContent extends AbstractContent
         return $table->renderTable();
     }
 
-    /**
-     * @return string
-     */
-    public function render($row)
-    {
-        return 'call TableContent::renderTable()';
-    }
-
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
