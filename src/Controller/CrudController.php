@@ -22,6 +22,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Twig\Environment;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\Page;
+use whatwedo\CrudBundle\Enum\PageInterface;
 use whatwedo\CrudBundle\Enum\PageMode;
 use whatwedo\CrudBundle\Event\CrudEvent;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
@@ -467,14 +468,14 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         );
     }
 
-    protected function redirectToCapability(string $capability, array $parameters = [], int $status = 302): RedirectResponse
+    protected function redirectToCapability(PageInterface $page, array $parameters = [], int $status = 302): RedirectResponse
     {
-        return $this->redirectToDefinitionObject($this->definition, $capability, $parameters, $status);
+        return $this->redirectToDefinitionObject($this->definition, $page, $parameters, $status);
     }
 
-    protected function redirectToDefinition(string $definitionClass, string $capability, array $parameters = [], int $status = 302): RedirectResponse
+    protected function redirectToDefinition(string $definitionClass, PageInterface $page, array $parameters = [], int $status = 302): RedirectResponse
     {
-        return $this->redirectToDefinitionObject($this->definitionManager->getDefinitionByClassName($definitionClass), $capability, $parameters, $status);
+        return $this->redirectToDefinitionObject($this->definitionManager->getDefinitionByClassName($definitionClass), $page, $parameters, $status);
     }
 
     /**
@@ -535,9 +536,9 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         return $this->getDefinition()->getRedirect(Page::CREATE, $entity);
     }
 
-    private function redirectToDefinitionObject(DefinitionInterface $definition, string $capability, array $parameters = [], int $status = 302): RedirectResponse
+    private function redirectToDefinitionObject(DefinitionInterface $definition, PageInterface $page, array $parameters = [], int $status = 302): RedirectResponse
     {
-        $route = $definition::getRoutePrefix() . '_' . $capability;
+        $route = $definition::getRoute($page);
 
         return $this->redirectToRoute($route, $parameters, $status);
     }
