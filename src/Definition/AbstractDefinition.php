@@ -43,6 +43,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     protected TranslatorInterface $translator;
 
+    /** @var \whatwedo\CoreBundle\Action\Action[]  */
     protected array $actions = [];
 
     protected array $batchActions = [];
@@ -101,6 +102,11 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     public function getActions(): array
     {
+        uasort(
+            $this->actions,
+            fn (\whatwedo\CoreBundle\Action\Action $a, \whatwedo\CoreBundle\Action\Action $b) => $a->getOption('priority') <=> $b->getOption('priority')
+        );
+
         return $this->actions;
     }
 
