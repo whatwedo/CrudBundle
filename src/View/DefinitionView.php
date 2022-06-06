@@ -131,7 +131,7 @@ class DefinitionView
                     }
 
                     return $this->router->generate(
-                        $this->definition::getRouteName($route),
+                        $this->definition::getRoute($route),
                         array_merge([
                             'id' => $this->data->getId(),
                         ], $params)
@@ -139,13 +139,13 @@ class DefinitionView
                 case Page::AJAXFORM:
                     if (! $this->data) {
                         return $this->router->generate(
-                            $this->definition::getRouteName($route),
+                            $this->definition::getRoute($route),
                             $params
                         );
                     }
 
                     return $this->router->generate(
-                        $this->definition::getRouteName($route),
+                        $this->definition::getRoute($route),
                         array_merge([
                             'id' => $this->data->getId(),
                         ], $params)
@@ -154,7 +154,7 @@ class DefinitionView
                 case Page::BATCH:
                 case Page::CREATE:
                     return $this->router->generate(
-                        $this->definition::getRouteName($route),
+                        $this->definition::getRoute($route),
                         $params
                     );
 
