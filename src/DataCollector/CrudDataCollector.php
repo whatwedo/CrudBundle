@@ -18,30 +18,43 @@ class CrudDataCollector extends AbstractDataCollector
 
     public function collect(Request $request, Response $response, \Throwable $exception = null)
     {
-        $definition = null;
+        $definitionClass = null;
         $route = null;
         $page = null;
 
         try {
             if ($request->attributes->has('_route')) {
                 $route = $request->attributes->get('_route');
-                $definitionInstance = $this->definitionManager->getDefinitionByRoute($route);
-                $definition = $definitionInstance::class;
+                $definition = $this->definitionManager->getDefinitionByRoute($route);
+                $definitionClass = $definition::class;
             }
         } catch (\Exception $ex) {
         }
 
-        if ($definition) {
+        if ($definitionClass) {
             if ($route) {
-                $page = $this->getPageName($definitionInstance, $route);
+                $page = $this->getPageName($definition, $route);
             }
 
-            if ($definition) {
+            if ($definitionClass) {
                 $this->data = [
-                    'definition' => $definition,
-                    'layout' => $definitionInstance->getLayout(),
+                    'definitionClass' => $definitionClass,
+                    'layout' => $definition->getLayout(),
+                    'templateDir' => $definition->getTemplateDirectory(),
                     'page' => $page,
                 ];
+
+                foreach ($definition->getActions() as $key => $action) {
+                    $this->data['actions'][$key] = [
+                        'class' => $action::class,
+                        'label' => $action->getOption('label'),
+                        'attr' => $action->getOption('attr'),
+                        'icon' => $action->getOption('icon'),
+                        'voter_attribute' => $action->getOption('voter_attribute'),
+                        'priority' => $action->getOption('priority'),
+                        'confirmation' => $action->getOption('confirmation'),
+                    ];
+                }
             }
         }
     }
@@ -61,9 +74,19 @@ class CrudDataCollector extends AbstractDataCollector
         return $this->data['page'] ?? '';
     }
 
-    public function getDefinition()
+    public function getDefinitionClass()
     {
-        return $this->data['definition'] ?? '';
+        return $this->data['definitionClass'] ?? '';
+    }
+
+    public function getTemplateDir()
+    {
+        return $this->data['templateDir'] ?? '';
+    }
+
+    public function getActions()
+    {
+        return $this->data['actions'] ?? '';
     }
 
     /**
