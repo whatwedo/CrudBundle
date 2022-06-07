@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\EventListener;
 
+use ReflectionClass;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use whatwedo\CrudBundle\Controller\CrudDefinitionController;
+use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 class CrudDefinitionListener
@@ -25,12 +27,29 @@ class CrudDefinitionListener
             return;
         }
 
-        if ($controller[0] instanceof CrudDefinitionController) {
-            try {
+        if (! $controller[0] instanceof CrudDefinitionController) {
+            return;
+        }
+
+        try {
+            $controller[0]->setDefinition(
+                $this->definitionManager->getDefinitionByRoute($event->getRequest()->attributes->get('_route'))
+            );
+        } catch (\InvalidArgumentException $e) {
+            $resource = $event->getRequest()->attributes->get('_resource', '');
+            $resourceImplementsDefinitionInterface = class_exists($resource)
+                && in_array(DefinitionInterface::class, (new ReflectionClass($resource))->getInterfaceNames(), true);
+            if ($resourceImplementsDefinitionInterface) {
                 $controller[0]->setDefinition(
-                    $this->definitionManager->getDefinitionByRoute($event->getRequest()->attributes->get('_route'))
+                    $this->definitionManager->getDefinitionByClassName($resource)
                 );
-            } catch (\InvalidArgumentException $e) {
+                return;
+            }
+            foreach ($this->definitionManager->getDefinitions() as $definition) {
+                if ($definition::getController() === $controller[0]::class) {
+                    $controller[0]->setDefinition($definition);
+                    return;
+                }
             }
         }
     }
