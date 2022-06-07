@@ -65,8 +65,8 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $table->setOption('definition', $this->getDefinition());
         $table->setOption('title', $this->getDefinition()->getTitle(route: Page::INDEX));
         $this->getDefinition()->configureTableActions($table);
-        $this->getDefinition()->configureFilters($table);
         $this->getDefinition()->configureTable($table);
+        $this->getDefinition()->configureFilters($table);
         $this->getDefinition()->buildBreadcrumbs(null, Page::INDEX);
 
         return $this->render(
