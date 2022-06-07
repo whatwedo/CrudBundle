@@ -278,7 +278,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
     {
         if ($table instanceof Table) {
             foreach ($table->getColumns() as $column) {
-                if ($column->getAcronym() === $property) {
+                if ($column->getIdentifier() === $property) {
                     $label = $column->getOption('label');
                     if ($label) {
                         return $label;
