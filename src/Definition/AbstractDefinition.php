@@ -43,6 +43,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     protected TranslatorInterface $translator;
 
+    /** @var \whatwedo\CoreBundle\Action\Action[]  */
     protected array $actions = [];
 
     protected array $batchActions = [];
@@ -101,6 +102,11 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     public function getActions(): array
     {
+        uasort(
+            $this->actions,
+            fn (\whatwedo\CoreBundle\Action\Action $a, \whatwedo\CoreBundle\Action\Action $b) => $a->getOption('priority') <=> $b->getOption('priority')
+        );
+
         return $this->actions;
     }
 
@@ -130,168 +136,10 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     public function configureView(DefinitionBuilder $builder, $data): void
     {
-        if ($this::hasCapability(Page::INDEX)) {
-            $this->addAction('index', [
-                'label' => 'whatwedo_crud.index',
-                'icon' => 'list',
-                'visibility' => [Page::CREATE, Page::SHOW, Page::EDIT],
-                'route' => static::getRoute(Page::INDEX),
-                'attr' => [
-                    'class' => 'whatwedo-crud-button--action-neutral',
-                ],
-                'voter_attribute' => Page::INDEX,
-                'priority' => 10,
-            ]);
-        }
-
-        if ($this::hasCapability(Page::CREATE)) {
-            $this->addAction('create', [
-                'label' => 'whatwedo_crud.add',
-                'icon' => 'plus',
-                'visibility' => [Page::INDEX],
-                'route' => static::getRoute(Page::CREATE),
-                'priority' => 20,
-                'voter_attribute' => Page::CREATE,
-            ]);
-        }
-
-        if ($data) {
-            if ($this::hasCapability(Page::SHOW)) {
-                $this->addAction('view', [
-                    'label' => 'whatwedo_crud.view',
-                    'icon' => 'eye',
-                    'visibility' => [Page::EDIT],
-                    'route' => static::getRoute(Page::SHOW),
-                    'route_parameters' => [
-                        'id' => $data->getId(),
-                    ],
-                    'priority' => 30,
-                    'voter_attribute' => Page::SHOW,
-                ]);
-            }
-            if ($this::hasCapability(Page::EDIT)) {
-                $this->addAction('edit', [
-                    'label' => 'whatwedo_crud.edit',
-                    'icon' => 'pencil',
-                    'visibility' => [Page::SHOW],
-                    'route' => static::getRoute(Page::EDIT),
-                    'route_parameters' => [
-                        'id' => $data->getId(),
-                    ],
-                    'priority' => 40,
-                    'voter_attribute' => Page::EDIT,
-                ]);
-            }
-
-            if ($this::hasCapability(Page::DELETE)) {
-                $this->addAction('delete', [
-                    'label' => 'whatwedo_crud.delete',
-                    'icon' => 'trash',
-                    'visibility' => [Page::SHOW, Page::EDIT],
-                    'route' => static::getRoute(Page::DELETE),
-                    'route_parameters' => [
-                        'id' => $data->getId(),
-                    ],
-                    'attr' => [
-                        'class' => 'whatwedo-crud-button--action-warning',
-                    ],
-                    'priority' => 50,
-                    'voter_attribute' => Page::DELETE,
-                ], PostAction::class);
-            }
-
-            if ($this::hasCapability(Page::EDIT)) {
-                $this->addAction('edit_submit', [
-                    'label' => 'whatwedo_crud.save',
-                    'icon' => 'check-lg',
-                    'visibility' => [Page::EDIT],
-                    'priority' => 60,
-                    'attr' => [
-                        'form' => 'crud_main_form',
-                    ],
-                    'voter_attribute' => Page::EDIT,
-                ], SubmitAction::class);
-            }
-
-            if ($this::hasCapability(Page::CREATE)) {
-                $this->addAction('create_submit', [
-                    'label' => 'whatwedo_crud.add',
-                    'icon' => 'check-lg',
-                    'visibility' => [Page::CREATE],
-                    'priority' => 60,
-                    'attr' => [
-                        'form' => 'crud_main_form',
-                    ],
-                    'voter_attribute' => Page::CREATE,
-                ], SubmitAction::class);
-            }
-        }
     }
 
     public function configureTable(Table $table): void
     {
-        $table->setOption('definition', $this);
-        $table->setOption('title', $this->getTitle(route: Page::INDEX));
-        $table->setOption('primary_link', function (object|array $row) {
-            if (static::hasCapability(Page::SHOW)) {
-                return $this->container->get(RouterInterface::class)->generate(
-                    static::getRoute(Page::SHOW),
-                    [
-                        'id' => $row->getId(),
-                    ]
-                );
-            }
-
-            return null;
-        });
-
-        if ($this::hasCapability(Page::SHOW)) {
-            $table->addAction('show', [
-                'label' => 'whatwedo_crud.view',
-                'icon' => 'eye',
-                'route' => static::getRoute(Page::SHOW),
-                'route_parameters' => fn ($row) => [
-                    'id' => $row->getId(),
-                ],
-                'priority' => 100,
-                'voter_attribute' => Page::SHOW,
-            ]);
-        }
-
-        if ($this::hasCapability(Page::EDIT)) {
-            $table->addAction('edit', [
-                'label' => 'whatwedo_crud.edit',
-                'icon' => 'pencil',
-                'route' => static::getRoute(Page::EDIT),
-                'route_parameters' => fn ($row) => [
-                    'id' => $row->getId(),
-                ],
-                'priority' => 50,
-                'voter_attribute' => Page::EDIT,
-            ]);
-        }
-
-        if ($this::hasCapability(Page::DELETE)) {
-            $table->addAction('delete', [
-                'label' => 'whatwedo_crud.delete',
-                'icon' => 'trash',
-                'route' => static::getRoute(Page::DELETE),
-                'route_parameters' => fn ($row) => [
-                    'id' => $row->getId(),
-                ],
-                'priority' => 500,
-                'voter_attribute' => Page::DELETE,
-            ], PostAction::class);
-        }
-
-        if ($table->hasExtension(FilterExtension::class)) {
-            $table->getFilterExtension()
-                ->addFiltersAutomatically(
-                    $table,
-                    [$this, 'getLabelFor'],
-                    [$this, 'getJsonSearchUrl'],
-                );
-        }
     }
 
     public function configureExport(Table $table)
@@ -663,6 +511,173 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         return null;
     }
 
+    public function configureActions($data): void
+    {
+        if ($this::hasCapability(Page::INDEX)) {
+            $this->addAction('index', [
+                'label' => 'whatwedo_crud.index',
+                'icon' => 'list',
+                'visibility' => [Page::CREATE, Page::SHOW, Page::EDIT],
+                'route' => static::getRoute(Page::INDEX),
+                'attr' => [
+                    'class' => 'whatwedo-crud-button--action-neutral',
+                ],
+                'voter_attribute' => Page::INDEX,
+                'priority' => 10,
+            ]);
+        }
+
+        if ($this::hasCapability(Page::CREATE)) {
+            $this->addAction('create', [
+                'label' => 'whatwedo_crud.add',
+                'icon' => 'plus',
+                'visibility' => [Page::INDEX],
+                'route' => static::getRoute(Page::CREATE),
+                'priority' => 20,
+                'voter_attribute' => Page::CREATE,
+            ]);
+        }
+
+        if ($data) {
+            if ($this::hasCapability(Page::SHOW)) {
+                $this->addAction('view', [
+                    'label' => 'whatwedo_crud.view',
+                    'icon' => 'eye',
+                    'visibility' => [Page::EDIT],
+                    'route' => static::getRoute(Page::SHOW),
+                    'route_parameters' => [
+                        'id' => $data->getId(),
+                    ],
+                    'priority' => 30,
+                    'voter_attribute' => Page::SHOW,
+                ]);
+            }
+            if ($this::hasCapability(Page::EDIT)) {
+                $this->addAction('edit', [
+                    'label' => 'whatwedo_crud.edit',
+                    'icon' => 'pencil',
+                    'visibility' => [Page::SHOW],
+                    'route' => static::getRoute(Page::EDIT),
+                    'route_parameters' => [
+                        'id' => $data->getId(),
+                    ],
+                    'priority' => 40,
+                    'voter_attribute' => Page::EDIT,
+                ]);
+            }
+
+            if ($this::hasCapability(Page::DELETE)) {
+                $this->addAction('delete', [
+                    'label' => 'whatwedo_crud.delete',
+                    'icon' => 'trash',
+                    'visibility' => [Page::SHOW, Page::EDIT],
+                    'route' => static::getRoute(Page::DELETE),
+                    'route_parameters' => [
+                        'id' => $data->getId(),
+                    ],
+                    'attr' => [
+                        'class' => 'whatwedo-crud-button--action-warning',
+                    ],
+                    'priority' => 50,
+                    'voter_attribute' => Page::DELETE,
+                ], PostAction::class);
+            }
+
+            if ($this::hasCapability(Page::EDIT)) {
+                $this->addAction('edit_submit', [
+                    'label' => 'whatwedo_crud.save',
+                    'icon' => 'check-lg',
+                    'visibility' => [Page::EDIT],
+                    'priority' => 60,
+                    'attr' => [
+                        'form' => 'crud_main_form',
+                    ],
+                    'voter_attribute' => Page::EDIT,
+                ], SubmitAction::class);
+            }
+
+            if ($this::hasCapability(Page::CREATE)) {
+                $this->addAction('create_submit', [
+                    'label' => 'whatwedo_crud.add',
+                    'icon' => 'check-lg',
+                    'visibility' => [Page::CREATE],
+                    'priority' => 60,
+                    'attr' => [
+                        'form' => 'crud_main_form',
+                    ],
+                    'voter_attribute' => Page::CREATE,
+                ], SubmitAction::class);
+            }
+        }
+    }
+
+    public function configureTableActions(Table $table): void
+    {
+        $table->setOption('primary_link', function (object|array $row) {
+            if (static::hasCapability(Page::SHOW)) {
+                return $this->container->get(RouterInterface::class)->generate(
+                    static::getRoute(Page::SHOW),
+                    [
+                        'id' => $row->getId(),
+                    ]
+                );
+            }
+
+            return null;
+        });
+
+        if ($this::hasCapability(Page::SHOW)) {
+            $table->addAction('show', [
+                'label' => 'whatwedo_crud.view',
+                'icon' => 'eye',
+                'route' => static::getRoute(Page::SHOW),
+                'route_parameters' => fn ($row) => [
+                    'id' => $row->getId(),
+                ],
+                'priority' => 100,
+                'voter_attribute' => Page::SHOW,
+            ]);
+        }
+
+        if ($this::hasCapability(Page::EDIT)) {
+            $table->addAction('edit', [
+                'label' => 'whatwedo_crud.edit',
+                'icon' => 'pencil',
+                'route' => static::getRoute(Page::EDIT),
+                'route_parameters' => fn ($row) => [
+                    'id' => $row->getId(),
+                ],
+                'priority' => 50,
+                'voter_attribute' => Page::EDIT,
+            ]);
+        }
+
+        if ($this::hasCapability(Page::DELETE)) {
+            $table->addAction('delete', [
+                'label' => 'whatwedo_crud.delete',
+                'icon' => 'trash',
+                'route' => static::getRoute(Page::DELETE),
+                'route_parameters' => fn ($row) => [
+                    'id' => $row->getId(),
+                ],
+                'priority' => 500,
+                'voter_attribute' => Page::DELETE,
+            ], PostAction::class);
+        }
+    }
+
+    public function configureFilters(Table $table): void
+    {
+        if ($table->hasExtension(FilterExtension::class)) {
+            $table->getFilterExtension()
+                ->addFiltersAutomatically(
+                    $table,
+                    [$this, 'getLabelFor'],
+                    [$this, 'getJsonSearchUrl'],
+                );
+        }
+    }
+
     protected function getDefinitionBuilder(object|array|null $data = null): DefinitionBuilder
     {
         static $cache;
@@ -670,6 +685,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         if ($cache === null || $data !== null) {
             $builder = $this->container->get(DefinitionBuilder::class);
             $builder->setDefinition($this);
+            $this->configureActions($data);
             $this->configureView($builder, $data);
 
             if ($data === null) {
