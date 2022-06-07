@@ -30,6 +30,24 @@ class Block implements ServiceSubscriberInterface
     use VisibilityTrait;
     use VoterAttributeTrait;
 
+    public const OPT_LABEL = 'label';
+
+    public const OPT_DESCRIPTION = 'description';
+
+    public const OPT_ATTR = 'attr';
+
+    public const OPT_SIZE = 'size';
+
+    public const OPT_VISIBILITY = 'visibility';
+
+    public const OPT_SHOW_VOTER_ATTRIBUTE = 'show_voter_attribute';
+
+    public const OPT_EDIT_VOTER_ATTRIBUTE = 'edit_voter_attribute';
+
+    public const OPT_CREATE_VOTER_ATTRIBUTE = 'create_voter_attribute';
+
+    public const OPT_BLOCK_PREFIX = 'block_prefix';
+
     protected ContainerInterface $container;
 
     protected string $acronym = '';
@@ -60,18 +78,18 @@ class Block implements ServiceSubscriberInterface
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'label' => null,
-            'description' => null,
-            'attr' => null,
-            'size' => BlockSize::SMALL,
-            'visibility' => [Page::SHOW, Page::EDIT, Page::CREATE],
-            'show_voter_attribute' => Page::SHOW,
-            'edit_voter_attribute' => Page::EDIT,
-            'create_voter_attribute' => Page::CREATE,
-            'block_prefix' => StringUtil::fqcnToBlockPrefix(static::class),
+            self::OPT_LABEL => null,
+            self::OPT_DESCRIPTION => null,
+            self::OPT_ATTR => null,
+            self::OPT_SIZE => BlockSize::SMALL,
+            self::OPT_VISIBILITY => [Page::SHOW, Page::EDIT, Page::CREATE],
+            self::OPT_SHOW_VOTER_ATTRIBUTE => Page::SHOW,
+            self::OPT_EDIT_VOTER_ATTRIBUTE => Page::EDIT,
+            self::OPT_CREATE_VOTER_ATTRIBUTE => Page::CREATE,
+            self::OPT_BLOCK_PREFIX => StringUtil::fqcnToBlockPrefix(static::class),
         ]);
 
-        $resolver->setAllowedTypes('visibility', 'array');
+        $resolver->setAllowedTypes(self::OPT_VISIBILITY, 'array');
     }
 
     public function setOption($name, $value): static
@@ -131,11 +149,11 @@ class Block implements ServiceSubscriberInterface
         $element = $this->container->get(ContentManager::class)->getContent($type ?? $this->getType($acronym, $options));
         $element->setDefinition($this->definition);
 
-        if ($element->getOptionsResolver()->isDefined('label') && ! isset($options['label'])) {
-            $options['label'] = sprintf('wwd.%s.property.%s', $this->definition::getEntityAlias(), $acronym);
+        if ($element->getOptionsResolver()->isDefined(AbstractContent::OPT_LABEL) && ! isset($options[AbstractContent::OPT_LABEL])) {
+            $options[self::OPT_LABEL] = sprintf('wwd.%s.property.%s', $this->definition::getEntityAlias(), $acronym);
         }
-        if ($element->getOptionsResolver()->isDefined('help') && ! isset($options['help'])) {
-            $options['help'] = sprintf('wwd.%s.help.%s', $this->definition::getEntityAlias(), $acronym);
+        if ($element->getOptionsResolver()->isDefined(AbstractContent::OPT_HELP) && ! isset($options[AbstractContent::OPT_HELP])) {
+            $options[AbstractContent::OPT_HELP] = sprintf('wwd.%s.help.%s', $this->definition::getEntityAlias(), $acronym);
         }
 
         $element->setAcronym($acronym);
@@ -190,7 +208,7 @@ class Block implements ServiceSubscriberInterface
         /** @var TypeGuess $typeGuess */
         $typeGuess = $this->container->get(FormRegistryInterface::class)->getTypeGuesser()->guessType(
             $this->definition::getEntity(),
-            $options['accessor_path'] ?? $acronym
+            $options[AbstractContent::OPT_ACCESSOR_PATH] ?? $acronym
         );
 
         if ($typeGuess->getType() === EntityType::class
@@ -198,7 +216,7 @@ class Block implements ServiceSubscriberInterface
             return RelationContent::class;
         }
 
-        if (isset($options['class']) && enum_exists($options['class'])) {
+        if (isset($options[EnumContent::OPT_CLASS]) && enum_exists($options[EnumContent::OPT_CLASS])) {
             return EnumContent::class;
         }
 

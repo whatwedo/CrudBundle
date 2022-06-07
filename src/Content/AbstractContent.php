@@ -26,6 +26,8 @@ abstract class AbstractContent implements ServiceSubscriberInterface
 
     public const OPT_LABEL = 'label';
 
+    public const OPT_HELP = 'help';
+
     public const OPT_CALLABLE = 'callable';
 
     public const OPT_ATTR = 'attr';
@@ -68,6 +70,7 @@ abstract class AbstractContent implements ServiceSubscriberInterface
     {
         $resolver->setDefaults([
             self::OPT_LABEL => $this->acronym,
+            self::OPT_HELP => null,
             self::OPT_CALLABLE => null,
             self::OPT_ATTR => [],
             self::OPT_VISIBILITY => [Page::SHOW, Page::EDIT, Page::CREATE],
@@ -79,6 +82,7 @@ abstract class AbstractContent implements ServiceSubscriberInterface
 
         $resolver->setAllowedTypes(self::OPT_VISIBILITY, 'array');
         $resolver->setAllowedTypes(self::OPT_LABEL, 'string');
+        $resolver->setAllowedTypes(self::OPT_HELP, 'string');
         $resolver->setAllowedTypes(self::OPT_CALLABLE, ['callable', 'null']);
         $resolver->setAllowedTypes(self::OPT_ATTR, 'array');
         $resolver->setAllowedTypes(self::OPT_SHOW_VOTER_ATTRIBUTE, 'whatwedo\CrudBundle\Enum\PageInterface');
