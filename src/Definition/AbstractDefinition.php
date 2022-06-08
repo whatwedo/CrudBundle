@@ -43,7 +43,9 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     protected TranslatorInterface $translator;
 
-    /** @var \whatwedo\CoreBundle\Action\Action[]  */
+    /**
+     * @var \whatwedo\CoreBundle\Action\Action[]
+     */
     protected array $actions = [];
 
     protected array $batchActions = [];
