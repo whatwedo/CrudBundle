@@ -44,6 +44,8 @@ abstract class AbstractContent implements ServiceSubscriberInterface
 
     public const OPT_ACCESSOR_PATH = 'accessor_path';
 
+    public const OPT_CUSTOM_OPTIONS = 'custom_options';
+
     protected ContainerInterface $container;
 
     protected string $acronym = '';
@@ -78,6 +80,7 @@ abstract class AbstractContent implements ServiceSubscriberInterface
             self::OPT_EDIT_VOTER_ATTRIBUTE => Page::EDIT,
             self::OPT_CREATE_VOTER_ATTRIBUTE => Page::CREATE,
             self::OPT_BLOCK_PREFIX => StringUtil::fqcnToBlockPrefix(static::class),
+            self::OPT_CUSTOM_OPTIONS => [],
         ]);
 
         $resolver->setAllowedTypes(self::OPT_VISIBILITY, 'array');
@@ -89,6 +92,7 @@ abstract class AbstractContent implements ServiceSubscriberInterface
         $resolver->setAllowedTypes(self::OPT_EDIT_VOTER_ATTRIBUTE, 'whatwedo\CrudBundle\Enum\PageInterface');
         $resolver->setAllowedTypes(self::OPT_CREATE_VOTER_ATTRIBUTE, 'whatwedo\CrudBundle\Enum\PageInterface');
         $resolver->setAllowedTypes(self::OPT_BLOCK_PREFIX, 'string');
+        $resolver->setAllowedTypes(self::OPT_CUSTOM_OPTIONS, 'array');
     }
 
     public function setOptions(array $options): void

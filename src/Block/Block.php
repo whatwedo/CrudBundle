@@ -49,6 +49,8 @@ class Block implements ServiceSubscriberInterface
 
     public const OPT_BLOCK_PREFIX = 'block_prefix';
 
+    public const OPT_CUSTOM_OPTIONS = 'custom_options';
+
     protected ContainerInterface $container;
 
     protected string $acronym = '';
@@ -88,9 +90,11 @@ class Block implements ServiceSubscriberInterface
             self::OPT_EDIT_VOTER_ATTRIBUTE => Page::EDIT,
             self::OPT_CREATE_VOTER_ATTRIBUTE => Page::CREATE,
             self::OPT_BLOCK_PREFIX => StringUtil::fqcnToBlockPrefix(static::class),
+            self::OPT_CUSTOM_OPTIONS => [],
         ]);
 
         $resolver->setAllowedTypes(self::OPT_VISIBILITY, 'array');
+        $resolver->setAllowedTypes(self::OPT_CUSTOM_OPTIONS, 'array');
     }
 
     public function setOption($name, $value): static
