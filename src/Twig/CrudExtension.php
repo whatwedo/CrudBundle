@@ -10,6 +10,7 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 use whatwedo\CrudBundle\Enum\Page;
+use whatwedo\CrudBundle\Enum\PageInterface;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 class CrudExtension extends AbstractExtension
@@ -27,7 +28,7 @@ class CrudExtension extends AbstractExtension
             new TwigFunction('wwd_crud_render_breadcrumbs', [$this, 'renderBreadcrumbs'], [
                 'is_safe' => ['html'],
             ]),
-            new TwigFunction('wwd_crud_entity_path', fn ($entityOrClass, Page $page) => $this->getEntityPath($entityOrClass, $page)),
+            new TwigFunction('wwd_crud_entity_path', fn ($entityOrClass, PageInterface $page) => $this->getEntityPath($entityOrClass, $page)),
         ];
     }
 
@@ -68,7 +69,7 @@ class CrudExtension extends AbstractExtension
         return $defnition::getEntityAlias();
     }
 
-    public function getEntityPath($entityOrClass, Page $page)
+    public function getEntityPath($entityOrClass, PageInterface $page)
     {
         $defnition = $this->definitionManager->getDefinitionByEntity($entityOrClass);
 

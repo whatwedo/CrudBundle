@@ -20,6 +20,7 @@ use whatwedo\CrudBundle\Content\RelationContent;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\BlockSize;
 use whatwedo\CrudBundle\Enum\Page;
+use whatwedo\CrudBundle\Enum\PageInterface;
 use whatwedo\CrudBundle\Manager\ContentManager;
 use whatwedo\CrudBundle\Traits\VisibilityTrait;
 use whatwedo\CrudBundle\Traits\VoterAttributeTrait;
@@ -168,7 +169,7 @@ class Block implements ServiceSubscriberInterface
     /**
      * @return ContentCollection<AbstractContent>|AbstractContent[]
      */
-    public function getContents(?Page $page = null): ContentCollection
+    public function getContents(?PageInterface $page = null): ContentCollection
     {
         return $page
             ? $this->elements->filterVisibility($page)

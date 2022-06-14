@@ -7,6 +7,7 @@ namespace whatwedo\CrudBundle\Tests\App\Definition;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
 use whatwedo\CrudBundle\Definition\AbstractDefinition;
 use whatwedo\CrudBundle\Enum\Page;
+use whatwedo\CrudBundle\Enum\PageInterface;
 use whatwedo\CrudBundle\Tests\App\Entity\Person;
 use whatwedo\TableBundle\Table\Column;
 use whatwedo\TableBundle\Table\Table;
@@ -37,7 +38,7 @@ class PersonDefinition extends AbstractDefinition
         return array_merge(parent::getCapabilities(), [Page::EXPORT]);
     }
 
-    public function getFormOptions(Page $page, object $data): array
+    public function getFormOptions(PageInterface $page, object $data): array
     {
         if ($page === Page::EDIT) {
             // only check in edit case if the name is not valid

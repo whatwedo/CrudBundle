@@ -511,7 +511,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         }
     }
 
-    private function formSubmittedAndValid(object $entity, PageMode $mode, Page $page): Response
+    private function formSubmittedAndValid(object $entity, PageMode $mode, PageInterface $page): Response
     {
         $this->dispatchEvent(CrudEvent::POST_VALIDATE_PREFIX, $entity);
         $isCreate = $page === Page::CREATE;

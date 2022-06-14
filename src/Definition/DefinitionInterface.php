@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
-use whatwedo\CrudBundle\Enum\Page;
+use whatwedo\CrudBundle\Enum\PageInterface;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
 use whatwedo\CrudBundle\View\DefinitionView;
 use whatwedo\TableBundle\Table\Table;
@@ -31,7 +31,7 @@ interface DefinitionInterface
 
     public static function getRoutePrefix(): string;
 
-    public static function getRoute(Page $route): string;
+    public static function getRoute(PageInterface $route): string;
 
     public function getBuilder(): DefinitionBuilder;
 
@@ -39,7 +39,7 @@ interface DefinitionInterface
      * @param object|null $entity
      * @param object|null $route
      */
-    public function getTitle($entity = null, ?Page $route = null): string;
+    public function getTitle($entity = null, ?PageInterface $route = null): string;
 
     /**
      * returns capabilities of this definition.
@@ -52,7 +52,7 @@ interface DefinitionInterface
      * - delete
      * - batch
      *
-     * @return Page[] capabilities
+     * @return PageInterface[] capabilities
      */
     public static function getCapabilities(): array;
 
@@ -116,7 +116,7 @@ interface DefinitionInterface
      *
      * @param $data
      */
-    public function createView(Page $route, ?object $data = null): DefinitionView;
+    public function createView(PageInterface $route, ?object $data = null): DefinitionView;
 
     /**
      * builds the interface.
@@ -128,9 +128,9 @@ interface DefinitionInterface
      */
     public function configureActions(object $data);
 
-    public function getRedirect(Page $routeFrom, ?object $entity = null): Response;
+    public function getRedirect(PageInterface $routeFrom, ?object $entity = null): Response;
 
-    public function ajaxForm(object $entity, Page $page): void;
+    public function ajaxForm(object $entity, PageInterface $page): void;
 
     /**
      * @param string $extension FQDN of extension
@@ -146,11 +146,11 @@ interface DefinitionInterface
 
     public function jsonSearch(string $q): iterable;
 
-    public function getPage(): ?Page;
+    public function getPage(): ?PageInterface;
 
     public function getBatchActions(): array;
 
-    public function getFormOptions(Page $page, object $data): array;
+    public function getFormOptions(PageInterface $page, object $data): array;
 
     /*
      * @param string $class
