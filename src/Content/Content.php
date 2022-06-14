@@ -30,11 +30,6 @@ class Content extends AbstractContent
         ]);
     }
 
-    public function render($row): string
-    {
-        return $this->formatData($this->getContents($row), $this->options['formatter'], $this->options['formatter_options']);
-    }
-
     public function getFormOptions(array $options = []): array
     {
         // Override options for the EntityHiddenType and HiddenType
@@ -59,21 +54,5 @@ class Content extends AbstractContent
         return [
             FormatterManager::class,
         ];
-    }
-
-    protected function formatData($data, $formatter, $formatterOptions): string
-    {
-        if (is_string($formatter)) {
-            $formatterObj = $this->container->get(FormatterManager::class)->getFormatter($formatter);
-            $formatterObj->processOptions($formatterOptions);
-
-            return (string) $formatterObj->getHtml($data);
-        }
-
-        if (is_callable($formatter)) {
-            return (string) $formatter($data);
-        }
-
-        return (string) $data;
     }
 }

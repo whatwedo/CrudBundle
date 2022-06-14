@@ -12,7 +12,7 @@ use Symfony\Component\Form\FormRegistryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Twig\Environment;
+use Symfony\Component\Security\Core\Security;
 use whatwedo\CoreBundle\Action\Action;
 use whatwedo\CrudBundle\Block\Block;
 use whatwedo\CrudBundle\Collection\BlockCollection;
@@ -39,13 +39,13 @@ class DefinitionView
 
     public function __construct(
         protected DefinitionManager $definitionManager,
-        protected Environment $templating,
         protected FormRegistryInterface $formRegistry,
         protected FormFactoryInterface $formFactory,
         protected RouterInterface $router,
         protected RequestStack $requestStack,
         protected AuthorizationCheckerInterface $authorizationChecker,
         protected Reader $annotationReader,
+        protected Security $security,
     ) {
     }
 
@@ -91,10 +91,26 @@ class DefinitionView
 
     public function getActions(): iterable
     {
-        return array_filter(
+        $actions = array_filter(
             $this->definition->getActions(),
             fn (Action $action) => in_array($this->route, $action->getOption('visibility'), true)
         );
+
+        $filteredActions = [];
+
+        $voterSubject = $this->getData();
+        if (! $voterSubject) {
+            $voterSubject = $this->getDefinition()::getEntity();
+        }
+
+        foreach ($actions as $action) {
+            if ($action->getOption('voter_attribute') === null
+            || $this->security->isGranted($action->getOption('voter_attribute'), $voterSubject)) {
+                $filteredActions[] = $action;
+            }
+        }
+
+        return $filteredActions;
     }
 
     /**
@@ -102,17 +118,25 @@ class DefinitionView
      */
     public function getBlocks(?PageInterface $page = null)
     {
-        return $page
+        $blocks = $page
             ? $this->definition->getBuilder()->getBlocks()->filterVisibility($page)
             : $this->definition->getBuilder()->getBlocks();
-    }
 
-    public function render(): string
-    {
-        return $this->templating->render($this->getTemplatePath('_boxes/' . $this->getRoute() . '.html.twig'), [
-            'data' => $this->data,
-            'helper' => $this,
-        ]);
+        if ($page) {
+            $attribute = match ($page) {
+                Page::SHOW => 'show_voter_attribute',
+                Page::CREATE => 'create_voter_attribute',
+                Page::EDIT => 'edit_voter_attribute',
+            };
+
+            $blocks->filter(
+                function (Block $block) use ($attribute) {
+                    return $block->getOption($attribute) === null || $this->security->isGranted($block->getOption($attribute), $this->getData());
+                }
+            );
+        }
+
+        return $blocks;
     }
 
     /**
@@ -259,15 +283,6 @@ class DefinitionView
     public function getDefinition(): DefinitionInterface
     {
         return $this->definition;
-    }
-
-    public function getTemplatePath(string $templatePath): string
-    {
-        if ($this->templating->getLoader()->exists($this->getDefinition()->getTemplateDirectory() . '/' . $templatePath)) {
-            return $this->getDefinition()->getTemplateDirectory() . '/' . $templatePath;
-        }
-
-        return '@whatwedoCrud/Crud/' . $templatePath;
     }
 
     protected function isContentRequired(AbstractContent $content): bool
