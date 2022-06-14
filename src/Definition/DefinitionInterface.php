@@ -139,5 +139,4 @@ interface DefinitionInterface
     public function getBatchActions(): array;
 
     public function getFormOptions(PageInterface $page, object $data): array;
-
 }
