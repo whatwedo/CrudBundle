@@ -11,6 +11,7 @@ use Symfony\Component\Form\FormRegistryInterface;
 use Symfony\Component\Form\Guess\TypeGuess;
 use Symfony\Component\Form\Util\StringUtil;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use whatwedo\CrudBundle\Collection\ContentCollection;
 use whatwedo\CrudBundle\Content\AbstractContent;
@@ -24,6 +25,7 @@ use whatwedo\CrudBundle\Enum\PageInterface;
 use whatwedo\CrudBundle\Manager\ContentManager;
 use whatwedo\CrudBundle\Traits\VisibilityTrait;
 use whatwedo\CrudBundle\Traits\VoterAttributeTrait;
+use whatwedo\CrudBundle\View\DefinitionView;
 
 #[Autoconfigure(tags: ['whatwedo_crud.block'])]
 class Block implements ServiceSubscriberInterface
@@ -61,8 +63,9 @@ class Block implements ServiceSubscriberInterface
 
     protected DefinitionInterface $definition;
 
-    public function __construct()
-    {
+    public function __construct(
+        protected Security $security
+    ) {
         $this->elements = new ContentCollection();
     }
 
@@ -173,11 +176,27 @@ class Block implements ServiceSubscriberInterface
     /**
      * @return ContentCollection<AbstractContent>|AbstractContent[]
      */
-    public function getContents(?PageInterface $page = null): ContentCollection
+    public function getContents(?DefinitionView $view = null, ?PageInterface $page = null): ContentCollection
     {
-        return $page
+        $contentCollection = $page
             ? $this->elements->filterVisibility($page)
             : $this->elements;
+
+        if ($page && $view) {
+            $attribute = match ($page) {
+                Page::SHOW => 'show_voter_attribute',
+                Page::CREATE => 'create_voter_attribute',
+                Page::EDIT => 'edit_voter_attribute',
+            };
+
+            $contentCollection->filter(
+                function (AbstractContent $content) use ($attribute, $view) {
+                    return $content->getOption($attribute) === null || $this->security->isGranted($content->getOption($attribute), $view->getData());
+                }
+            );
+        }
+
+        return $contentCollection;
     }
 
     public function getContent($acronym): ?AbstractContent
