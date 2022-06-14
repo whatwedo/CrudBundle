@@ -42,7 +42,7 @@
         "doctrine/doctrine-bundle": "^2.5",
         "doctrine/orm": "^2.11",
         "doctrine/annotations": "^1.13.2",
-        "whatwedo/php-coding-standard": "dev-develop",
+        "whatwedo/php-coding-standard": "^1.0",
         "zenstruck/foundry": "^1.16",
         "zenstruck/console-test": "^v1.1.0",
         "symfony/orm-pack": "^1.0",
