@@ -70,8 +70,10 @@ class Block implements ServiceSubscriberInterface
             'edit_voter_attribute' => Page::EDIT,
             'create_voter_attribute' => Page::CREATE,
             'block_prefix' => StringUtil::fqcnToBlockPrefix(static::class),
+            'custom_options' => [],
         ]);
 
+        $resolver->setAllowedTypes('custom_options', 'array');
         $resolver->setAllowedTypes('visibility', 'array');
     }
 
