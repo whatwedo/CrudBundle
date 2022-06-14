@@ -35,10 +35,6 @@ interface DefinitionInterface
 
     public function getBuilder(): DefinitionBuilder;
 
-    /**
-     * @param object|null $entity
-     * @param object|null $route
-     */
     public function getTitle($entity = null, ?PageInterface $route = null): string;
 
     /**
@@ -113,8 +109,6 @@ interface DefinitionInterface
 
     /**
      * returns a view.
-     *
-     * @param $data
      */
     public function createView(PageInterface $route, ?object $data = null): DefinitionView;
 
@@ -132,14 +126,8 @@ interface DefinitionInterface
 
     public function ajaxForm(object $entity, PageInterface $page): void;
 
-    /**
-     * @param string $extension FQDN of extension
-     */
     public function hasExtension($extension): bool;
 
-    /**
-     * @param string $extension FQDN of extension
-     */
     public function getExtension($extension): ExtensionInterface;
 
     public function getParentDefinitionProperty(?object $data): ?string;
@@ -152,12 +140,4 @@ interface DefinitionInterface
 
     public function getFormOptions(PageInterface $page, object $data): array;
 
-    /*
-     * @param string $class
-     * @param string $property
-     *
-     * @return \Symfony\Component\Form\Guess\Guess|\Symfony\Component\Form\Guess\TypeGuess|null
-     *
-    public function guessType($class, $property);
-     * */
 }

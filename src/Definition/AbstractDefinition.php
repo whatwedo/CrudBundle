@@ -272,10 +272,6 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         return '';
     }
 
-    /**
-     * @param Table $table
-     * @param       $property
-     */
     public function getLabelFor($table, $property): string
     {
         if ($table instanceof Table) {
@@ -358,9 +354,6 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     /**
      * build breadcrumbs according to route.
-     *
-     * @param object|null $entity
-     * @param string|null $route
      */
     public function buildBreadcrumbs($entity = null, $route = null, ?Breadcrumbs $breadcrumbs = null): void
     {

@@ -73,8 +73,6 @@ class RelationContent extends TableContent
     }
 
     /**
-     * @param $data
-     *
      * @return array<int|string, mixed>
      */
     public function getCreateRouteParameters($data): array
@@ -207,9 +205,6 @@ class RelationContent extends TableContent
         return $this->getOption('definition');
     }
 
-    /**
-     * @param $entity
-     */
     public function getTable($entity): \whatwedo\TableBundle\Table\Table
     {
         $options = $this->options['table_options'];

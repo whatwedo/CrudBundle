@@ -389,10 +389,6 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         ]);
     }
 
-    /**
-     * @param $event
-     * @param $entity
-     */
     protected function dispatchEvent($event, $entity)
     {
         $this->eventDispatcher->dispatch(new CrudEvent($entity), $event);
@@ -482,10 +478,6 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         return $this->redirectToDefinitionObject($this->definitionManager->getDefinitionByClassName($definitionClass), $page, $parameters, $status);
     }
 
-    /**
-     * @param $attributes
-     * @param null $subject
-     */
     protected function denyAccessUnlessGrantedCrud($attributes, $subject = null, string $message = 'Access Denied.')
     {
         if (! $this->getUser()) {

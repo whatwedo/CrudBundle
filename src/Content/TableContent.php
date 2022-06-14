@@ -54,8 +54,6 @@ class TableContent extends AbstractContent
     }
 
     /**
-     * @param $row
-     *
      * @return string
      */
     public function render($row)
@@ -76,17 +74,11 @@ class TableContent extends AbstractContent
         ]);
     }
 
-    /**
-     * @param $capability
-     */
     protected function hasCapability($capability): bool
     {
         return call_user_func([$this->getOption('definition'), 'hasCapability'], $capability);
     }
 
-    /**
-     * @param $suffix
-     */
     protected function getRoute($suffix): string
     {
         return call_user_func([$this->options['definition'], 'getRoute'], $suffix);
