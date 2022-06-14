@@ -1,10 +1,10 @@
 {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
 
-{% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW'))|filter(c => is_granted(c.option('show_voter_attribute'), view.data)) %}
+{% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW')) %}
     {% if block.acronym == blockAcronym and fieldAcronym is null%}
         {{ wwd_crud_render_block(block, view, constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW')) }}
     {% elseif block.acronym == blockAcronym and fieldAcronym is not null %}
-        {% for content in block.contents(constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW'))|filter(c => is_granted(c.option('show_voter_attribute'), view.data)) %}
+        {% for content in block.contents(view, constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW')) %}
             {% if content.acronym == fieldAcronym %}
                 {{ wwd_crud_render_content(content, block, view, form) }}
             {% endif %}

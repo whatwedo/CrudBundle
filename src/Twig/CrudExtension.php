@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace whatwedo\CrudBundle\Twig;
 
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Security;
 use Twig\Environment;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -18,7 +19,8 @@ class CrudExtension extends AbstractExtension
     public function __construct(
         protected Environment $environment,
         protected DefinitionManager $definitionManager,
-        protected UrlGeneratorInterface $urlGenerator
+        protected UrlGeneratorInterface $urlGenerator,
+        protected Security $security
     ) {
     }
 

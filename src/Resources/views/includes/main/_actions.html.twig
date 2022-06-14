@@ -1,10 +1,6 @@
 {% if view is defined and view.actions|length > 0 %}
     <div aria-label="Aktionen">
-        {% set voterSubject = view.data %}
-        {% if not voterSubject %}
-            {% set voterSubject = view.definition.entity %}
-        {% endif  %}
-        {% for action in view.actions | filter (action => action.getOption('voter_attribute') is null or is_granted(action.getOption('voter_attribute'), voterSubject)) %}
+        {% for action in view.actions %}
             {{ wwd_crud_render_action(action, view) }}
         {% endfor %}
     </div>
