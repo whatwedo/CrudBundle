@@ -19,6 +19,7 @@ use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Content\AbstractContent;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\Page;
+use whatwedo\CrudBundle\Enum\PageInterface;
 use whatwedo\CrudBundle\Form\Type\EntityAjaxType;
 use whatwedo\CrudBundle\Form\Type\EntityHiddenType;
 use whatwedo\CrudBundle\Form\Type\EntityPreselectType;
@@ -28,7 +29,7 @@ class DefinitionView
 {
     protected ?object $data = null;
 
-    protected Page $route;
+    protected PageInterface $route;
 
     protected ?FormInterface $form = null;
 
@@ -48,7 +49,7 @@ class DefinitionView
     ) {
     }
 
-    public function create(DefinitionInterface $definition, Page $route, ?object $data = null): self
+    public function create(DefinitionInterface $definition, PageInterface $route, ?object $data = null): self
     {
         $view = clone $this;
         $view->setDefinition($definition);
@@ -76,12 +77,12 @@ class DefinitionView
         return $this->data;
     }
 
-    public function getRoute(): Page
+    public function getRoute(): PageInterface
     {
         return $this->route;
     }
 
-    public function setRoute(Page $route): self
+    public function setRoute(PageInterface $route): self
     {
         $this->route = $route;
 
@@ -99,7 +100,7 @@ class DefinitionView
     /**
      * @return BlockCollection|Block[]
      */
-    public function getBlocks(?Page $page = null)
+    public function getBlocks(?PageInterface $page = null)
     {
         return $page
             ? $this->definition->getBuilder()->getBlocks()->filterVisibility($page)
@@ -119,7 +120,7 @@ class DefinitionView
      *
      * @return string
      */
-    public function getPath(Page $route, $params = [])
+    public function getPath(PageInterface $route, $params = [])
     {
         if ($this->definition->hasCapability($route)) {
             switch ($route) {
@@ -250,7 +251,7 @@ class DefinitionView
         return $this->form;
     }
 
-    public function hasCapability(Page $route): bool
+    public function hasCapability(PageInterface $route): bool
     {
         return $this->definition->hasCapability($route);
     }

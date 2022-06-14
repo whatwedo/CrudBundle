@@ -37,6 +37,7 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Security;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
 use whatwedo\CrudBundle\Enum\Page;
+use whatwedo\CrudBundle\Enum\PageInterface;
 use whatwedo\TableBundle\Entity\Filter;
 use whatwedo\TableBundle\Entity\UserInterface;
 use whatwedo\TableBundle\Repository\FilterRepository;
@@ -106,7 +107,7 @@ class FilterDefinition extends AbstractDefinition
         ;
     }
 
-    public function getRedirect(Page $routeFrom, ?object $entity = null): Response
+    public function getRedirect(PageInterface $routeFrom, ?object $entity = null): Response
     {
         if ($entity instanceof Filter) {
             $router = $this->container->get(RouterInterface::class);

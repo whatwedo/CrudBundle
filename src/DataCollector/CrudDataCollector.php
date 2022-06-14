@@ -7,6 +7,8 @@ namespace whatwedo\CrudBundle\DataCollector;
 use Symfony\Bundle\FrameworkBundle\DataCollector\AbstractDataCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use whatwedo\CrudBundle\Definition\DefinitionInterface;
+use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 class CrudDataCollector extends AbstractDataCollector
@@ -92,12 +94,12 @@ class CrudDataCollector extends AbstractDataCollector
     /**
      * @param mixed $route
      */
-    protected function getPageName(\whatwedo\CrudBundle\Definition\DefinitionInterface $definitionInstance, string $route): string
+    protected function getPageName(DefinitionInterface $definitionInstance, string $route): string
     {
         $pageValue = str_replace($definitionInstance::getRoutePathPrefix() . '_', '', $route);
 
         try {
-            $page = \whatwedo\CrudBundle\Enum\Page::tryFrom($pageValue);
+            $page = Page::tryFrom($pageValue);
             $page = serialize($page);
             $pageItem = explode('"', $page);
             if (count($pageItem) === 3) {

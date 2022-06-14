@@ -15,8 +15,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use whatwedo\CrudBundle\Action\IdentityAction;
-use whatwedo\CrudBundle\Action\PostAction;
 use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Enum\PageMode;
 use whatwedo\CrudBundle\Form\Type\EntityAjaxType;
@@ -26,7 +24,6 @@ use whatwedo\TableBundle\DataLoader\DoctrineDataLoader;
 use whatwedo\TableBundle\Extension\FilterExtension;
 use whatwedo\TableBundle\Extension\SearchExtension;
 use whatwedo\TableBundle\Factory\TableFactory;
-use whatwedo\TableBundle\Table\ActionColumn;
 use function array_keys;
 use function array_reduce;
 use function array_reverse;
@@ -34,8 +31,6 @@ use function implode;
 
 class RelationContent extends TableContent
 {
-    protected array $accessorPathDefinitionCacheMap = [];
-
     public function __construct(
         protected TableFactory $tableFactory,
         protected EventDispatcherInterface $eventDispatcher,

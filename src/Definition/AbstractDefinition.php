@@ -167,7 +167,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         );
     }
 
-    public function getTitle($entity = null, ?Page $route = null): string
+    public function getTitle($entity = null, ?PageInterface $route = null): string
     {
         $title = $this->translator->trans(static::getEntityTitle());
         $add = $this->translator->trans('whatwedo_crud.add');
@@ -246,7 +246,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         return $this->builder ?? throw new \RuntimeException('Please call DefinitionInterface::createView before accessing the builder');
     }
 
-    public function createView(Page $route, object $data = null): DefinitionView
+    public function createView(PageInterface $route, object $data = null): DefinitionView
     {
         $this->builder = $this->getDefinitionBuilder($data);
 
@@ -318,7 +318,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         return null;
     }
 
-    public function getRedirect(Page $routeFrom, ?object $entity = null): Response
+    public function getRedirect(PageInterface $routeFrom, ?object $entity = null): Response
     {
         return match ($routeFrom) {
             Page::CREATE, Page::EDIT => new RedirectResponse(
@@ -337,7 +337,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         return static::getQueryAlias();
     }
 
-    public function ajaxForm(object $entity, Page $page): void
+    public function ajaxForm(object $entity, PageInterface $page): void
     {
     }
 
@@ -411,7 +411,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         }
     }
 
-    public function getTemplateParameters(Page $route, array $parameters = [], $entity = null): array
+    public function getTemplateParameters(PageInterface $route, array $parameters = [], $entity = null): array
     {
         return $parameters;
     }
@@ -454,7 +454,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         return static::getAlias();
     }
 
-    public static function getRoute(Page $route): string
+    public static function getRoute(PageInterface $route): string
     {
         return static::getRoutePrefix() . '_' . $route->toRoute();
     }
@@ -480,7 +480,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         return null;
     }
 
-    public function getFormOptions(Page $page, object $data): array
+    public function getFormOptions(PageInterface $page, object $data): array
     {
         return [];
     }
@@ -500,7 +500,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         ];
     }
 
-    public function getPage(): ?Page
+    public function getPage(): ?PageInterface
     {
         $exploded = explode('_', $this->container->get(RequestStack::class)->getCurrentRequest()->attributes->get('_route'));
         $route = end($exploded);
