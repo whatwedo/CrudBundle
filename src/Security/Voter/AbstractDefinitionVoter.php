@@ -79,12 +79,7 @@ abstract class AbstractDefinitionVoter extends Voter
         return $definition;
     }
 
-    /**
-     * @param $subject
-     *
-     * @return bool
-     */
-    protected function isSubjectSupported($subject)
+    protected function isSubjectSupported($subject): bool
     {
         if ($subject === null) {
             return false;
@@ -95,12 +90,7 @@ abstract class AbstractDefinitionVoter extends Voter
         return $entityReflector->isInstance($subject);
     }
 
-    /**
-     * @param $attribute
-     *
-     * @return bool
-     */
-    protected function isAttributeSupported($attribute)
+    protected function isAttributeSupported($attribute): bool
     {
         $supportedAttributes = array_merge($this->getDefinition()::getCapabilities(), static::getAdditionalAttributes());
 
@@ -109,11 +99,6 @@ abstract class AbstractDefinitionVoter extends Voter
 
     /**
      * Determines if the attribute and subject are supported by this voter.
-     *
-     * @param string $attribute An attribute
-     * @param mixed  $subject   The subject to secure, e.g. an object the user wants to access or any other PHP type
-     *
-     * @return bool True if the attribute and subject are supported, false otherwise
      */
     protected function supports(string $attribute, mixed $subject): bool
     {
