@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace whatwedo\CrudBundle\Content;
 
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use whatwedo\CoreBundle\Formatter\FormatterInterface;
 use whatwedo\CoreBundle\Manager\FormatterManager;
+use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Form\Type\EntityHiddenType;
 use whatwedo\CrudBundle\Formatter\CrudDefaultFormatter;
 
@@ -60,6 +63,29 @@ class Content extends AbstractContent
         $resolver->setDefault(self::OPT_AJAX_FORM_TRIGGER, false);
 
         $resolver->setAllowedTypes(self::OPT_FORMATTER, 'string');
+        $resolver->setAllowedValues(self::OPT_FORMATTER, function ($value) {
+            $isNull = $value === null;
+            $isFormatterFqdn = !$isNull && class_exists($value) && in_array(FormatterInterface::class, class_implements($value), true);
+            return $isNull || $isFormatterFqdn;
+        });
+
+        $resolver->setAllowedTypes(self::OPT_FORMATTER_OPTIONS, 'array');
+        $resolver->setAllowedTypes(self::OPT_HELP, ['null', 'string']);
+        $resolver->setAllowedTypes(self::OPT_PRESELECT_DEFINITION, ['null', 'string']);
+        $resolver->setAllowedValues(self::OPT_PRESELECT_DEFINITION, function ($value) {
+            $isNull = $value === null;
+            $isDefinitionFqdn = !$isNull && class_exists($value) && in_array(DefinitionInterface::class, class_implements($value), true);
+            return $isNull || $isDefinitionFqdn;
+        });
+        $resolver->setAllowedTypes(self::OPT_ATTR, 'array');
+        $resolver->setAllowedTypes(self::OPT_FORM_TYPE, ['null', 'string']);
+        $resolver->setAllowedValues(self::OPT_FORM_TYPE, function ($value) {
+            $isNull = $value === null;
+            $isFormTypeFqdn = !$isNull && class_exists($value) && in_array(FormTypeInterface::class, class_implements($value), true);
+            return $isNull || $isFormTypeFqdn;
+        });
+        $resolver->setAllowedTypes(self::OPT_FORM_OPTIONS, 'array');
+        $resolver->setAllowedTypes(self::OPT_AJAX_FORM_TRIGGER, 'boolean');
     }
 
     public function getFormOptions(array $options = []): array
