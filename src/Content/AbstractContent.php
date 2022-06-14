@@ -62,6 +62,13 @@ abstract class AbstractContent implements ServiceSubscriberInterface
 
         $resolver->setAllowedTypes('custom_options', 'array');
         $resolver->setAllowedTypes('visibility', 'array');
+        $resolver->setAllowedTypes('label', ['string', 'boolean', 'null']);
+        $resolver->setAllowedTypes('callable', ['callable', 'null']);
+        $resolver->setAllowedTypes('attr', 'array');
+        $resolver->setAllowedTypes('show_voter_attribute', ['null', 'object', 'string']);
+        $resolver->setAllowedTypes('edit_voter_attribute', ['null', 'object', 'string']);
+        $resolver->setAllowedTypes('create_voter_attribute', ['null', 'object', 'string']);
+        $resolver->setAllowedTypes('block_prefix', 'string');
     }
 
     public function setOptions(array $options): void

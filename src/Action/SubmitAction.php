@@ -36,6 +36,7 @@ class SubmitAction extends Action
         array $options
     ) {
         unset($this->defaultOptions['route'], $this->defaultOptions['route_parameters']);
+        unset($this->allowedTypes['route'], $this->allowedTypes['route_parameters']);
         parent::__construct($this->acronym, $options);
     }
 }
