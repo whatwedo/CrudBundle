@@ -29,12 +29,28 @@ class BlockBlock extends Block
         ]);
     }
 
-    public function getBlocks(?Page $page = null): BlockCollection
+    public function getBlocks(?DefinitionView $view = null, ?PageInterface $page = null): BlockCollection
     {
-        return $page
+        $blockCollection = $page
             ? $this->blocks->filterVisibility($page)
             : $this->blocks
         ;
+
+        if ($page && $view) {
+            $attribute = match ($page) {
+                Page::SHOW => self::OPT_SHOW_VOTER_ATTRIBUTE,
+                Page::CREATE => self::OPT_CREATE_VOTER_ATTRIBUTE,
+                Page::EDIT => self::OPT_EDIT_VOTER_ATTRIBUTE,
+            };
+
+            $blockCollection->filter(
+                function (Block $block) use ($attribute, $view) {
+                    return $block->getOption($attribute) === null || $this->security->isGranted($block->getOption($attribute), $view->getData());
+                }
+            );
+        }
+
+        return $blockCollection;
     }
 
     public function getContents(?DefinitionView $view = null, ?PageInterface $page = null): ContentCollection

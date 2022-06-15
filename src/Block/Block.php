@@ -195,9 +195,9 @@ class Block implements ServiceSubscriberInterface
 
         if ($page && $view) {
             $attribute = match ($page) {
-                Page::SHOW => 'show_voter_attribute',
-                Page::CREATE => 'create_voter_attribute',
-                Page::EDIT => 'edit_voter_attribute',
+                Page::SHOW => self::OPT_SHOW_VOTER_ATTRIBUTE,
+                Page::CREATE => self::OPT_CREATE_VOTER_ATTRIBUTE,
+                Page::EDIT => self::OPT_EDIT_VOTER_ATTRIBUTE,
             };
 
             $contentCollection->filter(
