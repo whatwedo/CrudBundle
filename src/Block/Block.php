@@ -98,6 +98,14 @@ class Block implements ServiceSubscriberInterface
 
         $resolver->setAllowedTypes(self::OPT_VISIBILITY, 'array');
         $resolver->setAllowedTypes(self::OPT_CUSTOM_OPTIONS, 'array');
+        $resolver->setAllowedTypes(self::OPT_LABEL, ['null', 'string']);
+        $resolver->setAllowedTypes(self::OPT_DESCRIPTION, ['null', 'string']);
+        $resolver->setAllowedTypes(self::OPT_ATTR, ['null', 'array']);
+        $resolver->setAllowedValues(self::OPT_SIZE, [BlockSize::LARGE, BlockSize::SMALL]);
+        $resolver->setAllowedTypes(self::OPT_SHOW_VOTER_ATTRIBUTE, ['null', 'string', 'object']);
+        $resolver->setAllowedTypes(self::OPT_EDIT_VOTER_ATTRIBUTE, ['null', 'string', 'object']);
+        $resolver->setAllowedTypes(self::OPT_CREATE_VOTER_ATTRIBUTE, ['null', 'string', 'object']);
+        $resolver->setAllowedTypes(self::OPT_BLOCK_PREFIX, 'string');
     }
 
     public function setOption($name, $value): static

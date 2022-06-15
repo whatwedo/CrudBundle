@@ -76,5 +76,12 @@ class EnumContent extends Content
                 self::OPT_FORM_OPTIONS_CLASS => $option[self::OPT_CLASS],
             ],
         ]);
+
+        $resolver->setAllowedTypes('class', ['string']);
+        $resolver->setAllowedValues('class', function ($value) {
+            $isNull = $value === null;
+            $isEnumClass = !$isNull && enum_exists($value);
+            return $isNull || $isEnumClass;
+        });
     }
 }

@@ -173,6 +173,10 @@ class RelationContent extends TableContent
 
         $resolver->setRequired(self::OPT_CREATE_URL);
         $resolver->setRequired(self::OPT_RELOAD_URL);
+        $resolver->setAllowedTypes(self::OPT_ROUTE_ADDITION_KEY, ['null', 'string']);
+        $resolver->setAllowedTypes(self::OPT_SHOW_INDEX_BUTTON, 'boolean');
+        $resolver->setAllowedTypes(self::OPT_ADD_VOTER_ATTRIBUTE, ['string', 'null', 'object']);
+        $resolver->setAllowedTypes(self::OPT_SHOW_TABLE_IN_FORM, 'boolean');
 
         $resolver->setDefault(self::OPT_DEFINITION, fn (Options $options) => $this->getTargetDefinition($options['accessor_path'])::class);
         $resolver->setDefault(self::OPT_CLASS, fn (Options $options) => $this->getTargetDefinition($options['accessor_path'])::getEntity());
