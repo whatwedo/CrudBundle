@@ -6,15 +6,18 @@ namespace whatwedo\CrudBundle\Content;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Enum\PageMode;
 use whatwedo\CrudBundle\Form\Type\EntityAjaxType;
@@ -24,6 +27,7 @@ use whatwedo\TableBundle\DataLoader\DoctrineDataLoader;
 use whatwedo\TableBundle\Extension\FilterExtension;
 use whatwedo\TableBundle\Extension\SearchExtension;
 use whatwedo\TableBundle\Factory\TableFactory;
+use whatwedo\TableBundle\Table\Table;
 use function array_keys;
 use function array_reduce;
 use function array_reverse;
@@ -217,7 +221,7 @@ class RelationContent extends TableContent
         $resolver->setAllowedTypes(self::OPT_QUERY_BUILDER_CONFIGURATION, ['callable', 'null']);
     }
 
-    public function getRequest(): ?\Symfony\Component\HttpFoundation\Request
+    public function getRequest(): ?Request
     {
         return $this->requestStack->getCurrentRequest();
     }
@@ -245,17 +249,12 @@ class RelationContent extends TableContent
         return array_merge($options, $this->options[self::OPT_FORM_OPTIONS]);
     }
 
-    /**
-     * Definiton der Vorselektion.
-     *
-     * @return string
-     */
-    public function getPreselectDefinition()
+    public function getPreselectDefinition(): ?string
     {
         return $this->getOption(self::OPT_DEFINITION);
     }
 
-    public function getTable($entity): \whatwedo\TableBundle\Table\Table
+    public function getTable($entity): Table
     {
         $options = $this->options[self::OPT_TABLE_OPTIONS];
 
@@ -394,7 +393,7 @@ class RelationContent extends TableContent
         return $this->options[self::OPT_RELOAD_URL];
     }
 
-    private function getTargetDefinition($accessorPath = null): \whatwedo\CrudBundle\Definition\DefinitionInterface
+    private function getTargetDefinition($accessorPath = null): DefinitionInterface
     {
         $metadataFactory = $this->getMetadataFactory();
 
@@ -474,7 +473,7 @@ class RelationContent extends TableContent
         return $reverse;
     }
 
-    private function getMetadataFactory(): \Doctrine\Persistence\Mapping\ClassMetadataFactory
+    private function getMetadataFactory(): ClassMetadataFactory
     {
         return $this->doctrine
             ->getManager()
