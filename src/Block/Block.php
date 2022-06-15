@@ -22,6 +22,7 @@ use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\BlockSize;
 use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Enum\PageInterface;
+use whatwedo\CrudBundle\Exception\BlockNotFoundException;
 use whatwedo\CrudBundle\Manager\ContentManager;
 use whatwedo\CrudBundle\Traits\VisibilityTrait;
 use whatwedo\CrudBundle\Traits\VoterAttributeTrait;
@@ -55,6 +56,8 @@ class Block implements ServiceSubscriberInterface
 
     protected ContainerInterface $container;
 
+    protected ?Block $parentBlock = null;
+
     protected string $acronym = '';
 
     protected array $options = [];
@@ -63,9 +66,8 @@ class Block implements ServiceSubscriberInterface
 
     protected DefinitionInterface $definition;
 
-    public function __construct(
-        protected Security $security
-    ) {
+    public function __construct()
+    {
         $this->elements = new ContentCollection();
     }
 
@@ -192,14 +194,14 @@ class Block implements ServiceSubscriberInterface
 
         if ($page && $view) {
             $attribute = match ($page) {
-                Page::SHOW => 'show_voter_attribute',
-                Page::CREATE => 'create_voter_attribute',
-                Page::EDIT => 'edit_voter_attribute',
+                Page::SHOW => self::OPT_SHOW_VOTER_ATTRIBUTE,
+                Page::CREATE => self::OPT_CREATE_VOTER_ATTRIBUTE,
+                Page::EDIT => self::OPT_EDIT_VOTER_ATTRIBUTE,
             };
 
-            $contentCollection->filter(
+            $contentCollection = $contentCollection->filter(
                 function (AbstractContent $content) use ($attribute, $view) {
-                    return $content->getOption($attribute) === null || $this->security->isGranted($content->getOption($attribute), $view->getData());
+                    return $content->getOption($attribute) === null || $this->getSecurity()->isGranted($content->getOption($attribute), $view->getData());
                 }
             );
         }
@@ -232,7 +234,27 @@ class Block implements ServiceSubscriberInterface
         return [
             FormRegistryInterface::class,
             ContentManager::class,
+            Security::class,
         ];
+    }
+
+    public function getParentBlock(): self
+    {
+        if (! $this->parentBlock) {
+            throw new BlockNotFoundException('no Parent Block available');
+        }
+
+        return $this->parentBlock;
+    }
+
+    protected function getSecurity(): Security
+    {
+        return $this->container->get(Security::class);
+    }
+
+    protected function setParentBlock(?self $parentBlock): void
+    {
+        $this->parentBlock = $parentBlock;
     }
 
     private function getType(string $acronym, array $options): string
