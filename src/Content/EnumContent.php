@@ -80,7 +80,8 @@ class EnumContent extends Content
         $resolver->setAllowedTypes('class', ['string']);
         $resolver->setAllowedValues('class', function ($value) {
             $isNull = $value === null;
-            $isEnumClass = !$isNull && enum_exists($value);
+            $isEnumClass = ! $isNull && enum_exists($value);
+
             return $isNull || $isEnumClass;
         });
     }

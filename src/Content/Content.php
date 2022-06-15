@@ -65,7 +65,8 @@ class Content extends AbstractContent
         $resolver->setAllowedTypes(self::OPT_FORMATTER, 'string');
         $resolver->setAllowedValues(self::OPT_FORMATTER, function ($value) {
             $isNull = $value === null;
-            $isFormatterFqdn = !$isNull && class_exists($value) && in_array(FormatterInterface::class, class_implements($value), true);
+            $isFormatterFqdn = ! $isNull && class_exists($value) && in_array(FormatterInterface::class, class_implements($value), true);
+
             return $isNull || $isFormatterFqdn;
         });
 
@@ -74,14 +75,16 @@ class Content extends AbstractContent
         $resolver->setAllowedTypes(self::OPT_PRESELECT_DEFINITION, ['null', 'string']);
         $resolver->setAllowedValues(self::OPT_PRESELECT_DEFINITION, function ($value) {
             $isNull = $value === null;
-            $isDefinitionFqdn = !$isNull && class_exists($value) && in_array(DefinitionInterface::class, class_implements($value), true);
+            $isDefinitionFqdn = ! $isNull && class_exists($value) && in_array(DefinitionInterface::class, class_implements($value), true);
+
             return $isNull || $isDefinitionFqdn;
         });
         $resolver->setAllowedTypes(self::OPT_ATTR, 'array');
         $resolver->setAllowedTypes(self::OPT_FORM_TYPE, ['null', 'string']);
         $resolver->setAllowedValues(self::OPT_FORM_TYPE, function ($value) {
             $isNull = $value === null;
-            $isFormTypeFqdn = !$isNull && class_exists($value) && in_array(FormTypeInterface::class, class_implements($value), true);
+            $isFormTypeFqdn = ! $isNull && class_exists($value) && in_array(FormTypeInterface::class, class_implements($value), true);
+
             return $isNull || $isFormTypeFqdn;
         });
         $resolver->setAllowedTypes(self::OPT_FORM_OPTIONS, 'array');

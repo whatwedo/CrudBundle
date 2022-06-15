@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Tests\App\Definition;
 
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
 use whatwedo\CrudBundle\Definition\AbstractDefinition;
 use whatwedo\CrudBundle\Tests\App\Entity\Company;

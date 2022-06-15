@@ -97,7 +97,8 @@ class TableContent extends AbstractContent
         $resolver->setAllowedTypes('definition', ['null', 'string']);
         $resolver->setAllowedValues('definition', function ($value) {
             $isNull = $value === null;
-            $isDefinitionFqdn = !$isNull && class_exists($value) && in_array(DefinitionInterface::class, class_implements($value), true);
+            $isDefinitionFqdn = ! $isNull && class_exists($value) && in_array(DefinitionInterface::class, class_implements($value), true);
+
             return $isNull || $isDefinitionFqdn;
         });
         $resolver->setAllowedTypes('route_addition_key', ['null', 'string']);
