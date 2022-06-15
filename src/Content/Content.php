@@ -71,7 +71,7 @@ class Content extends AbstractContent
         });
 
         $resolver->setAllowedTypes(self::OPT_FORMATTER_OPTIONS, 'array');
-        $resolver->setAllowedTypes(self::OPT_HELP, ['null', 'string']);
+        $resolver->setAllowedTypes(self::OPT_HELP, ['null', 'string', 'boolean']);
         $resolver->setAllowedTypes(self::OPT_PRESELECT_DEFINITION, ['null', 'string']);
         $resolver->setAllowedValues(self::OPT_PRESELECT_DEFINITION, function ($value) {
             $isNull = $value === null;

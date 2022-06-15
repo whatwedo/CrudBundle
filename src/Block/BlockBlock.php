@@ -7,6 +7,7 @@ namespace whatwedo\CrudBundle\Block;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Collection\ContentCollection;
+use whatwedo\CrudBundle\Enum\BlockSize;
 use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Enum\PageInterface;
 use whatwedo\CrudBundle\Manager\BlockManager;
@@ -43,9 +44,9 @@ class BlockBlock extends Block
                 Page::EDIT => self::OPT_EDIT_VOTER_ATTRIBUTE,
             };
 
-            $blockCollection->filter(
+            $blockCollection = $blockCollection->filter(
                 function (Block $block) use ($attribute, $view) {
-                    return $block->getOption($attribute) === null || $this->security->isGranted($block->getOption($attribute), $view->getData());
+                    return $block->getOption($attribute) === null || $this->getSecurity()->isGranted($block->getOption($attribute), $view->getData());
                 }
             );
         }
@@ -71,6 +72,9 @@ class BlockBlock extends Block
         $element->setParentBlock($this);
         if (! isset($options[self::OPT_LABEL])) {
             $options[self::OPT_LABEL] = sprintf('wwd.%s.block_block.%s', $this->definition::getEntityAlias(), $acronym);
+        }
+        if (! isset($options[self::OPT_SIZE])) {
+            $options[self::OPT_SIZE] = BlockSize::LARGE;
         }
         $element->setOptions($options);
         $this->blocks->set($acronym, $element, $position);

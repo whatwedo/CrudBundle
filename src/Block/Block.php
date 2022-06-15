@@ -66,9 +66,8 @@ class Block implements ServiceSubscriberInterface
 
     protected DefinitionInterface $definition;
 
-    public function __construct(
-        protected Security $security
-    ) {
+    public function __construct()
+    {
         $this->elements = new ContentCollection();
     }
 
@@ -200,9 +199,9 @@ class Block implements ServiceSubscriberInterface
                 Page::EDIT => self::OPT_EDIT_VOTER_ATTRIBUTE,
             };
 
-            $contentCollection->filter(
+            $contentCollection = $contentCollection->filter(
                 function (AbstractContent $content) use ($attribute, $view) {
-                    return $content->getOption($attribute) === null || $this->security->isGranted($content->getOption($attribute), $view->getData());
+                    return $content->getOption($attribute) === null || $this->getSecurity()->isGranted($content->getOption($attribute), $view->getData());
                 }
             );
         }
@@ -235,6 +234,7 @@ class Block implements ServiceSubscriberInterface
         return [
             FormRegistryInterface::class,
             ContentManager::class,
+            Security::class,
         ];
     }
 
@@ -245,6 +245,11 @@ class Block implements ServiceSubscriberInterface
         }
 
         return $this->parentBlock;
+    }
+
+    protected function getSecurity(): Security
+    {
+        return $this->container->get(Security::class);
     }
 
     protected function setParentBlock(?self $parentBlock): void
