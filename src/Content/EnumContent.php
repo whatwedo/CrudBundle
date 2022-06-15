@@ -36,17 +36,53 @@ use whatwedo\CoreBundle\Formatter\EnumFormatter;
 
 class EnumContent extends Content
 {
+    public const OPT_CLASS = 'class';
+
+    public const OPT_FORMATTER = 'formatter';
+
+    public const OPT_FORM_TYPE = 'form_type';
+
+    public const OPT_FORM_OPTIONS = 'form_options';
+
+    public const OPT_FORM_OPTIONS_CLASS = 'class';
+
+    public const OPT_LABEL = 'label';
+
+    public const OPT_CALLABLE = 'callable';
+
+    public const OPT_ATTR = 'attr';
+
+    public const OPT_VISIBILITY = 'visibility';
+
+    public const OPT_SHOW_VOTER_ATTRIBUTE = 'show_voter_attribute';
+
+    public const OPT_EDIT_VOTER_ATTRIBUTE = 'edit_voter_attribute';
+
+    public const OPT_CREATE_VOTER_ATTRIBUTE = 'create_voter_attribute';
+
+    public const OPT_BLOCK_PREFIX = 'block_prefix';
+
+    public const OPT_ACCESSOR_PATH = 'accessor_path';
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'class' => null,
-            'formatter' => EnumFormatter::class,
-            'form_type' => EnumType::class,
-            'form_options' => fn (Options $option) => [
-                'class' => $option['class'],
+            self::OPT_CLASS => null,
+            self::OPT_FORMATTER => EnumFormatter::class,
+            self::OPT_FORM_TYPE => EnumType::class,
+            self::OPT_FORM_OPTIONS => fn (Options $option) => [
+                self::OPT_FORM_OPTIONS_CLASS => $option[self::OPT_CLASS],
             ],
         ]);
+
+        $resolver->setAllowedTypes('class', ['string']);
+        $resolver->setAllowedValues('class', function ($value) {
+            $isNull = $value === null;
+            $isEnumClass = ! $isNull && enum_exists($value);
+
+            return $isNull || $isEnumClass;
+        });
     }
 }

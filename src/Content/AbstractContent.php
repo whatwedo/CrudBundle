@@ -24,6 +24,28 @@ abstract class AbstractContent implements ServiceSubscriberInterface
     use VisibilityTrait;
     use VoterAttributeTrait;
 
+    public const OPT_LABEL = 'label';
+
+    public const OPT_HELP = 'help';
+
+    public const OPT_CALLABLE = 'callable';
+
+    public const OPT_ATTR = 'attr';
+
+    public const OPT_VISIBILITY = 'visibility';
+
+    public const OPT_SHOW_VOTER_ATTRIBUTE = 'show_voter_attribute';
+
+    public const OPT_EDIT_VOTER_ATTRIBUTE = 'edit_voter_attribute';
+
+    public const OPT_CREATE_VOTER_ATTRIBUTE = 'create_voter_attribute';
+
+    public const OPT_BLOCK_PREFIX = 'block_prefix';
+
+    public const OPT_ACCESSOR_PATH = 'accessor_path';
+
+    public const OPT_CUSTOM_OPTIONS = 'custom_options';
+
     protected ContainerInterface $container;
 
     protected string $acronym = '';
@@ -49,19 +71,28 @@ abstract class AbstractContent implements ServiceSubscriberInterface
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'label' => $this->acronym,
-            'callable' => null,
-            'attr' => [],
-            'visibility' => [Page::SHOW, Page::EDIT, Page::CREATE],
-            'show_voter_attribute' => Page::SHOW,
-            'edit_voter_attribute' => Page::EDIT,
-            'create_voter_attribute' => Page::CREATE,
-            'block_prefix' => StringUtil::fqcnToBlockPrefix(static::class),
-            'custom_options' => [],
+            self::OPT_LABEL => $this->acronym,
+            self::OPT_HELP => null,
+            self::OPT_CALLABLE => null,
+            self::OPT_ATTR => [],
+            self::OPT_VISIBILITY => [Page::SHOW, Page::EDIT, Page::CREATE],
+            self::OPT_SHOW_VOTER_ATTRIBUTE => Page::SHOW,
+            self::OPT_EDIT_VOTER_ATTRIBUTE => Page::EDIT,
+            self::OPT_CREATE_VOTER_ATTRIBUTE => Page::CREATE,
+            self::OPT_BLOCK_PREFIX => StringUtil::fqcnToBlockPrefix(static::class),
+            self::OPT_CUSTOM_OPTIONS => [],
         ]);
 
-        $resolver->setAllowedTypes('custom_options', 'array');
-        $resolver->setAllowedTypes('visibility', 'array');
+        $resolver->setAllowedTypes(self::OPT_VISIBILITY, 'array');
+        $resolver->setAllowedTypes(self::OPT_LABEL, ['string', 'boolean', 'null']);
+        $resolver->setAllowedTypes(self::OPT_HELP, ['string', 'boolean', 'null']);
+        $resolver->setAllowedTypes(self::OPT_CALLABLE, ['callable', 'null']);
+        $resolver->setAllowedTypes(self::OPT_ATTR, 'array');
+        $resolver->setAllowedTypes(self::OPT_SHOW_VOTER_ATTRIBUTE, ['null', 'object', 'string']);
+        $resolver->setAllowedTypes(self::OPT_EDIT_VOTER_ATTRIBUTE, ['null', 'object', 'string']);
+        $resolver->setAllowedTypes(self::OPT_CREATE_VOTER_ATTRIBUTE, ['null', 'object', 'string']);
+        $resolver->setAllowedTypes(self::OPT_BLOCK_PREFIX, 'string');
+        $resolver->setAllowedTypes(self::OPT_CUSTOM_OPTIONS, 'array');
     }
 
     public function setOptions(array $options): void
@@ -121,12 +152,12 @@ abstract class AbstractContent implements ServiceSubscriberInterface
 
     public function getContents($row): mixed
     {
-        if (is_callable($this->options['callable'])) {
-            if (is_array($this->options['callable'])) {
-                return call_user_func($this->options['callable'], [$row]);
+        if (is_callable($this->options[self::OPT_CALLABLE])) {
+            if (is_array($this->options[self::OPT_CALLABLE])) {
+                return call_user_func($this->options[self::OPT_CALLABLE], [$row]);
             }
 
-            return $this->options['callable']($row);
+            return $this->options[self::OPT_CALLABLE]($row);
         }
 
         $propertyAccessor = PropertyAccess::createPropertyAccessorBuilder()
@@ -135,7 +166,7 @@ abstract class AbstractContent implements ServiceSubscriberInterface
         ;
 
         try {
-            return $propertyAccessor->getValue($row, $this->options['accessor_path']);
+            return $propertyAccessor->getValue($row, $this->options[self::OPT_ACCESSOR_PATH]);
         } catch (UnexpectedTypeException) {
             return null;
         } catch (NoSuchPropertyException $noSuchPropertyException) {
@@ -145,7 +176,7 @@ abstract class AbstractContent implements ServiceSubscriberInterface
 
     public function getBlockPrefix(): string
     {
-        return $this->options['block_prefix'];
+        return $this->options[self::OPT_BLOCK_PREFIX];
     }
 
     /**

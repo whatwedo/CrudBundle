@@ -34,16 +34,38 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TwigContent extends AbstractContent
 {
+    public const OPT_TEMPLATE = 'template';
+
+    public const OPT_PARAMETERS = 'parameters';
+
+    public const OPT_LABEL = 'label';
+
+    public const OPT_CALLABLE = 'callable';
+
+    public const OPT_ATTR = 'attr';
+
+    public const OPT_VISIBILITY = 'visibility';
+
+    public const OPT_SHOW_VOTER_ATTRIBUTE = 'show_voter_attribute';
+
+    public const OPT_EDIT_VOTER_ATTRIBUTE = 'edit_voter_attribute';
+
+    public const OPT_CREATE_VOTER_ATTRIBUTE = 'create_voter_attribute';
+
+    public const OPT_BLOCK_PREFIX = 'block_prefix';
+
+    public const OPT_ACCESSOR_PATH = 'accessor_path';
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'template' => null,
-            'parameters' => [],
+            self::OPT_TEMPLATE => null,
+            self::OPT_PARAMETERS => [],
         ]);
 
-        $resolver->setAllowedTypes('template', 'string');
-        $resolver->setAllowedTypes('parameters', 'array');
+        $resolver->setAllowedTypes(self::OPT_TEMPLATE, 'string');
+        $resolver->setAllowedTypes(self::OPT_PARAMETERS, 'array');
     }
 }
