@@ -48,5 +48,12 @@ class EnumContent extends Content
                 'class' => $option['class'],
             ],
         ]);
+
+        $resolver->setAllowedTypes('class', ['string']);
+        $resolver->setAllowedValues('class', function ($value) {
+            $isNull = $value === null;
+            $isEnumClass = !$isNull && enum_exists($value);
+            return $isNull || $isEnumClass;
+        });
     }
 }

@@ -6,6 +6,7 @@ namespace whatwedo\CrudBundle\Content;
 
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\TableBundle\Table\Table;
 
@@ -64,6 +65,17 @@ class TableContent extends AbstractContent
             'route_addition_key' => null,
             'show_index_button' => false,
         ]);
+
+        $resolver->setAllowedTypes('accessor_path', 'string');
+        $resolver->setAllowedTypes('table_configuration', ['null', 'callable']);
+        $resolver->setAllowedTypes('definition', ['null', 'string']);
+        $resolver->setAllowedValues('definition', function ($value) {
+            $isNull = $value === null;
+            $isDefinitionFqdn = !$isNull && class_exists($value) && in_array(DefinitionInterface::class, class_implements($value), true);
+            return $isNull || $isDefinitionFqdn;
+        });
+        $resolver->setAllowedTypes('route_addition_key', ['null', 'string']);
+        $resolver->setAllowedTypes('show_index_button', 'boolean');
     }
 
     protected function hasCapability($capability): bool

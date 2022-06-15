@@ -117,6 +117,10 @@ class RelationContent extends TableContent
             'show_table_in_form' => false,
         ]);
 
+        $resolver->setAllowedTypes('route_addition_key', ['null', 'string']);
+        $resolver->setAllowedTypes('show_index_button', 'boolean');
+        $resolver->setAllowedTypes('add_voter_attribute', ['string', 'null', 'object']);
+        $resolver->setAllowedTypes('show_table_in_form', 'boolean');
         $resolver->setRequired('create_url');
         $resolver->setRequired('reload_url');
 
