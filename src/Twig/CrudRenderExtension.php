@@ -47,6 +47,32 @@ class CrudRenderExtension extends AbstractExtension
         ];
     }
 
+    public function renderDefinitionBlock($context, DefinitionBlock $definitionBlock): string
+    {
+        $data = $definitionBlock->getData($context['view']->getData());
+        if ($data === null) {
+            return '';
+        }
+        $optionDefinition = $definitionBlock->getOption('definition');
+        $optionBlock = $definitionBlock->getOption('block');
+        if ($optionDefinition === null) {
+            $definition = $this->definitionManager->getDefinitionByEntity($data);
+        } else {
+            $definition = $this->definitionManager->getDefinitionByClassName($optionDefinition);
+        }
+        $view = $definition->createView(Page::SHOW, $data);
+        $block = $view->getBlocks(Page::SHOW)->filter(static fn (Block $block) => $block->getAcronym() === $optionBlock)->first();
+        if ($block === false) {
+            throw new BlockNotFoundException('Block "' . $optionBlock . '" does not exist in definition "' . get_class($definition) . '".');
+        }
+        $template = $this->twig->load($definition->getTemplateDirectory() . 'show.html.twig');
+
+        return $template->renderBlock('block_definition_single_block', [
+            'view' => $view,
+            'block' => $block,
+        ]);
+    }
+
     protected function renderBlock($context, Block $block, DefinitionView $view, PageInterface $page, ?FormView $form): string
     {
         $template = $this->environment->load($view->getDefinition()->getLayout());
@@ -116,30 +142,5 @@ class CrudRenderExtension extends AbstractExtension
         }
 
         return (string) $data;
-    }
-
-    public function renderDefinitionBlock($context, DefinitionBlock $definitionBlock): string
-    {
-        $data = $definitionBlock->getData($context['view']->getData());
-        if ($data === null) {
-            return '';
-        }
-        $optionDefinition = $definitionBlock->getOption('definition');
-        $optionBlock = $definitionBlock->getOption('block');
-        if ($optionDefinition === null) {
-            $definition = $this->definitionManager->getDefinitionByEntity($data);
-        } else {
-            $definition = $this->definitionManager->getDefinitionByClassName($optionDefinition);
-        }
-        $view = $definition->createView(Page::SHOW, $data);
-        $block = $view->getBlocks(Page::SHOW)->filter(static fn (Block $block) => $block->getAcronym() === $optionBlock)->first();
-        if ($block === false) {
-            throw new BlockNotFoundException('Block "'.$optionBlock.'" does not exist in definition "'.get_class($definition).'".');
-        }
-        $template = $this->twig->load($definition->getTemplateDirectory().'show.html.twig');
-        return $template->renderBlock('block_definition_single_block', [
-            'view' => $view,
-            'block' => $block,
-        ]);
     }
 }

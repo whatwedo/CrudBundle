@@ -238,6 +238,20 @@ class Block implements ServiceSubscriberInterface
         ];
     }
 
+    public function getParentBlock(): self
+    {
+        if (! $this->parentBlock) {
+            throw new BlockNotFoundException('no Parent Block available');
+        }
+
+        return $this->parentBlock;
+    }
+
+    protected function setParentBlock(?self $parentBlock): void
+    {
+        $this->parentBlock = $parentBlock;
+    }
+
     private function getType(string $acronym, array $options): string
     {
         /** @var TypeGuess $typeGuess */
@@ -256,20 +270,6 @@ class Block implements ServiceSubscriberInterface
         }
 
         return Content::class;
-    }
-
-
-    protected function setParentBlock(?Block $parentBlock): void
-    {
-        $this->parentBlock = $parentBlock;
-    }
-
-    public function getParentBlock(): Block
-    {
-        if (!$this->parentBlock) {
-            throw new BlockNotFoundException('no Parent Block available');
-        }
-        return $this->parentBlock;
     }
 
     public function __clone(): void
