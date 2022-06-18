@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace whatwedo\CrudBundle\EventListener;
 
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
-use whatwedo\CrudBundle\Controller\CrudDefinitionController;
+use whatwedo\CrudBundle\Controller\CrudDefinitionControllerInterface;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 
@@ -26,7 +26,7 @@ class CrudDefinitionListener
             return;
         }
 
-        if (! $controller[0] instanceof CrudDefinitionController) {
+        if (! $controller[0] instanceof CrudDefinitionControllerInterface) {
             return;
         }
 

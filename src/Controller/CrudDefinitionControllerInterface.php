@@ -6,7 +6,7 @@ namespace whatwedo\CrudBundle\Controller;
 
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 
-interface CrudDefinitionController
+interface CrudDefinitionControllerInterface
 {
     public function setDefinition(DefinitionInterface $definition);
 }

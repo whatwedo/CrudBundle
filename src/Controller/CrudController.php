@@ -35,7 +35,7 @@ use whatwedo\TableBundle\Manager\ExportManager;
 use whatwedo\TableBundle\Table\Table;
 
 #[AsController]
-class CrudController extends AbstractController implements CrudDefinitionController
+class CrudController extends AbstractController implements CrudDefinitionControllerInterface
 {
     protected ?DefinitionInterface $definition = null;
 

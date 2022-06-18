@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /*
- * Copyright (c) 2021, whatwedo GmbH
+ * Copyright (c) 2022, whatwedo GmbH
  * All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,23 +27,52 @@ declare(strict_types=1);
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace whatwedo\CrudBundle\Form\Extension;
+namespace whatwedo\CrudBundle\Test\Data;
 
-use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-class DateTypeExtension extends AbstractTypeExtension
+abstract class AbstractData
 {
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefault('widget', 'single_text');
+    public function __construct(
+        protected bool $skip = false,
+        protected array $queryParameters = [],
+        protected int $expectedStatusCode = 200
+    ) {
     }
 
-    public static function getExtendedTypes(): iterable
+    abstract public static function new(): self;
+
+    public function setSkip(bool $skip): self
     {
-        return [
-            DateType::class,
-        ];
+        $this->skip = $skip;
+
+        return $this;
+    }
+
+    public function setQueryParameters(array $queryParameters): self
+    {
+        $this->queryParameters = $queryParameters;
+
+        return $this;
+    }
+
+    public function isSkip(): bool
+    {
+        return $this->skip;
+    }
+
+    public function getQueryParameters(): array
+    {
+        return $this->queryParameters;
+    }
+
+    public function getExpectedStatusCode(): int
+    {
+        return $this->expectedStatusCode;
+    }
+
+    public function setExpectedStatusCode(int $expectedStatusCode): self
+    {
+        $this->expectedStatusCode = $expectedStatusCode;
+
+        return $this;
     }
 }

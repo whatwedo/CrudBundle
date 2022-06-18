@@ -184,7 +184,7 @@ class RelationContent extends TableContent
 
         $resolver->setDefault(self::OPT_DEFINITION, fn (Options $options) => $this->getTargetDefinition($options['accessor_path'])::class);
         $resolver->setDefault(self::OPT_CLASS, fn (Options $options) => $this->getTargetDefinition($options['accessor_path'])::getEntity());
-        $resolver->setDefault(self::OPT_RELOAD_URL, function ($entity) {
+        $resolver->setDefault(self::OPT_RELOAD_URL, function (mixed $entity) {
             if ($this->getDefinition()::hasCapability(Page::RELOAD)) {
                 return $this->urlGenerator->generate(
                     $this->getDefinition()::getRoute(Page::RELOAD),
@@ -198,7 +198,7 @@ class RelationContent extends TableContent
 
             return null;
         });
-        $resolver->setDefault(self::OPT_CREATE_URL, function ($entity) {
+        $resolver->setDefault(self::OPT_CREATE_URL, function (mixed $entity) {
             if ($this->getOption(self::OPT_DEFINITION)::hasCapability(Page::CREATE)) {
                 return $this->urlGenerator->generate(
                     $this->getOption(self::OPT_DEFINITION)::getRoute(Page::CREATE),
@@ -301,7 +301,6 @@ class RelationContent extends TableContent
         $table->removeExtension(SearchExtension::class);
         $targetDefinition->configureTable($table);
         $table->setOption('title', null); // no h1 for relation content
-        //$targetDefinition->overrideTableConfiguration($table);
 
         if (is_callable($this->options[self::OPT_TABLE_CONFIGURATION])) {
             $this->options[self::OPT_TABLE_CONFIGURATION]($table);
@@ -333,37 +332,6 @@ class RelationContent extends TableContent
             ];
         }
 
-        if ($this->hasCapability(Page::EXPORT)) {
-            //$table->setExportRoute($this->getRoute(Page::EXPORT));
-        }
-
-        if (is_callable($this->options[self::OPT_ACTION_CONFIGURATION])) {
-            $actionColumnItems = $this->options[self::OPT_ACTION_CONFIGURATION]($actionColumnItems);
-        }
-        /*
-                $table->addColumn('actions', ActionColumn::class, [
-                    'items' => $actionColumnItems,
-                ]);
-
-                $actionColumn = $table->getActionColumn();
-
-                $actionColumn->setActions(
-                    [
-                        IdentityAction::new('')
-                            ->setClass('btn btn-xs btn-primary')
-                            ->setIcon('fa fa-arrow-right')
-                            ->setRoute($this->getRoute(Page::SHOW)),
-                        IdentityAction::new('')
-                            ->setClass('btn btn-xs btn-warning')
-                            ->setIcon('fa fa-pencil')
-                            ->setRoute($this->getRoute(Page::EDIT)),
-                        PostAction::new('')
-                            ->setClass('btn btn-xs btn-danger')
-                            ->setIcon('fa fa-trash-o')
-                            ->setRoute($this->getRoute(Page::DELETE)),
-                    ]
-                );
-        */
         return $table;
     }
 

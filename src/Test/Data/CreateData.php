@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Test\Data;
 
-class CreateData
+class CreateData extends AbstractData
 {
     public function __construct(
         protected bool $skip = false,
@@ -13,25 +13,12 @@ class CreateData
         protected array $formData = [],
         protected int $expectedStatusCode = 200
     ) {
+        parent::__construct($this->skip, $this->queryParameters, $this->expectedStatusCode);
     }
 
     public static function new(): self
     {
         return new self();
-    }
-
-    public function setSkip(bool $skip): self
-    {
-        $this->skip = $skip;
-
-        return $this;
-    }
-
-    public function setQueryParameters(array $queryParameters): self
-    {
-        $this->queryParameters = $queryParameters;
-
-        return $this;
     }
 
     public function setFillForm(bool $fillForm): self
@@ -48,23 +35,6 @@ class CreateData
         return $this;
     }
 
-    public function setExpectedStatusCode(int $expectedStatusCode): self
-    {
-        $this->expectedStatusCode = $expectedStatusCode;
-
-        return $this;
-    }
-
-    public function isSkip(): bool
-    {
-        return $this->skip;
-    }
-
-    public function getQueryParameters(): array
-    {
-        return $this->queryParameters;
-    }
-
     public function isFillForm(): bool
     {
         return $this->fillForm;
@@ -73,10 +43,5 @@ class CreateData
     public function getFormData(): array
     {
         return $this->formData;
-    }
-
-    public function getExpectedStatusCode(): int
-    {
-        return $this->expectedStatusCode;
     }
 }
