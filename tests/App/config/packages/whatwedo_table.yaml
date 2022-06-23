@@ -1,0 +1,3 @@
+whatwedo_table:
+    filter:
+        save_created_by: true # defaults to false
