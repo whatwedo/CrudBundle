@@ -103,7 +103,7 @@ class Block implements ServiceSubscriberInterface
 
         $resolver->setAllowedTypes(self::OPT_VISIBILITY, 'array');
         $resolver->setAllowedTypes(self::OPT_CUSTOM_OPTIONS, 'array');
-        $resolver->setAllowedTypes(self::OPT_LABEL, ['null', 'string']);
+        $resolver->setAllowedTypes(self::OPT_LABEL, ['null', 'string', 'bool']);
         $resolver->setAllowedTypes(self::OPT_DESCRIPTION, ['null', 'string']);
         $resolver->setAllowedTypes(self::OPT_ATTR, ['null', 'array']);
         $resolver->setAllowedValues(self::OPT_SIZE, [BlockSize::LARGE, BlockSize::SMALL]);
