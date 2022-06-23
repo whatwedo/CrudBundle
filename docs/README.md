@@ -72,6 +72,12 @@ You can however use and configure it to whatever suits your business case.
 
 ### ORM
 The table bundle allows you to save filters on the go.
+To enable this feature create this config `config/packages/whatwedo_table.yaml`:
+```yaml
+whatwedo_table:
+    filter:
+        save_created_by: true # defaults to false
+```
 These filters save the creator, therefore you need to configure your user class. 
 You do this in your `packges/doctrine.yaml` file:
 ```yaml
@@ -81,6 +87,8 @@ doctrine:
             # The class which will be returned with "Symfony\Component\Security\Core\Security::getUser"
             whatwedo\TableBundle\Entity\UserInterface: App\Entity\User
 ```
+Be sure to decide weather you want to save the user or not early in your project lifecycle.
+Depending on this config a different doctrine migration is provided.
 
 ### Tailwind and Webpack
 To give you full access over the build and look-and-feel of the application you install these dependencies in your project locally.  
