@@ -7,9 +7,9 @@
         class: (block.option('size') == constant('whatwedo\\CrudBundle\\Enum\\BlockSize::LARGE') ? 'w-full' : 'w-3/6'),
     }|merge(block.option('attr')|default([])) %}
     <div id="wwd-crud-block-{{ block.acronym }}" {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
-        <div class="bg-neutral-50 shadow sm:rounded-lg m-4">
+        <div class="bg-neutral-50 shadow sm:rounded-lg m-4" {{ stimulus_controller('whatwedo/crud-bundle/block', {'collapsible': block.option('collapsible')}) }}>
             {% if block.option('label') or block.option('description') %}
-                <div class="px-4 py-5 sm:px-6">
+                <div class="px-4 py-5 sm:px-6" {{ stimulus_target('whatwedo/crud-bundle/block', 'titleDiv') }}>
                     {% if block.option('label') %}
                         <h3 class="text-lg leading-6 font-medium text-neutral-900">
                             {{ block.option('label')|trans }}
@@ -22,7 +22,10 @@
                     {% endif %}
                 </div>
             {% endif %}
-            <div class="{% if block.option('label') or block.option('description') %}border-t border-neutral-200 bg-white sm:rounded-b-lg{% endif%}">
+            <div
+                class="{% if block.option('label') or block.option('description') %}border-t border-neutral-200 bg-white sm:rounded-b-lg{% endif%}"
+                {{ stimulus_target('whatwedo/crud-bundle/block', 'blockDiv') }}
+            >
                 <dl>
                     {% for content in block.contents(view, page) %}
                         {{ wwd_crud_render_content(content, block, view, form) }}
