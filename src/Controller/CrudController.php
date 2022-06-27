@@ -109,6 +109,12 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $entity = $this->getEntityOr404($request);
         $this->denyAccessUnlessGrantedCrud(Page::SHOW, $entity);
 
+        if (! $request->isXmlHttpRequest()) {
+            return $this->redirectToCapability(Page::SHOW, array_merge([
+                'id' => $entity->getId(),
+            ], $request->query->all()));
+        }
+
         $block = $request->attributes->get('block');
         $field = $request->attributes->get('field');
 
