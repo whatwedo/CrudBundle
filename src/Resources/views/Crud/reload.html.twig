@@ -6,7 +6,7 @@
     {% elseif block.acronym == blockAcronym and fieldAcronym is not null %}
         {% for content in block.contents(view, constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW')) %}
             {% if content.acronym == fieldAcronym %}
-                {{ wwd_crud_render_content(content, block, view, form) }}
+                {{ wwd_crud_render_content(content, block, view) }}
             {% endif %}
         {% endfor %}
     {% endif %}
