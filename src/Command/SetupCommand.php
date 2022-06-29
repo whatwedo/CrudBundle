@@ -84,8 +84,8 @@ class SetupCommand extends Command
         }
         if ($this->confirm('Do you want to add tailwindcss, postcss-loader, sass-loader, sass and autoprefixer to your dev dependencies? [YES/no] ', true)) {
             $this->runCommand('yarn add tailwindcss postcss-loader sass-loader sass autoprefixer --dev');
+            $this->newLine();
         }
-        $this->newLine();
     }
 
     protected function setupRouting(): void
@@ -99,6 +99,8 @@ class SetupCommand extends Command
         $content = file_get_contents($this->projectRoot . self::SETUP_SKELETON . '/whatwedo_crud.yaml');
         $content = str_replace('%%prefix%%', $prefix, $content);
         file_put_contents($this->projectRoot . '/config/routes/whatwedo_crud.yaml', $content);
+        $this->output->writeln('created "config/routes/whatwedo_crud.yaml"');
+        $this->newLine();
     }
 
     protected function setupTailwind(): void
@@ -112,6 +114,8 @@ class SetupCommand extends Command
             $this->projectRoot . self::SETUP_SKELETON . '/tailwind.config.js',
             $this->projectRoot . '/tailwind.config.js'
         );
+        $this->output->writeln('created "tailwind.config.js"');
+        $this->newLine();
     }
 
     protected function setupPostcss(): void
@@ -125,12 +129,14 @@ class SetupCommand extends Command
             $this->projectRoot . self::SETUP_SKELETON . '/postcss.config.js',
             $this->projectRoot . '/postcss.config.js'
         );
+        $this->output->writeln('created "postcss.config.js"');
+        $this->newLine();
     }
 
     protected function setupBaseTemplate(): void
     {
         if ($this->filesystem->exists($this->projectRoot . '/templates/base.html.twig')
-            && ! $this->confirm('Do you want to override the existing base.html.twig?')) {
+            && ! $this->confirm('Do you want to override the existing base.html.twig? [YES/no] ', true)) {
             return;
         }
 
@@ -138,12 +144,14 @@ class SetupCommand extends Command
             $this->projectRoot . self::SETUP_SKELETON . '/base.html.twig',
             $this->projectRoot . '/templates/base.html.twig'
         );
+        $this->output->writeln('created "templates/base.html.twig"');
+        $this->newLine();
     }
 
     protected function checkLanguage(): void
     {
         if ($this->defaultLocale !== 'de') {
-            $this->output->writeln('<info>The default locale is not set to "de".</info>');
+            $this->output->writeln('<error>The default locale is not set to "de".</error>');
         }
     }
 
