@@ -1,6 +1,38 @@
 # Getting Started
 
-This documentation provides a basic view of the possibilities of the whatwedoCrudBundle.  
+## Quick Start
+Add to composer:
+```json
+"repositories": [
+    {
+        "type": "package",
+        "package": {
+            "name": "twbs/icons",
+            "version": "1.8.1",
+            "source": {
+                "url": "https://github.com/twbs/icons",
+                "type": "git",
+                "reference": "tags/v1.8.1"
+            }
+        }
+    }
+],
+"require": {
+    "whatwedo/core-bundle": "dev-1.0-dev as v1.0.0",
+    "whatwedo/crud-bundle": "dev-1.0-dev as v1.0.0",
+    "whatwedo/search-bundle": "dev-3.0-dev as v3.0.0",
+    "whatwedo/table-bundle": "dev-1.0-dev as v1.0.0",
+}
+```
+Run
+```
+composer update
+bin/console whatwedo:crud:setup
+```
+
+You are now ready to create entities (`bin/console make:entity`) and definitions (`bin/console make:definition`).
+
+# Full Guide
 
 ## Requirements
 
