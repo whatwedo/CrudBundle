@@ -55,7 +55,8 @@
         "whatwedo/twig-bootstrap-icons": "^1.0",
         "whatwedo/core-bundle": "dev-1.0-dev as 1.0",
         "whatwedo/table-bundle": "dev-1.0-dev as 1.0",
-        "whatwedo/search-bundle": "dev-3.0-dev as 3.0"
+        "whatwedo/search-bundle": "dev-3.0-dev as 3.0",
+        "symfony/process": "^6.0"
     },
 
     "suggest": {
