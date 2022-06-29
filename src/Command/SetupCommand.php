@@ -122,7 +122,8 @@ class SetupCommand extends Command
 
         $this->filesystem->copy(
             $this->projectRoot . self::SETUP_SKELETON . '/tailwind.config.js',
-            $this->projectRoot . '/tailwind.config.js'
+            $this->projectRoot . '/tailwind.config.js',
+            true
         );
         $this->output->writeln('created "tailwind.config.js"');
         $this->newLine();
@@ -137,7 +138,8 @@ class SetupCommand extends Command
 
         $this->filesystem->copy(
             $this->projectRoot . self::SETUP_SKELETON . '/postcss.config.js',
-            $this->projectRoot . '/postcss.config.js'
+            $this->projectRoot . '/postcss.config.js',
+            true
         );
         $this->output->writeln('created "postcss.config.js"');
         $this->newLine();
@@ -152,7 +154,8 @@ class SetupCommand extends Command
 
         $this->filesystem->copy(
             $this->projectRoot . self::SETUP_SKELETON . '/base.html.twig',
-            $this->projectRoot . '/templates/base.html.twig'
+            $this->projectRoot . '/templates/base.html.twig',
+            true
         );
         $this->output->writeln('created "templates/base.html.twig"');
         $this->newLine();
@@ -167,7 +170,8 @@ class SetupCommand extends Command
 
         $this->filesystem->copy(
             $this->projectRoot . self::SETUP_SKELETON . '/webpack.config.js',
-            $this->projectRoot . '/webpack.config.js'
+            $this->projectRoot . '/webpack.config.js',
+            true
         );
         $this->output->writeln('created "webpack.config.js"');
         $this->newLine();
@@ -182,7 +186,8 @@ class SetupCommand extends Command
 
         $this->filesystem->copy(
             $this->projectRoot . self::SETUP_SKELETON . '/app.js',
-            $this->projectRoot . '/assets/app.js'
+            $this->projectRoot . '/assets/app.js',
+            true
         );
         $this->output->writeln('created "assets/app.js"');
         $this->newLine();
@@ -201,7 +206,8 @@ class SetupCommand extends Command
 
         $this->filesystem->copy(
             $this->projectRoot . self::SETUP_SKELETON . '/app.scss',
-            $this->projectRoot . '/assets/styles/app.scss'
+            $this->projectRoot . '/assets/styles/app.scss',
+            true
         );
         $this->output->writeln('created "assets/styles/app.scss"');
         $this->newLine();
