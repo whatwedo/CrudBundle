@@ -80,6 +80,7 @@ class SetupCommand extends Command
         $this->setupBaseTemplate();
         $this->setupWebpackConfig();
         $this->setupAppJsScss();
+        $this->runYarnDev();
         $this->checkLanguage();
 
         return self::SUCCESS;
