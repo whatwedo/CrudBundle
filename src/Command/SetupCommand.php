@@ -36,6 +36,7 @@ use Symfony\Component\Console\Question\Question;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\Process;
 
 class SetupCommand extends Command
 {
@@ -77,22 +78,24 @@ class SetupCommand extends Command
 
     protected function setupYarnDependencies(): void
     {
-        if ($this->confirm('Do you want to add @tailwindcss/forms to your yarn.lock file?', true)) {
-            shell_exec('yarn add @tailwindcss/forms');
+        if ($this->confirm('Do you want to add @tailwindcss/forms to your yarn.lock file? [YES/no] ', true)) {
+            $this->runCommand('yarn add @tailwindcss/forms');
+            $this->newLine();
         }
-        if ($this->confirm('Do you want to add tailwindcss, postcss-loader, sass-loader, sass and autoprefixer to your dev dependencies?', true)) {
-            shell_exec('yarn add tailwindcss postcss-loader sass-loader sass autoprefixer --dev');
+        if ($this->confirm('Do you want to add tailwindcss, postcss-loader, sass-loader, sass and autoprefixer to your dev dependencies? [YES/no] ', true)) {
+            $this->runCommand('yarn add tailwindcss postcss-loader sass-loader sass autoprefixer --dev');
         }
+        $this->newLine();
     }
 
     protected function setupRouting(): void
     {
         if ($this->filesystem->exists($this->projectRoot . '/config/routes/whatwedo_crud.yaml')
-            && ! $this->confirm('Do you want to override the existing routing? (whatwedo_crud.yaml)')) {
+            && ! $this->confirm('Do you want to override the existing routing? (whatwedo_crud.yaml) [NO/yes] ')) {
             return;
         }
 
-        $prefix = $this->ask('What is the prefix for the CRUD routes? (default: "")');
+        $prefix = $this->ask('What is the prefix for the CRUD routes? [default: ""] ');
         $content = file_get_contents($this->projectRoot . self::SETUP_SKELETON . '/whatwedo_crud.yaml');
         $content = str_replace('%%prefix%%', $prefix, $content);
         file_put_contents($this->projectRoot . '/config/routes/whatwedo_crud.yaml', $content);
@@ -101,7 +104,7 @@ class SetupCommand extends Command
     protected function setupTailwind(): void
     {
         if ($this->filesystem->exists($this->projectRoot . '/tailwind.config.js')
-            && ! $this->confirm('Do you want to override the existing tailwind.config.js?')) {
+            && ! $this->confirm('Do you want to override the existing tailwind.config.js? [NO/yes] ')) {
             return;
         }
 
@@ -114,7 +117,7 @@ class SetupCommand extends Command
     protected function setupPostcss(): void
     {
         if ($this->filesystem->exists($this->projectRoot . '/postcss.config.js')
-            && ! $this->confirm('Do you want to override the existing postcss.config.js?')) {
+            && ! $this->confirm('Do you want to override the existing postcss.config.js? [NO/yes] ')) {
             return;
         }
 
@@ -140,7 +143,23 @@ class SetupCommand extends Command
     protected function checkLanguage(): void
     {
         if ($this->defaultLocale !== 'de') {
-            $this->output->writeln('<warning>The default locale is not set to "de".</warning>');
+            $this->output->writeln('<info>The default locale is not set to "de".</info>');
+        }
+    }
+
+    protected function newLine(): void
+    {
+        $this->output->writeln('');
+    }
+
+    protected function runCommand(string $command): void
+    {
+        $process = new Process(explode(' ', $command));
+        $process->start();
+        foreach ($process as $type => $data) {
+            if ($process::OUT === $type) {
+                $this->output->writeln($data);
+            }
         }
     }
 
