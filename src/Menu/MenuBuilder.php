@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * Copyright (c) 2022, whatwedo GmbH
  * All rights reserved
@@ -44,12 +46,14 @@ class MenuBuilder extends DefinitionMenuBuilder
         foreach ($this->definitionManager->getDefinitions() as $definition) {
             $this->addDefinition($menu, get_class($definition));
         }
+
         return $menu;
     }
 
     public function createSubMenu(): ItemInterface
     {
         $menu = $this->factory->createItem('');
+
         return $menu;
     }
 }

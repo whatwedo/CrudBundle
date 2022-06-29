@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * Copyright (c) 2022, whatwedo GmbH
  * All rights reserved
@@ -33,27 +35,32 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 
 class SetupCommand extends Command
 {
-
     protected const SETUP_SKELETON = '/vendor/whatwedo/crud-bundle/src/Resources/skeleton/setup';
 
     protected static $defaultName = 'whatwedo:crud:setup';
+
     protected static $defaultDescription = 'Setup the CRUD bundle';
 
     protected InputInterface $input;
+
     protected OutputInterface $output;
+
     protected Filesystem $filesystem;
+
     protected QuestionHelper $questionHelper;
+
     protected string $projectRoot;
+
     protected string $defaultLocale;
 
-    public function __construct(ParameterBagInterface $containerBag) {
+    public function __construct(ParameterBagInterface $containerBag)
+    {
         parent::__construct();
         $this->projectRoot = $containerBag->get('kernel.project_dir');
         $this->defaultLocale = $containerBag->get('kernel.default_locale');
@@ -152,7 +159,7 @@ class SetupCommand extends Command
 
     protected function setupWebpackConfig(): void
     {
-        if ($this->filesystem->exists($this->projectRoot. '/webpack.config.js')
+        if ($this->filesystem->exists($this->projectRoot . '/webpack.config.js')
             && ! $this->confirm('Do you want to override the existing webpack.config.js? [YES/no] ', true)) {
             return;
         }
@@ -167,7 +174,7 @@ class SetupCommand extends Command
 
     protected function setupAppJsScss(): void
     {
-        if ($this->filesystem->exists($this->projectRoot. '/assets/app.js')
+        if ($this->filesystem->exists($this->projectRoot . '/assets/app.js')
             && ! $this->confirm('Do you want to override the existing assets/app.js? [YES/no] ', true)) {
             return;
         }
@@ -182,9 +189,11 @@ class SetupCommand extends Command
         if ($this->filesystem->exists($this->projectRoot . '/assets/styles/app.css')
             && $this->confirm('Do you want to delete the not used assets/styles/app.css? [YES/no] ', true)) {
             $this->filesystem->remove($this->projectRoot . '/assets/styles/app.css');
+            $this->output->writeln('deleted "assets/styles/app.css"');
+            $this->newLine();
         }
 
-        if ($this->filesystem->exists($this->projectRoot. '/assets/styles/app.scss')
+        if ($this->filesystem->exists($this->projectRoot . '/assets/styles/app.scss')
             && ! $this->confirm('Do you want to override the existing assets/styles/app.scss? [YES/no] ', true)) {
             return;
         }
@@ -223,13 +232,14 @@ class SetupCommand extends Command
     protected function ask(string $question, string $default = ''): string
     {
         $question = new Question($question, $default);
+
         return $this->questionHelper->ask($this->input, $this->output, $question);
     }
 
     protected function confirm(string $question, bool $default = false): bool
     {
         $question = new ConfirmationQuestion($question, $default);
+
         return $this->questionHelper->ask($this->input, $this->output, $question);
     }
-
 }

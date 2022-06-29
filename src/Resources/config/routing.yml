@@ -10,4 +10,4 @@ dashboard:
     path: /dashboard
     controller: Symfony\Bundle\FrameworkBundle\Controller\TemplateController
     defaults:
-        template: '@whatwedoCrudBundle::dashboard.html.twig'
+        template: '@whatwedoCrudBundle/dashboard.html.twig'
