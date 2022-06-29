@@ -33,6 +33,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 class SetupCommand extends Command
@@ -47,12 +49,13 @@ class SetupCommand extends Command
     protected OutputInterface $output;
     protected Filesystem $filesystem;
     protected QuestionHelper $questionHelper;
+    protected string $projectRoot;
+    protected string $defaultLocale;
 
-    public function __construct(
-        protected string $projectRoot,
-        protected string $defaultLocale
-    ) {
+    public function __construct(ParameterBagInterface $containerBag) {
         parent::__construct();
+        $this->projectRoot = $containerBag->get('kernel.project_dir');
+        $this->defaultLocale = $containerBag->get('kernel.default_locale');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

@@ -1,3 +1,6 @@
+parameters:
+    whatwedo_crud.menu_builder.class: 'whatwedo\CrudBundle\Menu\MenuBuilder'
+
 services:
     _defaults:
         autowire: true
@@ -58,3 +61,9 @@ services:
             - '@whatwedo\CoreBundle\Manager\FormatterManager'
         tags:
             - { name: maker.command }
+
+    whatwedo_crud.menu_builder:
+        class: '%whatwedo_crud.menu_builder.class%'
+        tags:
+            - { name: knp_menu.menu_builder, method: createMainMenu, alias: main }
+            - { name: knp_menu.menu_builder, method: createSubMenu, alias: sub }
