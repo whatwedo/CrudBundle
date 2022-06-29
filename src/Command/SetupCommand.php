@@ -71,6 +71,8 @@ class SetupCommand extends Command
         $this->setupTailwind();
         $this->setupPostcss();
         $this->setupBaseTemplate();
+        $this->setupWebpackConfig();
+        $this->setupAppJsScss();
         $this->checkLanguage();
 
         return self::SUCCESS;
@@ -145,6 +147,53 @@ class SetupCommand extends Command
             $this->projectRoot . '/templates/base.html.twig'
         );
         $this->output->writeln('created "templates/base.html.twig"');
+        $this->newLine();
+    }
+
+    protected function setupWebpackConfig(): void
+    {
+        if ($this->filesystem->exists($this->projectRoot. '/webpack.config.js')
+            && ! $this->confirm('Do you want to override the existing webpack.config.js? [YES/no] ', true)) {
+            return;
+        }
+
+        $this->filesystem->copy(
+            $this->projectRoot . self::SETUP_SKELETON . '/webpack.config.js',
+            $this->projectRoot . '/webpack.config.js'
+        );
+        $this->output->writeln('created "webpack.config.js"');
+        $this->newLine();
+    }
+
+    protected function setupAppJsScss(): void
+    {
+        if ($this->filesystem->exists($this->projectRoot. '/assets/app.js')
+            && ! $this->confirm('Do you want to override the existing assets/app.js? [YES/no] ', true)) {
+            return;
+        }
+
+        $this->filesystem->copy(
+            $this->projectRoot . self::SETUP_SKELETON . '/app.js',
+            $this->projectRoot . '/assets/app.js'
+        );
+        $this->output->writeln('created "assets/app.js"');
+        $this->newLine();
+
+        if ($this->filesystem->exists($this->projectRoot . '/assets/styles/app.css')
+            && $this->confirm('Do you want to delete the not used assets/styles/app.css? [YES/no] ', true)) {
+            $this->filesystem->remove($this->projectRoot . '/assets/styles/app.css');
+        }
+
+        if ($this->filesystem->exists($this->projectRoot. '/assets/styles/app.scss')
+            && ! $this->confirm('Do you want to override the existing assets/styles/app.scss? [YES/no] ', true)) {
+            return;
+        }
+
+        $this->filesystem->copy(
+            $this->projectRoot . self::SETUP_SKELETON . '/app.scss',
+            $this->projectRoot . '/assets/styles/app.scss'
+        );
+        $this->output->writeln('created "assets/styles/app.scss"');
         $this->newLine();
     }
 
