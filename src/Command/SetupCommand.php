@@ -206,6 +206,14 @@ class SetupCommand extends Command
         $this->newLine();
     }
 
+    protected function runYarnDev(): void
+    {
+        if ($this->confirm('Do you want to run "yarn dev" [YES/no] ', true)) {
+            $this->runCommand('yarn dev');
+            $this->newLine();
+        }
+    }
+
     protected function checkLanguage(): void
     {
         if ($this->defaultLocale !== 'de') {
