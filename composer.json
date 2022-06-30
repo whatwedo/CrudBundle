@@ -31,11 +31,11 @@
         "doctrine/inflector": "^2.0"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^v6.0",
-        "symfony/config": "^v6.0",
-        "symfony/dependency-injection": "^v6.0",
-        "symfony/yaml": "^v6.0",
-        "symfony/validator": "^6.0",
+        "symfony/phpunit-bridge": "~5.3|~6.0",
+        "symfony/config": "~5.3|~6.0",
+        "symfony/dependency-injection": "~5.3|~6.0",
+        "symfony/yaml": "~5.3|~6.0",
+        "symfony/validator": "~5.3|~6.0",
         "symfony/maker-bundle": "^1.0.0",
         "nyholm/symfony-bundle-test": "^1.8",
         "doctrine/doctrine-bundle": "^2.5",
@@ -45,17 +45,18 @@
         "zenstruck/foundry": "^1.16",
         "zenstruck/console-test": "^v1.1.0",
         "symfony/orm-pack": "^1.0",
-        "symfony/translation": "^6.0",
+        "symfony/translation": "~5.3|~6.0",
         "gedmo/doctrine-extensions": "^3.5",
-        "symfony/dotenv": "^6.0",
+        "symfony/dotenv": "~5.3|~6.0",
         "symfony/test-pack": "^1.0",
-        "symfony/runtime": "^6.0",
+        "symfony/runtime": "~5.3|~6.0",
         "phpstan/phpstan": "^1.5",
         "mhujer/breadcrumbs-bundle": "^1.5",
         "whatwedo/twig-bootstrap-icons": "^1.0",
         "whatwedo/core-bundle": "dev-1.0-dev as 1.0",
         "whatwedo/table-bundle": "dev-1.0-dev as 1.0",
-        "whatwedo/search-bundle": "dev-3.0-dev as 3.0"
+        "whatwedo/search-bundle": "dev-3.0-dev as 3.0",
+        "symfony/process": "~5.3|~6.0"
     },
 
     "suggest": {
