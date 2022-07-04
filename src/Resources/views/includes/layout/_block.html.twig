@@ -60,7 +60,7 @@
         <div class="wwd-block-block-content{% if block.option('collapsed') %} hidden{% endif %}"
             {{ stimulus_target('whatwedo/crud-bundle/block', 'block') }}>
             {% for subBlock in block.blocks(view, page) %}
-                {{ wwd_crud_render_block(subBlock, view, page) }}
+                {{ wwd_crud_render_block(subBlock, view, page, form ?? null) }}
             {% endfor %}
         </div>
         </div>
