@@ -53,23 +53,25 @@ class CrudRenderExtension extends AbstractExtension
         if ($data === null) {
             return '';
         }
-        $optionDefinition = $definitionBlock->getOption('definition');
-        $optionBlock = $definitionBlock->getOption('block');
-        if ($optionDefinition === null) {
-            $definition = $this->definitionManager->getDefinitionByEntity($data);
-        } else {
-            $definition = $this->definitionManager->getDefinitionByClassName($optionDefinition);
-        }
-        $view = $definition->createView(Page::SHOW, $data);
-        $block = $view->getBlocks(Page::SHOW)->filter(static fn (Block $block) => $block->getAcronym() === $optionBlock)->first();
+        $route = $context['view']->getRoute();
+        $optionBlock = $definitionBlock->getOption(DefinitionBlock::OPT_BLOCK);
+        $definition = $definitionBlock->getReferencingDefinition($data);
+        $view = $definition->createView($route, $data);
+        $block = $view->getBlocks($route)->filter(static fn (Block $block) => $block->getAcronym() === $optionBlock)->first();
         if ($block === false) {
             throw new BlockNotFoundException('Block "' . $optionBlock . '" does not exist in definition "' . get_class($definition) . '".');
         }
-        $template = $this->twig->load($definition->getTemplateDirectory() . 'show.html.twig');
+        $templateFile = match ($route) {
+            Page::EDIT => 'edit.html.twig',
+            Page::CREATE => 'create.html.twig',
+            default => 'show.html.twig',
+        };
+        $template = $this->twig->load($definition->getTemplateDirectory() . $templateFile);
 
         return $template->renderBlock('block_definition_single_block', [
             'view' => $view,
             'block' => $block,
+            'form' => $context['form'] ?? null,
         ]);
     }
 
