@@ -15,7 +15,6 @@ export default class extends Controller {
     }
 
     toggleBlock() {
-        console.log(this.blockDivTarget);
         this.blockDivTarget.classList.toggle('hidden');
     }
 }
