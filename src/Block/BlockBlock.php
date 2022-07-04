@@ -73,9 +73,6 @@ class BlockBlock extends Block
         if (! isset($options[self::OPT_LABEL])) {
             $options[self::OPT_LABEL] = sprintf('wwd.%s.block_block.%s', $this->definition::getEntityAlias(), $acronym);
         }
-        if (! isset($options[self::OPT_SIZE])) {
-            $options[self::OPT_SIZE] = BlockSize::LARGE;
-        }
         $element->setOptions($options);
         $this->blocks->set($acronym, $element, $position);
 
