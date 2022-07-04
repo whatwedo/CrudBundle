@@ -1,8 +1,10 @@
 # Getting Started
 
 ## Quick Start
-Add to composer:
+Add to your composer.json:
 ```json
+...
+
 "repositories": [
     {
         "type": "package",
@@ -17,17 +19,29 @@ Add to composer:
         }
     }
 ],
+    
+...
+    
 "require": {
     "whatwedo/core-bundle": "dev-1.0-dev as v1.0.0",
     "whatwedo/crud-bundle": "dev-1.0-dev as v1.0.0",
     "whatwedo/search-bundle": "dev-3.0-dev as v3.0.0",
     "whatwedo/table-bundle": "dev-1.0-dev as v1.0.0",
 }
+
+...
 ```
 Run
 ```
 composer update
 bin/console whatwedo:crud:setup
+```
+
+Add a new `form_theme` to your `twig.yaml` like following:
+```yaml
+twig:
+    form_themes:
+        - '@whatwedoCrud/form_layout.html.twig'
 ```
 
 You are now ready to create entities (`bin/console make:entity`) and definitions (`bin/console make:definition`).
@@ -123,6 +137,13 @@ Be sure to decide weather you want to save the user or not early in your project
 Depending on this config a different doctrine migration is provided.
 
 ### Tailwind and Webpack
+Add a new `form_theme` to your `twig.yaml` like following:
+```yaml
+twig:
+    form_themes:
+        - '@whatwedoCrud/form_layout.html.twig'
+```
+
 To give you full access over the build and look-and-feel of the application you install these dependencies in your project locally.  
 To get it up and running like whatwedo, install following:  
 ```shell
