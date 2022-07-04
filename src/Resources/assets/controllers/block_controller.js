@@ -9,10 +9,13 @@ export default class extends Controller {
 
     connect() {
         if (this.collapsibleValue && this.hasTitleDivTarget && this.hasBlockDivTarget) {
-            console.log(this.titleDivTarget);
-            console.log(this.blockDivTarget);
-        } else {
-            console.log('not collapsible');
+            this.titleDivTarget.style.cursor = 'pointer';
+            this.titleDivTarget.addEventListener('click', this.toggleBlock.bind(this));
         }
+    }
+
+    toggleBlock() {
+        console.log(this.blockDivTarget);
+        this.blockDivTarget.classList.toggle('hidden');
     }
 }
