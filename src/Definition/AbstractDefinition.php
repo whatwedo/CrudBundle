@@ -56,6 +56,8 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     protected array $templates;
 
+    protected string $formAccessorPrefix = '';
+
     /**
      * @var ExtensionInterface[]
      */
@@ -671,6 +673,16 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                     [$this, 'getJsonSearchUrl'],
                 );
         }
+    }
+
+    public function getFormAccessorPrefix(): string
+    {
+        return $this->formAccessorPrefix;
+    }
+
+    public function setFormAccessorPrefix(string $formAccessorPrefix): void
+    {
+        $this->formAccessorPrefix = $formAccessorPrefix;
     }
 
     protected function getDefinitionBuilder(object|array|null $data = null): DefinitionBuilder
