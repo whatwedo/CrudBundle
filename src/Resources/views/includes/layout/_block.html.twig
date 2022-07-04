@@ -56,7 +56,7 @@
         {% endif %}
         <div class="wwd-block-block-content">
             {% for subBlock in block.blocks(view, page) %}
-                {{ wwd_crud_render_block(subBlock, view, page) }}
+                {{ wwd_crud_render_block(subBlock, view, page, form ?? null) }}
             {% endfor %}
         </div>
         </div>

@@ -16,6 +16,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Security;
 use whatwedo\CoreBundle\Action\Action;
 use whatwedo\CrudBundle\Block\Block;
+use whatwedo\CrudBundle\Block\BlockBlock;
 use whatwedo\CrudBundle\Block\DefinitionBlock;
 use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Content\AbstractContent;
@@ -194,7 +195,7 @@ class DefinitionView
         return 'javascript:alert(\'Definition does not have the capability "' . $route . '".\')';
     }
 
-    public function getEditForm(?FormBuilderInterface $builder = null): FormInterface
+    public function getEditForm(?FormBuilderInterface $builder = null, ?string $blockName = null): FormInterface
     {
         if ($this->form instanceof FormInterface) {
             return $this->form;
@@ -209,20 +210,39 @@ class DefinitionView
         }
 
         foreach ($this->getBlocks() as $block) {
+            if ($blockName !== null && $block->getAcronym() !== $blockName) {
+                continue;
+            }
+
             if (! $block->isVisibleOnEdit()
                 || ! $this->authorizationChecker->isGranted($block->getEditVoterAttribute(), $this->data)) {
                 continue;
             }
 
-            if ($block instanceof DefinitionBlock && $block->getAccessorPath()) {
-                $referencingData = $block->getData($this->data);
-                $referencingDefinition = $block->getReferencingDefinition($referencingData);
+            $handleDefinitionBlock = function (Block $block) use ($builder) {
+                if ($block instanceof DefinitionBlock && $block->getAccessorPath()) {
+                    $referencingData = $block->getData($this->data);
+                    $referencingDefinition = $block->getReferencingDefinition($referencingData);
 
-                $referencingDefinition
-                    ->createView($this->getRoute(), $referencingData)
-                    ->getEditForm($builder)
-                ;
+                    $referencingDefinition
+                        ->createView($this->getRoute(), $referencingData)
+                        ->getEditForm($builder)
+                    ;
+
+                    return true;
+                }
+
+                return false;
+            };
+
+            if ($handleDefinitionBlock($block)) {
                 continue;
+            }
+
+            if ($block instanceof BlockBlock) {
+                foreach ($block->getBlocks($this, $this->getRoute()) as $subBlock) {
+                    $handleDefinitionBlock($subBlock);
+                }
             }
 
             foreach ($block->getContents() as $content) {
@@ -241,7 +261,7 @@ class DefinitionView
         return $this->form;
     }
 
-    public function getCreateForm(?FormBuilderInterface $builder = null): FormInterface
+    public function getCreateForm(?FormBuilderInterface $builder = null, ?string $blockName = null): FormInterface
     {
         if ($this->form instanceof FormInterface) {
             return $this->form;
@@ -256,20 +276,39 @@ class DefinitionView
         }
 
         foreach ($this->getBlocks() as $block) {
+            if ($blockName !== null && $block->getAcronym() !== $blockName) {
+                continue;
+            }
+
             if (! $block->isVisibleOnCreate()
                 || ! $this->authorizationChecker->isGranted($block->getCreateVoterAttribute(), $this->data)) {
                 continue;
             }
 
-            if ($block instanceof DefinitionBlock && $block->getAccessorPath()) {
-                $referencingData = $block->getData($this->data);
-                $referencingDefinition = $block->getReferencingDefinition($referencingData);
+            $handleDefinitionBlock = function (Block $block) use ($builder) {
+                if ($block instanceof DefinitionBlock && $block->getAccessorPath()) {
+                    $referencingData = $block->getData($this->data);
+                    $referencingDefinition = $block->getReferencingDefinition($referencingData);
 
-                $referencingDefinition
-                    ->createView($this->getRoute(), $referencingData)
-                    ->getCreateForm($builder)
-                ;
+                    $referencingDefinition
+                        ->createView($this->getRoute(), $referencingData)
+                        ->getCreateForm($builder, $block->getOption(DefinitionBlock::OPT_BLOCK))
+                    ;
+
+                    return true;
+                }
+
+                return false;
+            };
+
+            if ($handleDefinitionBlock($block)) {
                 continue;
+            }
+
+            if ($block instanceof BlockBlock) {
+                foreach ($block->getBlocks($this, $this->getRoute()) as $subBlock) {
+                    $handleDefinitionBlock($subBlock);
+                }
             }
 
             foreach ($block->getContents() as $content) {

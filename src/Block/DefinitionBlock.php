@@ -71,7 +71,7 @@ class DefinitionBlock extends Block
             $definition = $this->getDefinitionManager()->getDefinitionByClassName($optionDefinition);
         }
         if ($this->getAccessorPath()) {
-            $definition->setFormAccessorPrefix($this->getAccessorPath() . '_');
+            $definition->setFormAccessorPrefix($this->definition->getFormAccessorPrefix() . $this->getAccessorPath() . '_');
         }
 
         return $definition;
