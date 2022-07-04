@@ -39,6 +39,10 @@ interface DefinitionInterface
 
     public function getTitle($entity = null, ?PageInterface $route = null): string;
 
+    public function getFormAccessorPrefix(): string;
+
+    public function setFormAccessorPrefix(string $formAccessorPrefix): void;
+
     /**
      * returns capabilities of this definition.
      *
