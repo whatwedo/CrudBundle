@@ -12,7 +12,7 @@ services:
             - '../../Normalizer/'
 
 
-    whatwedo\CrudBundle\View\DefinitionBuilder:
+    whatwedo\CrudBundle\Builder\DefinitionBuilder:
         shared: false
 
     whatwedo\CrudBundle\View\DefinitionView:
