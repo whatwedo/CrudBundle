@@ -38,6 +38,12 @@
                 "webpackMode": "eager",
                 "featch": "eager",
                 "enabled": true
+            },
+            "block": {
+                "main": "controllers/block_controller.js",
+                "webpackMode": "eager",
+                "featch": "eager",
+                "enabled": true
             }
         }
     },

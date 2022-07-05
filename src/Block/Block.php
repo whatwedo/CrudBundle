@@ -54,6 +54,10 @@ class Block implements ServiceSubscriberInterface
 
     public const OPT_CUSTOM_OPTIONS = 'custom_options';
 
+    public const OPT_COLLAPSIBLE = 'collapsible';
+
+    public const OPT_COLLAPSED = 'collapsed';
+
     protected ContainerInterface $container;
 
     protected ?Block $parentBlock = null;
@@ -96,11 +100,13 @@ class Block implements ServiceSubscriberInterface
             self::OPT_CREATE_VOTER_ATTRIBUTE => Page::CREATE,
             self::OPT_BLOCK_PREFIX => StringUtil::fqcnToBlockPrefix(static::class),
             self::OPT_CUSTOM_OPTIONS => [],
+            self::OPT_COLLAPSIBLE => false,
+            self::OPT_COLLAPSED => false,
         ]);
 
         $resolver->setAllowedTypes(self::OPT_VISIBILITY, 'array');
         $resolver->setAllowedTypes(self::OPT_CUSTOM_OPTIONS, 'array');
-        $resolver->setAllowedTypes(self::OPT_LABEL, ['null', 'string']);
+        $resolver->setAllowedTypes(self::OPT_LABEL, ['null', 'string', 'bool']);
         $resolver->setAllowedTypes(self::OPT_DESCRIPTION, ['null', 'string']);
         $resolver->setAllowedTypes(self::OPT_ATTR, ['null', 'array']);
         $resolver->setAllowedValues(self::OPT_SIZE, [BlockSize::LARGE, BlockSize::SMALL]);
@@ -108,6 +114,8 @@ class Block implements ServiceSubscriberInterface
         $resolver->setAllowedTypes(self::OPT_EDIT_VOTER_ATTRIBUTE, ['null', 'string', 'object']);
         $resolver->setAllowedTypes(self::OPT_CREATE_VOTER_ATTRIBUTE, ['null', 'string', 'object']);
         $resolver->setAllowedTypes(self::OPT_BLOCK_PREFIX, 'string');
+        $resolver->setAllowedTypes(self::OPT_COLLAPSIBLE, 'bool');
+        $resolver->setAllowedTypes(self::OPT_COLLAPSED, 'bool');
     }
 
     public function setOption($name, $value): static
