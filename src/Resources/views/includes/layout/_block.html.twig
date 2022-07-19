@@ -67,6 +67,71 @@
     </div>
 {% endblock %}
 
+{% block grid_block %}
+    {% set attr = {
+        class: (block.option('size') == constant('whatwedo\\CrudBundle\\Enum\\BlockSize::LARGE') ? 'w-full' : 'w-3/6') ~ ' wwd-block-block',
+    }|merge(block.option('attr')|default([])) %}
+    <div id="wwd-crud-block-{{ block.acronym }}" {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
+        <div class="bg-neutral-50 shadow sm:rounded-lg m-4" {{ stimulus_controller('whatwedo/crud-bundle/block', {'collapsible': block.option('collapsible')}) }}>
+        {% if block.option('label') or block.option('description') %}
+            <div class="wwd-crud-block-header px-4 pt-5 sm:px-6" {{ stimulus_target('whatwedo/crud-bundle/block', 'title') }}>
+                {% if block.option('label') %}
+                    <h3 class="text-lg leading-6 font-medium text-neutral-900">
+                        {{ block.option('label')|trans }}
+                    </h3>
+                {% endif %}
+                {% if block.option('description') %}
+                    <p class="mt-1 max-w-2xl text-sm text-neutral-500">
+                        {{ block.option('description')|trans }}
+                    </p>
+                {% endif %}
+            </div>
+        {% endif %}
+        <div class="wwd-block-block-content{% if block.option('collapsed') %} hidden{% endif %}"
+            {{ stimulus_target('whatwedo/crud-bundle/block', 'block') }}>
+            {% for subBlock in block.blocks(view, page) %}
+                {{ wwd_crud_render_block(subBlock, view, page) }}
+            {% endfor %}
+        </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block tab_block %}
+
+{{ block.option('layout_options')['horizontal'] is defined }}
+    {% set attr = {
+        class: (block.option('size') == constant('whatwedo\\CrudBundle\\Enum\\BlockSize::LARGE') ? 'w-full' : 'w-3/6') ~ ' wwd-block-block',
+    }|merge(block.option('attr')|default([])) %}
+    {% set attr = {
+        class: (block.option('size') == constant('whatwedo\\CrudBundle\\Enum\\BlockSize::LARGE') ? 'w-full' : 'w-3/6') ~ ' wwd-block-block',
+    }|merge(block.option('attr')|default([])) %}
+    <div id="wwd-crud-block-{{ block.acronym }}" {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
+        <div class="bg-neutral-50 shadow sm:rounded-lg m-4" {{ stimulus_controller('whatwedo/crud-bundle/block', {'collapsible': block.option('collapsible')}) }}>
+        {% if block.option('label') or block.option('description') %}
+            <div class="wwd-crud-block-header px-4 pt-5 sm:px-6" {{ stimulus_target('whatwedo/crud-bundle/block', 'title') }}>
+                {% if block.option('label') %}
+                    <h3 class="text-lg leading-6 font-medium text-neutral-900">
+                        {{ block.option('label')|trans }}
+                    </h3>
+                {% endif %}
+                {% if block.option('description') %}
+                    <p class="mt-1 max-w-2xl text-sm text-neutral-500">
+                        {{ block.option('description')|trans }}
+                    </p>
+                {% endif %}
+            </div>
+        {% endif %}
+        <div class="wwd-block-block-content{% if block.option('collapsed') %} hidden{% endif %}"
+            {{ stimulus_target('whatwedo/crud-bundle/block', 'block') }}>
+            {% for subBlock in block.blocks(view, page) %}
+                {{ wwd_crud_render_block(subBlock, view, page) }}
+            {% endfor %}
+        </div>
+        </div>
+    </div>
+{% endblock %}
+
 
 {% block definition_block %}
     {{ wwd_definition_block_render(block) }}
