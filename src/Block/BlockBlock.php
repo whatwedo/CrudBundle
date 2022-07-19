@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace whatwedo\CrudBundle\Block;
 
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Collection\ContentCollection;
 use whatwedo\CrudBundle\Enum\BlockSize;
@@ -16,6 +17,8 @@ use whatwedo\CrudBundle\View\DefinitionView;
 #[Autoconfigure(tags: ['whatwedo_crud.block'])]
 class BlockBlock extends Block
 {
+    const OPT_LAYOUT_OPTIONS = 'layout_options';
+
     protected BlockCollection $blocks;
 
     public function __construct()
@@ -85,5 +88,13 @@ class BlockBlock extends Block
     public function addContent(string $acronym, ?string $type = null, array $options = [], ?int $position = null): static
     {
         throw new \Exception('cannot be used in BlockBlock');
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        parent::configureOptions($resolver);
+
+        $resolver->setDefault(self::OPT_LAYOUT_OPTIONS, []);
+        $resolver->setAllowedTypes(self::OPT_LAYOUT_OPTIONS, ['array']);
     }
 }
