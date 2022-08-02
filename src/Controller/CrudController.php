@@ -30,6 +30,7 @@ use whatwedo\CrudBundle\View\DefinitionView;
 use whatwedo\TableBundle\DataLoader\DoctrineDataLoader;
 use whatwedo\TableBundle\DataLoader\DoctrineTreeDataLoader;
 use whatwedo\TableBundle\Entity\TreeInterface;
+use whatwedo\TableBundle\Extension\PaginationExtension;
 use whatwedo\TableBundle\Factory\TableFactory;
 use whatwedo\TableBundle\Manager\ExportManager;
 use whatwedo\TableBundle\Table\Table;
@@ -257,13 +258,16 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
         $table = $tableFactory
             ->create('index', DoctrineDataLoader::class, [
-                Table::OPTION_DEFAULT_LIMIT => 0,
                 Table::OPTION_DATALOADER_OPTIONS => [
                     DoctrineDataLoader::OPTION_QUERY_BUILDER => $this->getDefinition()->getQueryBuilder(),
                 ],
             ]);
 
         $this->getDefinition()->configureExport($table);
+        $this->getDefinition()->configureFilters($table);
+        if ($request->query->getInt('all', 0) === 1) {
+            $table->getExtension(PaginationExtension::class)?->setLimit(0);
+        }
 
         $spreadsheet = $exportManager->createSpreadsheet($table);
         $writer = new Xlsx($spreadsheet);
@@ -275,7 +279,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         );
 
         $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        $response->headers->set('Content-Disposition', 'attachment; filename="export.xlsx"');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $this->definition->getExportFilename() . '"');
 
         return $response;
     }

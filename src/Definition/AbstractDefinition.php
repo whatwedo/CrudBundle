@@ -149,6 +149,11 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         $this->configureTable($table);
     }
 
+    public function getExportFilename(): string
+    {
+        return 'export.xlsx';
+    }
+
     public static function getAlias(): string
     {
         return str_replace(

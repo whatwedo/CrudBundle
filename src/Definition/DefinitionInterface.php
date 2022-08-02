@@ -96,6 +96,11 @@ interface DefinitionInterface
     public function configureExport(Table $table);
 
     /**
+     * defines the export file name.
+     */
+    public function getExportFilename(): string;
+
+    /**
      * check if this definition has specific capability.
     /**
      * get template directory of this definition.
