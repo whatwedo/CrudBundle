@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use whatwedo\CrudBundle\Action\Action;
@@ -133,7 +134,15 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     public function getBatchActions(): array
     {
-        return $this->batchActions;
+        return array_filter(
+            $this->batchActions,
+            function (Action $action) {
+                return $this->container->get(AuthorizationCheckerInterface::class)->isGranted(
+                    $action->getOption('voter_attribute'),
+                    $action
+                );
+            }
+        );
     }
 
     public function configureView(DefinitionBuilder $builder, $data): void
@@ -495,6 +504,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
             IndexRepository::class,
             RequestStack::class,
             LoggerInterface::class,
+            AuthorizationCheckerInterface::class,
         ];
     }
 
