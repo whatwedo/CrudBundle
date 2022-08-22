@@ -7,6 +7,7 @@ namespace whatwedo\CrudBundle\DataCollector;
 use Symfony\Bundle\FrameworkBundle\DataCollector\AbstractDataCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use whatwedo\CoreBundle\Action\Action;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
@@ -46,6 +47,9 @@ class CrudDataCollector extends AbstractDataCollector
                     'page' => $page,
                 ];
 
+                /**
+                 * @var Action $action
+                 */
                 foreach ($definition->getActions() as $key => $action) {
                     $this->data['actions'][$key] = [
                         'class' => $action::class,
@@ -54,8 +58,11 @@ class CrudDataCollector extends AbstractDataCollector
                         'icon' => $action->getOption('icon'),
                         'voter_attribute' => $action->getOption('voter_attribute'),
                         'priority' => $action->getOption('priority'),
-                        'confirmation' => $action->getOption('confirmation'),
                     ];
+
+                    if ($action->hasOption('confirmation')) {
+                        $this->data['actions'][$key]['confirmation'] = $action->getOption('confirmation');
+                    }
                 }
             }
         }
