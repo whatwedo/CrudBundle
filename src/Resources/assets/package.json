@@ -27,6 +27,12 @@
                 "fetch": "eager",
                 "enabled": true
             },
+            "offcanvas": {
+                "main": "controllers/offcanvas_controller.js",
+                "webpackMode": "eager",
+                "fetch": "eager",
+                "enabled": true
+            },
             "ajax-form": {
                 "main": "controllers/ajax_form_controller.js",
                 "webpackMode": "eager",

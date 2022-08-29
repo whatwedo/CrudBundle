@@ -45,6 +45,10 @@
                 "enabled": true,
                 "fetch": "eager"
             },
+            "offcanvas": {
+                "enabled": true,
+                "fetch": "eager"
+            },
             "ajax-form": {
                 "enabled": true,
                 "fetch": "eager"
