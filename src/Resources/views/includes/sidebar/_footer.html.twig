@@ -1,0 +1,19 @@
+{% block sidebar_profile %}
+    <a href="{% block logout_link %}{% endblock %}" class="whatwedo_crud-profile lex-shrink-0 flex border-t border-neutral-200 p-4">
+        <div class="flex items-center">
+            <div>
+                <img class="inline-block h-10 w-10 rounded-full"
+                     src="{% block profile_picture %}{% endblock %}" alt=""
+                     crossorigin="anonymous" referrerpolicy="no-referrer">
+            </div>
+            <div class="ml-3">
+                <p class="text-base font-medium text-neutral-700 group-hover:text-neutral-900">
+                    {% block profile_name %}{% endblock %}
+                </p>
+                <p class="text-sm font-medium text-neutral-500 group-hover:text-neutral-700">
+                    {% block logout_text %}Logout{% endblock %}
+                </p>
+            </div>
+        </div>
+    </a>
+{% endblock %}

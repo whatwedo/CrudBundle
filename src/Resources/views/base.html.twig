@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ app.request.locale }}">
+<html class="h-full bg-neutral-100" lang="{{ app.request.locale }}">
 <head>
     {% block header %}
         <meta charset="utf-8" />
@@ -17,94 +17,136 @@
         {% endblock %}
     {% endblock %}
 </head>
-<body class="{% block body_class %}{% endblock %}" data-turbo="false">
+<body class="{% block body_class %}{% endblock %} h-full" data-turbo="false">
 {% block content %}
-    <div class="whatwedo_crud-wrapper h-screen flex overflow-hidden" >
-        <div class="hidden lg:flex lg:flex-shrink-0 bg-neutral-100">
-            <div class="flex flex-col w-64 border-r border-neutral-200 pt-5 pb-4 overflow-x-auto">
+    <div {{ stimulus_controller({'whatwedo/crud-bundle/offcanvas': {}}) }}>
 
-                <div class="whatwedo_crud-logo flex items-center flex-shrink-0 px-6">
-                    {% block logo %}
-                        <a href="{{ path('dashboard') }}">
-                            <img class="h-6 w-auto" src="https://static.whatwedo.io/whatwedo-logo.svg" alt="whatwedo">
-                        </a>
-                    {% endblock %}
-                </div>
+        {# Off-canvas menu for mobile #}
+        <div class="relative z-40 md:hidden" role="dialog" aria-modal="true">
+            <div class="fixed inset-0 bg-neutral-600 bg-opacity-75 transition-opacity ease-linear duration-300 pointer-events-none opacity-0" {{ stimulus_target('whatwedo/crud-bundle/offcanvas', 'backdrop') }}></div>{# opacity-0 pointer-events-none #}
 
-                {% block navigation %}
-                <div class="whatwedo_crud-navigation mt-5 flex-grow flex flex-col">
-                    {{ knp_menu_render('main', { 'template': '@whatwedoCrud/extensions/knp_menu_main.html.twig' }) }}
-                    {{ knp_menu_render('sub', { 'template': '@whatwedoCrud/extensions/knp_menu_sub.html.twig' }) }}
-                </div>
-                {% endblock %}
-
-                {% block search_box %}
-                <div class="whatwedo_crud-sidedar flex-shrink-0 flex border-t border-neutral-200 p-4">
-                    <label for="search" class="sr-only">Search</label>
-                    <div class="relative rounded-md shadow-sm w-full mt-1 z-0">
-                        <form action="#" method="get">
-                            <input
-                                class="whatwedo_core-input"
-                                name="query"
-                                value=""
-                                autocomplete="off"
-                                placeholder="Suche ..."
-                                type="text"
-                            >
-                        </form>
+            <div class="fixed inset-0 flex z-40 pointer-events-none">
+                <div
+                    class="whatwedo_crud-sidebar relative flex-1 flex flex-col max-w-xs w-full bg-white transition ease-in-out duration-300 transform -translate-x-full pointer-events-auto"
+                    {{ stimulus_target('whatwedo/crud-bundle/offcanvas', 'content') }}
+                >
+                    <div class="absolute top-0 right-0 -mr-12 pt-2 ease-in-out duration-300 opacity-0" {{ stimulus_target('whatwedo/crud-bundle/offcanvas', 'closeButton') }}>
+                        <button
+                            type="button"
+                            class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                            {{ stimulus_action('whatwedo/crud-bundle/offcanvas', 'hideContent') }}
+                        >
+                            <span class="sr-only">Close sidebar</span>
+                            <!-- Heroicon name: outline/x -->
+                            <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
                     </div>
-                </div>
-                {% endblock %}
 
-                {% block profile %}
-                    <div class="whatwedo_crud-profile flex-shrink-0 flex border-t border-neutral-200 p-4 pb-0">
+                    <div class="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
+                        <div class="flex-shrink-0 flex items-center px-4">
+                            {% block logo %}
+                                <a href="{{ path('dashboard') }}">
+                                    <img class="h-6 w-auto" src="https://static.whatwedo.io/whatwedo-logo.svg" alt="whatwedo">
+                                </a>
+                            {% endblock %}
+                        </div>
 
-                        {% block profile_info %}
-                            <a href="{% block logout_link %}{% endblock %}" class="flex-shrink-0 group block">
-                                <div class="flex items-center">
-                                    <div>
-                                        <img class="inline-block h-10 w-10 rounded-full"
-                                             src="{% block profile_picture %}{% endblock %}" alt=""
-                                             crossorigin="anonymous" referrerpolicy="no-referrer">
-                                    </div>
-                                    <div class="ml-3">
-                                        <p class="text-base font-medium text-neutral-700 group-hover:text-neutral-900">
-                                            {% block profile_name %}{% endblock %}
-                                        </p>
-                                        <p class="text-sm font-medium text-neutral-500 group-hover:text-neutral-700">
-                                            {% block logout_text %}Logout{% endblock %}
-                                        </p>
-                                    </div>
-                                </div>
-                            </a>
+                        {% block navigation %}
+                            <div class="whatwedo_crud-navigation mt-5 flex-grow flex flex-col">
+                                {{ knp_menu_render('main', { 'template': '@whatwedoCrud/extensions/knp_menu_main.html.twig' }) }}
+                            </div>
+                        {% endblock %}
+                    </div>
+
+                    {% block sidebar_service %}
+
+                        {% block sidebar_nav %}
+                            {{ knp_menu_render('sub', { 'template': '@whatwedoCrud/extensions/knp_menu_sub.html.twig' }) }}
                         {% endblock %}
 
-                    </div>
-                {% endblock %}
+                        {#
+                        {% block sidebar-search %}
+                            <label for="search" class="sr-only">Search</label>
+                            <div class="relative rounded-md shadow-sm w-full z-0">
+                                <form action="#" method="get">
+                                    <input
+                                        class="whatwedo_core-input"
+                                        name="query"
+                                        value=""
+                                        autocomplete="off"
+                                        placeholder="Suche ..."
+                                        type="text"
+                                    >
+                                </form>
+                            </div>
+                        {% endblock %}
+                        #}
+
+                        {% block sidebar_footer %}
+                            {% include "@whatwedoCrud/includes/sidebar/_footer.html.twig" %}
+                        {% endblock %}
+
+                    {% endblock %}
+                </div>
+
+                <div class="flex-shrink-0 w-14"></div>
             </div>
         </div>
-        <main
-            class="whatwedo_crud-main flex flex-col flex-1 relative z-0 overflow-y-auto focus:outline-none"
-            {{ stimulus_controller({'whatwedo/table-bundle/filter': {}, 'whatwedo/table-bundle/table': {}}) }}
-        >
-            {% block top_bar_nav %}
-                <nav class="whatwedo_crud-nav flex-grow-0 bg-white flex-auto border-b border-neutral-200 px-4 py-4 sm:flex sm:justify-between">
-                    {% block breadcrumbs %}
-                        {% include "@whatwedoCrud/includes/main/_breadcrumbs.html.twig" %}
-                    {% endblock %}
-                    {% block actions %}
-                        {% include "@whatwedoCrud/includes/main/_actions.html.twig" %}
-                    {% endblock %}
-                </nav>
-            {% endblock %}
-            {% block messages %}
-                {% include "@whatwedoCrud/includes/main/_messages.html.twig" %}
-            {% endblock %}
-            {% block main %}
-            {% endblock %}
-        </main>
 
+        <div class="whatwedo_crud-sidebar hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
+            <div class="flex-1 flex flex-col min-h-0 border-r border-neutral-200 bg-white">
+                <div class="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
+                    <div class="flex items-center flex-shrink-0 px-4">
+                        {{ block('logo') }}
+                    </div>
+
+                    {{ block('navigation') }}
+                </div>
+                {{ block('sidebar_footer') }}
+            </div>
+        </div>
+
+        <div class="md:pl-64 flex flex-col flex-1">
+            <div class="sticky top-0 z-10 md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-neutral-100">
+                <button {{ stimulus_action('whatwedo/crud-bundle/offcanvas', 'showContent') }} type="button" class="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-neutral-500 hover:text-neutral-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+                    <span class="sr-only">Open sidebar</span>
+                    <!-- Heroicon name: outline/menu -->
+                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+
+            <main
+                class="whatwedo_crud-wrapper flex flex-col flex-1"
+                {{ stimulus_controller({'whatwedo/table-bundle/filter': {}, 'whatwedo/table-bundle/table': {}}) }}
+            >
+                {% block topbar %}
+                    <nav class="whatwedo_crud-topbar flex-grow-0 bg-white flex-auto border-b border-neutral-200 px-4 py-4 min-h-[71px] sm:flex sm:justify-between">
+                        {% block breadcrumbs %}
+                            {% include "@whatwedoCrud/includes/topbar/_breadcrumbs.html.twig" %}
+                        {% endblock %}
+
+                        {% block actions %}
+                            {% include "@whatwedoCrud/includes/topbar/_actions.html.twig" %}
+                        {% endblock %}
+                    </nav>
+                {% endblock %}
+
+                {% block messages %}
+                    {% include "@whatwedoCrud/includes/main/_messages.html.twig" %}
+                {% endblock %}
+
+                <div class="whatwedo_crud-maincontent">
+                    {% block main %}
+                    {% endblock %}
+                </div>
+            </main>
+        </div>
     </div>
+
 {% endblock %}
 </body>
 </html>

@@ -1,5 +1,5 @@
 {% if view is defined and view.actions|length > 0 %}
-    <div aria-label="Aktionen">
+    <div class="ml-auto">
         {% for action in view.actions %}
             {{ wwd_crud_render_action(action, view) }}
         {% endfor %}
