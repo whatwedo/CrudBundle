@@ -54,7 +54,8 @@
         "@hotwired/stimulus": "^3.0.0"
     },
     "dependencies": {
-        "tippy.js": "^6.3.7",
-        "stimulus-notification": "^2.0.0"
+        "core-js": "^3.24.1",
+        "stimulus-notification": "^2.0.0",
+        "tippy.js": "^6.3.7"
     }
 }
