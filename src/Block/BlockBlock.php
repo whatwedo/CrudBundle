@@ -7,7 +7,7 @@ namespace whatwedo\CrudBundle\Block;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Collection\ContentCollection;
-use whatwedo\CrudBundle\Enum\BlockSize;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Enum\PageInterface;
 use whatwedo\CrudBundle\Manager\BlockManager;
@@ -17,6 +17,7 @@ use whatwedo\CrudBundle\View\DefinitionView;
 class BlockBlock extends Block
 {
     protected BlockCollection $blocks;
+    const OPT_LAYOUT_OPTIONS = 'layout_options';
 
     public function __construct()
     {
@@ -82,5 +83,13 @@ class BlockBlock extends Block
     public function addContent(string $acronym, ?string $type = null, array $options = [], ?int $position = null): static
     {
         throw new \Exception('cannot be used in BlockBlock');
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        parent::configureOptions($resolver);
+
+        $resolver->setDefault(self::OPT_LAYOUT_OPTIONS, []);
+        $resolver->setAllowedTypes(self::OPT_LAYOUT_OPTIONS, ['array']);
     }
 }
