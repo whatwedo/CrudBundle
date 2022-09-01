@@ -4,10 +4,10 @@
     {# @var content string #}
 
     {% set attr = {
-        class: (block.option('size') == constant('whatwedo\\CrudBundle\\Enum\\BlockSize::LARGE') ? 'w-full' : 'w-3/6'),
+        class: 'mb-4 last:mb-0 ' ~ (block.option('size') == constant('whatwedo\\CrudBundle\\Enum\\BlockSize::LARGE') ? 'w-full sm:mb-0' : 'w-3/6'),
     }|merge(block.option('attr')|default([])) %}
     <div id="wwd-crud-block-{{ block.acronym }}" {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
-        <div class="bg-neutral-50 shadow sm:rounded-lg m-4" {{ stimulus_controller('whatwedo/crud-bundle/block', {'collapsible': block.option('collapsible')}) }}>
+        <div class="bg-white overflow-hidden shadow sm:rounded-lg" {{ stimulus_controller('whatwedo/crud-bundle/block', {'collapsible': block.option('collapsible')}) }}>
             {% if block.option('label') or block.option('description') %}
                 <div class="px-4 py-5 sm:px-6" {{ stimulus_target('whatwedo/crud-bundle/block', 'title') }}>
                     {% if block.option('label') %}
@@ -23,10 +23,10 @@
                 </div>
             {% endif %}
             <div
-                class="{% if block.option('label') or block.option('description') %}border-t border-neutral-200 bg-white sm:rounded-b-lg{% if block.option('collapsed') %} hidden{% endif %}{% endif%}"
+                class="{% if block.option('label') or block.option('description') %}border-t border-neutral-200 sm:rounded-b-lg{% if block.option('collapsed') %} hidden{% endif %}{% endif%}"
                 {{ stimulus_target('whatwedo/crud-bundle/block', 'block') }}
             >
-                <dl>
+                <dl class="sm:divide-y sm:divide-neutral-200">
                     {% for content in block.contents(view, page) %}
                         {{ wwd_crud_render_content(content, block, view, form) }}
                     {% endfor %}
@@ -39,10 +39,10 @@
 
 {% block block_block %}
     {% set attr = {
-        class: (block.option('size') == constant('whatwedo\\CrudBundle\\Enum\\BlockSize::LARGE') ? 'w-full' : 'w-3/6') ~ ' wwd-block-block',
+        class: (block.option('size') == constant('whatwedo\\CrudBundle\\Enum\\BlockSize::LARGE') ? 'w-full' : 'w-3/6') ~ ' wwd-block-block mb-4',
     }|merge(block.option('attr')|default([])) %}
     <div id="wwd-crud-block-{{ block.acronym }}" {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
-        <div class="bg-neutral-50 shadow sm:rounded-lg m-4" {{ stimulus_controller('whatwedo/crud-bundle/block', {'collapsible': block.option('collapsible')}) }}>
+        <div class="bg-white overflow-hidden shadow sm:rounded-lg" {{ stimulus_controller('whatwedo/crud-bundle/block', {'collapsible': block.option('collapsible')}) }}>
         {% if block.option('label') or block.option('description') %}
             <div class="wwd-crud-block-header px-4 pt-5 sm:px-6" {{ stimulus_target('whatwedo/crud-bundle/block', 'title') }}>
                 {% if block.option('label') %}
@@ -67,6 +67,58 @@
     </div>
 {% endblock %}
 
+{% block grid_block %}
+    <div class="w-full wwd-block-block wwd-block-block--grid border-neutral-200 p-4 sm:rounded border">
+        <p class="mb-4">{{ block.option('label') }}</p>
+        <div class="overflow-hidden gap-4 sm:grid sm:grid-cols-{{ block.option('layout_options')['vertically'] }} sm:grid-rows-{{ block.option('layout_options')['horizontally'] }}" id="wwd-crud-block-{{ block.acronym }}">
+            {% for subBlock in block.blocks(view, page) %}
+                {{ wwd_crud_render_block(subBlock, view, page, form ?? null) }}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block tab_block %}
+    <div
+        class="w-full wwd-block-block wwd-block-block--tab border-neutral-200 p-4 sm:rounded border overflow-hidden gap-4"
+        id="wwd-crud-block-{{ block.acronym }}"
+        {{ stimulus_controller({'whatwedo/crud-bundle/tab': {}}) }}
+    >
+        <p class="mb-4">{{ block.option('label') }}</p>
+        <div class="sm:hidden">
+            <label for="tabs" class="sr-only">Select a tab</label>
+            <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
+            <select {{ stimulus_action('whatwedo/crud-bundle/tab', 'changeTab') }} id="tabs" name="tabs" class="block w-full border-neutral-300 focus:border-primary-light focus:ring-primary mb-4">
+                {% for subBlock in block.blocks(view, page) %}
+                    <option value="{{ subBlock.acronym }}">{{ subBlock.option('label') }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="hidden sm:block">
+            <nav class="isolate z-0 mb-1 flex divide-x divide-neutral-200 rounded-lg shadow">
+                {% for subBlock in block.blocks(view, page) %}
+                    <a
+                        href="#tab-{{ subBlock.acronym }}"
+                        data-tab-id="{{ subBlock.acronym }}"
+                        class="text-neutral-500 hover:text-neutral-700 group relative min-w-0 flex-1 overflow-hidden bg-white py-4 px-4 text-sm font-medium text-center hover:bg-gray-50 focus:z-10{{ loop.first ? ' rounded-l-lg' : '' }}{{ loop.last ? ' rounded-r-lg' : '' }}"
+                        {{ stimulus_target('whatwedo/crud-bundle/tab', 'tab') }}
+                        {{ stimulus_action('whatwedo/crud-bundle/tab', 'openTab') }}
+                    >
+                        <span>{{ subBlock.option('label') }}</span>
+                        <span {{ stimulus_target('whatwedo/crud-bundle/tab', 'underline') }} class="bg-transparent absolute inset-x-0 bottom-0 h-0.5"></span>
+                    </a>
+                {% endfor %}
+            </nav>
+        </div>
+
+        {% for subBlock in block.blocks(view, page) %}
+            <div class="hidden" data-tab-content="{{ subBlock.acronym }}" {{ stimulus_target('whatwedo/crud-bundle/tab', 'content') }}>
+                {{ wwd_crud_render_block(subBlock, view, page, form ?? null) }}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
 
 {% block definition_block %}
     {{ wwd_definition_block_render(block) }}

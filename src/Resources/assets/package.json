@@ -27,6 +27,12 @@
                 "fetch": "eager",
                 "enabled": true
             },
+            "tab": {
+                "main": "controllers/tab_controller.js",
+                "webpackMode": "eager",
+                "fetch": "eager",
+                "enabled": true
+            },
             "offcanvas": {
                 "main": "controllers/offcanvas_controller.js",
                 "webpackMode": "eager",
