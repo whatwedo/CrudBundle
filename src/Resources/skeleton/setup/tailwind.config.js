@@ -8,6 +8,12 @@ module.exports = {
         './var/cache/twig/**/*.php',
         './src/Definition/*.php',
     ],
+    safelist: [
+        {
+            pattern: /grid-(cols|rows)-\d/,
+            variants: ['lg', 'md', 'sm'],
+        },
+    ],
     theme: {
         extend: {
             colors: {
