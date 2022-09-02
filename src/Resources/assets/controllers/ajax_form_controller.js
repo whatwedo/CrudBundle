@@ -1,4 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
+import 'regenerator-runtime/runtime'
 
 let form = null;
 let ajaxUrl = null;
