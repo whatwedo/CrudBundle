@@ -38,7 +38,7 @@
         {% import _self as knp_menu %}
 
         {# classes for link/button item #}
-        {% set classes = 'bg-gray-100 text-gray-900 group flex items-center px-2 py-2 text-base font-medium rounded-md' %}
+        {% set classes = 'bg-gray-100 text-gray-900 group flex items-center px-2 py-2 text-sm font-medium rounded-md' %}
         {% if item.parent.parent is null %}
             {# if its not a root element #}
             {% set classes = 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 group w-full flex items-center pl-2 pr-1 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-primary' %}
