@@ -4,7 +4,7 @@
     {# @var content string #}
 
     {% set attr = {
-        class: 'mb-4 last:mb-0 ' ~ (block.option('size') == constant('whatwedo\\CrudBundle\\Enum\\BlockSize::LARGE') ? 'w-full sm:mb-0' : 'w-3/6'),
+        class: 'mb-4 last:mb-0 ' ~ (block.option('size') == constant('whatwedo\\CrudBundle\\Enum\\BlockSize::LARGE') ? 'w-full sm:mb-0' : 'w-full sm:w-3/6'),
     }|merge(block.option('attr')|default([])) %}
     <div id="wwd-crud-block-{{ block.acronym }}" {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
         <div class="bg-white overflow-hidden shadow sm:rounded-lg" {{ stimulus_controller('whatwedo/crud-bundle/block', {'collapsible': block.option('collapsible')}) }}>
@@ -39,7 +39,7 @@
 
 {% block block_block %}
     {% set attr = {
-        class: (block.option('size') == constant('whatwedo\\CrudBundle\\Enum\\BlockSize::LARGE') ? 'w-full' : 'w-3/6') ~ ' wwd-block-block mb-4',
+        class: (block.option('size') == constant('whatwedo\\CrudBundle\\Enum\\BlockSize::LARGE') ? '' : 'sm:w-3/6') ~ ' w-full wwd-block-block mb-4',
     }|merge(block.option('attr')|default([])) %}
     <div id="wwd-crud-block-{{ block.acronym }}" {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
         <div class="bg-white overflow-hidden shadow sm:rounded-lg" {{ stimulus_controller('whatwedo/crud-bundle/block', {'collapsible': block.option('collapsible')}) }}>
