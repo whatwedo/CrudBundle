@@ -123,7 +123,7 @@
                 {{ stimulus_controller({'whatwedo/table-bundle/filter': {}, 'whatwedo/table-bundle/table': {}}) }}
             >
                 {% block topbar %}
-                    <nav class="whatwedo_crud-topbar sticky top-0 flex-grow-0 bg-white flex-auto border-b border-neutral-200 px-4 py-4 min-h-[71px] sm:flex sm:justify-between">
+                    <nav class="whatwedo_crud-topbar sticky top-[50px] md:top-0 flex-grow-0 bg-white flex-auto border-b border-neutral-200 px-4 py-4 min-h-[71px] sm:flex sm:justify-between">
                         {% block breadcrumbs %}
                             {% include "@whatwedoCrud/includes/topbar/_breadcrumbs.html.twig" %}
                         {% endblock %}
