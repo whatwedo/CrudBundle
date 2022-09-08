@@ -36,6 +36,7 @@ use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
+use whatwedo\CrudBundle\Test\Data\AbstractData;
 use whatwedo\CrudBundle\Test\Data\CreateData;
 use whatwedo\CrudBundle\Test\Data\EditData;
 use whatwedo\CrudBundle\Test\Data\ExportData;
@@ -55,6 +56,7 @@ abstract class AbstractCrudTest extends WebTestCase
      */
     public function testIndex(IndexData $indexData): void
     {
+        $this->setUpTestIndex($indexData);
         if (! $this->getDefinition()::hasCapability(Page::INDEX)) {
             $this->markTestSkipped('no index capability, skip test');
         }
@@ -89,6 +91,7 @@ abstract class AbstractCrudTest extends WebTestCase
      */
     public function testIndexSort(IndexData $indexData): void
     {
+        $this->setUpTestIndexSort($indexData);
         if (! $this->getDefinition()::hasCapability(Page::INDEX)) {
             $this->markTestSkipped('no index capability, skip test');
         }
@@ -163,6 +166,7 @@ abstract class AbstractCrudTest extends WebTestCase
      */
     public function testExport(ExportData $indexData): void
     {
+        $this->setUpTestExport($indexData);
         if (! $this->getDefinition()::hasCapability(Page::EXPORT)) {
             $this->markTestSkipped('no export capability, skip test');
         }
@@ -197,6 +201,7 @@ abstract class AbstractCrudTest extends WebTestCase
      */
     public function testShow(ShowData $showData): void
     {
+        $this->setUpTestShow($showData);
         if (! $this->getDefinition()::hasCapability(Page::SHOW)) {
             $this->markTestSkipped('no show capability, skip test');
         }
@@ -233,6 +238,7 @@ abstract class AbstractCrudTest extends WebTestCase
      */
     public function testEdit(EditData $editData): string
     {
+        $this->setUpTestEdit($editData);
         if (! $this->getDefinition()::hasCapability(Page::EDIT)) {
             $this->markTestSkipped('no edit capability, skip test');
         }
@@ -276,6 +282,7 @@ abstract class AbstractCrudTest extends WebTestCase
      */
     public function testCreate(CreateData $createData): string
     {
+        $this->setUpTestCreate($createData);
         if (! $this->getDefinition()::hasCapability(Page::CREATE)) {
             $this->markTestSkipped('no create capability, skip test');
         }
@@ -344,5 +351,39 @@ abstract class AbstractCrudTest extends WebTestCase
                 $form['form[' . $field . ']'] = $value;
             }
         }
+    }
+
+    protected function setUpTestIndex(IndexData $indexData)
+    {
+        $this->setUpTest($indexData, 'index');
+    }
+
+    protected function setUpTestIndexSort(IndexData $indexData)
+    {
+        $this->setUpTest($indexData, 'indexSort');
+    }
+
+    protected function setUpTestExport(ExportData $indexData)
+    {
+        $this->setUpTest($indexData, 'export');
+    }
+
+    protected function setUpTestShow(ShowData $showData)
+    {
+        $this->setUpTest($showData, 'show');
+    }
+
+    protected function setUpTestEdit(EditData $editData)
+    {
+        $this->setUpTest($editData, 'edit');
+    }
+
+    protected function setUpTestCreate(CreateData $createData)
+    {
+        $this->setUpTest($createData, 'create');
+    }
+
+    protected function setUpTest(AbstractData $createData, string $testType)
+    {
     }
 }
