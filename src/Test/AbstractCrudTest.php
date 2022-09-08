@@ -248,6 +248,7 @@ abstract class AbstractCrudTest extends WebTestCase
             ], $editData->getQueryParameters())
         );
         $crawler = $this->getBrowser()->request('GET', $editLink);
+        $this->assertSame(200, $this->getBrowser()->getResponse()->getStatusCode());
         $form = $crawler->filter('#crud_main_form')->form([], 'POST');
         $this->fillForm($form, $editData->getFormData());
         $this->getBrowser()->submit($form);
@@ -288,6 +289,7 @@ abstract class AbstractCrudTest extends WebTestCase
             $createData->getQueryParameters()
         );
         $crawler = $this->getBrowser()->request('GET', $createLink);
+        $this->assertSame(200, $this->getBrowser()->getResponse()->getStatusCode());
         $form = $crawler->filter('#crud_main_form')->form([], 'POST');
         $this->fillForm($form, $createData->getFormData());
         $this->getBrowser()->submit($form);
