@@ -22,6 +22,7 @@ class CrudDataCollector extends AbstractDataCollector
     public function collect(Request $request, Response $response, \Throwable $exception = null)
     {
         $definitionClass = null;
+        $definition = null;
         $route = null;
         $page = null;
 

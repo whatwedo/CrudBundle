@@ -1,5 +1,8 @@
 parameters:
-	level: 0
-	paths:
-		- src
-		- tests
+    level: 1
+    paths:
+        - src
+        - tests
+    excludePaths:
+        analyse:
+            - src/Resources/skeleton/definition

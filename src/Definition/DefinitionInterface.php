@@ -25,6 +25,8 @@ interface DefinitionInterface
 
     public static function getAlias(): string;
 
+    public static function hasCapability(PageInterface $page): bool;
+
     public static function getEntityAlias(): string;
 
     public static function getRoutePathPrefix(): string;

@@ -213,6 +213,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
         $this->definition->buildBreadcrumbs(null, Page::CREATE);
 
+        $template = $this->getTemplate('create.html.twig');
         match ($mode) {
             PageMode::NORMAL => $template = $this->getTemplate('create.html.twig'),
             PageMode::MODAL => $template = $this->getTemplate('create_modal.html.twig'),

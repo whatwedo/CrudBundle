@@ -1,5 +1,8 @@
-vendor/
-var/
+/vendor/
+/var/
 /composer.lock
 /.phpunit.result.cache
 /phpunit.xml
+/.idea/
+/.php-version
+

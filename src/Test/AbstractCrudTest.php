@@ -320,6 +320,9 @@ abstract class AbstractCrudTest extends WebTestCase
         ];
     }
 
+    /**
+     * @return array<string, array<int|string, array<int, AbstractData>>>
+     */
     public function getTestData(): array
     {
         return [];
