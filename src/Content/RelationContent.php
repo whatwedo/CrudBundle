@@ -299,6 +299,7 @@ class RelationContent extends TableContent
         $table = $this->tableFactory->create($this->acronym, DoctrineDataLoader::class, $options);
         $table->removeExtension(FilterExtension::class);
         $table->removeExtension(SearchExtension::class);
+        $table->setOption(Table::OPTION_DEFINITION, $targetDefinition);
         $targetDefinition->configureTable($table);
         $table->setOption('title', null); // no h1 for relation content
 
