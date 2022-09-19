@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace whatwedo\CrudBundle\Block;
 
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Collection\ContentCollection;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Enum\PageInterface;
 use whatwedo\CrudBundle\Manager\BlockManager;
@@ -16,8 +16,9 @@ use whatwedo\CrudBundle\View\DefinitionView;
 #[Autoconfigure(tags: ['whatwedo_crud.block'])]
 class BlockBlock extends Block
 {
+    public const OPT_LAYOUT_OPTIONS = 'layout_options';
+
     protected BlockCollection $blocks;
-    const OPT_LAYOUT_OPTIONS = 'layout_options';
 
     public function __construct()
     {
