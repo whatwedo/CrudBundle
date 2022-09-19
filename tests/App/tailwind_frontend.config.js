@@ -11,7 +11,6 @@ module.exports = {
             colors: {
                 primary: '#eeeeee',
                 error: colors.red,
-                neutral: colors.red,
             }
         },
     },

@@ -17,6 +17,15 @@ module.exports = {
     theme: {
         extend: {
             colors: {
+                // needs fixing 
+                'neutral-900': '#eeeeee',
+                'neutral-700': '#eeeeee',
+                'neutral-300': '#eeeeee',
+                'neutral-500': '#eeeeee',
+                'neutral-400': '#eeeeee',
+                'neutral-200': '#eeeeee',
+                'neutral-100': '#eeeeee',
+                'neutral-50': '#eeeeee',
                 primary: {
                     lightest: '#6EDBFF',
                     light: '#48C0E8',
@@ -24,7 +33,6 @@ module.exports = {
                     dark: '#336C80',
                     darkest: '#0F4152',
                 },
-                neutral: '#eeeeee',
                 error: colors.red,
             }
         },
