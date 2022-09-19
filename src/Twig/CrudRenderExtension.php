@@ -47,7 +47,7 @@ class CrudRenderExtension extends AbstractExtension
         ];
     }
 
-    public function renderDefinitionBlock($context, DefinitionBlock $definitionBlock): string
+    public function renderDefinitionBlock(mixed $context, DefinitionBlock $definitionBlock): string
     {
         $data = $definitionBlock->getData($context['view']->getData());
         if ($data === null) {
@@ -75,7 +75,7 @@ class CrudRenderExtension extends AbstractExtension
         ]);
     }
 
-    protected function renderBlock($context, Block $block, DefinitionView $view, PageInterface $page, ?FormView $form): string
+    protected function renderBlock(mixed $context, Block $block, DefinitionView $view, PageInterface $page, ?FormView $form): string
     {
         $template = $this->environment->load($view->getDefinition()->getLayout());
 
@@ -94,7 +94,7 @@ class CrudRenderExtension extends AbstractExtension
         );
     }
 
-    protected function renderContent($context, $content, Block $block, DefinitionView $view, ?FormView $form): string
+    protected function renderContent(mixed $context, $content, Block $block, DefinitionView $view, ?FormView $form): string
     {
         $template = $this->environment->load($view->getDefinition()->getLayout());
 
@@ -113,7 +113,7 @@ class CrudRenderExtension extends AbstractExtension
         return $template->renderBlock($blockName, $renderContext);
     }
 
-    protected function renderAction($context, Action $action, DefinitionView $view): string
+    protected function renderAction(mixed $context, Action $action, DefinitionView $view): string
     {
         $template = $this->environment->load($view->getDefinition()->getLayout());
 
@@ -126,7 +126,7 @@ class CrudRenderExtension extends AbstractExtension
         return $template->renderBlock($blockName, $renderContext);
     }
 
-    protected function renderContentValue($context, AbstractContent $content): string
+    protected function renderContentValue(mixed $context, AbstractContent $content): string
     {
         $data = $content->getContents($context['view']->getData());
         $formatter = $content->getOption('formatter');

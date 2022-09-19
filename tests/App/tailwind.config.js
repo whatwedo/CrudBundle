@@ -17,7 +17,7 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                // needs fixing 
+                // needs fixing
                 'neutral-900': '#eeeeee',
                 'neutral-700': '#eeeeee',
                 'neutral-300': '#eeeeee',

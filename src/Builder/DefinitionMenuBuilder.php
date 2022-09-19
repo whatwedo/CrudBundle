@@ -50,7 +50,7 @@ class DefinitionMenuBuilder
         $this->request = $requestStack->getCurrentRequest();
     }
 
-    protected function addDefinition(ItemInterface $parent, string $definition, array $options = [], $title = null): ? ItemInterface
+    protected function addDefinition(ItemInterface $parent, string $definition, array $options = [], ?string $title = null): ? ItemInterface
     {
         $definitionObject = $this->definitionManager->getDefinitionByClassName($definition);
 

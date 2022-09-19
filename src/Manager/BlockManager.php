@@ -45,7 +45,7 @@ class BlockManager
         }
     }
 
-    public function getBlock($class): Block
+    public function getBlock(string $class): Block
     {
         return clone $this->blocks[$class];
     }

@@ -42,7 +42,7 @@ class CrudExtension extends AbstractExtension
         ];
     }
 
-    public function renderBreadcrumbs(array $options)
+    public function renderBreadcrumbs(array $options): string
     {
         $fn = $this->environment->getFunction('wo_render_breadcrumbs');
         if ($fn !== null) {
@@ -52,7 +52,7 @@ class CrudExtension extends AbstractExtension
         return '';
     }
 
-    public function hasDefinition($entityOrClass)
+    public function hasDefinition($entityOrClass): bool
     {
         try {
             $this->definitionManager->getDefinitionByEntity($entityOrClass);
@@ -64,14 +64,14 @@ class CrudExtension extends AbstractExtension
         return false;
     }
 
-    public function getEntityAlias($entityOrClass)
+    public function getEntityAlias(mixed $entityOrClass): string
     {
         $defnition = $this->definitionManager->getDefinitionByEntity($entityOrClass);
 
         return $defnition::getEntityAlias();
     }
 
-    public function getEntityPath($entityOrClass, PageInterface $page)
+    public function getEntityPath(mixed $entityOrClass, PageInterface $page): string
     {
         $defnition = $this->definitionManager->getDefinitionByEntity($entityOrClass);
 

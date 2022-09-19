@@ -18,7 +18,7 @@ class CrudDefaultFormatter extends DefaultFormatter
     ) {
     }
 
-    public function getHtml($value): string
+    public function getHtml(mixed $value): string
     {
         if (is_object($value)) {
             try {

@@ -90,7 +90,7 @@ abstract class AbstractDefinitionVoter extends Voter
         return $entityReflector->isInstance($subject);
     }
 
-    protected function isAttributeSupported($attribute): bool
+    protected function isAttributeSupported(mixed $attribute): bool
     {
         $supportedAttributes = array_merge($this->getDefinition()::getCapabilities(), static::getAdditionalAttributes());
 

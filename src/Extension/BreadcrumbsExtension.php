@@ -54,7 +54,7 @@ class BreadcrumbsExtension implements ExtensionInterface
      */
     protected $startRoute = false;
 
-    public function __construct(Breadcrumbs $breadcrumbs, $startText, $startRoute)
+    public function __construct(Breadcrumbs $breadcrumbs, ?string $startText, ?string $startRoute)
     {
         $this->breadcrumbs = $breadcrumbs;
 
@@ -67,7 +67,7 @@ class BreadcrumbsExtension implements ExtensionInterface
         }
     }
 
-    public static function isEnabled($enabledBundles)
+    public static function isEnabled(array $enabledBundles)
     {
         foreach ($enabledBundles as $bundles) {
             if (in_array(WhiteOctoberBreadcrumbsBundle::class, $bundles, true)) {

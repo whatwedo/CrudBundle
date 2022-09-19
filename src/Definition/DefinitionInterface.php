@@ -17,7 +17,7 @@ use whatwedo\TableBundle\Table\Table;
 #[Autoconfigure(tags: ['whatwedo_crud.definition'])]
 interface DefinitionInterface
 {
-    public static function supports($entity): bool;
+    public static function supports(mixed $entity): bool;
 
     public static function getEntityTitle(): string;
 
@@ -37,7 +37,7 @@ interface DefinitionInterface
 
     public function getBuilder(): DefinitionBuilder;
 
-    public function getTitle($entity = null, ?PageInterface $route = null): string;
+    public function getTitle(mixed $entity = null, ?PageInterface $route = null): string;
 
     public function getFormAccessorPrefix(): string;
 
@@ -79,7 +79,7 @@ interface DefinitionInterface
      */
     public static function getQueryAlias(): string;
 
-    public function createEntity(Request $request);
+    public function createEntity(Request $request): mixed;
 
     /**
      * returns a query builder.
@@ -99,7 +99,7 @@ interface DefinitionInterface
     /**
      * table export configuration.
      */
-    public function configureExport(Table $table);
+    public function configureExport(Table $table): void;
 
     /**
      * defines the export file name.
@@ -126,20 +126,20 @@ interface DefinitionInterface
     /**
      * builds the interface.
      */
-    public function configureView(DefinitionBuilder $builder, object $data);
+    public function configureView(DefinitionBuilder $builder, object $data): void;
 
     /**
      * configure Actions.
      */
-    public function configureActions(object $data);
+    public function configureActions(object $data): void;
 
     public function getRedirect(PageInterface $routeFrom, ?object $entity = null): Response;
 
     public function ajaxForm(object $entity, PageInterface $page): void;
 
-    public function hasExtension($extension): bool;
+    public function hasExtension(string $extension): bool;
 
-    public function getExtension($extension): ExtensionInterface;
+    public function getExtension(string $extension): ExtensionInterface;
 
     public function getParentDefinitionProperty(?object $data): ?string;
 

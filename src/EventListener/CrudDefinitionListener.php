@@ -18,7 +18,7 @@ class CrudDefinitionListener
         $this->definitionManager = $definitionManager;
     }
 
-    public function onKernelController(ControllerEvent $event)
+    public function onKernelController(ControllerEvent $event): void
     {
         $controller = $event->getController();
 

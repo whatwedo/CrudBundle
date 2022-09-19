@@ -38,7 +38,7 @@ class DefinitionBlock extends Block
         $resolver->setAllowedTypes(self::OPT_CALLABLE, ['null', 'callable', 'array']);
     }
 
-    public function getData($row): mixed
+    public function getData(mixed $row): mixed
     {
         if (is_callable($this->options[self::OPT_CALLABLE])) {
             if (is_array($this->options[self::OPT_CALLABLE])) {

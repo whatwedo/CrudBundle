@@ -53,7 +53,7 @@ class DefaultDefinitionVoter implements VoterInterface
         $this->definitionManager = $definitionManager;
     }
 
-    public function addVoter(VoterInterface $voter)
+    public function addVoter(VoterInterface $voter): void
     {
         if ($voter instanceof self || $voter instanceof TraceableVoter) {
             return;

@@ -46,6 +46,7 @@ class BlockBlock extends Block
                 Page::EDIT => self::OPT_EDIT_VOTER_ATTRIBUTE,
             };
 
+            /** @var BlockCollection $blockCollection */
             $blockCollection = $blockCollection->filter(
                 function (Block $block) use ($attribute, $view) {
                     return $block->getOption($attribute) === null || $this->getSecurity()->isGranted($block->getOption($attribute), $view->getData());

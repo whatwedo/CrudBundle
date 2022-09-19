@@ -32,7 +32,7 @@ class DefinitionManager
     /**
      * @throws \InvalidArgumentException
      */
-    public function getDefinitionByEntityClass($entityClass): DefinitionInterface
+    public function getDefinitionByEntityClass(string $entityClass): DefinitionInterface
     {
         foreach ($this->definitions as $definition) {
             if ($definition::getEntity() === $entityClass) {
@@ -46,7 +46,7 @@ class DefinitionManager
     /**
      * @throws \InvalidArgumentException
      */
-    public function getDefinitionByEntity($entity): DefinitionInterface
+    public function getDefinitionByEntity(mixed $entity): DefinitionInterface
     {
         foreach ($this->definitions as $definition) {
             if ($definition::supports($entity)) {
@@ -71,7 +71,7 @@ class DefinitionManager
         throw new \InvalidArgumentException(sprintf('definition "%s" not found.', $class));
     }
 
-    public function getDefinitionByRoute($route): \whatwedo\CrudBundle\Definition\DefinitionInterface
+    public function getDefinitionByRoute(string $route): \whatwedo\CrudBundle\Definition\DefinitionInterface
     {
         // could be changed to use Page-Enum for the matching of the Definition
         if (preg_match('#([\w\_\-]+)\_(\w+)#', $route, $routeMatches)) {

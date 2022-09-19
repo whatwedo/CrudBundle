@@ -87,7 +87,7 @@ class FilterDefinition extends AbstractDefinition
         ;
     }
 
-    public function configureView(DefinitionBuilder $builder, $data): void
+    public function configureView(DefinitionBuilder $builder, mixed $data): void
     {
         parent::configureView($builder, $data);
         $this->removeAction('create'); // should only be called directly from table filter extension

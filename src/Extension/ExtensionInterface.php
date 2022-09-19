@@ -39,5 +39,5 @@ interface ExtensionInterface
      *
      * @return bool
      */
-    public static function isEnabled($enabledBundles);
+    public static function isEnabled(array $enabledBundles);
 }

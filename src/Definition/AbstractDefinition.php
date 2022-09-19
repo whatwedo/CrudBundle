@@ -78,14 +78,14 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         return 'wwd.' . static::getEntityAlias() . '.title_plural';
     }
 
-    public function createEntity(Request $request)
+    public function createEntity(Request $request): mixed
     {
         $className = static::getEntity();
 
         return new $className();
     }
 
-    public function addAction(string $acronym, array $options = [], $type = Action::class): static
+    public function addAction(string $acronym, array $options = [], string $type = Action::class): static
     {
         if (! isset($options['label'])) {
             $options['label'] = sprintf('wwd.%s.action.%s', self::getEntityAlias(), $acronym);
@@ -114,7 +114,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         return $this->actions;
     }
 
-    public function addBatchAction(string $acronym, array $options = [], $type = Action::class): static
+    public function addBatchAction(string $acronym, array $options = [], string $type = Action::class): static
     {
         if (! isset($options['voter_attribute'])) {
             $options['voter_attribute'] = 'batch_action';
@@ -138,7 +138,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         return $this->batchActions;
     }
 
-    public function configureView(DefinitionBuilder $builder, $data): void
+    public function configureView(DefinitionBuilder $builder, mixed $data): void
     {
     }
 
@@ -146,7 +146,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
     {
     }
 
-    public function configureExport(Table $table)
+    public function configureExport(Table $table): void
     {
         $this->configureTable($table);
     }
@@ -174,7 +174,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         );
     }
 
-    public function getTitle($entity = null, ?PageInterface $route = null): string
+    public function getTitle(mixed $entity = null, ?PageInterface $route = null): string
     {
         $title = $this->translator->trans(static::getEntityTitle());
         $add = $this->translator->trans('whatwedo_crud.add');
@@ -260,7 +260,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         return $this->container->get(DefinitionView::class)->create($this, $route, $data);
     }
 
-    public function getJsonSearchUrl($entityClass)
+    public function getJsonSearchUrl(string $entityClass): string
     {
         /** @var DefinitionInterface $definition */
         $definition = $this
@@ -279,7 +279,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         return '';
     }
 
-    public function getLabelFor($table, $property): string
+    public function getLabelFor(?Table $table, string $property): string
     {
         if ($table instanceof Table) {
             foreach ($table->getColumns() as $column) {
@@ -362,7 +362,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
     /**
      * build breadcrumbs according to route.
      */
-    public function buildBreadcrumbs($entity = null, $route = null, ?Breadcrumbs $breadcrumbs = null): void
+    public function buildBreadcrumbs(mixed $entity = null, ?PageInterface $route = null, ?Breadcrumbs $breadcrumbs = null): void
     {
         if (! $this->hasExtension(BreadcrumbsExtension::class)) {
             return;
@@ -411,12 +411,12 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         }
     }
 
-    public function getTemplateParameters(PageInterface $route, array $parameters = [], $entity = null): array
+    public function getTemplateParameters(PageInterface $route, array $parameters = [], mixed $entity = null): array
     {
         return $parameters;
     }
 
-    public function getExtension($extension): ExtensionInterface
+    public function getExtension(string $extension): ExtensionInterface
     {
         if (! $this->hasExtension($extension)) {
             throw new \InvalidArgumentException(sprintf('Extension %s is not enabled. Please configure it first.', $extension));
@@ -425,7 +425,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         return $this->extensions[$extension];
     }
 
-    public function hasExtension($extension): bool
+    public function hasExtension(string $extension): bool
     {
         return isset($this->extensions[$extension]);
     }
@@ -435,7 +435,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         $this->extensions[get_class($extension)] = $extension;
     }
 
-    public static function supports($entity): bool
+    public static function supports(mixed $entity): bool
     {
         if (is_object($entity)) {
             $entity = ClassUtils::getClass($entity);
@@ -513,7 +513,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         return null;
     }
 
-    public function configureActions($data): void
+    public function configureActions(mixed $data): void
     {
         if ($this::hasCapability(Page::INDEX)) {
             $this->addAction('index', [

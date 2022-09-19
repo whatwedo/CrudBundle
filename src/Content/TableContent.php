@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\Page;
+use whatwedo\CrudBundle\Enum\PageInterface;
 use whatwedo\TableBundle\Table\Table;
 
 class TableContent extends AbstractContent
@@ -43,7 +44,7 @@ class TableContent extends AbstractContent
         return true;
     }
 
-    public function renderTable(Table $table, $row)
+    public function renderTable(Table $table, mixed $row): string
     {
         if (is_callable($this->options[self::OPT_TABLE_CONFIGURATION])) {
             $this->options[self::OPT_TABLE_CONFIGURATION]($table);
@@ -105,12 +106,12 @@ class TableContent extends AbstractContent
         $resolver->setAllowedTypes('show_index_button', 'boolean');
     }
 
-    protected function hasCapability($capability): bool
+    protected function hasCapability(?PageInterface $capability): bool
     {
         return call_user_func([$this->getOption(self::OPT_DEFINITION), 'hasCapability'], $capability);
     }
 
-    protected function getRoute($suffix): string
+    protected function getRoute(mixed $suffix): string
     {
         return call_user_func([$this->options[self::OPT_DEFINITION], 'getRoute'], $suffix);
     }

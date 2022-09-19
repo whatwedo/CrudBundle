@@ -125,7 +125,7 @@ class RelationContent extends TableContent
     /**
      * @return array<int|string, mixed>
      */
-    public function getCreateRouteParameters($data): array
+    public function getCreateRouteParameters(mixed $data): array
     {
         $parameters = [];
 
@@ -144,7 +144,7 @@ class RelationContent extends TableContent
         return $this->authorizationChecker->isGranted(Page::CREATE, $definition);
     }
 
-    public function getAddVoterAttribute()
+    public function getAddVoterAttribute(): ?string
     {
         return $this->options[self::OPT_ADD_VOTER_ATTRIBUTE];
     }
@@ -254,7 +254,7 @@ class RelationContent extends TableContent
         return $this->getOption(self::OPT_DEFINITION);
     }
 
-    public function getTable($entity): Table
+    public function getTable(mixed $entity): Table
     {
         $options = $this->options[self::OPT_TABLE_OPTIONS];
 
@@ -344,7 +344,7 @@ class RelationContent extends TableContent
         return $this->options['actions'];
     }
 
-    public function getCreateUrl($entity)
+    public function getCreateUrl(mixed $entity): string
     {
         if (is_callable($this->options[self::OPT_CREATE_URL])) {
             return $this->options[self::OPT_CREATE_URL]($entity);
@@ -353,7 +353,7 @@ class RelationContent extends TableContent
         return $this->options[self::OPT_CREATE_URL];
     }
 
-    public function getReloadUrl($entity)
+    public function getReloadUrl(mixed $entity): string
     {
         if (is_callable($this->options[self::OPT_RELOAD_URL])) {
             return $this->options[self::OPT_RELOAD_URL]($entity);
@@ -362,7 +362,7 @@ class RelationContent extends TableContent
         return $this->options[self::OPT_RELOAD_URL];
     }
 
-    private function getTargetDefinition($accessorPath = null): DefinitionInterface
+    private function getTargetDefinition(?string $accessorPath = null): DefinitionInterface
     {
         $metadataFactory = $this->getMetadataFactory();
 
@@ -393,7 +393,7 @@ class RelationContent extends TableContent
     /**
      * @return array<int|string, mixed>
      */
-    private function getReverseMapping($row): array
+    private function getReverseMapping(mixed $row): array
     {
         /*
          * $accessorPath: 'occasion.students.person'

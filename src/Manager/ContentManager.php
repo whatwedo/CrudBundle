@@ -42,7 +42,7 @@ class ContentManager
         }
     }
 
-    public function getContent($class): AbstractContent
+    public function getContent(string $class): AbstractContent
     {
         return clone $this->contents[$class];
     }

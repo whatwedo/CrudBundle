@@ -54,7 +54,7 @@ class EntityAjaxType extends AbstractType
     ) {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit'], 50);
@@ -62,7 +62,7 @@ class EntityAjaxType extends AbstractType
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$options['choice_loader'], 'onFormPostSetData']);
     }
 
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         if ($options['definition'] && $options['definition']::hasCapability(Page::JSONSEARCH)) {
             $view->vars['attr']['data-whatwedo--core-bundle--select-url-value'] = $this->router->generate(
@@ -71,7 +71,7 @@ class EntityAjaxType extends AbstractType
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('choice_loader', function (Options $options, ChoiceLoaderInterface $doctrineChoiceLoader) {
             if ($doctrineChoiceLoader) {
@@ -88,7 +88,7 @@ class EntityAjaxType extends AbstractType
         });
     }
 
-    public function preSetData(PreSetDataEvent $event)
+    public function preSetData(PreSetDataEvent $event): void
     {
         $form = $event->getForm();
         $parent = $event->getForm()->getParent();
@@ -100,7 +100,7 @@ class EntityAjaxType extends AbstractType
         }
     }
 
-    public function preSubmit(PreSubmitEvent $event)
+    public function preSubmit(PreSubmitEvent $event): void
     {
         $form = $event->getForm();
         $parent = $event->getForm()->getParent();
@@ -114,7 +114,7 @@ class EntityAjaxType extends AbstractType
         }
     }
 
-    public function getChoices(array $options, $data)
+    public function getChoices(array $options, mixed $data): array
     {
         if ($data instanceof Collection) {
             return $data->toArray();

@@ -11,6 +11,9 @@ class ContentCollection extends ArrayCollection
 {
     public function filterVisibility(PageInterface $page): self
     {
-        return $this->filter(static fn (AbstractContent $content) => in_array($page, $content->getOption('visibility'), true));
+        /** @var self $filtered */
+        $filtered = $this->filter(static fn (AbstractContent $content) => in_array($page, $content->getOption('visibility'), true));
+
+        return $filtered;
     }
 }

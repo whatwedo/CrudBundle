@@ -63,20 +63,17 @@ class DefinitionView
         return $view;
     }
 
-    public function setDefinition(DefinitionInterface $definition)
+    public function setDefinition(DefinitionInterface $definition): void
     {
         $this->definition = $definition;
     }
 
-    public function setData($data)
+    public function setData(mixed $data): void
     {
         $this->data = $data;
     }
 
-    /**
-     * @return object
-     */
-    public function getData()
+    public function getData(): ?object
     {
         return $this->data;
     }
