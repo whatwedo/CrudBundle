@@ -4,6 +4,4 @@
 /node_modules/
 /.phpunit.result.cache
 /phpunit.xml
-/.idea/
-/.php-version
-
+/yarn.lock

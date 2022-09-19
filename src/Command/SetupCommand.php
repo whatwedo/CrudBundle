@@ -76,10 +76,14 @@ class SetupCommand extends Command
         $this->setupYarnDependencies();
         $this->setupRouting();
         $this->setupTailwind();
+        $this->setupTailwindFrontend();
         $this->setupPostcss();
+        $this->setupFrontendPostcss();
         $this->setupBaseTemplate();
         $this->setupWebpackConfig();
         $this->setupAppJsScss();
+        $this->setupFrontendJsScss();
+        $this->setupWebpackEncore();
         $this->runYarnDev();
         $this->checkLanguage();
 
@@ -129,6 +133,22 @@ class SetupCommand extends Command
         $this->newLine();
     }
 
+    protected function setupTailwindFrontend(): void
+    {
+        if ($this->filesystem->exists($this->projectRoot . '/tailwind_frontend.config.js')
+            && ! $this->confirm('Do you want to override the existing tailwind_frontend.config.js? [NO/yes] ')) {
+            return;
+        }
+
+        $this->filesystem->copy(
+            $this->projectRoot . self::SETUP_SKELETON . '/tailwind_frontend.config.js',
+            $this->projectRoot . '/tailwind_frontend.config.js',
+            true
+        );
+        $this->output->writeln('created "tailwind_frontend.config.js"');
+        $this->newLine();
+    }
+
     protected function setupPostcss(): void
     {
         if ($this->filesystem->exists($this->projectRoot . '/postcss.config.js')
@@ -142,6 +162,22 @@ class SetupCommand extends Command
             true
         );
         $this->output->writeln('created "postcss.config.js"');
+        $this->newLine();
+    }
+
+    protected function setupFrontendPostcss(): void
+    {
+        if ($this->filesystem->exists($this->projectRoot . '/postcss_frontend.config.js')
+            && ! $this->confirm('Do you want to override the existing postcss_frontend.config.js? [NO/yes] ')) {
+            return;
+        }
+
+        $this->filesystem->copy(
+            $this->projectRoot . self::SETUP_SKELETON . '/postcss_frontend.config.js',
+            $this->projectRoot . '/postcss_frontend.config.js',
+            true
+        );
+        $this->output->writeln('created "postcss_frontend.config.js"');
         $this->newLine();
     }
 
@@ -179,17 +215,17 @@ class SetupCommand extends Command
 
     protected function setupAppJsScss(): void
     {
-        if ($this->filesystem->exists($this->projectRoot . '/assets/app.js')
-            && ! $this->confirm('Do you want to override the existing assets/app.js? [YES/no] ', true)) {
+        if ($this->filesystem->exists($this->projectRoot . '/assets/admin.js')
+            && ! $this->confirm('Do you want to override the existing assets/admin.js? [YES/no] ', true)) {
             return;
         }
 
         $this->filesystem->copy(
-            $this->projectRoot . self::SETUP_SKELETON . '/app.js',
-            $this->projectRoot . '/assets/app.js',
+            $this->projectRoot . self::SETUP_SKELETON . '/admin.js',
+            $this->projectRoot . '/assets/admin.js',
             true
         );
-        $this->output->writeln('created "assets/app.js"');
+        $this->output->writeln('created "assets/admin.js"');
         $this->newLine();
 
         if ($this->filesystem->exists($this->projectRoot . '/assets/styles/app.css')
@@ -199,17 +235,72 @@ class SetupCommand extends Command
             $this->newLine();
         }
 
-        if ($this->filesystem->exists($this->projectRoot . '/assets/styles/app.scss')
-            && ! $this->confirm('Do you want to override the existing assets/styles/app.scss? [YES/no] ', true)) {
+        if ($this->filesystem->exists($this->projectRoot . '/assets/styles/admin.scss')
+            && ! $this->confirm('Do you want to override the existing assets/styles/admin.scss? [YES/no] ', true)) {
             return;
         }
 
         $this->filesystem->copy(
-            $this->projectRoot . self::SETUP_SKELETON . '/app.scss',
-            $this->projectRoot . '/assets/styles/app.scss',
+            $this->projectRoot . self::SETUP_SKELETON . '/admin.scss',
+            $this->projectRoot . '/assets/styles/admin.scss',
             true
         );
-        $this->output->writeln('created "assets/styles/app.scss"');
+        $this->output->writeln('created "assets/styles/admin.scss"');
+        $this->newLine();
+    }
+
+    protected function setupFrontendJsScss(): void
+    {
+        if ($this->filesystem->exists($this->projectRoot . '/assets/frontend.js')
+            && ! $this->confirm('Do you want to override the existing assets/frontend.js? [YES/no] ', true)) {
+            return;
+        }
+
+        $this->filesystem->copy(
+            $this->projectRoot . self::SETUP_SKELETON . '/frontend.js',
+            $this->projectRoot . '/assets/frontend.js',
+            true
+        );
+        $this->output->writeln('created "assets/frontend.js"');
+        $this->filesystem->copy(
+            $this->projectRoot . self::SETUP_SKELETON . '/bootstrap_frontend.js',
+            $this->projectRoot . '/assets/bootstrap_frontend.js',
+            true
+        );
+        $this->output->writeln('created "assets/bootstrap_frontend.js"');
+        if (! $this->filesystem->exists($this->projectRoot . '/assets/controllers_frontend')) {
+            $this->filesystem->mkdir($this->projectRoot . '/assets/controllers_frontend');
+            $this->output->writeln('created "assets/controllers_frontend"');
+        }
+        $this->newLine();
+
+        if ($this->filesystem->exists($this->projectRoot . '/assets/styles/frontend.scss')
+            && ! $this->confirm('Do you want to override the existing assets/styles/frontend.scss? [YES/no] ', true)) {
+            return;
+        }
+
+        $this->filesystem->copy(
+            $this->projectRoot . self::SETUP_SKELETON . '/frontend.scss',
+            $this->projectRoot . '/assets/styles/frontend.scss',
+            true
+        );
+        $this->output->writeln('created "assets/styles/frontend.scss"');
+        $this->newLine();
+    }
+
+    protected function setupWebpackEncore(): void
+    {
+        if ($this->filesystem->exists($this->projectRoot . '/config/packages/webpack_encore.yaml')
+            && ! $this->confirm('Do you want to override the existing webpack_encore.yaml? [YES/no] ', true)) {
+            return;
+        }
+
+        $this->filesystem->copy(
+            $this->projectRoot . self::SETUP_SKELETON . '/webpack_encore.yaml',
+            $this->projectRoot . '/config/packages/webpack_encore.yaml',
+            true
+        );
+        $this->output->writeln('created "config/packages/webpack_encore.yaml"');
         $this->newLine();
     }
 

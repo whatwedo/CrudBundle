@@ -1,0 +1,16 @@
+webpack_encore:
+    output_path: '%kernel.project_dir%/public/build'
+    script_attributes:
+        defer: true
+    builds:
+        frontend: '%kernel.project_dir%/public/build/frontend'
+        admin: '%kernel.project_dir%/public/build/admin'
+
+framework:
+    assets:
+        packages:
+            frontend:
+                json_manifest_path: '%kernel.project_dir%/public/build/frontend/manifest.json'
+            admin:
+                json_manifest_path: '%kernel.project_dir%/public/build/admin/manifest.json'
+
