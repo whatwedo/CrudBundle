@@ -94,7 +94,7 @@ class CrudRenderExtension extends AbstractExtension
         );
     }
 
-    protected function renderContent(mixed $context, $content, Block $block, DefinitionView $view, ?FormView $form): string
+    protected function renderContent(mixed $context, AbstractContent $content, Block $block, DefinitionView $view, ?FormView $form): string
     {
         $template = $this->environment->load($view->getDefinition()->getLayout());
 

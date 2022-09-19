@@ -79,7 +79,7 @@ abstract class AbstractDefinitionVoter extends Voter
         return $definition;
     }
 
-    protected function isSubjectSupported($subject): bool
+    protected function isSubjectSupported(mixed $subject): bool
     {
         if ($subject === null) {
             return false;

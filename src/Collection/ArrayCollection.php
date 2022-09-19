@@ -55,7 +55,7 @@ class ArrayCollection extends \Doctrine\Common\Collections\ArrayCollection
         }
     }
 
-    public function addAll(iterable $values)
+    public function addAll(iterable $values): void
     {
         foreach ($values as $key => $value) {
             $this->set($key, $value);

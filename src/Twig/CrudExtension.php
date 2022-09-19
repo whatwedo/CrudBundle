@@ -52,7 +52,7 @@ class CrudExtension extends AbstractExtension
         return '';
     }
 
-    public function hasDefinition($entityOrClass): bool
+    public function hasDefinition(mixed $entityOrClass): bool
     {
         try {
             $this->definitionManager->getDefinitionByEntity($entityOrClass);
