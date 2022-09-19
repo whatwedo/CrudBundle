@@ -39,4 +39,7 @@ return [
     whatwedo\TwigBootstrapIcons\whatwedoTwigBootstrapIconsBundle::class => [
         'all' => true,
     ],
+    Knp\Bundle\MenuBundle\KnpMenuBundle::class => [
+        'all' => true,
+    ],
 ];
