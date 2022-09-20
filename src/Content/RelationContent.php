@@ -144,7 +144,7 @@ class RelationContent extends TableContent
         return $this->authorizationChecker->isGranted(Page::CREATE, $definition);
     }
 
-    public function getAddVoterAttribute(): ?string
+    public function getAddVoterAttribute(): mixed
     {
         return $this->options[self::OPT_ADD_VOTER_ATTRIBUTE];
     }
