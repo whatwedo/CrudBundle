@@ -32,6 +32,7 @@ namespace whatwedo\CrudBundle\Definition;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Security;
@@ -56,7 +57,7 @@ class FilterDefinition extends AbstractDefinition
         return Filter::class;
     }
 
-    public function getQueryBuilder(): QueryBuilder
+    public function getQueryBuilder(?PageInterface $page = null, ?Request $request = null): QueryBuilder
     {
         $user = $this->security->getUser();
         if ($user instanceof UserInterface) {

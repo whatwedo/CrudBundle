@@ -32,6 +32,7 @@ namespace whatwedo\CrudBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\TableBundle\Event\ResultRequestEvent;
 
@@ -52,7 +53,7 @@ class RelationController extends AbstractController
         $definition = $this->definitionManager->getDefinitionByEntity($entity);
         if ($definition) {
             $resultRequestEvent->setEntity($definition::getEntity());
-            $resultRequestEvent->setQueryBuilder($definition->getQueryBuilder());
+            $resultRequestEvent->setQueryBuilder($definition->getQueryBuilder(null, $request));
         }
 
         $this->eventDispatcher->dispatch($resultRequestEvent, ResultRequestEvent::RELATION_SET);

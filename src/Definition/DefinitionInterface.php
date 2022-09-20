@@ -80,7 +80,7 @@ interface DefinitionInterface
     /**
      * returns a query builder.
      */
-    public function getQueryBuilder(): QueryBuilder;
+    public function getQueryBuilder(?PageInterface $page = null, ?Request $request = null): QueryBuilder;
 
     /**
      * table configuration.

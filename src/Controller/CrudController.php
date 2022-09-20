@@ -48,7 +48,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
     protected Environment $twig;
 
-    public function indexAction(TableFactory $tableFactory): Response
+    public function indexAction(TableFactory $tableFactory, Request $request): Response
     {
         $this->denyAccessUnlessGrantedCrud(Page::INDEX, $this->getDefinition());
 
@@ -59,7 +59,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
         $table = $tableFactory->create('index', $dataLoader, [
             'dataloader_options' => [
-                DoctrineDataLoader::OPTION_QUERY_BUILDER => $this->getDefinition()->getQueryBuilder(),
+                DoctrineDataLoader::OPTION_QUERY_BUILDER => $this->getDefinition()->getQueryBuilder(Page::INDEX, $request),
             ],
         ]);
 
@@ -84,7 +84,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
     public function showAction(Request $request): Response
     {
-        $entity = $this->getEntityOr404($request);
+        $entity = $this->getEntityOr404(Page::SHOW, $request);
         $this->denyAccessUnlessGrantedCrud(Page::SHOW, $entity);
 
         $this->dispatchEvent(CrudEvent::PRE_SHOW_PREFIX, $entity);
@@ -107,7 +107,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
     public function reloadAction(Request $request): Response
     {
-        $entity = $this->getEntityOr404($request);
+        $entity = $this->getEntityOr404(Page::RELOAD, $request);
         $this->denyAccessUnlessGrantedCrud(Page::SHOW, $entity);
 
         if (! $request->isXmlHttpRequest()) {
@@ -138,7 +138,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
     public function editAction(Request $request): Response
     {
-        $entity = $this->getEntityOr404($request);
+        $entity = $this->getEntityOr404(Page::EDIT, $request);
         $this->denyAccessUnlessGrantedCrud(Page::EDIT, $entity);
 
         $mode = PageMode::NORMAL;
@@ -233,7 +233,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
     public function deleteAction(Request $request): Response
     {
-        $entity = $this->getEntityOr404($request);
+        $entity = $this->getEntityOr404(Page::DELETE, $request);
         $this->denyAccessUnlessGrantedCrud(Page::DELETE, $entity);
 
         try {
@@ -260,7 +260,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $table = $tableFactory
             ->create('index', DoctrineDataLoader::class, [
                 Table::OPTION_DATALOADER_OPTIONS => [
-                    DoctrineDataLoader::OPTION_QUERY_BUILDER => $this->getDefinition()->getQueryBuilder(),
+                    DoctrineDataLoader::OPTION_QUERY_BUILDER => $this->getDefinition()->getQueryBuilder(Page::EXPORT, $request),
                 ],
             ]);
 
@@ -457,10 +457,10 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      *
      * @throws NotFoundHttpException
      */
-    protected function getEntityOr404(Request $request)
+    protected function getEntityOr404(PageInterface $page, Request $request)
     {
         try {
-            return $this->getDefinition()->getQueryBuilder()
+            return $this->getDefinition()->getQueryBuilder($page, $request)
                 ->andWhere($this->getIdentifierColumn() . ' = :id')
                 ->setParameter('id', $request->attributes->getInt('id'))
                 ->getQuery()
@@ -475,7 +475,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         return sprintf(
             '%s.%s',
             $this->getDefinition()::getQueryAlias(),
-            $this->getDefinition()->getQueryBuilder()->getEntityManager()->getClassMetadata($this->getDefinition()::getEntity())->identifier[0]
+            $this->entityManager->getClassMetadata($this->getDefinition()::getEntity())->identifier[0]
         );
     }
 
