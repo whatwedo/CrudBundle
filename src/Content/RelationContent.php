@@ -344,7 +344,7 @@ class RelationContent extends TableContent
         return $this->options['actions'];
     }
 
-    public function getCreateUrl(mixed $entity): string
+    public function getCreateUrl(mixed $entity): ?string
     {
         if (is_callable($this->options[self::OPT_CREATE_URL])) {
             return $this->options[self::OPT_CREATE_URL]($entity);
@@ -353,7 +353,7 @@ class RelationContent extends TableContent
         return $this->options[self::OPT_CREATE_URL];
     }
 
-    public function getReloadUrl(mixed $entity): string
+    public function getReloadUrl(mixed $entity): ?string
     {
         if (is_callable($this->options[self::OPT_RELOAD_URL])) {
             return $this->options[self::OPT_RELOAD_URL]($entity);
