@@ -4,9 +4,15 @@ module.exports = {
     content: [
         './assets/**/*.js',
         './templates/**/*.{html,html.twig}',
-        './vendor/whatwedo/**/*.{html,html.twig,js}',
+        './vendor/whatwedo/**/*.{html,html.twig,js,scss}',
         './var/cache/twig/**/*.php',
         './src/Definition/*.php',
+    ],
+    safelist: [
+        {
+            pattern: /grid-(cols|rows)-\d/,
+            variants: ['lg', 'md', 'sm'],
+        },
     ],
     theme: {
         extend: {

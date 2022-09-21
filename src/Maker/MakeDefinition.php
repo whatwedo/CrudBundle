@@ -95,7 +95,7 @@ final class MakeDefinition extends AbstractMaker
         return 'make:definition';
     }
 
-    public function configureCommand(Command $command, InputConfiguration $inputConfig)
+    public function configureCommand(Command $command, InputConfiguration $inputConfig): void
     {
         $command
             ->setDescription(self::getCommandDescription())
@@ -130,7 +130,7 @@ final class MakeDefinition extends AbstractMaker
         }
     }
 
-    public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator)
+    public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator): void
     {
         $entityClassDetails = $generator->createClassNameDetails(
             Validator::entityExists($input->getArgument('entity-class'), $this->doctrineHelper->getEntitiesForAutocomplete()),
@@ -168,7 +168,7 @@ final class MakeDefinition extends AbstractMaker
         $this->writeSuccessMessage($io);
     }
 
-    public function configureDependencies(DependencyBuilder $dependencies)
+    public function configureDependencies(DependencyBuilder $dependencies): void
     {
         $dependencies->addClassDependency(
             AbstractType::class,
@@ -249,7 +249,7 @@ final class MakeDefinition extends AbstractMaker
         ?ClassMetadata $entityDetails,
         string $entityVarSingular,
         array $fieldFormatters
-    ) {
+    ): void {
         $templatePath = $this->rootPath . '/vendor/whatwedo/crud-bundle/src/Resources/skeleton/definition/Definition.tpl.php';
         $fieldNames = $entityDetails->fieldNames;
         foreach ($entityDetails->getIdentifierFieldNames() as $idField) {
@@ -269,7 +269,7 @@ final class MakeDefinition extends AbstractMaker
         );
     }
 
-    private function createTranslations($entityClassDetails, $entityDetails)
+    private function createTranslations(mixed $entityClassDetails, mixed $entityDetails): void
     {
         $fieldNames = $entityDetails->fieldNames;
         foreach ($entityDetails->getIdentifierFieldNames() as $idField) {

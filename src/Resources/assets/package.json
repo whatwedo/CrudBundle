@@ -27,6 +27,18 @@
                 "fetch": "eager",
                 "enabled": true
             },
+            "tab": {
+                "main": "controllers/tab_controller.js",
+                "webpackMode": "eager",
+                "fetch": "eager",
+                "enabled": true
+            },
+            "offcanvas": {
+                "main": "controllers/offcanvas_controller.js",
+                "webpackMode": "eager",
+                "fetch": "eager",
+                "enabled": true
+            },
             "ajax-form": {
                 "main": "controllers/ajax_form_controller.js",
                 "webpackMode": "eager",
@@ -54,7 +66,9 @@
         "@hotwired/stimulus": "^3.0.0"
     },
     "dependencies": {
-        "tippy.js": "^6.3.7",
-        "stimulus-notification": "^2.0.0"
+        "core-js": "^3.24.1",
+        "regenerator-runtime": "^0.13.9",
+        "stimulus-notification": "^2.0.0",
+        "tippy.js": "^6.3.7"
     }
 }

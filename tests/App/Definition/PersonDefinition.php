@@ -58,7 +58,7 @@ class PersonDefinition extends AbstractDefinition
         ;
     }
 
-    public function configureExport(Table $table)
+    public function configureExport(Table $table): void
     {
         $this->configureTable($table);
 

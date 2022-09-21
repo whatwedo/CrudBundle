@@ -33,7 +33,7 @@ use whatwedo\SearchBundle\whatwedoSearchBundle;
 
 class JsonSearchExtension implements ExtensionInterface
 {
-    public static function isEnabled($enabledBundles)
+    public static function isEnabled(array $enabledBundles)
     {
         foreach ($enabledBundles as $bundles) {
             if (in_array(whatwedoSearchBundle::class, $bundles, true)) {

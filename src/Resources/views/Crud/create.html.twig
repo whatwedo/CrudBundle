@@ -18,10 +18,12 @@
                 'case' : 'create'
             }) }}"
         {% endif %}
-        class="whatwedo_crud-blocks whatwedo_crud-blocks--create bg-neutral-50 p-4 flex flex-wrap items-baseline"
+        class="whatwedo_crud-blocks whatwedo_crud-blocks--create flex flex-wrap items-baseline"
     >
         {% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\Page::CREATE')) %}
-            {{ wwd_crud_render_block(block, view, constant('whatwedo\\CrudBundle\\Enum\\Page::CREATE'), form) }}
+            {% block block_definition_single_block %}
+                {{ wwd_crud_render_block(block, view, constant('whatwedo\\CrudBundle\\Enum\\Page::CREATE'), form) }}
+            {% endblock %}
         {% endfor %}
     </div>
     {{ form_end(form) }}

@@ -8,5 +8,5 @@ use whatwedo\CrudBundle\Definition\DefinitionInterface;
 
 interface CrudDefinitionControllerInterface
 {
-    public function setDefinition(DefinitionInterface $definition);
+    public function setDefinition(DefinitionInterface $definition): void;
 }

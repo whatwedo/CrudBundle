@@ -11,6 +11,9 @@ class BlockCollection extends ArrayCollection
 {
     public function filterVisibility(PageInterface $page): self
     {
-        return $this->filter(static fn (Block $block) => in_array($page, $block->getOption('visibility'), true));
+        /** @var self $filtered */
+        $filtered = $this->filter(static fn (Block $block) => in_array($page, $block->getOption('visibility'), true));
+
+        return $filtered;
     }
 }

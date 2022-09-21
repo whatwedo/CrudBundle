@@ -118,7 +118,7 @@ class Block implements ServiceSubscriberInterface
         $resolver->setAllowedTypes(self::OPT_COLLAPSED, 'bool');
     }
 
-    public function setOption($name, $value): static
+    public function setOption(string $name, mixed $value): static
     {
         if (! $this->hasOption($name)) {
             throw new \InvalidArgumentException(sprintf('Option "%s" for %s does not exist.', $name, static::class));
@@ -138,7 +138,7 @@ class Block implements ServiceSubscriberInterface
         return $this;
     }
 
-    public function getOption(string $name)
+    public function getOption(string $name): mixed
     {
         if (! $this->hasOption($name)) {
             throw new \InvalidArgumentException(sprintf('Option "%s" for %s does not exist.', $name, static::class));
@@ -191,9 +191,6 @@ class Block implements ServiceSubscriberInterface
         return $this;
     }
 
-    /**
-     * @return ContentCollection<AbstractContent>|AbstractContent[]
-     */
     public function getContents(?DefinitionView $view = null, ?PageInterface $page = null): ContentCollection
     {
         $contentCollection = $page
@@ -207,6 +204,7 @@ class Block implements ServiceSubscriberInterface
                 Page::EDIT => self::OPT_EDIT_VOTER_ATTRIBUTE,
             };
 
+            /** @var ContentCollection $contentCollection */
             $contentCollection = $contentCollection->filter(
                 function (AbstractContent $content) use ($attribute, $view) {
                     return $content->getOption($attribute) === null || $this->getSecurity()->isGranted($content->getOption($attribute), $view->getData());
@@ -217,7 +215,7 @@ class Block implements ServiceSubscriberInterface
         return $contentCollection;
     }
 
-    public function getContent($acronym): ?AbstractContent
+    public function getContent(string $acronym): ?AbstractContent
     {
         return $this->elements[$acronym] ?? null;
     }

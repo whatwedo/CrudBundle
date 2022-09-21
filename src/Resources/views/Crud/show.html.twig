@@ -3,7 +3,7 @@
 
 {% block main %}
     {% include '@whatwedoCrud/includes/main/_site_title.html.twig' with {'title':title} only %}
-    <div class="whatwedo_crud-blocks whatwedo_crud-blocks--show bg-neutral-50 p-4 flex flex-wrap items-baseline">
+    <div class="whatwedo_crud-blocks whatwedo_crud-blocks--show flex flex-wrap gap-4 items-baseline">
         {% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW')) %}
             {% block block_definition_single_block %}
                 {{ wwd_crud_render_block(block, view, constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW')) }}

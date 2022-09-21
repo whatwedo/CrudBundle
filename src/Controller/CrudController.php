@@ -301,7 +301,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         ]);
     }
 
-    public static function convertToWindowsCharset($string)
+    public static function convertToWindowsCharset(string $string): string
     {
         $charset = mb_detect_encoding(
             $string,
@@ -400,13 +400,13 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         ]);
     }
 
-    protected function dispatchEvent($event, $entity)
+    protected function dispatchEvent(string $event, mixed $entity): void
     {
         $this->eventDispatcher->dispatch(new CrudEvent($entity), $event);
         $this->eventDispatcher->dispatch(new CrudEvent($entity), $event . '.' . $this->getDefinition()::getAlias());
     }
 
-    protected function preselectEntities(Request $request, DefinitionView $view, object $entity)
+    protected function preselectEntities(Request $request, DefinitionView $view, object $entity): void
     {
         if ($request->isMethod('get') || $request->isMethod('post')) {
             // set preselected entities
@@ -457,7 +457,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      *
      * @throws NotFoundHttpException
      */
-    protected function getEntityOr404(Request $request)
+    protected function getEntityOr404(Request $request): mixed
     {
         try {
             return $this->getDefinition()->getQueryBuilder()
@@ -470,7 +470,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         }
     }
 
-    protected function getIdentifierColumn()
+    protected function getIdentifierColumn(): string
     {
         return sprintf(
             '%s.%s',
@@ -489,7 +489,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         return $this->redirectToDefinitionObject($this->definitionManager->getDefinitionByClassName($definitionClass), $page, $parameters, $status);
     }
 
-    protected function denyAccessUnlessGrantedCrud($attributes, $subject = null, string $message = 'Access Denied.')
+    protected function denyAccessUnlessGrantedCrud(mixed $attributes, mixed $subject = null, string $message = 'Access Denied.'): void
     {
         if (! $this->getUser()) {
             return;

@@ -22,7 +22,7 @@ class AjaxDoctrineChoiceLoader implements ChoiceLoaderInterface
     ) {
     }
 
-    public function onFormPostSetData(FormEvent $event)
+    public function onFormPostSetData(FormEvent $event): void
     {
         $data = $event->getForm()->getData();
         if ($data) {

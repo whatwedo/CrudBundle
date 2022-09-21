@@ -108,7 +108,7 @@ abstract class AbstractContent implements ServiceSubscriberInterface
         return $resolver;
     }
 
-    public function setOption($name, $value): static
+    public function setOption(string $name, mixed $value): static
     {
         if (! $this->hasOption($name)) {
             throw new \InvalidArgumentException(sprintf('Option "%s" for %s does not exist.', $name, static::class));
@@ -124,7 +124,7 @@ abstract class AbstractContent implements ServiceSubscriberInterface
         return $this->options;
     }
 
-    public function getOption(string $name)
+    public function getOption(string $name): mixed
     {
         if (! $this->hasOption($name)) {
             throw new \InvalidArgumentException(sprintf('Option "%s" for %s does not exist.', $name, static::class));
@@ -150,7 +150,7 @@ abstract class AbstractContent implements ServiceSubscriberInterface
         return $this;
     }
 
-    public function getContents($row): mixed
+    public function getContents(mixed $row): mixed
     {
         if (is_callable($this->options[self::OPT_CALLABLE])) {
             if (is_array($this->options[self::OPT_CALLABLE])) {

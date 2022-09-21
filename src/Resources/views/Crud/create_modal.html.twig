@@ -15,7 +15,7 @@
             'case' : 'createmodal'
         }) }}"
     {% endif %}x
-    class="whatwedo_crud-blocks whatwedo_crud-blocks--create h-full bg-neutral-50 p-4 flex flex-wrap items-baseline"
+    class="whatwedo_crud-blocks whatwedo_crud-blocks--create h-full flex flex-wrap items-baseline"
 >
     {% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\Page::CREATE')) %}
         {{ wwd_crud_render_block(block, view, constant('whatwedo\\CrudBundle\\Enum\\Page::CREATE'), form) }}

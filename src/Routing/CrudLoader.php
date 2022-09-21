@@ -20,7 +20,7 @@ class CrudLoader extends Loader
         parent::__construct();
     }
 
-    public function load($resource, $type = null): RouteCollection
+    public function load(mixed $resource, mixed $type = null): RouteCollection
     {
         if ($this->isLoaded) {
             throw new \RuntimeException('Do not add the "whatwedo_crud" loader twice');
@@ -101,7 +101,7 @@ class CrudLoader extends Loader
     /**
      * @return bool
      */
-    public function supports($resource, $type = null)
+    public function supports(mixed $resource, mixed $type = null)
     {
         return $type === 'whatwedo_crud';
     }

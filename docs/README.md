@@ -209,7 +209,7 @@ Encore
 ;
 ```
 Your main style, for instance `assets/styles/app.scss`, should be a `sass` file.
-If your file is named `app.css` rename it to `app.scss`. Also change the import in main entrypoint file, for instance `assets/app.js`.
+If your file is named `app.css` rename it to `app.scss`. Also change the import in main entrypoint file, for instance `assets/admin.js`.
 ```js
 import './styles/app.scss';
 ```

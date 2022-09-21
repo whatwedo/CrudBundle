@@ -4,8 +4,9 @@
     {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
     {% set isHiddenType = content.options['form_type'] in ['whatwedo\\CrudBundle\\Form\\Type\\EntityHiddenType', 'Symfony\\Component\\Form\\Extension\\Core\\Type\\HiddenType'] %}
     {% set isFormCase = form is defined %}
-    <div id="wwd-crud-block-{{ block.acronym }}-content-{{ content.acronym }}" class="{% if (not isHiddenType and isFormCase) or not isFormCase %}px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6{% endif %} {{ content.getOption('attr')['class'] is defined ? content.getOption('attr')['class'] : '' }}">
-        <dt class="text-sm font-medium text-neutral-500" id="wwd-crud-block-{{ block.acronym }}-content-{{ content.acronym }}-label">
+    {% set contentAcronym = view.definition.formAccessorPrefix ~ content.acronym %}
+    <div id="wwd-crud-block-{{ block.acronym }}-content-{{ contentAcronym }}" class="{% if (not isHiddenType and isFormCase) or not isFormCase %}px-4 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6{% endif %} {{ content.getOption('attr')['class'] is defined ? content.getOption('attr')['class'] : '' }}">
+        <dt class="text-sm font-medium text-neutral-500" id="wwd-crud-block-{{ block.acronym }}-content-{{ contentAcronym }}-label">
             {{ content.option('label')|trans }}
             {% if content.option('help') is not empty %}
                 <span {{ stimulus_controller('whatwedo/crud-bundle/tooltip', { 'title': content.option('help')|trans } ) }}>
@@ -15,7 +16,7 @@
                 </span>
             {% endif %}
         </dt>
-        <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2" id="wwd-crud-block-{{ block.acronym }}-content-{{ content.acronym }}-content">
+        <dd class="mt-1 text-sm text-neutral-900 sm:mt-0 sm:col-span-2" id="wwd-crud-block-{{ block.acronym }}-content-{{ contentAcronym }}-content">
             {% if form is defined %}
                 <div
                     {% if content.options['ajax_form_trigger'] %}
@@ -23,11 +24,11 @@
                         class="wwd-ajax-div"
                     {% endif %}
                 >
-                    {{ form_widget(attribute(form, content.acronym)) }}
+                    {{ form_widget(attribute(form, contentAcronym)) }}
                 </div>
-                {% if attribute(form, content.acronym).vars.errors|length %}
+                {% if attribute(form, contentAcronym).vars.errors|length %}
                     <div class="help-block">
-                        {{ form_errors(attribute(form, content.acronym)) }}
+                        {{ form_errors(attribute(form, contentAcronym)) }}
                     </div>
                 {% endif %}
             {% else %}

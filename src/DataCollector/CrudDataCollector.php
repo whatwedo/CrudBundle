@@ -19,7 +19,7 @@ class CrudDataCollector extends AbstractDataCollector
     ) {
     }
 
-    public function collect(Request $request, Response $response, \Throwable $exception = null)
+    public function collect(Request $request, Response $response, \Throwable $exception = null): void
     {
         $definitionClass = null;
         $definition = null;
@@ -74,27 +74,27 @@ class CrudDataCollector extends AbstractDataCollector
         return '@whatwedoCrud/data_collector/template.html.twig';
     }
 
-    public function getLayout()
+    public function getLayout(): string
     {
         return $this->data['layout'] ?? '';
     }
 
-    public function getPage()
+    public function getPage(): string
     {
         return $this->data['page'] ?? '';
     }
 
-    public function getDefinitionClass()
+    public function getDefinitionClass(): string
     {
         return $this->data['definitionClass'] ?? '';
     }
 
-    public function getTemplateDir()
+    public function getTemplateDir(): string
     {
         return $this->data['templateDir'] ?? '';
     }
 
-    public function getActions()
+    public function getActions(): string
     {
         return $this->data['actions'] ?? '';
     }

@@ -6,6 +6,7 @@ namespace whatwedo\CrudBundle\View;
 
 use Doctrine\Common\Annotations\Reader;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormRegistryInterface;
@@ -15,6 +16,8 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Security;
 use whatwedo\CoreBundle\Action\Action;
 use whatwedo\CrudBundle\Block\Block;
+use whatwedo\CrudBundle\Block\BlockBlock;
+use whatwedo\CrudBundle\Block\DefinitionBlock;
 use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Content\AbstractContent;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
@@ -52,6 +55,7 @@ class DefinitionView
     public function create(DefinitionInterface $definition, PageInterface $route, ?object $data = null): self
     {
         $view = clone $this;
+        $view->form = null;
         $view->setDefinition($definition);
         $view->setData($data);
         $view->setRoute($route);
@@ -59,20 +63,17 @@ class DefinitionView
         return $view;
     }
 
-    public function setDefinition(DefinitionInterface $definition)
+    public function setDefinition(DefinitionInterface $definition): void
     {
         $this->definition = $definition;
     }
 
-    public function setData($data)
+    public function setData(mixed $data): void
     {
         $this->data = $data;
     }
 
-    /**
-     * @return object
-     */
-    public function getData()
+    public function getData(): ?object
     {
         return $this->data;
     }
@@ -191,22 +192,54 @@ class DefinitionView
         return 'javascript:alert(\'Definition does not have the capability "' . $route . '".\')';
     }
 
-    public function getEditForm(): FormInterface
+    public function getEditForm(?FormBuilderInterface $builder = null, ?string $blockName = null): FormInterface
     {
         if ($this->form instanceof FormInterface) {
             return $this->form;
         }
 
-        $builder = $this->formFactory->createBuilder(
-            FormType::class,
-            $this->data,
-            $this->definition->getFormOptions(Page::EDIT, $this->data)
-        );
+        if ($builder === null) {
+            $builder = $this->formFactory->createBuilder(
+                FormType::class,
+                $this->data,
+                $this->definition->getFormOptions(Page::EDIT, $this->data)
+            );
+        }
 
         foreach ($this->getBlocks() as $block) {
+            if ($blockName !== null && $block->getAcronym() !== $blockName) {
+                continue;
+            }
+
             if (! $block->isVisibleOnEdit()
                 || ! $this->authorizationChecker->isGranted($block->getEditVoterAttribute(), $this->data)) {
                 continue;
+            }
+
+            $handleDefinitionBlock = function (Block $block) use ($builder) {
+                if ($block instanceof DefinitionBlock && $block->getAccessorPath()) {
+                    $referencingData = $block->getData($this->data);
+                    $referencingDefinition = $block->getReferencingDefinition($referencingData);
+
+                    $referencingDefinition
+                        ->createView($this->getRoute(), $referencingData)
+                        ->getEditForm($builder)
+                    ;
+
+                    return true;
+                }
+
+                return false;
+            };
+
+            if ($handleDefinitionBlock($block)) {
+                continue;
+            }
+
+            if ($block instanceof BlockBlock) {
+                foreach ($block->getBlocks($this, $this->getRoute()) as $subBlock) {
+                    $handleDefinitionBlock($subBlock);
+                }
             }
 
             foreach ($block->getContents() as $content) {
@@ -216,15 +249,7 @@ class DefinitionView
                     continue;
                 }
 
-                $formType = $this->getFormType($content);
-
-                $builder->add(
-                    $content->getAcronym(),
-                    $formType,
-                    $content->getFormOptions([
-                        'required' => $this->isContentRequired($content),
-                    ])
-                );
+                $this->addFormChild($builder, $content);
             }
         }
 
@@ -233,22 +258,54 @@ class DefinitionView
         return $this->form;
     }
 
-    public function getCreateForm(): FormInterface
+    public function getCreateForm(?FormBuilderInterface $builder = null, ?string $blockName = null): FormInterface
     {
         if ($this->form instanceof FormInterface) {
             return $this->form;
         }
 
-        $builder = $this->formFactory->createBuilder(
-            FormType::class,
-            $this->data,
-            $this->definition->getFormOptions(Page::CREATE, $this->data)
-        );
+        if ($builder === null) {
+            $builder = $this->formFactory->createBuilder(
+                FormType::class,
+                $this->data,
+                $this->definition->getFormOptions(Page::CREATE, $this->data)
+            );
+        }
 
         foreach ($this->getBlocks() as $block) {
+            if ($blockName !== null && $block->getAcronym() !== $blockName) {
+                continue;
+            }
+
             if (! $block->isVisibleOnCreate()
                 || ! $this->authorizationChecker->isGranted($block->getCreateVoterAttribute(), $this->data)) {
                 continue;
+            }
+
+            $handleDefinitionBlock = function (Block $block) use ($builder) {
+                if ($block instanceof DefinitionBlock && $block->getAccessorPath()) {
+                    $referencingData = $block->getData($this->data);
+                    $referencingDefinition = $block->getReferencingDefinition($referencingData);
+
+                    $referencingDefinition
+                        ->createView($this->getRoute(), $referencingData)
+                        ->getCreateForm($builder, $block->getOption(DefinitionBlock::OPT_BLOCK))
+                    ;
+
+                    return true;
+                }
+
+                return false;
+            };
+
+            if ($handleDefinitionBlock($block)) {
+                continue;
+            }
+
+            if ($block instanceof BlockBlock) {
+                foreach ($block->getBlocks($this, $this->getRoute()) as $subBlock) {
+                    $handleDefinitionBlock($subBlock);
+                }
             }
 
             foreach ($block->getContents() as $content) {
@@ -258,15 +315,7 @@ class DefinitionView
                     continue;
                 }
 
-                $formType = $this->getFormType($content);
-
-                $builder->add(
-                    $content->getAcronym(),
-                    $formType,
-                    $content->getFormOptions([
-                        'required' => $this->isContentRequired($content),
-                    ])
-                );
+                $this->addFormChild($builder, $content);
             }
         }
 
@@ -283,6 +332,23 @@ class DefinitionView
     public function getDefinition(): DefinitionInterface
     {
         return $this->definition;
+    }
+
+    protected function addFormChild(FormBuilderInterface $builder, AbstractContent $content): void
+    {
+        $formType = $this->getFormType($content);
+        $formOptions = [
+            'required' => $this->isContentRequired($content),
+        ];
+        if (! empty($this->definition->getFormAccessorPrefix())) {
+            $formOptions['property_path'] = str_replace('_', '.', $this->definition->getFormAccessorPrefix() . $content->getAcronym());
+        }
+
+        $builder->add(
+            $this->definition->getFormAccessorPrefix() . $content->getAcronym(),
+            $formType,
+            $content->getFormOptions($formOptions)
+        );
     }
 
     protected function isContentRequired(AbstractContent $content): bool

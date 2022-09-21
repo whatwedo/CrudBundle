@@ -8,6 +8,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use whatwedo\CrudBundle\Definition\DefinitionInterface;
+use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 class DefinitionBlock extends Block
 {
@@ -36,7 +38,7 @@ class DefinitionBlock extends Block
         $resolver->setAllowedTypes(self::OPT_CALLABLE, ['null', 'callable', 'array']);
     }
 
-    public function getData($row): mixed
+    public function getData(mixed $row): mixed
     {
         if (is_callable($this->options[self::OPT_CALLABLE])) {
             if (is_array($this->options[self::OPT_CALLABLE])) {
@@ -58,5 +60,35 @@ class DefinitionBlock extends Block
         } catch (NoSuchPropertyException $noSuchPropertyException) {
             return $noSuchPropertyException->getMessage();
         }
+    }
+
+    public function getReferencingDefinition(mixed $data): ?DefinitionInterface
+    {
+        $optionDefinition = $this->getOption(self::OPT_DEFINITION);
+        if ($optionDefinition === null) {
+            $definition = $this->getDefinitionManager()->getDefinitionByEntity($data);
+        } else {
+            $definition = $this->getDefinitionManager()->getDefinitionByClassName($optionDefinition);
+        }
+        if ($this->getAccessorPath()) {
+            $definition->setFormAccessorPrefix($this->definition->getFormAccessorPrefix() . $this->getAccessorPath() . '_');
+        }
+
+        return $definition;
+    }
+
+    public static function getSubscribedServices(): array
+    {
+        return array_merge(parent::getSubscribedServices(), [DefinitionManager::class]);
+    }
+
+    public function getAccessorPath(): ?string
+    {
+        return $this->options[self::OPT_ACCESSOR_PATH];
+    }
+
+    protected function getDefinitionManager(): DefinitionManager
+    {
+        return $this->container->get(DefinitionManager::class);
     }
 }

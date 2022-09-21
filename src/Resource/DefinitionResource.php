@@ -39,7 +39,7 @@ class DefinitionResource implements ResourceInterface, SelfCheckingResourceInter
      */
     protected $definitionClass;
 
-    public function __construct($definitionClass)
+    public function __construct(string $definitionClass)
     {
         $this->definitionClass = $definitionClass;
     }
