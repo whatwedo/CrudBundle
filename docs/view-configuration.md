@@ -1,14 +1,14 @@
 # View Configuration
 
-in the view configuration you define all detail views of your entity (create, edit, view). 
+In the view configuration you define all detail views of your entity (create, edit, view). 
 
-Every view is splitted in one or more blocks (like groups of properties).
+Every view is splitted into one or more blocks (like groups of properties).
 
 ## Build a simple view
 
-In the following example we are creating one block with three properties. Those are similar to the Symfony Form Component. Every block has an acronym, an options array and every content has an acronym, a type (defaults to `null` for a simple content) and an options array.
+In the following example we are creating one block with three properties. Those are similar to the Symfony Form Component. Every block has an acronym, an options array. Every content has an acronym, a type (defaults to `null` for a simple content) and an options array.
 
-you can add as many blocks as you want
+You can add as many blocks as you want.
 
 ```
 /**
@@ -68,7 +68,7 @@ public function configureView(DefinitionBuilder $builder, $data)
 If the options `label` or `help` are not set, the defaults are
 
 - `<enttyClassName>.<acronym>` for the `label` option
-- `<enttyClassName>.<acronym>.help` for the `help` 
+- `<enttyClassName>.<acronym>.help` for `help` 
 
 ## Add a relation
  

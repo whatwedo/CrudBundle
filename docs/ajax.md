@@ -1,9 +1,9 @@
 # Ajax
 
-You can change input fields live while editing with crudbundle
+You can change input fields live while editing with crudbundle.
 
 ## Javascript
-add the `ajax.js` to your template
+Add the `ajax.js` file to your template:
 ```
 {% javascripts
     '@whatwedoCrudBundle/Resources/public/js/ajax.js'
@@ -29,7 +29,7 @@ Add the capability:
     }
 ```
 
-choose which property to listen on
+Choose which property to listen on:
 ``` 
     public function addAjaxOnChangeListener()
     {
@@ -46,9 +46,9 @@ choose which property to listen on
 
 Do not use `AJAX_LISTEN` everywhere to prevent a circular event firing. 
 
-implement `ajaxOnDataChanged`
+Implement `ajaxOnDataChanged`.
 
-the data is passed as an array like that:
+The data is passed as an array like that:
 ```
 $data = [
 	'playerOne' => 1,
@@ -57,7 +57,7 @@ $data = [
 ];
 ```
 Imagine a match where player #1 competes against player #2. Now the winner can only be one of the two players. So as
-soon as the player #1 and #2 are selected we update the winner select field to only show these two options. 
+soon as the players #1 and #2 are selected, we update the winner select field to only show these two options. 
 ``` 
 public function ajaxOnDataChanged($data)
     {

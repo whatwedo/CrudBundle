@@ -1,7 +1,7 @@
 # Exporting
 The CrudBundle allows you to easily export your data to CSV files. For doing so follow these steps:
 
-1: Enable the Export Route in your Definition:
+1: Enable the export route in your definition:
 ```
     /**
      * {@inheritdoc}
@@ -19,13 +19,13 @@ The CrudBundle allows you to easily export your data to CSV files. For doing so 
     }
 ```
 
-You now see a export button at the bottom of your table.
+You now see an export button at the bottom of your table.
 
-By default the Table configuration will be exported.
+By default the table configuration will be exported.
 
 ## Customization
 
-To export define your custom export, just override the `configureExport` method. Column as you need.
+To define your custom export, just override the `configureExport` method. Create columns as you need them.
 
 ```   
     public function configureExport(Table $table)

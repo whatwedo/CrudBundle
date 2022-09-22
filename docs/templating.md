@@ -2,8 +2,8 @@
 
 ## Layout Based Rendering
 
-with Version v0.5 a new templating method is introduced. Like in Symfony form one layout file is introduced with 
-can easily extended or overwritten. The old rendering is still available and is the default rendering engine.  
+with Version v0.5 a new templating method has been introduced. Like in Symfony forms, one layout file is introduced, whitch 
+can easily be extended or overwritten. The old rendering is still available and is used as the default rendering engine.  
 
 To enable the layout based rendering you need to change the template path in the `config/packages/whatwedo_crud.yaml` config.
 
@@ -12,7 +12,7 @@ whatwedo_crud:
   templateDirectory: '@whatwedoCrud/Templates'
 ```
 
-The template path can also change individually per Definition. 
+The template path can also be changed individually for each definition class. 
 
 ```
 class PostDefinition extends AbstractDefinition
@@ -27,7 +27,7 @@ class PostDefinition extends AbstractDefinition
 
 ## Layout Files
 
-The Layout file defines how the crud will be rendered. The default layout file is `@whatwedoCrud/layout/adminlte_layout.html.twig` 
+The layout file defines how the crud will be rendered. The default layout file is `@whatwedoCrud/layout/adminlte_layout.html.twig` 
 and can be changed in the config `config/packages/whatwedo_crud.yaml`
 
 ```
@@ -35,7 +35,7 @@ whatwedo_crud:
   layout: 'crud/layout/my_layout.html.twig'
 ```
 
-Like Symfony Form the layout file can be extended or overwritten. New blocks can be added or overwritten. 
+Like in Symfony Forms, the layout file can be extended or overwritten. New blocks can be added or overwritten. 
 
 ```
 {% extends '@whatwedoCrud/layout/adminlte_layout.html.twig' %}
@@ -61,11 +61,11 @@ Like Symfony Form the layout file can be extended or overwritten. New blocks can
 
 ### `crud_content_row` - Twig-Function 
 
-The row block name will be dynamically created.   `<block_prefix>` and `<render_mode>` will be used to create the block name.
+The row block name will be dynamically created. `<block_prefix>` and `<render_mode>` will be used to create the block name.
 
 ### `<block_prefix>`
 
-The `block_prefix` can be set in with the content options.
+The `block_prefix` can be set with the content options.
 
 ```
 class PostDefinition extends AbstractDefinition
@@ -85,7 +85,7 @@ class PostDefinition extends AbstractDefinition
 
 ```
 
-By default, the `block_prefix` is the snake case of the class name. 
+By default the `block_prefix` is the snake case of the class name. 
 
 | Class                                         | Default Block - Prefix |
 |---------------                                |-----------             |

@@ -24,9 +24,9 @@ whatwedo_crud:
 
 ### Prepend custom routes
 
-If you objects with relations in your application, you might want prepend custom attributes.
+If you have objects with relations in your application, you might want to prepend custom attributes.
 
-You can overwrite them in your Definition-File. 
+You can overwrite them in your definition-file. 
 
 ```php
 // Just add one unlinked item
@@ -82,7 +82,7 @@ class ProductContentDefinition extends AbstractDefinition
     }
 ...
 ```
-Where possible, we inject the entity and the current route, but try to not rely on it.
+Where possible, we inject the entity and the current route, but try not to rely on it.
 
 ### Use it outside of Definitions and CrudController
 
