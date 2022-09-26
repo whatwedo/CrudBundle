@@ -31,6 +31,12 @@ Add to your composer.json:
 
 ...
 ```
+
+Also, if you don't have `symfony/process` as a requirement in your `composer.json`-file, run this command to add it:
+```
+composer require symfony/process
+```
+
 Run
 ```
 composer update
