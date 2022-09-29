@@ -1,40 +1,20 @@
 # Getting Started
 
 ## Quick Start
-Add to your composer.json:
-```json
-...
+```
+symfony new my_project_directory --version="6.1.*"
+```
 
-"repositories": [
-    {
-        "type": "package",
-        "package": {
-            "name": "twbs/icons",
-            "version": "1.8.1",
-            "source": {
-                "url": "https://github.com/twbs/icons",
-                "type": "git",
-                "reference": "tags/v1.8.1"
-            }
-        }
-    }
-],
-    
+Add to your composer.json:
+```json 
 ...
-    
 "require": {
     "whatwedo/core-bundle": "dev-1.0-dev as v1.0.0",
     "whatwedo/crud-bundle": "dev-1.0-dev as v1.0.0",
     "whatwedo/search-bundle": "dev-3.0-dev as v3.0.0",
     "whatwedo/table-bundle": "dev-1.0-dev as v1.0.0",
 }
-
 ...
-```
-
-Also, if you don't have `symfony/process` as a requirement in your `composer.json`-file, run this command to add it:
-```
-composer require symfony/process
 ```
 
 Run
@@ -68,25 +48,6 @@ More info about that can be found in the [Templating](templating.md) section of 
 
 ## Installation
 ### Composer
-The bundle depends on bootstrap icons. To get them running smoothly in your project
-add this repository to you composer.json: ([Sadly composer cannot load repositories recursively](https://getcomposer.org/doc/faqs/why-cant-composer-load-repositories-recursively.md))
-```json
-"repositories": [
-    {
-        "type": "package",
-        "package": {
-            "name": "twbs/icons",
-            "version": "1.8.1",
-            "source": {
-                "url": "https://github.com/twbs/icons",
-                "type": "git",
-                "reference": "tags/v1.8.1"
-            }
-        }
-    }
-]
-```
-Then, add the bundle to your dependencies and install it.
 ```
 composer require whatwedo/crud-bundle
 ```
