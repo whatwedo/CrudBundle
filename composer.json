@@ -28,7 +28,8 @@
         "whatwedo/table-bundle":    "1.0",
         "whatwedo/search-bundle":    "3.0",
         "knplabs/knp-menu-bundle":  "~v3.2.0",
-        "doctrine/inflector": "^2.0"
+        "doctrine/inflector": "^2.0",
+        "symfony/maker-bundle": "^1.0.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "~5.3|^6.0",
@@ -36,7 +37,6 @@
         "symfony/dependency-injection": "~5.3|^6.0",
         "symfony/yaml": "~5.3|^6.0",
         "symfony/validator": "~5.3|^6.0",
-        "symfony/maker-bundle": "^1.0.0",
         "nyholm/symfony-bundle-test": "^1.8",
         "doctrine/doctrine-bundle": "^2.5",
         "doctrine/orm": "2.13.1",
