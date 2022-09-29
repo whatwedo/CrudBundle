@@ -39,7 +39,7 @@
         "symfony/maker-bundle": "^1.0.0",
         "nyholm/symfony-bundle-test": "^1.8",
         "doctrine/doctrine-bundle": "^2.5",
-        "doctrine/orm": "^2.11",
+        "doctrine/orm": "2.13.1",
         "doctrine/annotations": "^1.13.2",
         "whatwedo/php-coding-standard": "^1.0",
         "zenstruck/foundry": "^1.16",
