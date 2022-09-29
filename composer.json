@@ -4,7 +4,6 @@
     "description": "Very simple CRUD operations",
     "license": "MIT",
     "homepage": "https://whatwedo.github.io/CrudBundle/#/",
-
     "keywords": [
         "symfony-ux"
     ],
@@ -16,52 +15,51 @@
     ],
     "require": {
         "php":                      ">=8.1",
-        "symfony/framework-bundle": "~5.3|~6.0|~6.1",
-        "symfony/http-kernel":      "~5.3|~6.0|~6.1",
-        "symfony/security-bundle":  "~5.3|~6.0|~6.1",
-        "symfony/serializer":       "~5.3|~6.0|~6.1",
-        "symfony/form":             "~5.3|~6.0|~6.1",
-        "symfony/twig-bundle":      "~5.3|~6.0|~6.1",
+        "symfony/framework-bundle": "~5.3|^6.0",
+        "symfony/http-kernel":      "~5.3|^6.0",
+        "symfony/security-bundle":  "~5.3|^6.0",
+        "symfony/serializer":       "~5.3|^6.0",
+        "symfony/form":             "~5.3|^6.0",
+        "symfony/twig-bundle":      "~5.3|^6.0",
+        "symfony/process":          "~5.3|^6.0",
         "symfony/ux-turbo": "^2.0",
+        "symfony/webpack-encore-bundle": "^1.14",
         "whatwedo/core-bundle":     "1.0",
         "whatwedo/table-bundle":    "1.0",
         "whatwedo/search-bundle":    "3.0",
         "knplabs/knp-menu-bundle":  "~v3.2.0",
-        "symfony/webpack-encore-bundle": "^1.14",
         "doctrine/inflector": "^2.0"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "~5.3|~6.0",
-        "symfony/config": "~5.3|~6.0",
-        "symfony/dependency-injection": "~5.3|~6.0",
-        "symfony/yaml": "~5.3|~6.0",
-        "symfony/validator": "~5.3|~6.0",
+        "symfony/phpunit-bridge": "~5.3|^6.0",
+        "symfony/config": "~5.3|^6.0",
+        "symfony/dependency-injection": "~5.3|^6.0",
+        "symfony/yaml": "~5.3|^6.0",
+        "symfony/validator": "~5.3|^6.0",
         "symfony/maker-bundle": "^1.0.0",
         "nyholm/symfony-bundle-test": "^1.8",
         "doctrine/doctrine-bundle": "^2.5",
-        "doctrine/orm": "^2.11",
+        "doctrine/orm": "2.13.1",
         "doctrine/annotations": "^1.13.2",
         "whatwedo/php-coding-standard": "^1.0",
         "zenstruck/foundry": "^1.16",
         "zenstruck/console-test": "^v1.1.0",
         "symfony/orm-pack": "^1.0",
-        "symfony/translation": "~5.3|~6.0",
+        "symfony/translation": "~5.3|^6.0",
         "gedmo/doctrine-extensions": "^3.5",
-        "symfony/dotenv": "~5.3|~6.0",
+        "symfony/dotenv": "~5.3|^6.0",
         "symfony/test-pack": "^1.0",
-        "symfony/runtime": "~5.3|~6.0",
+        "symfony/runtime": "~5.3|^6.0",
         "phpstan/phpstan": "^1.5",
         "mhujer/breadcrumbs-bundle": "^1.5",
         "whatwedo/twig-bootstrap-icons": "^1.0",
         "whatwedo/core-bundle": "dev-1.0-dev as 1.0",
         "whatwedo/table-bundle": "dev-1.0-dev as 1.0",
-        "whatwedo/search-bundle": "dev-3.0-dev as 3.0",
-        "symfony/process": "~5.3|~6.0"
+        "whatwedo/search-bundle": "dev-3.0-dev as 3.0"
     },
 
     "suggest": {
-        "mhujer/breadcrumbs-bundle": "Allows creation of breadcrumbs",
-        "whatwedo/twig-bootstrap-icons": "For using icons in the templates"
+        "mhujer/breadcrumbs-bundle": "Allows creation of breadcrumbs"
     },
     "autoload": {
         "psr-4": {
@@ -69,20 +67,6 @@
             "whatwedo\\CrudBundle\\Tests\\": "tests/"
         }
     },
-    "repositories": [
-        {
-            "type": "package",
-            "package": {
-                "name": "twbs/icons",
-                "version": "1.8.1",
-                "source": {
-                    "url": "https://github.com/twbs/icons",
-                    "type": "git",
-                    "reference": "tags/v1.8.1"
-                }
-            }
-        }
-    ],
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
