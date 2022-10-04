@@ -18,6 +18,14 @@ class BlockBlock extends Block
 {
     public const OPT_LAYOUT_OPTIONS = 'layout_options';
 
+    public const OPT_LAYOUT_VERTICALLY = 'vertically';
+
+    public const OPT_LAYOUT_HORIZONTALLY = 'horizontally';
+
+    public const OPT_BLOCK_PREFIX_TAB = 'tab_block';
+
+    public const OPT_BLOCK_PREFIX_GRID = 'grid_block';
+
     protected BlockCollection $blocks;
 
     public function __construct()

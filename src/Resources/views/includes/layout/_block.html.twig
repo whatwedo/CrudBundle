@@ -70,7 +70,7 @@
 {% block grid_block %}
     <div class="w-full wwd-block-block wwd-block-block--grid border-neutral-200 p-4 sm:rounded border">
         <p class="mb-4">{{ block.option('label') }}</p>
-        <div class="overflow-hidden gap-4 grid grid-cols-{{ block.option('layout_options')['vertically'] }} grid-rows-{{ block.option('layout_options')['horizontally'] }}" id="wwd-crud-block-{{ block.acronym }}">
+        <div class="overflow-hidden gap-4 sm:grid sm:grid-cols-{{ block.option('layout_options')['vertically'] }} sm:grid-rows-{{ block.option('layout_options')['horizontally'] }}" id="wwd-crud-block-{{ block.acronym }}">
             {% for subBlock in block.blocks(view, page) %}
                 {{ wwd_crud_render_block(subBlock, view, page, form ?? null) }}
             {% endfor %}
