@@ -223,7 +223,7 @@ class DefinitionView
 
                     $referencingDefinition
                         ->createView($this->getRoute(), $referencingData)
-                        ->getEditForm($builder)
+                        ->getEditForm($builder, $block->getOption(DefinitionBlock::OPT_BLOCK))
                     ;
 
                     return true;
