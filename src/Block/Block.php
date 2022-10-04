@@ -147,6 +147,11 @@ class Block implements ServiceSubscriberInterface
         return $this->options[$name];
     }
 
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
     public function hasOption(string $name): bool
     {
         return isset($this->options[$name]) || array_key_exists($name, $this->options);

@@ -61,6 +61,7 @@ class CrudRenderExtension extends AbstractExtension
         if ($block === false) {
             throw new BlockNotFoundException('Block "' . $optionBlock . '" does not exist in definition "' . get_class($definition) . '".');
         }
+        $block->setOptions(array_merge($block->getOptions(), $definitionBlock->getOption(DefinitionBlock::OPT_OVERRIDE)));
         $templateFile = match ($route) {
             Page::EDIT => 'edit.html.twig',
             Page::CREATE => 'create.html.twig',
