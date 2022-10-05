@@ -84,13 +84,13 @@
         id="wwd-crud-block-{{ block.acronym }}"
         {{ stimulus_controller({'whatwedo/crud-bundle/tab': {}}) }}
     >
-        <p class="mb-4">{{ block.option('label') }}</p>
+        <p class="mb-4">{{ block.option('label') | trans }}</p>
         <div class="sm:hidden">
             <label for="tabs" class="sr-only">Select a tab</label>
             <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
             <select {{ stimulus_action('whatwedo/crud-bundle/tab', 'changeTab') }} id="tabs" name="tabs" class="block w-full border-neutral-300 focus:border-primary-light focus:ring-primary mb-4">
                 {% for subBlock in block.blocks(view, page) %}
-                    <option value="{{ subBlock.acronym }}">{{ subBlock.option('label') }}</option>
+                    <option value="{{ subBlock.acronym }}">{{ subBlock.option('label') | trans }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -105,7 +105,7 @@
                         {{ stimulus_target('whatwedo/crud-bundle/tab', 'tab') }}
                         {{ stimulus_action('whatwedo/crud-bundle/tab', 'openTab') }}
                     >
-                        <span>{{ subBlock.option('label') }}</span>
+                        <span>{{ subBlock.option('label') | trans }}</span>
                         <span {{ stimulus_target('whatwedo/crud-bundle/tab', 'underline') }} class="bg-transparent absolute inset-x-0 bottom-0 h-0.5"></span>
                     </a>
                 {% endfor %}
