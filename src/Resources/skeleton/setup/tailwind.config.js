@@ -10,7 +10,11 @@ module.exports = {
     ],
     safelist: [
         {
-            pattern: /grid-(cols|rows)-\d/,
+            pattern: /grid-(cols|rows)-\d+/,
+            variants: ['lg', 'md', 'sm'],
+        },
+        {
+            pattern: /col-span-\d+/,
             variants: ['lg', 'md', 'sm'],
         },
     ],
