@@ -236,11 +236,7 @@ class DefinitionView
                 continue;
             }
 
-            if ($block instanceof BlockBlock) {
-                foreach ($block->getBlocks($this, $this->getRoute()) as $subBlock) {
-                    $handleDefinitionBlock($subBlock);
-                }
-            }
+            $this->handleBockBlock($block, $handleDefinitionBlock);
 
             foreach ($block->getContents() as $content) {
                 if (! $content->hasOption('form_type')
@@ -256,6 +252,16 @@ class DefinitionView
         $this->form = $builder->getForm();
 
         return $this->form;
+    }
+
+    private function handleBockBlock(Block $block, callable $handleDefinitionBlock): void
+    {
+        if ($block instanceof BlockBlock) {
+            foreach ($block->getBlocks($this, $this->getRoute()) as $subBlock) {
+                $handleDefinitionBlock($subBlock);
+                $this->handleBockBlock($subBlock, $handleDefinitionBlock);
+            }
+        }
     }
 
     public function getCreateForm(?FormBuilderInterface $builder = null, ?string $blockName = null): FormInterface
@@ -302,11 +308,7 @@ class DefinitionView
                 continue;
             }
 
-            if ($block instanceof BlockBlock) {
-                foreach ($block->getBlocks($this, $this->getRoute()) as $subBlock) {
-                    $handleDefinitionBlock($subBlock);
-                }
-            }
+            $this->handleBockBlock($block, $handleDefinitionBlock);
 
             foreach ($block->getContents() as $content) {
                 if (! $content->hasOption('form_type')

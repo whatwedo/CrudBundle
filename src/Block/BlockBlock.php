@@ -102,4 +102,10 @@ class BlockBlock extends Block
         $resolver->setDefault(self::OPT_LAYOUT_OPTIONS, []);
         $resolver->setAllowedTypes(self::OPT_LAYOUT_OPTIONS, ['array']);
     }
+
+    public function __clone(): void
+    {
+        parent::__clone();
+        $this->blocks = new BlockCollection();
+    }
 }
