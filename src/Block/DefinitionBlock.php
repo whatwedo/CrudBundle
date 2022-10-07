@@ -23,6 +23,8 @@ class DefinitionBlock extends Block
 
     public const OPT_OVERRIDE = 'override';
 
+    public const OPT_CONFIGURE = 'configure';
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
@@ -32,6 +34,7 @@ class DefinitionBlock extends Block
             self::OPT_BLOCK => $this->acronym,
             self::OPT_DEFINITION => null,
             self::OPT_OVERRIDE => [],
+            self::OPT_CONFIGURE => null,
         ]);
         $resolver->setRequired([
             self::OPT_BLOCK,
@@ -40,6 +43,7 @@ class DefinitionBlock extends Block
         $resolver->setAllowedTypes(self::OPT_BLOCK, 'string');
         $resolver->setAllowedTypes(self::OPT_CALLABLE, ['null', 'callable', 'array']);
         $resolver->setAllowedTypes(self::OPT_OVERRIDE, 'array');
+        $resolver->setAllowedTypes(self::OPT_CONFIGURE, ['null', 'callable']);
     }
 
     public function getData(mixed $row): mixed
