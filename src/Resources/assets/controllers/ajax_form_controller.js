@@ -13,11 +13,12 @@ export default class extends Controller {
         ajaxUrl  = this.element.getAttribute('data-ajax-url');
         this.ajaxTargets.forEach(target => {
             let found = false;
-            const formElement = target.querySelector('select, input, textarea');
-
+            const formElement = target.querySelectorAll('select, input, textarea');
             if (formElement !== null) {
-                this.initFormElement(formElement);
-                found = true;
+                formElement.forEach(element => {
+                    this.initFormElement(element);
+                    found = true;
+                });
             }
 
             if (!found) {
