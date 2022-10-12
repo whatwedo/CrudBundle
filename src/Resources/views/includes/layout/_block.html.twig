@@ -4,12 +4,12 @@
     {# @var content string #}
 
     {% set attr = {
-        class: 'mb-4 last:mb-0 ' ~ (block.option('size') == constant('whatwedo\\CrudBundle\\Enum\\BlockSize::LARGE') ? 'w-full sm:mb-0' : 'w-full sm:w-3/6'),
+        class: (block.option('size') == constant('whatwedo\\CrudBundle\\Enum\\BlockSize::LARGE') ? 'basis-full sm:mb-0' : 'basis-full sm:basis-3/6-gap'),
     }|merge(block.option('attr')|default([])) %}
     <div id="wwd-crud-block-{{ block.acronym }}" {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
-        <div class="bg-white overflow-hidden shadow sm:rounded-lg" {{ stimulus_controller('whatwedo/crud-bundle/block', {'collapsible': block.option('collapsible')}) }}>
+        <div class="bg-white shadow" {{ stimulus_controller('whatwedo/crud-bundle/block', {'collapsible': block.option('collapsible')}) }}>
             {% if block.option('label') or block.option('description') %}
-                <div class="px-4 py-5 sm:px-6" {{ stimulus_target('whatwedo/crud-bundle/block', 'title') }}>
+                <div class="px-4 py-5" {{ stimulus_target('whatwedo/crud-bundle/block', 'title') }}>
                     {% if block.option('label') %}
                         <h3 class="text-lg leading-6 font-medium text-neutral-900">
                             {{ block.option('label')|trans }}
@@ -42,7 +42,7 @@
         class: (block.option('size') == constant('whatwedo\\CrudBundle\\Enum\\BlockSize::LARGE') ? '' : 'sm:w-3/6') ~ ' w-full wwd-block-block mb-4',
     }|merge(block.option('attr')|default([])) %}
     <div id="wwd-crud-block-{{ block.acronym }}" {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
-        <div class="bg-white overflow-hidden shadow sm:rounded-lg" {{ stimulus_controller('whatwedo/crud-bundle/block', {'collapsible': block.option('collapsible')}) }}>
+        <div class="bg-white shadow" {{ stimulus_controller('whatwedo/crud-bundle/block', {'collapsible': block.option('collapsible')}) }}>
         {% if block.option('label') or block.option('description') %}
             <div class="wwd-crud-block-header px-4 pt-5 sm:px-6" {{ stimulus_target('whatwedo/crud-bundle/block', 'title') }}>
                 {% if block.option('label') %}
@@ -68,7 +68,7 @@
 {% endblock %}
 
 {% block grid_block %}
-    <div class="w-full wwd-block-block wwd-block-block--grid border-neutral-200 p-4 sm:rounded border">
+    <div class="w-full wwd-block-block wwd-block-block--grid border-neutral-200 p-4 border">
         <p class="mb-4">{{ block.option('label') }}</p>
         <div class="overflow-hidden gap-4 sm:grid sm:grid-cols-{{ block.option('layout_options')['vertically'] }} sm:grid-rows-{{ block.option('layout_options')['horizontally'] }}" id="wwd-crud-block-{{ block.acronym }}">
             {% for subBlock in block.blocks(view, page) %}
@@ -81,7 +81,7 @@
 {% block tab_block %}
     {% set attr = block.option('attr')|default([])|filter((k,i) => k != 'class') %}
     <div
-        class="w-full wwd-block-block wwd-block-block--tab border-neutral-200 p-4 sm:rounded border overflow-hidden gap-4 {{ block.option('attr')['class'] ?? '' }}"
+        class="w-full wwd-block-block wwd-block-block--tab border-neutral-200 p-4 border gap-4 {{ block.option('attr')['class'] ?? '' }}"
         {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}
         id="wwd-crud-block-{{ block.acronym }}"
         {{ stimulus_controller({'whatwedo/crud-bundle/tab': {}}) }}
@@ -98,7 +98,7 @@
         </div>
 
         <div class="hidden sm:block">
-            <nav class="isolate z-0 mb-1 flex divide-x divide-neutral-200 rounded-lg shadow">
+            <nav class="isolate z-0 mb-1 flex divide-x divide-neutral-200 shadow">
                 {% for subBlock in block.blocks(view, page) %}
                     <a
                         href="#tab-{{ subBlock.acronym }}"
