@@ -30,7 +30,7 @@
                     class="whatwedo_crud-sidebar relative flex-1 flex flex-col max-w-xs w-full bg-white transition ease-in-out duration-300 transform -translate-x-full pointer-events-auto"
                     {{ stimulus_target('whatwedo/crud-bundle/offcanvas', 'content') }}
                 >
-                    <div class="absolute top-0 right-0 -mr-12 pt-2 ease-in-out duration-300 opacity-0" {{ stimulus_target('whatwedo/crud-bundle/offcanvas', 'closeButton') }}>
+                    <div class="absolute top-0 right-0 -mr-12 pt-2 ease-in-out duration-300 opacity-0 pointer-events-none" {{ stimulus_target('whatwedo/crud-bundle/offcanvas', 'closeButton') }}>
                         <button
                             type="button"
                             class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
@@ -123,7 +123,7 @@
                 {{ stimulus_controller({'whatwedo/table-bundle/filter': {}, 'whatwedo/table-bundle/table': {}}) }}
             >
                 {% block topbar %}
-                    <nav class="whatwedo_crud-topbar sticky top-[50px] md:top-0 flex-grow-0 bg-white flex-auto border-b border-neutral-200 px-4 py-4 min-h-[71px] sm:flex sm:justify-between">
+                    <nav class="whatwedo_crud-topbar z-30 sticky top-[50px] md:top-0 flex-grow-0 bg-white flex-auto border-b border-neutral-200 px-4 py-4 min-h-[71px] sm:flex sm:justify-between">
                         {% block breadcrumbs %}
                             {% include "@whatwedoCrud/includes/topbar/_breadcrumbs.html.twig" %}
                         {% endblock %}

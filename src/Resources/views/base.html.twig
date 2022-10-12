@@ -30,7 +30,7 @@
                     class="whatwedo_crud-sidebar relative flex-1 flex flex-col max-w-xs w-full bg-white transition ease-in-out duration-300 transform -translate-x-full pointer-events-auto"
                     {{ stimulus_target('whatwedo/crud-bundle/offcanvas', 'content') }}
                 >
-                    <div class="absolute top-0 right-0 -mr-12 pt-2 ease-in-out duration-300 opacity-0" {{ stimulus_target('whatwedo/crud-bundle/offcanvas', 'closeButton') }}>
+                    <div class="absolute top-0 right-0 -mr-12 pt-2 ease-in-out duration-300 opacity-0 pointer-events-none" {{ stimulus_target('whatwedo/crud-bundle/offcanvas', 'closeButton') }}>
                         <button
                             type="button"
                             class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
