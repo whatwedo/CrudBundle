@@ -31,7 +31,7 @@ ecs:
 
 ## check code with phpstan
 phpstan:
-	vendor/bin/phpstan
+	vendor/bin/phpstan --memory-limit=2G
 
 ## check code with all tools
 styles:
@@ -40,6 +40,7 @@ styles:
 
 ## PHP Unit
 phpunit:
+	cd tests/App && yarn install && yarn dev
 	vendor/bin/simple-phpunit
 
 ## server start
