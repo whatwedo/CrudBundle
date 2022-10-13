@@ -578,7 +578,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                         'id' => $data->getId(),
                     ],
                     'attr' => [
-                        'class' => 'whatwedo-crud-button--action-warning',
+                        'class' => 'whatwedo-crud-button--action-warning h-full',
                     ],
                     'priority' => 50,
                     'voter_attribute' => Page::DELETE,

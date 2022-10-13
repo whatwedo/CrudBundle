@@ -15,7 +15,7 @@ module.exports = {
         },
         {
             pattern: /col-span-\d+/,
-            variants: ['lg', 'md', 'sm'],
+            variants: ['2xl', 'xl', 'lg', 'md', 'sm'],
         },
     ],
     theme: {
@@ -29,6 +29,9 @@ module.exports = {
                     darkest: '#0F4152',
                 },
                 error: colors.red,
+            },
+            flexBasis: {
+                '3/6-gap': 'calc(50% - 0.5rem)', // this is an ugly hack to float blocks
             }
         },
     },

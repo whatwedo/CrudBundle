@@ -1,4 +1,4 @@
-<ol class="whatwedo_crud-breadcrumbs flex items-center space-x-4" aria-label="Breadcrumb" id="{{ listId }}" itemscope itemtype="http://schema.org/BreadcrumbList">
+<ol class="whatwedo_crud-breadcrumbs hidden lg:flex items-center space-x-4" aria-label="Breadcrumb" id="{{ listId }}" itemscope itemtype="http://schema.org/BreadcrumbList">
     {% for crumb in breadcrumbs %}
     <li{% if itemClass is defined and itemClass|length %} class="{{ itemClass }}"{% endif %} itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
         <div class="flex items-center">
