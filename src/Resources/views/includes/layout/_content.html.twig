@@ -122,3 +122,14 @@
     {% endwith %}
 {% endblock %}
 
+
+{% block simple_table_content %}
+    {# @var content \whatwedo\CrudBundle\Content\RelationContent #}
+    {# @var block \whatwedo\CrudBundle\Block\Block #}
+    {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
+
+    {{ whatwedo_table_render(content.table(view.data)) }}
+
+{% endblock %}
+
+
