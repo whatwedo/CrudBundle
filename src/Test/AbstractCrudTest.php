@@ -69,7 +69,7 @@ abstract class AbstractCrudTest extends WebTestCase
             $this->getDefinition()::getRoute(Page::INDEX),
             $indexData->getQueryParameters()
         ));
-        $this->assertResponseStatusCodeSame($indexData->getExpectedStatusCode());
+        $this->assertStatusCode($indexData->getExpectedStatusCode());
     }
 
     public function indexData()
@@ -104,7 +104,7 @@ abstract class AbstractCrudTest extends WebTestCase
             $this->getDefinition()::getRoute(Page::INDEX),
             $indexData->getQueryParameters()
         ));
-        $this->assertResponseStatusCodeSame($indexData->getExpectedStatusCode());
+        $this->assertStatusCode($indexData->getExpectedStatusCode());
     }
 
     public function indexSortData()
@@ -179,7 +179,7 @@ abstract class AbstractCrudTest extends WebTestCase
             $this->getDefinition()::getRoute(Page::EXPORT),
             $indexData->getQueryParameters()
         ));
-        $this->assertResponseStatusCodeSame($indexData->getExpectedStatusCode());
+        $this->assertStatusCode($indexData->getExpectedStatusCode());
     }
 
     public function exportData()
@@ -216,7 +216,7 @@ abstract class AbstractCrudTest extends WebTestCase
                 'id' => $showData->getEntityId(),
             ], $showData->getQueryParameters())
         ));
-        $this->assertResponseStatusCodeSame($showData->getExpectedStatusCode());
+        $this->assertStatusCode($showData->getExpectedStatusCode());
     }
 
     public function showData()
@@ -258,7 +258,7 @@ abstract class AbstractCrudTest extends WebTestCase
         $form = $crawler->filter('#crud_main_form')->form([], 'POST');
         $this->fillForm($form, $editData->getFormData());
         $this->getBrowser()->submit($form);
-        $this->assertResponseStatusCodeSame($editData->getExpectedStatusCode());
+        $this->assertStatusCode($editData->getExpectedStatusCode());
 
         return $editLink;
     }
@@ -301,7 +301,7 @@ abstract class AbstractCrudTest extends WebTestCase
         $this->fillForm($form, $createData->getFormData());
         $this->getBrowser()->submit($form);
 
-        $this->assertResponseStatusCodeSame($createData->getExpectedStatusCode());
+        $this->assertStatusCode($createData->getExpectedStatusCode());
 
         return $createLink;
     }
@@ -354,6 +354,11 @@ abstract class AbstractCrudTest extends WebTestCase
                 $form['form[' . $field . ']'] = $value;
             }
         }
+    }
+
+    protected function assertStatusCode(int $expectedStatusCode, string $message = 'Status Code is not as expected!'): void
+    {
+        self::assertSame($expectedStatusCode, $this->getBrowser()->getResponse()->getStatusCode(), $message);
     }
 
     protected function setUpTestIndex(IndexData $indexData)
