@@ -39,7 +39,7 @@ class MenuBuilder extends DefinitionMenuBuilder
     {
         $menu = $this->factory->createItem('');
         $menu->addChild('Dashboard', [
-            'route' => 'dashboard',
+            'route' => 'whatwedo_crud_dashboard',
             'attributes' => [
                 'icon' => 'house-door',
             ],
