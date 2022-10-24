@@ -36,7 +36,6 @@ use Symfony\Component\Security\Core\Security;
 use whatwedo\CrudBundle\Definition\FilterDefinition;
 use whatwedo\CrudBundle\Event\CrudEvent;
 use whatwedo\TableBundle\Entity\Filter;
-use whatwedo\TableBundle\Entity\UserInterface;
 
 class FilterSubscriber implements EventSubscriberInterface
 {
@@ -65,9 +64,5 @@ class FilterSubscriber implements EventSubscriberInterface
             unset($all['filter_path']);
         }
         $filter->setConditions($all);
-        $user = $this->security->getUser();
-        if ($user instanceof UserInterface) {
-            $filter->setCreatedBy($user);
-        }
     }
 }

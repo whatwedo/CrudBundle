@@ -31,5 +31,3 @@ doctrine:
                         alias: Gedmo
                         prefix: Gedmo\Tree\Entity
                         dir: "%kernel.project_dir%/../../vendor/gedmo/doctrine-extensions/src/Tree/Entity"
-        resolve_target_entities:
-            whatwedo\TableBundle\Entity\UserInterface: whatwedo\CrudBundle\Tests\App\Entity\Person

@@ -10,6 +10,9 @@ on:
             - 1.0-dev
             - feature/1.0-dev-tree
 
+env:
+    DATABASE_URL: mysql://root:root@127.0.0.1:3306/crud_bundle
+
 jobs:
     phpunit:
         runs-on: ubuntu-latest

@@ -81,27 +81,7 @@ whatwedo_crud_bundle:
 ```
 Here you can define a prefix for the whole crud part.
 We mostly use `/admin` as often times this bundle is used as backend. 
-You can however use and configure it to whatever suits your business case. 
-
-### ORM
-The table bundle allows you to save filters on the go.
-To enable this feature create this config `config/packages/whatwedo_table.yaml`:
-```yaml
-whatwedo_table:
-    filter:
-        save_created_by: true # defaults to false
-```
-These filters save the creator, therefore you need to configure your user class. 
-You do this in your `packges/doctrine.yaml` file:
-```yaml
-doctrine:
-    orm:
-        resolve_target_entities:
-            # The class which will be returned with "Symfony\Component\Security\Core\Security::getUser"
-            whatwedo\TableBundle\Entity\UserInterface: App\Entity\User
-```
-Be sure to decide weather you want to save the user or not early in your project lifecycle.
-Depending on this config a different doctrine migration is provided.
+You can however use and configure it to whatever suits your business case.
 
 ### Tailwind and Webpack
 Add a new `form_theme` to your `twig.yaml` like following:

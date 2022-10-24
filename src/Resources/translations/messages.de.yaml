@@ -22,7 +22,6 @@ wwd:
             base: Grundkonfiguration
         property:
             name: Name
-            createdBy: Erstellt von
             description: Beschreibung
             route: Anwendungsort
             type: Typ
