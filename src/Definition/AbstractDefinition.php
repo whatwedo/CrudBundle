@@ -153,7 +153,9 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     public function getExportFilename(): string
     {
-        return 'export.xlsx';
+        $prefix = $this->translator->trans(static::getEntityTitlePlural());
+        $suffix = date('Y-m-d\TH_i_s');
+        return sprintf('%s_%s.xlsx', $prefix, $suffix);
     }
 
     public static function getAlias(): string
