@@ -30,7 +30,8 @@
         "knplabs/knp-menu-bundle":  "~v3.2.0",
         "doctrine/inflector": "^2.0",
         "symfony/maker-bundle": "^1.0.0",
-        "twig/twig": "^3.4.3|^2.15.3"
+        "twig/twig": "^3.4.3|^2.15.3",
+        "doctrine/orm": "^2.13.3"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "~5.3|^6.0",
@@ -40,7 +41,6 @@
         "symfony/validator": "~5.3|^6.0",
         "nyholm/symfony-bundle-test": "^1.8",
         "doctrine/doctrine-bundle": "^2.5",
-        "doctrine/orm": "2.13.1",
         "doctrine/annotations": "^1.13.2",
         "whatwedo/php-coding-standard": "^1.0",
         "zenstruck/foundry": "^1.16",
