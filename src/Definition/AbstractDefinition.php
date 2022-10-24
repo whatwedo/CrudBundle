@@ -155,6 +155,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
     {
         $prefix = $this->translator->trans(static::getEntityTitlePlural());
         $suffix = date('Y-m-d\TH_i_s');
+
         return sprintf('%s_%s.xlsx', $prefix, $suffix);
     }
 
