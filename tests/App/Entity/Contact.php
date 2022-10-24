@@ -36,9 +36,11 @@ class Contact implements \Stringable
      */
     private Company $company;
 
-    public function __construct(Company $company)
+    public function __construct(?Company $company = null)
     {
-        $this->company = $company;
+        if ($company) {
+            $this->company = $company;
+        }
     }
 
     public function getId(): ?int

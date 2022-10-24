@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Formatter;
 
-use Doctrine\Common\Util\ClassUtils;
 use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CoreBundle\Formatter\DefaultFormatter;
 use whatwedo\CrudBundle\Enum\Page;
@@ -22,7 +21,7 @@ class CrudDefaultFormatter extends DefaultFormatter
     {
         if (is_object($value)) {
             try {
-                $definition = $this->definitionManager->getDefinitionByEntityClass(ClassUtils::getRealClass(get_class($value)));
+                $definition = $this->definitionManager->getDefinitionByEntity($value);
                 if ($definition::hasCapability(Page::SHOW)) {
                     return sprintf(
                         '<a href="%s">%s</a>',

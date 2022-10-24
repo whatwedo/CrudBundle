@@ -32,20 +32,6 @@ class DefinitionManager
     /**
      * @throws \InvalidArgumentException
      */
-    public function getDefinitionByEntityClass(string $entityClass): DefinitionInterface
-    {
-        foreach ($this->definitions as $definition) {
-            if ($definition::getEntity() === $entityClass) {
-                return $definition;
-            }
-        }
-
-        throw new \InvalidArgumentException(sprintf('definition for entity class "%s" not found.', $entityClass));
-    }
-
-    /**
-     * @throws \InvalidArgumentException
-     */
     public function getDefinitionByEntity(mixed $entity): DefinitionInterface
     {
         foreach ($this->definitions as $definition) {
