@@ -7,5 +7,6 @@
 ** [Ajax](ajax.md)
 ** [Exporting](exporting.md)
 ** [Templating](templating.md)
+** [Custom Routes](custom-routes.md)
 * Extension
 ** [Breadcrumbs](extensions/breadcrumbs.md)
