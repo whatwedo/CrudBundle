@@ -122,6 +122,16 @@ class RelationContent extends TableContent
         return null;
     }
 
+    public function isVisibleInCreateForm(): bool
+    {
+        return parent::isVisibleInCreateForm() && ! $this->options[self::OPT_SHOW_TABLE_IN_FORM];
+    }
+
+    public function isVisibleInEditForm(): bool
+    {
+        return parent::isVisibleInEditForm() && ! $this->options[self::OPT_SHOW_TABLE_IN_FORM];
+    }
+
     /**
      * @return array<int|string, mixed>
      */

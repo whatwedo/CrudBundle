@@ -47,4 +47,14 @@ trait VisibilityTrait
     {
         return in_array(Page::SHOW, $this->options['visibility'], true);
     }
+
+    public function isVisibleInEditForm(): bool
+    {
+        return $this->isVisibleOnEdit();
+    }
+
+    public function isVisibleInCreateForm(): bool
+    {
+        return $this->isVisibleOnCreate();
+    }
 }

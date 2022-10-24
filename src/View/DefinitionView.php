@@ -192,7 +192,7 @@ class DefinitionView
         return 'javascript:alert(\'Definition does not have the capability "' . $route . '".\')';
     }
 
-    public function getEditForm(?FormBuilderInterface $builder = null, ?string $blockName = null): FormInterface
+    public function getEditForm(?FormBuilderInterface $builder = null, ?string $blockName = null, ?callable $blockConfigure = null): FormInterface
     {
         if ($this->form instanceof FormInterface) {
             return $this->form;
@@ -211,6 +211,10 @@ class DefinitionView
                 continue;
             }
 
+            if ($blockConfigure !== null) {
+                $blockConfigure($block);
+            }
+
             if (! $block->isVisibleOnEdit()
                 || ! $this->authorizationChecker->isGranted($block->getEditVoterAttribute(), $this->data)) {
                 continue;
@@ -223,7 +227,7 @@ class DefinitionView
 
                     $referencingDefinition
                         ->createView($this->getRoute(), $referencingData)
-                        ->getEditForm($builder, $block->getOption(DefinitionBlock::OPT_BLOCK))
+                        ->getEditForm($builder, $block->getOption(DefinitionBlock::OPT_BLOCK), $block->getOption(DefinitionBlock::OPT_CONFIGURE))
                     ;
 
                     return true;
@@ -241,6 +245,7 @@ class DefinitionView
             foreach ($block->getContents() as $content) {
                 if (! $content->hasOption('form_type')
                     || ! $content->isVisibleOnEdit()
+                    || ! $content->isVisibleInEditForm()
                     || ! $this->authorizationChecker->isGranted($content->getEditVoterAttribute(), $this->data)) {
                     continue;
                 }
@@ -254,7 +259,7 @@ class DefinitionView
         return $this->form;
     }
 
-    public function getCreateForm(?FormBuilderInterface $builder = null, ?string $blockName = null): FormInterface
+    public function getCreateForm(?FormBuilderInterface $builder = null, ?string $blockName = null, ?callable $blockConfigure = null): FormInterface
     {
         if ($this->form instanceof FormInterface) {
             return $this->form;
@@ -273,6 +278,10 @@ class DefinitionView
                 continue;
             }
 
+            if ($blockConfigure !== null) {
+                $blockConfigure($block);
+            }
+
             if (! $block->isVisibleOnCreate()
                 || ! $this->authorizationChecker->isGranted($block->getCreateVoterAttribute(), $this->data)) {
                 continue;
@@ -285,7 +294,7 @@ class DefinitionView
 
                     $referencingDefinition
                         ->createView($this->getRoute(), $referencingData)
-                        ->getCreateForm($builder, $block->getOption(DefinitionBlock::OPT_BLOCK))
+                        ->getCreateForm($builder, $block->getOption(DefinitionBlock::OPT_BLOCK), $block->getOption(DefinitionBlock::OPT_CONFIGURE))
                     ;
 
                     return true;
@@ -303,6 +312,7 @@ class DefinitionView
             foreach ($block->getContents() as $content) {
                 if (! $content->hasOption('form_type')
                     || ! $content->isVisibleOnCreate()
+                    || ! $content->isVisibleInCreateForm()
                     || ! $this->authorizationChecker->isGranted($content->getCreateVoterAttribute(), $this->data)) {
                     continue;
                 }
