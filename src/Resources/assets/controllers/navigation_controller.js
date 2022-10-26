@@ -7,6 +7,7 @@ export default class extends Controller {
         if (this.navigationTarget.classList.contains('hidden')) {
             this.arrowTarget.classList.remove('text-neutral-300');
             this.arrowTarget.classList.add('text-neutral-400');
+            this.arrowTarget.classList.remove('rotate-0');
             this.arrowTarget.classList.add('rotate-90');
             this.navigationTarget.classList.remove('hidden');
         } else {
