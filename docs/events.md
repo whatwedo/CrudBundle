@@ -1,6 +1,6 @@
 # Events
 
-There are some events which are triggered while editing or creating entites.
+There are some events, which are triggered while editing or creating entites.
 
 ## Events available
 

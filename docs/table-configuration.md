@@ -1,6 +1,6 @@
 # Table Configuration
 
-For basic table configuration refer to the [WhatwedoTableBundle Documentations](https://doc.whatwedo.ch/whatwedo/tablebundle/table-configuration)
+For a basic table configuration refer to the [WhatwedoTableBundle Documentations](https://doc.whatwedo.ch/whatwedo/tablebundle/table-configuration)
 
 ```php
 
@@ -26,12 +26,12 @@ class LocationDefinition extends AbstractDefinition
 
 ## Filter with joins
 
-It is possible to create filters, based on columns which must be joined.  
+It is possible to create filters based on columns that have to be joined.  
 FilterTypes accept an array of filters.
 
 ### Simple
 
-Filter all rooms, included in a house with a specific color.  
+Filter all rooms included in a house with a specific color.  
 This filter would be applied on the `RoomDefinition`.
 ```php
 public function overrideTableConfiguration(Table $table)
@@ -52,7 +52,7 @@ public function overrideTableConfiguration(Table $table)
 ### Advanced
 
 In this example we join a ManyToOne (Room -> House) and then a OneToMany (House -> Furniture) relation.  
-The goal is to filter all rooms contained in all houses which include a furniture with a specic status (StatusEnum).  
+The goal is to filter all rooms contained in all houses which include a furniture with a specific status (StatusEnum).  
 This filter would be applied on the `RoomDefinition` as well.  
 ```php
 public function overrideTableConfiguration(Table $table)
