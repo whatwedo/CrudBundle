@@ -35,8 +35,6 @@ use function implode;
 
 class RelationContent extends TableContent
 {
-    public const OPT_ACCESSOR_PATH = 'accessor_path';
-
     public const OPT_TABLE_OPTIONS = 'table_options';
 
     public const OPT_FORM_TYPE = 'form_type';
@@ -164,7 +162,6 @@ class RelationContent extends TableContent
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            self::OPT_ACCESSOR_PATH => $this->acronym,
             self::OPT_TABLE_OPTIONS => [],
             self::OPT_FORM_TYPE => EntityAjaxType::class,
             self::OPT_FORM_OPTIONS => fn (Options $options) => [

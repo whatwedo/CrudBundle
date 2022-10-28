@@ -15,8 +15,6 @@ use whatwedo\CrudBundle\Formatter\CrudDefaultFormatter;
 
 class Content extends AbstractContent
 {
-    public const OPT_ACCESSOR_PATH = 'accessor_path';
-
     public const OPT_FORMATTER = 'formatter';
 
     public const OPT_FORMATTER_OPTIONS = 'formatter_options';
@@ -51,7 +49,6 @@ class Content extends AbstractContent
     {
         parent::configureOptions($resolver);
 
-        $resolver->setDefault(self::OPT_ACCESSOR_PATH, $this->acronym);
         $resolver->setDefault(self::OPT_CALLABLE, null);
         $resolver->setDefault(self::OPT_FORMATTER, CrudDefaultFormatter::class);
         $resolver->setDefault(self::OPT_FORMATTER_OPTIONS, []);

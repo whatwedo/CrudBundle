@@ -13,8 +13,6 @@ use whatwedo\TableBundle\Table\Table;
 
 class TableContent extends AbstractContent
 {
-    public const OPT_ACCESSOR_PATH = 'accessor_path';
-
     public const OPT_TABLE_CONFIGURATION = 'table_configuration';
 
     public const OPT_DEFINITION = 'definition';
@@ -86,7 +84,6 @@ class TableContent extends AbstractContent
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            self::OPT_ACCESSOR_PATH => $this->acronym,
             self::OPT_TABLE_CONFIGURATION => null,
             self::OPT_DEFINITION => null,
             self::OPT_ROUTE_ADDITION_KEY => null,

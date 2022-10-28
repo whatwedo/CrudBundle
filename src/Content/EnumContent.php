@@ -62,8 +62,6 @@ class EnumContent extends Content
 
     public const OPT_BLOCK_PREFIX = 'block_prefix';
 
-    public const OPT_ACCESSOR_PATH = 'accessor_path';
-
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
