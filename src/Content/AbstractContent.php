@@ -24,6 +24,11 @@ abstract class AbstractContent implements ServiceSubscriberInterface
     use VisibilityTrait;
     use VoterAttributeTrait;
 
+    /**
+     * Defines the label of the content. Form labels in create and edit and data term in show.
+     * defaults to "wwd.[definition::getEntityAlias].property.[content->acronym]"
+     * Accepts: `string|boolean|null`
+     */
     public const OPT_LABEL = 'label';
 
     public const OPT_HELP = 'help';
