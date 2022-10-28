@@ -27,14 +27,14 @@ abstract class AbstractContent implements ServiceSubscriberInterface
     /**
      * Defines the label of the content. Form labels in create and edit and data term in show.
      * Defaults to <code>wwd.[definition::getEntityAlias].property.[content->acronym]</code>
-     * Accepts: <code>string|boolean|null</code>
+     * Accepts: <code>string|boolean|null</code>.
      */
     public const OPT_LABEL = 'label';
 
     /**
      * Defines the help text of the content. Is shown in a tooltip next to the label.
      * Defaults to <code>wwd.[definition::getEntityAlias].help.[content->acronym]</code>
-     * Accepts: <code>string|boolean|null</code>
+     * Accepts: <code>string|boolean|null</code>.
      */
     public const OPT_HELP = 'help';
 
@@ -42,7 +42,7 @@ abstract class AbstractContent implements ServiceSubscriberInterface
      * With the callable you can define custom data which is give to the content.
      * The callable is called with the entity as parameter and should return the data.
      * Defaults to <code>null</code>
-     * Accepts: <code>callable|null</code>
+     * Accepts: <code>callable|null</code>.
      */
     public const OPT_CALLABLE = 'callable';
 
@@ -50,14 +50,14 @@ abstract class AbstractContent implements ServiceSubscriberInterface
      * Defines custom html attributes on the content. These attributes will be rendered on the form elements
      * and the data term in show. It will be rendered as following in the html: <code>key="value"</code>.
      * Defaults to an empty array <code>[]</code>
-     * Accepts: <code>array</code>
+     * Accepts: <code>array</code>.
      */
     public const OPT_ATTR = 'attr';
 
     /**
      * Defines the visibility of the content. Available options are the on the definition defined Capabilities.
      * Defaults to <code>[Page::SHOW, Page::EDIT, Page::CREATE]</code>
-     * Accepts: <code>array</code>
+     * Accepts: <code>array</code>.
      */
     public const OPT_VISIBILITY = 'visibility';
 
@@ -65,7 +65,7 @@ abstract class AbstractContent implements ServiceSubscriberInterface
      * Voter attribute for the show page. If the voter attribute is set, the content will only be shown if the voter
      * returns true. If the voter attribute is not set if will be shown too.
      * Defaults to <code>Page::SHOW</code>
-     * Accepts: <code>null|object|string</code>
+     * Accepts: <code>null|object|string</code>.
      */
     public const OPT_SHOW_VOTER_ATTRIBUTE = 'show_voter_attribute';
 
@@ -73,7 +73,7 @@ abstract class AbstractContent implements ServiceSubscriberInterface
      * Voter attribute for the edit page. If the voter attribute is set, the content will only be shown if the voter
      * returns true. If the voter attribute is not set if will be shown too.
      * Defaults to <code>Page::EDIT</code>
-     * Accepts: <code>null|object|string</code>
+     * Accepts: <code>null|object|string</code>.
      */
     public const OPT_EDIT_VOTER_ATTRIBUTE = 'edit_voter_attribute';
 
@@ -81,7 +81,7 @@ abstract class AbstractContent implements ServiceSubscriberInterface
      * Voter attribute for the create page. If the voter attribute is set, the content will only be shown if the voter
      * returns true. If the voter attribute is not set if will be shown too.
      * Defaults to <code>Page::CREATE</code>
-     * Accepts: <code>null|object|string</code>
+     * Accepts: <code>null|object|string</code>.
      */
     public const OPT_CREATE_VOTER_ATTRIBUTE = 'create_voter_attribute';
 
@@ -89,21 +89,21 @@ abstract class AbstractContent implements ServiceSubscriberInterface
      * Defines the twig block to render the content with. See <code>views/includes/layout/_content.html.twig</code> for more information.
      * Be sure that your custom Content classes end with <code>Content</code>.
      * Defaults to Content's class name without the namespace in snake case.
-     * Accepts: <code>string</code>
+     * Accepts: <code>string</code>.
      */
     public const OPT_BLOCK_PREFIX = 'block_prefix';
 
     /**
      * Defines the accessor path to the data.
      * Defaults to the <code>acronym</code> of the content.
-     * Accepts: <code>string</code>
+     * Accepts: <code>string</code>.
      */
     public const OPT_ACCESSOR_PATH = 'accessor_path';
 
     /**
      * Define custom options here. You can use this additional array however it fits your need.
      * Defaults to an empty array <code>[]</code>
-     * Accepts: <code>array</code>
+     * Accepts: <code>array</code>.
      */
     public const OPT_CUSTOM_OPTIONS = 'custom_options';
 
