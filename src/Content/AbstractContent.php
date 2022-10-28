@@ -26,17 +26,39 @@ abstract class AbstractContent implements ServiceSubscriberInterface
 
     /**
      * Defines the label of the content. Form labels in create and edit and data term in show.
-     * defaults to "wwd.[definition::getEntityAlias].property.[content->acronym]"
-     * Accepts: `string|boolean|null`
+     * Defaults to "wwd.[definition::getEntityAlias].property.[content->acronym]"
+     * Accepts: string|boolean|null
      */
     public const OPT_LABEL = 'label';
 
+    /**
+     * Defines the help text of the content. Is shown in a tooltip next to the label.
+     * Defaults to "wwd.[definition::getEntityAlias].help.[content->acronym]"
+     * Accepts: string|boolean|null
+     */
     public const OPT_HELP = 'help';
 
+    /**
+     * With the callable you can define custom data which is give to the content.
+     * The callable is called with the entity as parameter and should return the data.
+     * Defaults to null
+     * Accepts: callable|null
+     */
     public const OPT_CALLABLE = 'callable';
 
+    /**
+     * Defines custom html attributes on the content. These attributes will be rendered on the form elements
+     * and the data term in show. It will be rendered as following in the html: key="value".
+     * Defaults to an empty array
+     * Accepts: array
+     */
     public const OPT_ATTR = 'attr';
 
+    /**
+     * Defines the visibility of the content. Available options are the on the definition defined Capabilities.
+     * Defaults to [Page::SHOW, Page::EDIT, Page::CREATE]
+     * Accepts: array
+     */
     public const OPT_VISIBILITY = 'visibility';
 
     public const OPT_SHOW_VOTER_ATTRIBUTE = 'show_voter_attribute';

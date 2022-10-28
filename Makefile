@@ -47,3 +47,6 @@ phpunit:
 server:
 	symfony server:start --dir=tests/App
 
+## docsify server start
+docsify:
+	docsify serve docs
