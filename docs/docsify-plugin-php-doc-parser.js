@@ -13,7 +13,8 @@
         for (const match of matches) {
 
             const lines = match[0].split('\n');
-            const codeLine = lines.pop().trim();
+            const codeLine = lines.pop().trim().split(' ').filter((line) => line.startsWith('OPT_'))[0];
+
             const removeCommentsRegex = /\/?[^\S\r\n]*\*[^\S\r\n]*\/?/g;
             lines.shift();
             code += '<h4>' + codeLine + '</h4><p>' + lines.join('<br />').replaceAll(removeCommentsRegex, '') + '</p>';
