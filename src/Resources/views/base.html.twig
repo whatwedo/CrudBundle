@@ -19,7 +19,7 @@
 </head>
 <body class="{% block body_class %}{% endblock %} h-full" data-turbo="false">
 {% block content %}
-    <div {{ stimulus_controller({'whatwedo/crud-bundle/offcanvas': {}}) }}>
+    <div {{ stimulus_controller('whatwedo/crud-bundle/offcanvas') }}>
 
         {# Off-canvas menu for mobile #}
         <div class="relative z-40 md:hidden" role="dialog" aria-modal="true">
@@ -120,7 +120,7 @@
 
             <main
                 class="whatwedo_crud-wrapper flex flex-col flex-1"
-                {{ stimulus_controller({'whatwedo/table-bundle/filter': {}, 'whatwedo/table-bundle/table': {}}) }}
+                {{ stimulus_controller('whatwedo/table-bundle/filter') | stimulus_controller('whatwedo/table-bundle/table') }}
             >
                 {% block topbar %}
                     <nav class="whatwedo_crud-topbar z-30 sticky top-[50px] md:top-0 flex-grow-0 bg-white flex-auto border-b border-neutral-200 px-4 py-4 min-h-[71px] sm:flex sm:justify-between">

@@ -84,7 +84,7 @@
         class="w-full wwd-block-block wwd-block-block--tab border-neutral-200 p-4 border gap-4 {{ block.option('attr')['class'] ?? '' }}"
         {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}
         id="wwd-crud-block-{{ block.acronym }}"
-        {{ stimulus_controller({'whatwedo/crud-bundle/tab': {}}) }}
+        {{ stimulus_controller('whatwedo/crud-bundle/tab') }}
     >
         <p class="mb-4">{{ block.option('label') | trans }}</p>
         <div class="sm:hidden">
