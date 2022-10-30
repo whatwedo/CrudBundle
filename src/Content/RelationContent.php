@@ -10,6 +10,7 @@ use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\Options;
@@ -19,6 +20,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\Page;
+use whatwedo\CrudBundle\Enum\PageInterface;
 use whatwedo\CrudBundle\Enum\PageMode;
 use whatwedo\CrudBundle\Form\Type\EntityAjaxType;
 use whatwedo\CrudBundle\Form\Type\EntityHiddenType;
@@ -33,59 +35,108 @@ use function array_reduce;
 use function array_reverse;
 use function implode;
 
-class RelationContent extends TableContent
+class RelationContent extends AbstractContent
 {
+    /**
+     * Defines additional table options to be set in the table factory.
+     * Defaults to an empty array <code>[]</code>
+     * Accepts: <code>array</code>.
+     */
     public const OPT_TABLE_OPTIONS = 'table_options';
 
+    /**
+     * Defines the form type to be used. Uses the same logic as symfony form types if kept null.
+     * Defaults to <code>whatwedo\CrudBundle\Form\Type\EntityAjaxType</code>
+     * Accepts: <code>null|FormTypeInterface</code>.
+     */
     public const OPT_FORM_TYPE = 'form_type';
 
+    /**
+     * Defines the form type options.
+     * Defaults to an array <code>[
+     *      'definition' => [relationDefinition::class],
+     *      'multiple' => true,
+     * ]</code>
+     * Accepts: <code>array</code>.
+     */
     public const OPT_FORM_OPTIONS = 'form_options';
 
     public const OPT_FORM_OPTIONS_MULTIPLE = 'multiple';
 
     public const OPT_FORM_OPTIONS_DEFINITTION = self::OPT_DEFINITION;
 
-    public const OPT_HELP = 'help';
-
+    /**
+     * Defines whether this content will trigger a ajax change to the definition or not.
+     * Defaults to <code>false</code>
+     * Accepts: <code>bool</code>.
+     */
     public const OPT_AJAX_FORM_TRIGGER = 'ajax_form_trigger';
 
+    /**
+     * Defines a callable to edit the used query builder in forms. The callable will be called with the query builder
+     * as first parameter and the definition as second parameter.
+     * Defaults to <code>null</code>
+     * Accepts: <code>null|callable</code>.
+     */
     public const OPT_QUERY_BUILDER_CONFIGURATION = 'query_builder_configuration';
 
+    /**
+     * Defines a callable to configure the table.
+     * Defaults to <code>null</code>
+     * Accepts: <code>callable|null</code>.
+     */
     public const OPT_TABLE_CONFIGURATION = 'table_configuration';
 
-    public const OPT_ACTION_CONFIGURATION = 'action_configuration';
-
+    /**
+     * Defines the request query parameter name to be used on create / add routes around this content.
+     * Can be used together with the <code>Content::OPT_PRESELECT_DEFINITION</code> Option.
+     * Defaults to <code>[relation::getAlias]</code>
+     * Accepts: <code>null|string</code>.
+     */
     public const OPT_ROUTE_ADDITION_KEY = 'route_addition_key';
 
-    public const OPT_SHOW_INDEX_BUTTON = 'show_index_button';
-
+    /**
+     * Defines the voter attribute which will be used to show the Add button.
+     * Defaults to <code>Page::EDIT</code>
+     * Accepts: <code>null|object|string</code>.
+     */
     public const OPT_ADD_VOTER_ATTRIBUTE = 'add_voter_attribute';
 
+    /**
+     * Defines a callable which return a create uri for the add button.
+     * Defaults to a <code>callable</code> which will generate a uri from the definition.
+     * Accepts: <code>callable|null</code>.
+     */
     public const OPT_CREATE_URL = 'create_url';
 
+    /**
+     * Defines a callable which return a reload uri for the content. This will be used to reload the content after
+     * adding a new entity.
+     * Defaults to a <code>callable</code> which will generate a uri from the definition.
+     * Accepts: <code>callable|null</code>.
+     */
     public const OPT_RELOAD_URL = 'reload_url';
 
-    public const OPT_VISIBILITY = 'visibility';
-
+    /**
+     * Defines whether the content should be rendered in the form. You can choose to show the table in all cases.
+     * Defaults to <code>false</code>
+     * Accepts: <code>bool</code>.
+     */
     public const OPT_SHOW_TABLE_IN_FORM = 'show_table_in_form';
 
+    /**
+     * Defines the definition where the relation is coming from.
+     * Defaults to the definition of the content.
+     * Accepts: <code>DefinitionInterface</code>.
+     */
     public const OPT_DEFINITION = 'definition';
 
+    /**
+     * Defines the class of the entity which is used in the relation.
+     * Defaults to <code>[definition::getEntity]</code>
+     * Accepts: <code>SomeEntityFQDN</code>.
+     */
     public const OPT_CLASS = 'class';
-
-    public const OPT_LABEL = 'label';
-
-    public const OPT_CALLABLE = 'callable';
-
-    public const OPT_ATTR = 'attr';
-
-    public const OPT_SHOW_VOTER_ATTRIBUTE = 'show_voter_attribute';
-
-    public const OPT_EDIT_VOTER_ATTRIBUTE = 'edit_voter_attribute';
-
-    public const OPT_CREATE_VOTER_ATTRIBUTE = 'create_voter_attribute';
-
-    public const OPT_BLOCK_PREFIX = 'block_prefix';
 
     public function __construct(
         protected TableFactory $tableFactory,
@@ -96,19 +147,6 @@ class RelationContent extends TableContent
         protected ManagerRegistry $doctrine,
         protected UrlGeneratorInterface $urlGenerator
     ) {
-    }
-
-    public function getIndexRoute(): ?string
-    {
-        if (! $this->options[self::OPT_SHOW_INDEX_BUTTON]) {
-            return null;
-        }
-
-        if ($this->hasCapability(Page::INDEX)) {
-            return $this->getRoute(Page::INDEX);
-        }
-
-        return null;
     }
 
     public function getCreateRoute(): ?string
@@ -168,24 +206,27 @@ class RelationContent extends TableContent
                 self::OPT_FORM_OPTIONS_DEFINITTION => $this->getTargetDefinition($options[self::OPT_ACCESSOR_PATH])::class,
                 self::OPT_FORM_OPTIONS_MULTIPLE => true,
             ],
-            self::OPT_HELP => null,
             self::OPT_AJAX_FORM_TRIGGER => false,
             self::OPT_QUERY_BUILDER_CONFIGURATION => null,
             self::OPT_TABLE_CONFIGURATION => null,
-            self::OPT_ACTION_CONFIGURATION => null,
             self::OPT_ROUTE_ADDITION_KEY => $this->definition::getAlias(),
-            self::OPT_SHOW_INDEX_BUTTON => false,
             self::OPT_ADD_VOTER_ATTRIBUTE => Page::EDIT,
             self::OPT_CREATE_URL => null,
             self::OPT_RELOAD_URL => null,
-            self::OPT_VISIBILITY => [Page::SHOW, Page::EDIT, Page::CREATE],
             self::OPT_SHOW_TABLE_IN_FORM => false,
         ]);
 
+        $resolver->setAllowedTypes(self::OPT_FORM_TYPE, ['null', 'string']);
+        $resolver->setAllowedTypes(self::OPT_AJAX_FORM_TRIGGER, 'bool');
+        $resolver->setAllowedValues(self::OPT_FORM_TYPE, function ($value) {
+            $isNull = $value === null;
+            $isFormTypeFqdn = ! $isNull && class_exists($value) && in_array(FormTypeInterface::class, class_implements($value), true);
+
+            return $isNull || $isFormTypeFqdn;
+        });
         $resolver->setRequired(self::OPT_CREATE_URL);
         $resolver->setRequired(self::OPT_RELOAD_URL);
         $resolver->setAllowedTypes(self::OPT_ROUTE_ADDITION_KEY, ['null', 'string']);
-        $resolver->setAllowedTypes(self::OPT_SHOW_INDEX_BUTTON, 'boolean');
         $resolver->setAllowedTypes(self::OPT_ADD_VOTER_ATTRIBUTE, ['string', 'null', 'object']);
         $resolver->setAllowedTypes(self::OPT_SHOW_TABLE_IN_FORM, 'boolean');
 
@@ -224,7 +265,6 @@ class RelationContent extends TableContent
         $resolver->setAllowedTypes(self::OPT_TABLE_OPTIONS, ['array']);
         $resolver->setAllowedTypes(self::OPT_FORM_OPTIONS, ['array']);
         $resolver->setAllowedTypes(self::OPT_TABLE_CONFIGURATION, ['callable', 'null']);
-        $resolver->setAllowedTypes(self::OPT_ACTION_CONFIGURATION, ['callable', 'null']);
         $resolver->setAllowedTypes(self::OPT_QUERY_BUILDER_CONFIGURATION, ['callable', 'null']);
     }
 
@@ -367,6 +407,21 @@ class RelationContent extends TableContent
         }
 
         return $this->options[self::OPT_RELOAD_URL];
+    }
+
+    public function isTable(): bool
+    {
+        return true;
+    }
+
+    protected function hasCapability(?PageInterface $capability): bool
+    {
+        return call_user_func([$this->getOption(self::OPT_DEFINITION), 'hasCapability'], $capability);
+    }
+
+    protected function getRoute(mixed $suffix): string
+    {
+        return call_user_func([$this->options[self::OPT_DEFINITION], 'getRoute'], $suffix);
     }
 
     private function getTargetDefinition(?string $accessorPath = null): DefinitionInterface

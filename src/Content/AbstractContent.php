@@ -55,19 +55,19 @@ abstract class AbstractContent implements ServiceSubscriberInterface
     public const OPT_ATTR = 'attr';
 
     /**
-     * Defines the visibility of the content. Available options are the on the definition defined Capabilities.
-     * Defaults to <code>[Page::SHOW, Page::EDIT, Page::CREATE]</code>
-     * Accepts: <code>array</code>.
-     */
-    public const OPT_VISIBILITY = 'visibility';
-
-    /**
      * Voter attribute for the show page. If the voter attribute is set, the content will only be shown if the voter
      * returns true. If the voter attribute is not set if will be shown too.
      * Defaults to <code>Page::SHOW</code>
      * Accepts: <code>null|object|string</code>.
      */
     public const OPT_SHOW_VOTER_ATTRIBUTE = 'show_voter_attribute';
+
+    /**
+     * Defines the visibility of the content. Available options are the on the definition defined Capabilities.
+     * Defaults to <code>[Page::SHOW, Page::EDIT, Page::CREATE]</code>
+     * Accepts: <code>array</code>.
+     */
+    public const OPT_VISIBILITY = 'visibility';
 
     /**
      * Voter attribute for the edit page. If the voter attribute is set, the content will only be shown if the voter

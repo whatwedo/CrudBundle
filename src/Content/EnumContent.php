@@ -36,31 +36,14 @@ use whatwedo\CoreBundle\Formatter\EnumFormatter;
 
 class EnumContent extends Content
 {
+    /**
+     * Defines the enum class.
+     * Defaults to <code>null</code>
+     * Accepts: <code>Enum</code>.
+     */
     public const OPT_CLASS = 'class';
 
-    public const OPT_FORMATTER = 'formatter';
-
-    public const OPT_FORM_TYPE = 'form_type';
-
-    public const OPT_FORM_OPTIONS = 'form_options';
-
     public const OPT_FORM_OPTIONS_CLASS = 'class';
-
-    public const OPT_LABEL = 'label';
-
-    public const OPT_CALLABLE = 'callable';
-
-    public const OPT_ATTR = 'attr';
-
-    public const OPT_VISIBILITY = 'visibility';
-
-    public const OPT_SHOW_VOTER_ATTRIBUTE = 'show_voter_attribute';
-
-    public const OPT_EDIT_VOTER_ATTRIBUTE = 'edit_voter_attribute';
-
-    public const OPT_CREATE_VOTER_ATTRIBUTE = 'create_voter_attribute';
-
-    public const OPT_BLOCK_PREFIX = 'block_prefix';
 
     public function configureOptions(OptionsResolver $resolver): void
     {

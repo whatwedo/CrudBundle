@@ -4,7 +4,6 @@
 * Contents
 ** [AbstractContent](/contents/abstract-content.md)
 ** [Content](/contents/content.md)
-** [TableContent](/contents/table-content.md)
 ** [RelationContent](/contents/relation-content.md)
 ** [TwigContent](/contents/twig-content.md)
 ** [EnumContent](/contents/enum-content.md)
