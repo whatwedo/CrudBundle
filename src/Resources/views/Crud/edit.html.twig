@@ -18,7 +18,7 @@
                 'case' : 'edit'
             }) }}"
         {% endif %}
-        class="whatwedo_crud-blocks whatwedo_crud-blocks--edit flex flex-wrap items-baseline"
+        class="whatwedo_crud-blocks whatwedo_crud-blocks--edit flex flex-wrap gap-4 items-baseline"
     >
         {% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\Page::EDIT')) %}
             {% block block_definition_single_block %}
