@@ -34,28 +34,93 @@ class Block implements ServiceSubscriberInterface
     use VisibilityTrait;
     use VoterAttributeTrait;
 
+    /**
+     * Defines the header of the block.
+     * Defaults to <code>wwd.[definition::getEntityAlias].block.[block->acronym]</code>
+     * Accepts: <code>string|boolean|null</code>.
+     */
     public const OPT_LABEL = 'label';
 
+    /**
+     * Defines the block header description.
+     * Defaults to <code>null</code>
+     * Accepts: <code>string|null</code>.
+     */
     public const OPT_DESCRIPTION = 'description';
 
+    /**
+     * Defines custom html attributes on the block. These attributes will be rendered on the outer block div.
+     * It will be rendered as following in the html: <code>key="value"</code>.
+     * Defaults to an empty array <code>[]</code>
+     * Accepts: <code>array</code>.
+     */
     public const OPT_ATTR = 'attr';
 
+    /**
+     * Defines the block size. <code>SMALL</code> = Half Page, <code>LARGE</code> = Full Page.
+     * Defaults to <code>BlockSize::SMALL</code>
+     * Accepts: <code>BlockSize::SMALL|BlockSize::LARGE</code>.
+     */
     public const OPT_SIZE = 'size';
 
+    /**
+     * Defines the visibility of the block. Available options are the on the definition defined Capabilities.
+     * Defaults to <code>[Page::SHOW, Page::EDIT, Page::CREATE]</code>
+     * Accepts: <code>array</code>.
+     */
     public const OPT_VISIBILITY = 'visibility';
 
+    /**
+     * Voter attribute for the show page. If the voter attribute is set, the block will only be shown if the voter
+     * returns true. If the voter attribute is not set it will be shown too.
+     * Defaults to <code>Page::SHOW</code>
+     * Accepts: <code>null|object|string</code>.
+     */
     public const OPT_SHOW_VOTER_ATTRIBUTE = 'show_voter_attribute';
 
+    /**
+     * Voter attribute for the edit page. If the voter attribute is set, the block will only be shown if the voter
+     * returns true. If the voter attribute is not set it will be shown too.
+     * Defaults to <code>Page::EDIT</code>
+     * Accepts: <code>null|object|string</code>.
+     */
     public const OPT_EDIT_VOTER_ATTRIBUTE = 'edit_voter_attribute';
 
+    /**
+     * Voter attribute for the create page. If the voter attribute is set, the block will only be shown if the voter
+     * returns true. If the voter attribute is not set it will be shown too.
+     * Defaults to <code>Page::CREATE</code>
+     * Accepts: <code>null|object|string</code>.
+     */
     public const OPT_CREATE_VOTER_ATTRIBUTE = 'create_voter_attribute';
 
+    /**
+     * Defines the twig block to render the block with. See <code>views/includes/layout/_block.html.twig</code> for more information.
+     * Be sure that your custom Block classes end with <code>Block</code>.
+     * Defaults to Block's class name without the namespace in snake case.
+     * Accepts: <code>string</code>.
+     */
     public const OPT_BLOCK_PREFIX = 'block_prefix';
 
+    /**
+     * Define custom options here. You can use this additional array however it fits your need.
+     * Defaults to an empty array <code>[]</code>
+     * Accepts: <code>array</code>.
+     */
     public const OPT_CUSTOM_OPTIONS = 'custom_options';
 
+    /**
+     * Defines whether the block is collapsible or not.
+     * Defaults to <code>false</code>
+     * Accepts: <code>boolean</code>.
+     */
     public const OPT_COLLAPSIBLE = 'collapsible';
 
+    /**
+     * Defines whether the block should be collapsed by default.
+     * Defaults to <code>false</code>
+     * Accepts: <code>boolean</code>.
+     */
     public const OPT_COLLAPSED = 'collapsed';
 
     protected ContainerInterface $container;
@@ -92,7 +157,7 @@ class Block implements ServiceSubscriberInterface
         $resolver->setDefaults([
             self::OPT_LABEL => null,
             self::OPT_DESCRIPTION => null,
-            self::OPT_ATTR => null,
+            self::OPT_ATTR => [],
             self::OPT_SIZE => BlockSize::SMALL,
             self::OPT_VISIBILITY => [Page::SHOW, Page::EDIT, Page::CREATE],
             self::OPT_SHOW_VOTER_ATTRIBUTE => Page::SHOW,
@@ -108,7 +173,7 @@ class Block implements ServiceSubscriberInterface
         $resolver->setAllowedTypes(self::OPT_CUSTOM_OPTIONS, 'array');
         $resolver->setAllowedTypes(self::OPT_LABEL, ['null', 'string', 'bool']);
         $resolver->setAllowedTypes(self::OPT_DESCRIPTION, ['null', 'string']);
-        $resolver->setAllowedTypes(self::OPT_ATTR, ['null', 'array']);
+        $resolver->setAllowedTypes(self::OPT_ATTR, ['array']);
         $resolver->setAllowedValues(self::OPT_SIZE, [BlockSize::LARGE, BlockSize::SMALL]);
         $resolver->setAllowedTypes(self::OPT_SHOW_VOTER_ATTRIBUTE, ['null', 'string', 'object']);
         $resolver->setAllowedTypes(self::OPT_EDIT_VOTER_ATTRIBUTE, ['null', 'string', 'object']);
@@ -181,7 +246,7 @@ class Block implements ServiceSubscriberInterface
         $element->setDefinition($this->definition);
 
         if ($element->getOptionsResolver()->isDefined(AbstractContent::OPT_LABEL) && ! isset($options[AbstractContent::OPT_LABEL])) {
-            $options[self::OPT_LABEL] = sprintf('wwd.%s.property.%s', $this->definition::getEntityAlias(), $acronym);
+            $options[AbstractContent::OPT_LABEL] = sprintf('wwd.%s.property.%s', $this->definition::getEntityAlias(), $acronym);
         }
         if ($element->getOptionsResolver()->isDefined(AbstractContent::OPT_HELP) && ! isset($options[AbstractContent::OPT_HELP])) {
             $options[AbstractContent::OPT_HELP] = sprintf('wwd.%s.help.%s', $this->definition::getEntityAlias(), $acronym);

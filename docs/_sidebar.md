@@ -8,6 +8,11 @@
 ** [TwigContent](/contents/twig-content.md)
 ** [EnumContent](/contents/enum-content.md)
 
+* Blocks
+** [Block](/blocks/block.md)
+** [BlockBlock](/blocks/block-block.md)
+** [DefinitionBlock](/blocks/definition-block.md)
+
 * TO BE REVISED
 ** [View Configuration](view-configuration.md)
 ** [Table Configuration](table-configuration.md)

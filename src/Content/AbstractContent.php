@@ -39,7 +39,7 @@ abstract class AbstractContent implements ServiceSubscriberInterface
     public const OPT_HELP = 'help';
 
     /**
-     * With the callable you can define custom data which is give to the content.
+     * With the callable you can define custom data which is given to the content.
      * The callable is called with the entity as parameter and should return the data.
      * Defaults to <code>null</code>
      * Accepts: <code>callable|null</code>.
@@ -56,7 +56,7 @@ abstract class AbstractContent implements ServiceSubscriberInterface
 
     /**
      * Voter attribute for the show page. If the voter attribute is set, the content will only be shown if the voter
-     * returns true. If the voter attribute is not set if will be shown too.
+     * returns true. If the voter attribute is not set it will be shown too.
      * Defaults to <code>Page::SHOW</code>
      * Accepts: <code>null|object|string</code>.
      */
@@ -71,7 +71,7 @@ abstract class AbstractContent implements ServiceSubscriberInterface
 
     /**
      * Voter attribute for the edit page. If the voter attribute is set, the content will only be shown if the voter
-     * returns true. If the voter attribute is not set if will be shown too.
+     * returns true. If the voter attribute is not set it will be shown too.
      * Defaults to <code>Page::EDIT</code>
      * Accepts: <code>null|object|string</code>.
      */
@@ -79,7 +79,7 @@ abstract class AbstractContent implements ServiceSubscriberInterface
 
     /**
      * Voter attribute for the create page. If the voter attribute is set, the content will only be shown if the voter
-     * returns true. If the voter attribute is not set if will be shown too.
+     * returns true. If the voter attribute is not set it will be shown too.
      * Defaults to <code>Page::CREATE</code>
      * Accepts: <code>null|object|string</code>.
      */

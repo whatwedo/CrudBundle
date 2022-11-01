@@ -16,14 +16,31 @@ use whatwedo\CrudBundle\View\DefinitionView;
 #[Autoconfigure(tags: ['whatwedo_crud.block'])]
 class BlockBlock extends Block
 {
+    /**
+     * Defines the layout options for this block. Depending on which layout is chosen different options are available.
+     * Defaults to an empty array <code>[]</code>
+     * Accepts: <code>array</code>.
+     */
     public const OPT_LAYOUT_OPTIONS = 'layout_options';
 
+    /**
+     * This is a layout option for the GRID layout. Use this to define the number of columns.
+     */
     public const OPT_LAYOUT_VERTICALLY = 'vertically';
 
+    /**
+     * This is a layout option for the GRID layout. Use this to define the number of rows.
+     */
     public const OPT_LAYOUT_HORIZONTALLY = 'horizontally';
 
+    /**
+     * This is a layout. To use this layout set the <code>Block::OPT_BLOCK_PREFIX</code> to <code>BlockBlock::OPT_BLOCK_PREFIX_TAB</code>
+     */
     public const OPT_BLOCK_PREFIX_TAB = 'tab_block';
 
+    /**
+     * This is a layout. To use this layout set the <code>Block::OPT_BLOCK_PREFIX</code> to <code>BlockBlock::OPT_BLOCK_PREFIX_GRID</code>
+     */
     public const OPT_BLOCK_PREFIX_GRID = 'grid_block';
 
     protected BlockCollection $blocks;
