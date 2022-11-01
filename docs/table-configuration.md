@@ -1,6 +1,6 @@
 # Table Configuration
 
-For a basic table configuration refer to the [WhatwedoTableBundle Documentations](https://doc.whatwedo.ch/whatwedo/tablebundle/table-configuration)
+For a basic table configuration refer to the [WhatwedoTableBundle Documentations](https://whatwedo.github.io/TableBundle/#/)
 
 ```php
 
@@ -29,8 +29,12 @@ class LocationDefinition extends AbstractDefinition
 It is possible to create filters based on columns that have to be joined.  
 FilterTypes accept an array of filters.
 
-### Simple
+### Automatically added Filters
 
+explain how they are added automatically and how to customize them. 
+
+### Custom Filters
+#### Simple
 Filter all rooms included in a house with a specific color.  
 This filter would be applied on the `RoomDefinition`.
 ```php
@@ -65,31 +69,6 @@ public function overrideTableConfiguration(Table $table)
     ], FurnitureStatus::class));
 }
 ```
-
-## Advanced Table Configuration with CrudBundle
-
-### Filters
-The CrudBundle will add filters automatically to your table. You can however override this behaviour. 
-
-In your definition override the method `overrideTableConfiguration`:
-```
-...
-public function overrideTableConfiguration(Table $table)
-{
-    // call parent to add automatically filters
-    parent::overrideTableConfiguration($table);
-    $table
-        ->overrideFilterName('acronym', 'new Label')
-        ->simpleEnumFilter('acronym', YourEnumClass::class)
-        ->removeFilter('acronym')
-    ;
-}
-...
-```
-
-***Attention:***
-* These methods only work when the parent method was called as well!
-* To use `simpleEnumFilter` your Enum Class needs to extend from `whatwedo\CoreBundle\Enum\AbstractSimpleEnum`
 
 ### Action Buttons
 The CrudBundle will add two Action Buttons to each row (show / edit). To add more use the same method `overrideTableConfiguration`.

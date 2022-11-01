@@ -1,5 +1,16 @@
 * Documentation
 ** [Getting Started](/)
+** [View Configuration](view-configuration.md)
+** [Table Configuration](table-configuration.md)
+** [Exporting](exporting.md)
+** [Templating](templating.md)
+** [Formatter](formatter.md)
+** [Events](events.md)
+** [Custom Routes](custom-routes.md)
+** [Search](search.md)
+
+* Extensions
+** [Breadcrumbs](extensions/breadcrumbs.md)
 
 * Contents
 ** [AbstractContent](/contents/abstract-content.md)
@@ -12,14 +23,3 @@
 ** [Block](/blocks/block.md)
 ** [BlockBlock](/blocks/block-block.md)
 ** [DefinitionBlock](/blocks/definition-block.md)
-
-* TO BE REVISED
-** [View Configuration](view-configuration.md)
-** [Table Configuration](table-configuration.md)
-** [Formatter](formatter.md)
-** [Events](events.md)
-** [Ajax](ajax.md)
-** [Exporting](exporting.md)
-** [Templating](templating.md)
-** [Custom Routes](custom-routes.md)
-** [Breadcrumbs](extensions/breadcrumbs.md)

@@ -2,10 +2,7 @@
 
 ## Layout Based Rendering
 
-with Version v0.5 a new templating method has been introduced. Like in Symfony forms, one layout file is introduced, whitch 
-can easily be extended or overwritten. The old rendering is still available and is used as the default rendering engine.  
-
-To enable the layout based rendering you need to change the template path in the `config/packages/whatwedo_crud.yaml` config.
+CHECK WHETHER THESE CONFIGS ARE STILL VALID (@tuxes3)
 
 ```
 whatwedo_crud:

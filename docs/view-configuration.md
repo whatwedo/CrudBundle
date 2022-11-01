@@ -1,6 +1,6 @@
 # View Configuration
 
-In the view configuration you define all detail views of your entity (create, edit, view). 
+In the view configuration you define all detail views of your entity (create, edit, show). 
 
 Every view is splitted into one or more blocks (like groups of properties).
 
@@ -36,82 +36,14 @@ public function configureView(DefinitionBuilder $builder, $data)
 }
 ```
 
-### Block Options
-
-- `label`: Title of the block
-- `attr`: Block attributes
-- `size`: BlockSizeEnum::SMALL, BlockSizeEnum::LARGE
-- `collapsible`: boolean
-- `collapsed`: boolean
-- `visibility`: display Box in which Context Page::SHOW | Page::EDIT | Page::CREATE,
-- `show_voter_attribute`:  Page::SHOW,
-- `edit_voter_attribute`: Page::EDIT,
-- `create_voter_attribute`: Page::CREATE,
-
-
-### Content Options
-
- - `accessor_path`: default to the acronym
- - `callable`: callable to get the data, no accessor_path needed
- - `formatter`: [formatter class](formatter.md) to format the output of the field
- - `formatter_options`: options for the [formatter class](formatter.md) 
- - `visibility`: define visibilities of a form
- - `form_type`: custom [form type](https://symfony.com/doc/current/reference/forms/types.html) (only needed if symfony takes the wrong one)
- - `form_options`: options given to the form type
- - `preselect_definition`: needed for relations, see below
- - `help`: Helptext
- - `attr`: attributes
-
-
-### Translations
-
-If the options `label` or `help` are not set, the defaults are
-
-- `<enttyClassName>.<acronym>` for the `label` option
-- `<enttyClassName>.<acronym>.help` for `help` 
-
 ## Add a relation
  
-A relation will render a custom table inside the show-View with add, view and edit buttons. This is how to configure this:
+### OneToMany / ManyToMany
 
-```
-// UserDefinition.php
+Explain how to add a relation to a view.
 
-$builder->addBlock('subscription', [
-    'label' => 'Subscriptions',
-])
-    ->addContent('subscriptions', RelationContent::class, [
-        'label' => 'Subscriptions',
-        'definition' => SubscriptionDefinition::class,
-        'route_addition_key' => static::getChildRouteAddition(), // this will add `?{route_addition_key}={id}` to the create route, to preselect the current entity - overwrite this in your definition to your desired parameter
-        'table_configuration' => function(Table $table) {
-            $table
-                ->addColumn('product', null, [
-                    'label' => 'Product',
-                ])
-// ...
-            ;
-        },
-    ])
-;
-```
+### ManyToOne / OneToOne
 
-```
-// SubscriptionDefinition.php
+Explain how to add a relation to a view.
 
-->addContent('user', null, [
-    'label' => 'Client',
-    'preselect_definition' => UserDefinition::class, // to know which parameter is the preselected user
-    'form_type' => EntityType::class,
-    'form_options' => [
-        'class' => UserDefinition::getEntity(),
-    ],
-])
-```
- 
-### Relation Content Options
-
-- `accessor_path`: defaults to acronym
-- `table_configuration`: callable with the table configuration
-- `definition`: definition of the relation
-- `route_addition_key`: parameter to be added to the query on create route
+### Ajax in Create/Edit
