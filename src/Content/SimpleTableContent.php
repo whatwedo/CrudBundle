@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Content;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -265,7 +264,6 @@ class SimpleTableContent extends TableContent
 
         $queryBuilder = $targetDefinition->getQueryBuilder();
 
-
         $options['dataloader_options']['query_builder'] = $queryBuilder;
 
         if (is_callable($this->options[self::OPT_QUERY_BUILDER_CONFIGURATION])) {
@@ -292,7 +290,9 @@ class SimpleTableContent extends TableContent
                 'label' => 'Details',
                 'icon' => 'arrow-right',
                 'route' => $showRoute,
-                'route_parameters' => ['id' => $entity->getId()],
+                'route_parameters' => [
+                    'id' => $entity->getId(),
+                ],
                 'voter_attribute' => Page::SHOW,
             ];
         }
@@ -302,7 +302,9 @@ class SimpleTableContent extends TableContent
                 'label' => 'Bearbeiten',
                 'icon' => 'pencil',
                 'route' => $this->getRoute(Page::EDIT),
-                'route_parameters' => ['id' => $entity->getId()],
+                'route_parameters' => [
+                    'id' => $entity->getId(),
+                ],
                 'voter_attribute' => Page::EDIT,
             ];
         }
