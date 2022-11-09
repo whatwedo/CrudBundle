@@ -1,14 +1,23 @@
 {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
 
-{% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW')) %}
-    {% if block.acronym == blockAcronym and fieldAcronym is null%}
-        {{ wwd_crud_render_block(block, view, constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW')) }}
-    {% elseif block.acronym == blockAcronym and fieldAcronym is not null %}
-        {% for content in block.contents(view, constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW')) %}
-            {% if content.acronym == fieldAcronym %}
-                {{ wwd_crud_render_content(content, block, view) }}
-            {% endif %}
-        {% endfor %}
-    {% endif %}
-{% endfor %}
 
+{% macro reload_block(view, subBlock, blockAcronym, fieldAcronym) %}
+    {% set blocks = subBlock is null ? view.blocks(constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW')) : subBlock.blocks(view, constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW')) %}
+
+    {% for block in blocks %}
+        {% if block.acronym == blockAcronym and fieldAcronym is null%}
+            {{ wwd_crud_render_block(block, view, constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW')) }}
+        {% elseif block.acronym == blockAcronym and fieldAcronym is not null %}
+            {% for content in block.contents(view, constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW')) %}
+                {% if content.acronym == fieldAcronym %}
+                    {{ wwd_crud_render_content(content, block, view) }}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% if block.blocks is defined %}
+            {{ _self.reload_block(view, block, blockAcronym, fieldAcronym) }}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{{ _self.reload_block(view, null, blockAcronym, fieldAcronym) }}
