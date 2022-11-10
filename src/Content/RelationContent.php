@@ -350,34 +350,52 @@ class RelationContent extends AbstractContent
         $targetDefinition->configureTable($table);
         $table->setOption('title', null); // no h1 for relation content
 
-        if (is_callable($this->options[self::OPT_TABLE_CONFIGURATION])) {
-            $this->options[self::OPT_TABLE_CONFIGURATION]($table);
-        }
-
         $actionColumnItems = [];
-
-        if ($this->hasCapability(Page::SHOW)) {
-            $showRoute = $this->getRoute(Page::SHOW);
-
-            $actionColumnItems[Page::SHOW->toRoute()] = [
-                'label' => 'Details',
-                'icon' => 'arrow-right',
-                'button' => 'primary',
-                'route' => $showRoute,
-                'route_parameters' => [],
-                'voter_attribute' => Page::SHOW,
-            ];
-        }
 
         if ($this->hasCapability(Page::EDIT)) {
             $actionColumnItems[Page::EDIT->toRoute()] = [
                 'label' => 'Bearbeiten',
                 'icon' => 'pencil',
-                'button' => 'warning',
                 'route' => $this->getRoute(Page::EDIT),
-                'route_parameters' => [],
+                'route_parameters' => fn ($row) => [
+                    'id' => $row->getId(),
+                ],
                 'voter_attribute' => Page::EDIT,
             ];
+        }
+        
+        if ($this->hasCapability(Page::SHOW)) {
+            $showRoute = $this->getRoute(Page::SHOW);
+
+            $actionColumnItems[Page::SHOW->toRoute()] = [
+                'label' => 'Ansehen',
+                'icon' => 'eye',
+                'route' => $showRoute,
+                'route_parameters' => fn ($row) => [
+                    'id' => $row->getId(),
+                ],
+                'voter_attribute' => Page::SHOW,
+            ];
+        }
+
+        if ($this->hasCapability(Page::DELETE)) {
+            $actionColumnItems[Page::DELETE->toRoute()] = [
+                'label' => 'Löschen',
+                'icon' => 'trash',
+                'route' => $this->getRoute(Page::DELETE),
+                'route_parameters' => fn ($row) => [
+                    'id' => $row->getId(),
+                ],
+                'voter_attribute' => Page::DELETE,
+            ];
+        }
+
+        foreach ($actionColumnItems as $key => $value) {
+            $table->addAction($key, $value);
+        }
+
+        if (is_callable($this->options[self::OPT_TABLE_CONFIGURATION])) {
+            $this->options[self::OPT_TABLE_CONFIGURATION]($table);
         }
 
         return $table;
