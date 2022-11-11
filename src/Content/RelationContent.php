@@ -363,7 +363,7 @@ class RelationContent extends AbstractContent
                 'voter_attribute' => Page::EDIT,
             ];
         }
-        
+
         if ($this->hasCapability(Page::SHOW)) {
             $showRoute = $this->getRoute(Page::SHOW);
 
