@@ -34,12 +34,12 @@ class BlockBlock extends Block
     public const OPT_LAYOUT_HORIZONTALLY = 'horizontally';
 
     /**
-     * This is a layout. To use this layout set the <code>Block::OPT_BLOCK_PREFIX</code> to <code>BlockBlock::OPT_BLOCK_PREFIX_TAB</code>
+     * This is a layout. To use this layout set the <code>Block::OPT_BLOCK_PREFIX</code> to <code>BlockBlock::OPT_BLOCK_PREFIX_TAB</code>.
      */
     public const OPT_BLOCK_PREFIX_TAB = 'tab_block';
 
     /**
-     * This is a layout. To use this layout set the <code>Block::OPT_BLOCK_PREFIX</code> to <code>BlockBlock::OPT_BLOCK_PREFIX_GRID</code>
+     * This is a layout. To use this layout set the <code>Block::OPT_BLOCK_PREFIX</code> to <code>BlockBlock::OPT_BLOCK_PREFIX_GRID</code>.
      */
     public const OPT_BLOCK_PREFIX_GRID = 'grid_block';
 

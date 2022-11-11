@@ -13,7 +13,6 @@ use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 class DefinitionBlock extends Block
 {
-
     /**
      * Defines the accessor path to the data.
      * Defaults to <code>null</code>
