@@ -242,7 +242,7 @@ class DefinitionView
 
             $this->handleBockBlock($block, $handleDefinitionBlock);
 
-            foreach ($block->getContents() as $content) {
+            foreach ($block->getContents($this, $this->getRoute()) as $content) {
                 if (! $content->hasOption('form_type')
                     || ! $content->isVisibleOnEdit()
                     || ! $content->isVisibleInEditForm()
@@ -309,7 +309,7 @@ class DefinitionView
 
             $this->handleBockBlock($block, $handleDefinitionBlock);
 
-            foreach ($block->getContents() as $content) {
+            foreach ($block->getContents($this, $this->getRoute()) as $content) {
                 if (! $content->hasOption('form_type')
                     || ! $content->isVisibleOnCreate()
                     || ! $content->isVisibleInCreateForm()

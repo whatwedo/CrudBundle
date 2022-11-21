@@ -85,7 +85,7 @@ class BlockBlock extends Block
     public function getContents(?DefinitionView $view = null, ?PageInterface $page = null): ContentCollection
     {
         $contentCollection = new ContentCollection();
-        foreach ($this->blocks as $block) {
+        foreach ($page === null ? $this->blocks : $this->blocks->filterVisibility($page) as $block) {
             $contentCollection->addAll($block->getContents($view, $page));
         }
 
