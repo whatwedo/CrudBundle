@@ -18,6 +18,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use whatwedo\CoreBundle\Action\Action;
+use whatwedo\CoreBundle\Action\PostAction;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Enum\PageInterface;
@@ -391,7 +393,7 @@ class RelationContent extends AbstractContent
         }
 
         foreach ($actionColumnItems as $key => $value) {
-            $table->addAction($key, $value);
+            $table->addAction($key, $value, Page::DELETE->toRoute() === $key ? PostAction::class : Action::class);
         }
 
         if (is_callable($this->options[self::OPT_TABLE_CONFIGURATION])) {
