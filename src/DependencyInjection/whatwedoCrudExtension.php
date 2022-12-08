@@ -36,7 +36,7 @@ class whatwedoCrudExtension extends Extension
             && isset($config['breadcrumbs']['home_route'])) {
             $container->setParameter('whatwedo_crud.config.breadcrumbs.home.route', $config['breadcrumbs']['home_route']);
         } else {
-            $container->setParameter('whatwedo_crud.config.breadcrumbs.home.route', false);
+            $container->setParameter('whatwedo_crud.config.breadcrumbs.home.route', 'whatwedo_crud_dashboard');
         }
 
         // templates

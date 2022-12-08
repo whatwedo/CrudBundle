@@ -535,10 +535,12 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         if ($isEdit) {
             $this->dispatchEvent(CrudEvent::POST_EDIT_PREFIX, $entity);
         }
-        $this->addFlash('success', sprintf('Erfolgreich gespeichert.'));
+
         if ($mode === PageMode::MODAL) {
             return new Response('', 200);
         }
+
+        $this->addFlash('success', sprintf('Erfolgreich gespeichert.'));
 
         return $this->getDefinition()->getRedirect(Page::CREATE, $entity);
     }

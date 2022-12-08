@@ -3,21 +3,18 @@
 This extension allows adding auto-generated breadcrumbs to your project.
 
 ## Requirements
-This extension requires the [whiteoctober/BreadcrumbsBundle](https://github.com/whiteoctober/BreadcrumbsBundle) bundle.
+This extension requires the [mhujer/breadcrumbs-bundle](https://github.com/mhujer/BreadcrumbsBundle) bundle.
 
 ## Installation
 
-1. follow the installation instructions on [whiteoctober/BreadcrumbsBundle GitHub Page](https://github.com/whiteoctober/BreadcrumbsBundle).
+1. follow the installation instructions on [mhujer/breadcrumbs-bundle GitHub Page](https://github.com/mhujer/BreadcrumbsBundle).
 2. configure the bundle:
 ```yml
-
 whatwedo_crud:
     breadcrumbs:
         home_text: Dashboard
         home_route: my_project_dashboard_start
-
 ```
-3. add the breadcrumbs to your frontend: `{{ wo_render_breadcrumbs() }}`
 3. clear the cache of your application
 
 ## Usage
@@ -29,65 +26,51 @@ If you have objects with relations in your application, you might want to prepen
 You can overwrite them in your definition-file. 
 
 ```php
-// Just add one unlinked item
-...
 class ProductDefinition extends AbstractDefinition
 {
-    public static function getEntityTitle()
+    public function buildBreadcrumbs(mixed $entity = null, ?PageInterface $route = null, ?Breadcrumbs $breadcrumbs = null): void
     {
-        return 'My Products';
+        parent::buildBreadcrumbs($entity, $route, $breadcrumbs);   
+        $this->getBreadcrumbs()->addItem('Some Custom Text', 'some_custom_route');
     }
+}
+```
 
-    public function buildBreadcrumbs($entity = null, $route = null)
-    {
-        $this->getBreadcrumbs()->addItem('Product Management');
-        parent::buildBreadcrumbs($entity, $route);
-    }
-...
+You can let the bundle automatically build the breadcrumbs. For that to work you have to define the parents of each entity.
 
-
-
-
-// add parent entity
+```php 
 class ProductContentDefinition extends AbstractDefinition
 {
-    public static function getEntityTitle()
+    public function getParentDefinitionProperty(?object $data): ?string
     {
-        return 'My Product Contents';
+        return 'product';
     }
-
-    public function buildBreadcrumbs($entity = null, $route = null)
-    {
-        $this->getBreadcrumbs()->addItem('Product Management');
-
-        $product = null;
-        if ($entity instanceof Content
-            && $entity->getProduct() instanceof Product) {
-            $product = $entity->getProduct();
-        }
-
-        // if you create a new content from the product, we pass the product id by parameter
-        if ($this->getRequestStack()->getCurrentRequest()->query->has(ProductDefinition::getQueryAlias())) {
-            $product = $this->getDoctrine()->getRepository(ProductDefinition::getEntity())->find(
-                $this->getRequestStack()->getCurrentRequest()->query->get(ProductDefinition::getQueryAlias())
-            );
-        }
-
-        if ($product instanceof Product) {
-            $this->getBreadcrumbs()->addRouteItem(ProductDefinition::getEntityTitle(), ProductDefinition::getRoutePrefix() . '_' . Page::INDEX);
-            $this->getBreadcrumbs()->addRouteItem($product->__toString(), ProductDefinition::getRoutePrefix() . '_' . Page::SHOW, ['id' => $product->getId()]);
-        }
-
-        parent::buildBreadcrumbs($entity, $route);
-    }
-...
+}
 ```
 Where possible, we inject the entity and the current route, but try not to rely on it.
 
 ### Use it outside of Definitions and CrudController
 
-To use the breadcrumbs outside of the definitions, you can use this snippet to get the [`Breadcrumbs`-Class](https://github.com/whiteoctober/BreadcrumbsBundle/blob/master/Model/Breadcrumbs.php)
+To use the breadcrumbs outside of the definitions, you can use this snippet:
 
 ```php
-$this->get("whatwedo_crud.extension.breadcrumbs")->getBreadcrumbs();
+class SomeController extends AbstractController
+{
+    public function __construct(protected BreadcrumbsExtension $breadcrumbsExtension)
+    {
+    }
+
+    #[Route('/some', name: 'some')]
+    public function someAction()
+    {
+        $this->breadcrumbsExtension->getBreadcrumbs()->addItem('Some Text', 'some_route');
+        return $this->render('some.html.twig');
+    }
+}
+```
+
+And render it in your template like following:
+
+```twig
+{{ wo_render_breadcrumbs() }}
 ```

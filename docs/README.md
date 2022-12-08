@@ -2,27 +2,30 @@
 
 ## Quick Start
 ```
-symfony new my_project_directory --version="6.1.*"
+symfony new my_project_directory
+``` 
+As soon as we release the `1.0` version tag you will be able to install the bundle with the following command:
+```sh
+composer require whatwedo/crud-bundle
 ```
-Add the following to your composer.json:
-
+As of now you still need to add the following to your composer.json and then run `composer update`: 
 ```json 
-...
 "require": {
     "whatwedo/core-bundle": "dev-1.0-dev as v1.0.0",
     "whatwedo/crud-bundle": "dev-1.0-dev as v1.0.0",
     "whatwedo/search-bundle": "dev-3.0-dev as v3.0.0",
     "whatwedo/table-bundle": "dev-1.0-dev as v1.0.0",
 }
-...
 ```
 
-Run
-```
-composer update
+On a newly installed symfony project you can do all needed configurations with this command. If you are trying to implement
+the crud bundle in an existing project you can skip this step. Read the full guide and only use the steps needed for your
+project.
+```sh
 bin/console whatwedo:crud:setup
 ```
 
+To get the forms smoothly running you should add our form theme to your twig configuration.
 Add a new `form_theme` to your `twig.yaml` like following:
 ```yaml
 twig:
@@ -30,7 +33,18 @@ twig:
         - '@whatwedoCrud/form_layout.html.twig'
 ```
 
-You are now ready to create entities (`bin/console make:entity`) and definitions (`bin/console make:definition`).
+The crud bundle is currently only translated in German. Be sure to have set the locale to `de` in your `config/packages/framework.yaml`
+or create your own translations. Push them to us, and we will add them to the bundle.
+```yaml
+framework:
+    default_locale: de
+```
+
+You are now ready to create entities and definitions: 
+```sh
+bin/console make:entity
+bin/console make:definition
+``` 
 
 # Full Guide
 
@@ -57,21 +71,12 @@ composer require whatwedo/crud-bundle
 The v1 version is still in development,
 so you need to add these lines manually to the `composer.json` `require` to get the version constraint right:
 ```json
-    ...
     "whatwedo/core-bundle": "dev-1.0-dev as v1.0.0",
     "whatwedo/crud-bundle": "dev-1.0-dev as v1.0.0",
     "whatwedo/search-bundle": "dev-3.0-dev as v3.0.0",
     "whatwedo/table-bundle": "dev-1.0-dev as v1.0.0",
-    ...
 ```
-Run `composer update`  
-After successfully installing the bundle, you should see changes in these files:
- - `assets/controller.json`
- - `config/bundles.php`
- - `package.json`
- - `symfony.lock`
- - `composer.json`
- - `composer.lock`.
+Run `composer update`
 
 ### Routing
 Add our routes ```config/routes/wwd_crud.yaml```
@@ -84,26 +89,6 @@ Here you can define a prefix for the whole crud part.
 
 We mostly use `/admin` as often times this bundle is used as a backend. 
 You can however use and configure it to whatever suits your business case. 
-
-### ORM
-The table bundle allows you to save filters on the go.
-To enable this feature create this config `config/packages/whatwedo_table.yaml`:
-```yaml
-whatwedo_table:
-    filter:
-        save_created_by: true # defaults to false
-```
-These filters save the creator, therefore you need to configure your user class. 
-You do this in your `packges/doctrine.yaml` file:
-```yaml
-doctrine:
-    orm:
-        resolve_target_entities:
-            # The class which will be returned with "Symfony\Component\Security\Core\Security::getUser"
-            whatwedo\TableBundle\Entity\UserInterface: App\Entity\User
-```
-Be sure to decide relatively early in your project lifecycle whether you want to save the user or not.
-Depending on this config a different doctrine migration is provided.
 
 ### Tailwind and Webpack
 Add a new `form_theme` to your `twig.yaml` like this:
@@ -204,64 +189,6 @@ Our default views extend your `templates/base.html.twig` template. To get the de
 {% extends '@whatwedoCrud/base.html.twig' %}
 ```
 If you create your own template without extending ours, be sure to use the same block names and stimulus controllers.
-
-##### Config with our templates
-If you are using our template, you will need a route named `dashboard`. A simple dashboard template file could look like this:  
-
-`config/routes/wwd_crud.yaml`
-```yaml
-dashboard:
-  path: /dashboard
-  controller: Symfony\Bundle\FrameworkBundle\Controller\TemplateController
-  defaults:
-    template: dashboard.html.twig
-```
-`templates/dashboard.html.twig`
-```twig
-{% extends 'base.html.twig' %}
-{% block main %}
-    Your static dashboard.
-{% endblock %}
-```
-You will also need two menus (main and sub).
-You can configure them like this:
-
-`services.yaml`
-```yaml
-App\Menu\MenuBuilder:
-    tags:
-        - { name: knp_menu.menu_builder, method: createMainMenu, alias: main }
-        - { name: knp_menu.menu_builder, method: createSubMenu, alias: sub }
-```
-
-`App\Menu\MenuBuilder.php`
-```php
-namespace App\Menu;
-
-use Knp\Menu\ItemInterface;
-use whatwedo\CrudBundle\Builder\DefinitionMenuBuilder;
-
-class MenuBuilder extends DefinitionMenuBuilder
-{
-    public function createMainMenu(): ItemInterface
-    {
-        $menu = $this->factory->createItem('');
-        $menu->addChild('Dashboard', [
-            'route' => 'dashboard',
-            'attributes' => [
-                'icon' => 'house-door',
-            ],
-        ]);
-        return $menu;
-    }
-
-    public function createSubMenu(): ItemInterface
-    {
-        $menu = $this->factory->createItem('');
-        return $menu;
-    }
-}
-```
 
 Done! The whatwedoCrudBundle is fully installed. You should see your dashboard at: http://localhost:8000/dashboard. Now start using it!
 

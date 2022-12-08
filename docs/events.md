@@ -4,14 +4,21 @@ There are some events, which are triggered while editing or creating entites.
 
 ## Events available
 
+- `whatwedo_crud.pre_show`: Is triggered before the show action is executed.
 - `whatwedo_crud.pre_create`: Is triggered before creating (persist / flush) an entity.
 - `whatwedo_crud.post_create`: Is triggered after creating (persist / flush) an entity.
+- `whatwedo_crud.create_show`: Is triggered on creating a new entity and showing the form.
+- `whatwedo_crud.pre_edit_form_creation`: Is triggered before creating the edit form.
 - `whatwedo_crud.pre_edit`: Is triggered before saving (persist / flush) an entity.
 - `whatwedo_crud.post_edit`: Is triggered after saving (persist / flush) an entity.
-- `whatwedo_crud.pre_create.DEFINITION_ALIAS`: Is triggered before creating (persist / flush) a specific entity.
-- `whatwedo_crud.post_create.DEFINITION_ALIAS`: Is triggered after creating (persist / flush) a specific entity.
-- `whatwedo_crud.pre_edit.DEFINITION_ALIAS`: Is triggered before saving (persist / flush) a specific entity.
-- `whatwedo_crud.post_edit.DEFINITION_ALIAS`: Is triggered after saving (persist / flush) a specific entity.
+- `whatwedo_crud.new`: Is triggered before creating a new entity.
+- `whatwedo_crud.pre_validate`: Is triggered before validating an entity.
+- `whatwedo_crud.post_validate`: Is triggered after validating an entity.
+- `whatwedo_crud.pre_delete`: Is triggered before deleting an entity.
+- `whatwedo_crud.post_delete`: Is triggered after deleting an entity.
+
+Each event can be suffixed with the definition alias to only get events for a specific definition.
+For example: `whatwedo_crud.pre_show.my_definition_alias`.
 
 ## Using events
 
@@ -53,12 +60,16 @@ class HistoryCreateEventListener
 }
 ```
 
+This example uses event listeners defined in the services.yaml file.
+You can also use Event Subscriber with the same result.
+See the official docs for more information: https://symfony.com/doc/current/event_dispatcher.html
+
 ```
-# src/Agency/UserBundle/Resources/config/services.yml
+# config/services.yml
 
 services:
     agency_user.event_listener.history_create:
-        class: Agency\UserBundle\EventListener\HistoryCreateEventListener
+        class: App\EventListener\HistoryCreateEventListener
         arguments:
             - '@security.token_storage'
         tags:
