@@ -11,6 +11,7 @@
 
 * Cookbook
 ** [Overview](cookbook/overview_todo.md)
+** - [Filter Overview](cookbook/filters.md)
 
 * Extensions
 ** [Breadcrumbs](extensions/breadcrumbs.md)
