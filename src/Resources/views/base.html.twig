@@ -17,7 +17,7 @@
         {% endblock %}
     {% endblock %}
 </head>
-<body class="{% block body_class %}{% endblock %}" data-turbo="false">
+<body class="h-full {% block body_class %}{% endblock %}" data-turbo="false">
 {% block content %}
     <div {{ stimulus_controller('whatwedo/crud-bundle/offcanvas') }}>
 
