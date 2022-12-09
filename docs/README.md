@@ -134,7 +134,10 @@ module.exports = {
                     700: '...',
                     800: '...',
                 },
+                neutral: colors.slate,
                 error: colors.red,
+                warning: colors.orange,
+                success: color.green,
             }
         },
     },
