@@ -106,7 +106,7 @@
             </div>
         </div>
 
-        <div class="md:pl-64 flex flex-col flex-1">
+        <div class="md:pl-64 flex flex-col flex-1 min-h-screen">
             <div class="sticky top-0 z-10 md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-neutral-100">
                 <button {{ stimulus_action('whatwedo/crud-bundle/offcanvas', 'showContent') }} type="button" class="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-neutral-500 hover:text-neutral-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500">
                     <span class="sr-only">Open sidebar</span>
@@ -137,10 +137,16 @@
                     {% include "@whatwedoCrud/includes/main/_messages.html.twig" %}
                 {% endblock %}
 
-                <div class="whatwedo_crud-maincontent m-4">
+                <div class="whatwedo_crud-maincontent m-4 grow">
                     {% block main %}
                     {% endblock %}
                 </div>
+
+                {% block footer %}
+                    <footer class="whatwedo-utility-paragraph text-center mb-2">
+                        <a href="https://github.com/whatwedo/CrudBundle">CrudBundle</a> | Made with ♥️ by <a href="https://whatwedo.ch" target="_blank">whatwedo</a>
+                    </footer>
+                {% endblock %}
             </main>
         </div>
     </div>
