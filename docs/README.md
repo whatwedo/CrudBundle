@@ -106,7 +106,7 @@ yarn add tailwindcss postcss-loader sass-loader sass autoprefixer --dev
 ```
 
 #### Tailwind
-Be sure to extend tailwinds default config. You need a `primary` color and an `error` color.
+Be sure to extend tailwinds default config. You need a `primary` color and an some accent colors like `error`, `warning` and `success` color.
 Furthermore, you need to add our files to the `content` section. The `@tailwindcss/forms` plugin is a basic form style resetter. 
 The config is located at `tailwind.config.js`.  
 
@@ -126,11 +126,13 @@ module.exports = {
         extend: {
             colors: {
                 primary: {
-                    lightest: '#6EDBFF',
-                    light: '#48C0E8',
-                    DEFAULT: '#007EA8',
-                    dark: '#336C80',
-                    darkest: '#0F4152',
+                    200: '...',
+                    300: '...',
+                    400: '...',
+                    500: '...',
+                    600: '...',
+                    700: '...',
+                    800: '...',
                 },
                 error: colors.red,
             }

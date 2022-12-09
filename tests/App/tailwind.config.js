@@ -17,23 +17,19 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                // needs fixing
-                'neutral-900': '#eeeeee',
-                'neutral-700': '#eeeeee',
-                'neutral-300': '#eeeeee',
-                'neutral-500': '#eeeeee',
-                'neutral-400': '#eeeeee',
-                'neutral-200': '#eeeeee',
-                'neutral-100': '#eeeeee',
-                'neutral-50': '#eeeeee',
                 primary: {
-                    lightest: '#6EDBFF',
-                    light: '#48C0E8',
-                    DEFAULT: '#007EA8',
-                    dark: '#336C80',
-                    darkest: '#0F4152',
+                    200: '#f1f8fe',
+                    300: '#b1d2f2',
+                    400: '#70a1d3',
+                    500: '#4682c3',
+                    600: '#35689d',
+                    700: '#25496e',
+                    800: '#001c5c',
                 },
+                neutral: colors.slate,
                 error: colors.red,
+                warning: colors.orange,
+                success: colors.green,
             }
         },
     },

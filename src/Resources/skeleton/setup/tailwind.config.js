@@ -22,13 +22,17 @@ module.exports = {
         extend: {
             colors: {
                 primary: {
-                    lightest: '#6EDBFF',
-                    light: '#48C0E8',
-                    DEFAULT: '#007EA8',
-                    dark: '#336C80',
-                    darkest: '#0F4152',
+                    200: '#f1f8fe',
+                    300: '#b1d2f2',
+                    400: '#70a1d3',
+                    500: '#4682c3',
+                    600: '#35689d',
+                    700: '#25496e',
+                    800: '#001c5c',
                 },
                 error: colors.red,
+                warning: colors.orange,
+                success: colors.green,
             },
             flexBasis: {
                 '3/6-gap': 'calc(50% - 0.5rem)', // this is an ugly hack to float blocks
