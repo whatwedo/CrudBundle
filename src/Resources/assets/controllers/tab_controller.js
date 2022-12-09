@@ -45,7 +45,7 @@ export default class extends Controller {
         element.classList.add('text-neutral-900');
 
         underline.classList.remove('bg-transparent');
-        underline.classList.add('bg-primary');
+        underline.classList.add('bg-primary-500');
 
         activeContent.classList.remove('hidden');
         activeContent.classList.add('block');

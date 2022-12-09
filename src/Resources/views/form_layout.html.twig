@@ -4,7 +4,7 @@
     {% set row_class = row_class|default('mt-2 px-3 ...') %}
     {% set label_class = label_class|default('font-semibold text-neutral-600 ...') %}
     {% set error_item_class = error_item_class|default('text-red-700 ...') %}
-    {% set widget_class = widget_class|default('border border-neutral-200 bg-neutral-50 ...') %}
+    {% set widget_class = widget_class|default('border border-neutral-300 bg-neutral-100 ...') %}
     {% set widget_disabled_class = widget_disabled_class|default('border-dashed text-neutral-200 ...') %}
     {% set widget_errors_class = widget_errors_class|default('border-double border-red-500 bg-red-50 ...') %}
 #}
@@ -15,12 +15,12 @@
 {% endblock widget_attributes %}
 
 {%- block checkbox_widget -%}
-    {%- set widget_class = widget_class|default('mr-2 focus:ring-primary h-4 w-4 text-primary border-gray-300 rounded') -%}
+    {%- set widget_class = widget_class|default('mr-2 focus:ring-primary-500 h-4 w-4 text-primary-500 border-gray-300 rounded') -%}
     {{- parent() -}}
 {%- endblock checkbox_widget -%}
 
 {%- block radio_widget -%}
-    {%- set widget_class = widget_class|default('mr-2 focus:ring-primary h-4 w-4 text-primary border-gray-300') -%}
+    {%- set widget_class = widget_class|default('mr-2 focus:ring-primary-500 h-4 w-4 text-primary-500 border-gray-300') -%}
     {{- parent() -}}
 {%- endblock radio_widget -%}
 

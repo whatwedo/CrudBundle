@@ -90,7 +90,7 @@
         <div class="sm:hidden">
             <label for="tabs" class="sr-only">Select a tab</label>
             <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
-            <select {{ stimulus_action('whatwedo/crud-bundle/tab', 'changeTab') }} id="tabs" name="tabs" class="block w-full border-neutral-300 focus:border-primary-light focus:ring-primary mb-4">
+            <select {{ stimulus_action('whatwedo/crud-bundle/tab', 'changeTab') }} id="tabs" name="tabs" class="block w-full border-neutral-300 focus:border-primary-300 focus:ring-primary-500 mb-4">
                 {% for subBlock in block.blocks(view, page) %}
                     <option value="{{ subBlock.acronym }}">{{ subBlock.option('label') | trans }}</option>
                 {% endfor %}
