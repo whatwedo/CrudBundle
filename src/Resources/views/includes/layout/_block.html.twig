@@ -11,7 +11,7 @@
             {% if block.option('label') or block.option('description') %}
                 <div class="px-4 py-5" {{ stimulus_target('whatwedo/crud-bundle/block', 'title') }}>
                     {% if block.option('label') %}
-                        <h3 class="text-lg leading-6 font-medium text-neutral-900">
+                        <h3 class="whatwedo-utility-heading-3">
                             {{ block.option('label')|trans }}
                         </h3>
                     {% endif %}
@@ -46,7 +46,7 @@
         {% if block.option('label') or block.option('description') %}
             <div class="wwd-crud-block-header px-4 pt-5 sm:px-6" {{ stimulus_target('whatwedo/crud-bundle/block', 'title') }}>
                 {% if block.option('label') %}
-                    <h3 class="text-lg leading-6 font-medium text-neutral-900">
+                    <h3 class="whatwedo-utility-heading-3">
                         {{ block.option('label')|trans }}
                     </h3>
                 {% endif %}

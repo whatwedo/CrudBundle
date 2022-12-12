@@ -1,6 +1,6 @@
 {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
 {{ form_start(form, { attr: { id: 'crud_main_form', class: 'whatwedo_crud-form whatwedo_crud-form--create flex-grow mt-5' } }) }}
-<h2 class="text-lg leading-6 font-medium text-neutral-900 mb-5">{{ title|default('')|trans }}</h2>
+<h2 class="whatwedo-utility-heading-3 mb-5">{{ title|default('')|trans }}</h2>
 
     {% if form.vars.errors|length > 0 %}
         <div class="mb-5 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
