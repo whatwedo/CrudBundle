@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Routing\Annotation\Route;
 use Twig\Environment;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\Page;
@@ -27,6 +28,9 @@ use whatwedo\CrudBundle\Enum\PageMode;
 use whatwedo\CrudBundle\Event\CrudEvent;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\View\DefinitionView;
+use whatwedo\SearchBundle\Manager\SearchManager;
+use whatwedo\SearchBundle\Trait\SearchOptions;
+use whatwedo\SearchBundle\Trait\SearchTrait;
 use whatwedo\TableBundle\DataLoader\DoctrineDataLoader;
 use whatwedo\TableBundle\DataLoader\DoctrineTreeDataLoader;
 use whatwedo\TableBundle\Entity\TreeInterface;
@@ -47,6 +51,8 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     protected EntityManagerInterface $entityManager;
 
     protected Environment $twig;
+
+    use SearchTrait;
 
     public function indexAction(TableFactory $tableFactory): Response
     {
@@ -551,4 +557,5 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
         return $this->redirectToRoute($route, $parameters, $status);
     }
+    
 }
