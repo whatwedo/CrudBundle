@@ -26,7 +26,7 @@ bin/console whatwedo:crud:setup
 ```
 
 To get the forms smoothly running you should add our form theme to your twig configuration.
-Add a new `form_theme` to your `twig.yaml` like following:
+Add a new `form_theme` to your `config/packages/twig.yaml` like following:
 ```yaml
 twig:
     form_themes:
