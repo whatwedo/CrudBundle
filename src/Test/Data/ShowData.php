@@ -10,9 +10,17 @@ class ShowData extends AbstractData
         protected bool $skip = false,
         protected array $queryParameters = [],
         protected string $entityId = '1',
-        protected int $expectedStatusCode = 200
+        protected int $expectedStatusCode = 200,
+        protected bool $followRedirects = false,
+        protected ?\Closure $assertCallback = null,
     ) {
-        parent::__construct($this->skip, $this->queryParameters, $this->expectedStatusCode);
+        parent::__construct(
+            $this->skip,
+            $this->queryParameters,
+            $this->expectedStatusCode,
+            $this->followRedirects,
+            $this->assertCallback
+        );
     }
 
     public static function new(): self

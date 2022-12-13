@@ -12,9 +12,18 @@ class EditData extends AbstractData
         protected string $entityId = '1',
         protected bool $fillForm = true,
         protected array $formData = [],
-        protected int $expectedStatusCode = 200
+        protected int $expectedStatusCode = 302,
+        protected bool $followRedirects = false,
+        protected ?\Closure $assertCallback = null,
+        protected ?\Closure $assertBeforeSendCallback = null,
     ) {
-        parent::__construct($this->skip, $this->queryParameters, $this->expectedStatusCode);
+        parent::__construct(
+            $this->skip,
+            $this->queryParameters,
+            $this->expectedStatusCode,
+            $this->followRedirects,
+            $this->assertCallback
+        );
     }
 
     public static function new(): self
@@ -56,5 +65,17 @@ class EditData extends AbstractData
     public function getFormData(): array
     {
         return $this->formData;
+    }
+
+    public function getAssertBeforeSendCallback(): ?\Closure
+    {
+        return $this->assertBeforeSendCallback;
+    }
+
+    public function setAssertBeforeSendCallback(\Closure $assertBeforeSendCallback): self
+    {
+        $this->assertBeforeSendCallback = $assertBeforeSendCallback;
+
+        return $this;
     }
 }

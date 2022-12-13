@@ -34,7 +34,9 @@ abstract class AbstractData
     public function __construct(
         protected bool $skip = false,
         protected array $queryParameters = [],
-        protected int $expectedStatusCode = 200
+        protected int $expectedStatusCode = 200,
+        protected bool $followRedirects = false,
+        protected ?\Closure $assertCallback = null,
     ) {
     }
 
@@ -72,6 +74,33 @@ abstract class AbstractData
     public function setExpectedStatusCode(int $expectedStatusCode): self
     {
         $this->expectedStatusCode = $expectedStatusCode;
+
+        return $this;
+    }
+
+    public function isFollowRedirects(): bool
+    {
+        return $this->followRedirects;
+    }
+
+    public function setFollowRedirects(bool $followRedirects): self
+    {
+        $this->followRedirects = $followRedirects;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAssertCallback(): ?\Closure
+    {
+        return $this->assertCallback;
+    }
+
+    public function setAssertCallback(\Closure $callback): self
+    {
+        $this->assertCallback = $callback;
 
         return $this;
     }

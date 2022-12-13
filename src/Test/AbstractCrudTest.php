@@ -51,6 +51,8 @@ use whatwedo\TableBundle\Table\Column;
 
 abstract class AbstractCrudTest extends WebTestCase
 {
+    protected ?KernelBrowser $client = null;
+
     /**
      * @dataProvider indexData()
      */
@@ -65,11 +67,20 @@ abstract class AbstractCrudTest extends WebTestCase
             $this->markTestSkipped('index Test Skipped');
         }
 
-        $this->getBrowser()->request('GET', $this->getRouter()->generate(
+        $url = $this->getRouter()->generate(
             $this->getDefinition()::getRoute(Page::INDEX),
             $indexData->getQueryParameters()
-        ));
+        );
+
+        $this->getBrowser()->followRedirects($indexData->isFollowRedirects());
+
+        $crawler = $this->getBrowser()->request('GET', $url);
+
         $this->assertStatusCode($indexData->getExpectedStatusCode());
+
+        if ($indexData->getAssertCallback() && is_callable($indexData->getAssertCallback())) {
+            $indexData->getAssertCallback()($crawler, $this->getBrowser());
+        }
     }
 
     public function indexData()
@@ -80,7 +91,7 @@ abstract class AbstractCrudTest extends WebTestCase
         }
 
         return [
-            [
+            'default' => [
                 IndexData::new(),
             ],
         ];
@@ -99,6 +110,8 @@ abstract class AbstractCrudTest extends WebTestCase
         if ($indexData->isSkip()) {
             $this->markTestSkipped('index Test Skipped');
         }
+
+        $this->getBrowser()->followRedirects($indexData->isFollowRedirects());
 
         $this->getBrowser()->request('GET', $this->getRouter()->generate(
             $this->getDefinition()::getRoute(Page::INDEX),
@@ -175,11 +188,17 @@ abstract class AbstractCrudTest extends WebTestCase
             $this->markTestSkipped('index Test Skipped');
         }
 
-        $this->getBrowser()->request('GET', $this->getRouter()->generate(
+        $this->getBrowser()->followRedirects($indexData->isFollowRedirects());
+
+        $crawler = $this->getBrowser()->request('GET', $this->getRouter()->generate(
             $this->getDefinition()::getRoute(Page::EXPORT),
             $indexData->getQueryParameters()
         ));
         $this->assertStatusCode($indexData->getExpectedStatusCode());
+
+        if ($indexData->getAssertCallback() && is_callable($indexData->getAssertCallback())) {
+            $indexData->getAssertCallback()($crawler, $this->getBrowser());
+        }
     }
 
     public function exportData()
@@ -190,7 +209,7 @@ abstract class AbstractCrudTest extends WebTestCase
         }
 
         return [
-            [
+            'default' => [
                 ExportData::new(),
             ],
         ];
@@ -210,13 +229,19 @@ abstract class AbstractCrudTest extends WebTestCase
             $this->markTestSkipped('show Test Skipped');
         }
 
-        $this->getBrowser()->request('GET', $this->getRouter()->generate(
+        $this->getBrowser()->followRedirects($showData->isFollowRedirects());
+
+        $crawler = $this->getBrowser()->request('GET', $this->getRouter()->generate(
             $this->getDefinition()::getRoute(Page::SHOW),
             array_merge([
                 'id' => $showData->getEntityId(),
             ], $showData->getQueryParameters())
         ));
         $this->assertStatusCode($showData->getExpectedStatusCode());
+
+        if ($showData->getAssertCallback() && is_callable($showData->getAssertCallback())) {
+            $showData->getAssertCallback()($crawler, $this->getBrowser());
+        }
     }
 
     public function showData()
@@ -227,7 +252,7 @@ abstract class AbstractCrudTest extends WebTestCase
         }
 
         return [
-            [
+            'id-1' => [
                 ShowData::new(),
             ],
         ];
@@ -236,8 +261,12 @@ abstract class AbstractCrudTest extends WebTestCase
     /**
      * @dataProvider editData()
      */
-    public function testEdit(EditData $editData): string
+    public function testEdit(?EditData $editData): void
     {
+        if ($editData === null) {
+            $this->markTestSkipped('no data provided for edit, skip test');
+        }
+
         $this->setUpTestEdit($editData);
         if (! $this->getDefinition()::hasCapability(Page::EDIT)) {
             $this->markTestSkipped('no edit capability, skip test');
@@ -255,12 +284,22 @@ abstract class AbstractCrudTest extends WebTestCase
         );
         $crawler = $this->getBrowser()->request('GET', $editLink);
         $this->assertSame(200, $this->getBrowser()->getResponse()->getStatusCode());
+
         $form = $crawler->filter('#crud_main_form')->form([], 'POST');
         $this->fillForm($form, $editData->getFormData());
+
+        $this->getBrowser()->followRedirects($editData->isFollowRedirects());
+
+        if ($editData->getAssertBeforeSendCallback() && is_callable($editData->getAssertBeforeSendCallback())) {
+            $editData->getAssertBeforeSendCallback()($crawler, $this->getBrowser());
+        }
+
         $this->getBrowser()->submit($form);
         $this->assertStatusCode($editData->getExpectedStatusCode());
 
-        return $editLink;
+        if ($editData->getAssertCallback() && is_callable($editData->getAssertCallback())) {
+            $editData->getAssertCallback()($crawler, $this->getBrowser());
+        }
     }
 
     public function editData()
@@ -271,8 +310,8 @@ abstract class AbstractCrudTest extends WebTestCase
         }
 
         return [
-            [
-                EditData::new(),
+            'default' => [
+                null,
             ],
         ];
     }
@@ -280,11 +319,15 @@ abstract class AbstractCrudTest extends WebTestCase
     /**
      * @dataProvider createData()
      */
-    public function testCreate(CreateData $createData): string
+    public function testCreate(?CreateData $createData): void
     {
+        if ($createData === null) {
+            $this->markTestSkipped('no data provided for create, skip test');
+        }
+
         $this->setUpTestCreate($createData);
         if (! $this->getDefinition()::hasCapability(Page::CREATE)) {
-            $this->markTestSkipped('no create capability, skip test');
+            $this->markTestSkipped('no edit capability, skip test');
         }
 
         if ($createData->isSkip()) {
@@ -299,11 +342,20 @@ abstract class AbstractCrudTest extends WebTestCase
         $this->assertSame(200, $this->getBrowser()->getResponse()->getStatusCode());
         $form = $crawler->filter('#crud_main_form')->form([], 'POST');
         $this->fillForm($form, $createData->getFormData());
+
+        $this->getBrowser()->followRedirects($createData->isFollowRedirects());
+
+        if ($createData->getAssertBeforeSendCallback() && is_callable($createData->getAssertBeforeSendCallback())) {
+            $createData->getAssertBeforeSendCallback()($crawler, $this->getBrowser());
+        }
+
         $this->getBrowser()->submit($form);
 
         $this->assertStatusCode($createData->getExpectedStatusCode());
 
-        return $createLink;
+        if ($createData->getAssertCallback() && is_callable($createData->getAssertCallback())) {
+            $createData->getAssertCallback()($crawler, $this->getBrowser());
+        }
     }
 
     public function createData()
@@ -314,8 +366,8 @@ abstract class AbstractCrudTest extends WebTestCase
         }
 
         return [
-            [
-                CreateData::new(),
+            'default' => [
+                null,
             ],
         ];
     }
@@ -330,7 +382,16 @@ abstract class AbstractCrudTest extends WebTestCase
 
     abstract protected function getDefinitionClass(): string;
 
-    abstract protected function getBrowser(): KernelBrowser;
+    protected function getBrowser(): KernelBrowser
+    {
+        if (! $this->client) {
+            static::ensureKernelShutdown();
+            $this->client = static::createClient();
+            $this->client->followRedirects(false);
+        }
+
+        return $this->client;
+    }
 
     protected function getDefinition(): DefinitionInterface
     {
