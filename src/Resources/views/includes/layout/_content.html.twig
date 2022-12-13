@@ -6,7 +6,7 @@
     {% set isFormCase = form is defined %}
     {% set contentAcronym = view.definition.formAccessorPrefix ~ content.acronym %}
     <div id="wwd-crud-block-{{ block.acronym }}-content-{{ contentAcronym }}" class="{% if (not isHiddenType and isFormCase) or not isFormCase %}px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4{% endif %} {{ content.getOption('attr')['class'] is defined ? content.getOption('attr')['class'] : '' }}">
-        <dt class="text-sm font-medium text-neutral-500" id="wwd-crud-block-{{ block.acronym }}-content-{{ contentAcronym }}-label">
+        <dt class="whatwedo-utility-bold text-neutral-500" id="wwd-crud-block-{{ block.acronym }}-content-{{ contentAcronym }}-label">
             {{ content.option('label')|trans }}
             {% if content.option('help') is not empty %}
                 <span {{ stimulus_controller('whatwedo/crud-bundle/tooltip', { 'title': content.option('help')|trans } ) }}>
@@ -55,7 +55,7 @@
             >
         {% endif %}
         {% if content.option('label') %}
-            <span class="block text-sm font-medium text-neutral-500 mb-4">
+            <span class="block whatwedo-utility-bold text-neutral-500 mb-4">
                 {{ content.option('label')|trans }}
             </span>
         {% endif %}
