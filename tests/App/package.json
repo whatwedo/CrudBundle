@@ -4,7 +4,7 @@
         "@hotwired/stimulus": "^3.0.0",
         "@hotwired/turbo": "^7.0.1",
         "@symfony/stimulus-bridge": "^3.0.0",
-        "@symfony/ux-turbo": "file:../../vendor/symfony/ux-turbo/Resources/assets",
+        "@symfony/ux-turbo": "file:../../vendor/symfony/ux-turbo/assets",
         "@symfony/webpack-encore": "^1.7.0",
         "@tailwindcss/forms": "^0.3.2",
         "@whatwedo/core-bundle": "file:../../vendor/whatwedo/core-bundle/src/Resources/assets",
