@@ -7,12 +7,12 @@
 ** [Formatter](formatter.md)
 ** [Events](events.md)
 ** [Custom Routes](custom-routes.md)
-** [Search](search.md)
 
 * Cookbook
-** [Overview TODO](cookbook/overview_todo.md)
 ** [Overview](cookbook/overview.md)
 ** - [Filters](cookbook/filters.md)
+** - [Search](cookbook/search.md)
+** - [Custom Styles](cookbook/custom_styles.md)
 
 * Extensions
 ** [Breadcrumbs](extensions/breadcrumbs.md)
