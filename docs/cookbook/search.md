@@ -67,11 +67,10 @@ The bundle comes already with a predefined Controller.
 Controller/SearchController.php
 
 ```
-class SearchController extends AbstractController
+class SearchController extends \whatwedo\CrudBundle\Controller\SearchController
 {
     use SearchTrait;
 
-    #[Route('/search', name: 'search')]
     public function search(Request $request, SearchManager $searchManager): Response
     {
         $templateParams = $this->getGlobalResults($request, $searchManager);
