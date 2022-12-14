@@ -91,16 +91,7 @@ $searchParams = $this->getGlobalResults($request, $searchManager, [
 ]);
 ```
 
-Create a form  and place it anywhere u want.
-
-```
-<form action="{{ path('search') }}" method="get">
-    <input name="query" value="" type="text">
-</form>
-```
-
-
-Or add the following code to ```templates/base.html.twig```
+Search form is found here:  ```templates/base.html.twig```
 ```
 {% block search_box %}
     <div class="whatwedo_crud-sidedar flex-shrink-0 flex border-t border-neutral-200 p-4">
