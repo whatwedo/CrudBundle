@@ -12,11 +12,11 @@
                 </svg>
             {% endif %}
             {% if crumb.url %}
-                <a href="{{ crumb.url }}" class="ml-4 text-sm font-medium text-neutral-500 hover:text-neutral-700">
+                <a href="{{ crumb.url }}" class="ml-4 whatwedo-utility-bold hover:text-neutral-700 max-w-[8rem] text-ellipsis overflow-hidden whitespace-nowrap{{ loop.last ? ' underline underline-offset-2 decoration-1' : '' }}">
                     {{- crumb.text | trans(crumb.translationParameters, translation_domain, locale) -}}
                 </a>
             {% else %}
-                <span class="ml-4 text-sm font-medium text-neutral-500">
+                <span class="ml-4 whatwedo-utility-bold max-w-[8rem] text-ellipsis overflow-hidden whitespace-nowrap">
                     {{- crumb.text | trans(crumb.translationParameters, translation_domain, locale) -}}
                 </span>
             {% endif %}
