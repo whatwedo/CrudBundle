@@ -1,7 +1,37 @@
 {% if view is defined and view.actions|length > 0 %}
     <div class="ml-auto flex flex-nowrap items-stretch">
-        {% for action in view.actions %}
+        {% for action in view.actions|slice(0, 2) %}
             {{ wwd_crud_render_action(action, view) }}
         {% endfor %}
+
+        {% if view.actions|length == 3 %}
+            {% for action in view.actions|slice(2) %}
+                {{ wwd_crud_render_action(action, view) }}
+            {% endfor %}
+        {% elseif view.actions|length > 2 %}
+            <div
+                {{ stimulus_controller('whatwedo/core-bundle/dropdown') }}
+                class="whatwedo-crud-topbar-actions relative"
+            >
+                <button
+                    class="whatwedo-crud-button--action-neutral"
+                    {{ stimulus_action('whatwedo/core-bundle/dropdown', 'toggle') | stimulus_action('whatwedo/core-bundle/dropdown', 'click@window', 'hide') }}
+                >
+                    {{ bootstrap_icon('info-circle', {
+                        class: 'inline mr-2 h-4 w-4'
+                    }) }}
+                    <span class="2xl:block hidden">{{ 'Mehr...'|trans }}</span>
+                </button>
+
+                <div
+                    class="whatwedo-crud-topbar-actions__submenu hidden absolute right-0 top-full flex flex-col mt-2 bg-neutral-50 p-3 space-y-2 rounded-md shadow-lg z-10"
+                    {{ stimulus_target('whatwedo/core-bundle/dropdown', 'menu') }}
+                >
+                    {% for action in view.actions|slice(2, view.actions|length) %}
+                        {{ wwd_crud_render_action(action, view) }}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
     </div>
 {% endif %}
