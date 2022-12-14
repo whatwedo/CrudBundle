@@ -24,7 +24,7 @@
                 </button>
 
                 <div
-                    class="whatwedo-crud-topbar-actions__submenu hidden absolute right-0 top-full flex flex-col mt-2 bg-neutral-50 p-3 space-y-2 rounded-md shadow-lg z-10"
+                    class="whatwedo-crud-topbar-actions__submenu hidden absolute right-0 top-full flex flex-col mt-2 bg-neutral-50 py-1 rounded-md shadow-lg z-10"
                     {{ stimulus_target('whatwedo/core-bundle/dropdown', 'menu') }}
                 >
                     {% for action in view.actions|slice(2, view.actions|length) %}
