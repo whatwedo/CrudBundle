@@ -71,7 +71,6 @@ class SearchController extends AbstractController
 {
     use SearchTrait;
 
-    #[Route('/search', name: 'search')]
     public function search(Request $request, SearchManager $searchManager): Response
     {
         $templateParams = $this->getGlobalResults($request, $searchManager);
