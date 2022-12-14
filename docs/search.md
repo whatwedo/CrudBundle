@@ -62,7 +62,7 @@ php bin/console whatwedo:search:populate
 
 ## Global Search
 
-The bundle comes with a predefined Controller to handle search request.
+The bundle comes already with a predefined Controller.
 
 Controller/SearchController.php
 
@@ -91,7 +91,11 @@ $searchParams = $this->getGlobalResults($request, $searchManager, [
 ]);
 ```
 
-Search form is found here:  ```templates/base.html.twig```
+### Configuration
+
+#### Templates
+
+Global search form is found here:  ```templates/base.html.twig```
 ```
 {% block search_box %}
     <div class="whatwedo_crud-sidedar flex-shrink-0 flex border-t border-neutral-200 p-4">
@@ -111,3 +115,46 @@ Search form is found here:  ```templates/base.html.twig```
     </div>
 {% endblock %}
 ```
+
+To customize the search results create a file ```index.html.twig``` in ```templates/bundles/whatwedoSearchBundle```
+
+```
+{% extends '@!whatwedoSearch/index.html.twig' %}
+
+{% block results %}
+    <h1>This is a custom heading</h1>
+    {{ parent() }}
+{% endblock %}
+```
+
+
+#### Index groups
+
+You can define indexing groups and restrict search within these. If not specified the standard group is ```default```
+
+```
+#[Index groups: ['default', 'posts']]
+private $title;
+
+#[Index]
+private $description;
+```
+
+In the controller set which group(s) you want to include using ```SearchOptions::OPTION_GROUPS```
+
+```
+$searchParams = $this->getGlobalResults($request, $searchManager, [
+    SearchOptions::OPTION_GROUPS => [
+        'posts'
+    ],
+]);
+```
+
+
+#### Formatters and hooks
+
+You can use custom formatters, pre and post search hooks. 
+
+Please check out the SearchBundle documentation for more information. 
+
+https://whatwedo.github.io/SearchBundle/#/configuration
