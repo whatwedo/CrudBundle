@@ -67,7 +67,7 @@ The bundle comes already with a predefined Controller.
 Controller/SearchController.php
 
 ```
-class SearchController extends \whatwedo\CrudBundle\Controller\SearchController
+class SearchController extends AbstractController
 {
     use SearchTrait;
 
