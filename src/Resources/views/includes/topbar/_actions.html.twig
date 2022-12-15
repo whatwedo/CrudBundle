@@ -1,5 +1,5 @@
 {% if view is defined and view.actions|length > 0 %}
-    <div class="ml-auto flex flex-nowrap items-stretch">
+    <div class="ml-12 md:ml-0 sm:w-full flex justify-end flex-nowrap items-stretch">
         {% for action in view.actions|slice(0, 2) %}
             {{ wwd_crud_render_action(action, view) }}
         {% endfor %}
