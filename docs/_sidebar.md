@@ -12,7 +12,12 @@
 * Cookbook
 ** [Overview](cookbook/overview_todo.md)
 
+* Layout
+** [Dashboard](extensions/dashboard.md)
+** [Footer](extensions/footer.md)
+
 * Extensions
+** [Menu](extensions/menu.md)
 ** [Breadcrumbs](extensions/breadcrumbs.md)
 
 * Contents
