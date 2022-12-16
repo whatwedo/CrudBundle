@@ -27,8 +27,7 @@ export default class extends Controller {
     resetContent() {
         this.tabTargets.forEach(tab => {
             tab.classList.remove('active');
-            tab.classList.add('active');
-            tab.querySelector('[data-whatwedo--crud-bundle--tab-target]').classList.remove('bg-primary');
+            tab.querySelector('[data-whatwedo--crud-bundle--tab-target]').classList.remove('bg-primary-500');
         });
         this.contentTargets.forEach(content => {
             content.classList.remove('block');
@@ -43,6 +42,7 @@ export default class extends Controller {
 
         element.classList.remove('text-neutral-500');
         element.classList.add('text-neutral-900');
+        element.classList.add('active');
 
         underline.classList.remove('bg-transparent');
         underline.classList.add('bg-primary-500');
