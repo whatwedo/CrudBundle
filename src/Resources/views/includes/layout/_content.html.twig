@@ -46,7 +46,7 @@
         {{ block('content') }}
     {% else %}
         {% if view.route == constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW') %}
-            <div class="bg-white px-4 py-5"
+            <div class="inline-block w-full"
             {% set reloadUrl = content.reloadUrl(view.data) %}
             {% if reloadUrl %}
             {{ stimulus_controller('whatwedo/core-bundle/reload-content', { url: reloadUrl }) }}

@@ -1,5 +1,5 @@
 {% if view is defined and view.actions|length > 0 %}
-    <div class="ml-12 md:ml-0 sm:w-full flex justify-end flex-nowrap items-stretch">
+    <div class="ml-12 md:ml-0 flex justify-end flex-nowrap items-stretch">
         {% for action in view.actions|slice(0, 2) %}
             {{ wwd_crud_render_action(action, view) }}
         {% endfor %}
@@ -24,7 +24,7 @@
                 </button>
 
                 <div
-                    class="whatwedo-crud-topbar-actions__submenu hidden absolute right-0 top-full flex flex-col mt-2 bg-neutral-50 py-1 rounded-md shadow-lg z-10"
+                    class="whatwedo-crud-topbar-actions__submenu hidden absolute right-0 top-full flex flex-col mt-2 bg-white py-1 rounded-md shadow-lg z-10"
                     {{ stimulus_target('whatwedo/core-bundle/dropdown', 'menu') }}
                 >
                     {% for action in view.actions|slice(2, view.actions|length) %}
