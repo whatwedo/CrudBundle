@@ -138,6 +138,36 @@ class Category
         return $this->children;
     }
 
+    public function getLft(): ?int
+    {
+        return $this->lft;
+    }
+
+    public function setLft(?int $lft): void
+    {
+        $this->lft = $lft;
+    }
+
+    public function getLvl(): ?int
+    {
+        return $this->lvl;
+    }
+
+    public function setLvl(?int $lvl): void
+    {
+        $this->lvl = $lvl;
+    }
+
+    public function getRgt(): ?int
+    {
+        return $this->rgt;
+    }
+
+    public function setRgt(?int $rgt): void
+    {
+        $this->rgt = $rgt;
+    }
+
     public function __toString(): string
     {
         return (string) $this->getName();

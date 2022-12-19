@@ -249,7 +249,7 @@ class Block implements ServiceSubscriberInterface
             $options[AbstractContent::OPT_LABEL] = sprintf('wwd.%s.property.%s', $this->definition::getEntityAlias(), $acronym);
         }
         if ($element->getOptionsResolver()->isDefined(AbstractContent::OPT_HELP) && ! isset($options[AbstractContent::OPT_HELP])) {
-            $options[AbstractContent::OPT_HELP] = sprintf('wwd.%s.help.%s', $this->definition::getEntityAlias(), $acronym);
+            $options[AbstractContent::OPT_HELP] = false;
         }
 
         $element->setAcronym($acronym);
