@@ -27,8 +27,8 @@ class <?= $class_name; ?> extends AbstractDefinition
     <?php foreach ($fields as $label => $field): ?>
             ->addContent('<?= $field; ?>', null, [
         <?php if (isset($fieldFormatters[$field])) {
-    echo sprintf("'formatter' => \\%s::class,", $fieldFormatters[$field]);
-} ?>
+            echo sprintf("'formatter' => \\%s::class,", $fieldFormatters[$field]);
+        } ?>
         ])
     <?php endforeach; ?>
     ;
@@ -41,8 +41,8 @@ class <?= $class_name; ?> extends AbstractDefinition
     <?php foreach ($fields as $label => $field): ?>
         ->addColumn('<?= $field; ?>', null, [
         <?php if (isset($fieldFormatters[$field])) {
-    echo sprintf("'formatter' => \\%s::class,", $fieldFormatters[$field]);
-} ?>
+            echo sprintf("'formatter' => \\%s::class,", $fieldFormatters[$field]);
+        } ?>
         ])
     <?php endforeach; ?>
     ;
