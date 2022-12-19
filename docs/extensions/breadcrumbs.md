@@ -74,3 +74,24 @@ And render it in your template like following:
 ```twig
 {{ wo_render_breadcrumbs() }}
 ```
+
+### Remove breadcrumb
+For example, we have a company definition where we display all employees. Now when we want to view an employee the breadcrumb looks like this:
+
+`companies -> company -> employees -> employee`
+
+Now we would like to remove the breadcrumb employees, so that we do not come to the overview of all employees. Add the following code to the employee definition:
+
+```php
+public function getParentDefinitionProperty(?object $data): ?string
+{
+    return 'company';
+}
+
+public function buildBreadcrumbs(mixed $entity = null, ?PageInterface $route = null, ?Breadcrumbs $breadcrumbs = null): void
+{
+    parent::buildBreadcrumbs($entity, $route, $breadcrumbs);
+    // Employees breadcrumb is the third. Offset starts at 0
+    $this->getBreadcrumbs()->offsetUnset(2);
+}
+```

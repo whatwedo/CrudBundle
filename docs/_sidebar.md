@@ -14,7 +14,12 @@
 ** - [Search](cookbook/search.md)
 ** - [Custom Styles](cookbook/custom_styles.md)
 
+* Layout
+** [Dashboard](extensions/dashboard.md)
+** [Footer](extensions/footer.md)
+
 * Extensions
+** [Menu](extensions/menu.md)
 ** [Breadcrumbs](extensions/breadcrumbs.md)
 
 * Contents
