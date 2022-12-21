@@ -23,7 +23,12 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Helvetica Neue', 'Helvetica', ...defaultTheme.fontFamily.sans],
+                sans: [...defaultTheme.fontFamily.sans],
+            },
+            fontSize: {
+                sm: ['12px', '16px'],
+                base: ['14px', '20px'],
+                '2xl': ['20px', '28px'],
             },
             colors: {
                 primary: colors.sky,
