@@ -35,7 +35,7 @@
         {% import _self as knp_menu %}
 
         {# classes for link/button item #}
-        {% set classes = 'group flex items-center px-3 py-2 text-sm font-medium text-neutral-600 rounded-md hover:text-neutral-900 hover:bg-neutral-50' %}
+        {% set classes = 'group flex items-center px-3 py-2 text-base font-medium text-neutral-600 rounded-md hover:text-neutral-900 hover:bg-neutral-50' %}
 
         {% if matcher.isCurrent(item) or matcher.isAncestor(item, options.matchingDepth) %}
             {% set classes = classes|replace({'text-neutral-600': 'text-neutral-900'}) %}
