@@ -1,4 +1,4 @@
-<ol class="whatwedo_crud-breadcrumbs hidden lg:flex items-center space-x-4 overflow-auto" aria-label="Breadcrumb" id="{{ listId }}" itemscope itemtype="http://schema.org/BreadcrumbList">
+<ol class="whatwedo_crud-breadcrumbs hidden lg:flex items-center space-x-4 overflow-x-auto" aria-label="Breadcrumb" id="{{ listId }}" itemscope itemtype="http://schema.org/BreadcrumbList">
     {% for crumb in breadcrumbs %}
     <li{% if itemClass is defined and itemClass|length %} class="{{ itemClass }}"{% endif %} itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
         <div class="flex items-center">
@@ -7,16 +7,16 @@
                     <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
                 </svg>
             {% else %}
-                <svg class="flex-shrink-0 h-5 w-5 text-neutral-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                <svg class="flex-shrink-0 h-3 w-3 text-neutral-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8.836 14.036">
+                    <path id="arrow-right" d="M27.65,1.333a.718.718,0,0,1,0-1.1.97.97,0,0,1,1.251,0l7.067,6.238a.717.717,0,0,1,0,1.1L28.9,13.808a.97.97,0,0,1-1.251,0,.718.718,0,0,1,0-1.1l6.487-5.685Z" transform="translate(-27.391)" fill="#4b5563" fill-rule="evenodd"/>
                 </svg>
             {% endif %}
             {% if crumb.url %}
-                <a href="{{ crumb.url }}" class="ml-4 text-sm font-bold text-neutral-700 hover:text-neutral-900 max-w-[8rem] text-ellipsis overflow-hidden whitespace-nowrap{{ loop.last ? ' underline underline-offset-2 decoration-1' : '' }}">
+                <a href="{{ crumb.url }}" class="ml-4 text-base font-bold text-neutral-700 hover:text-neutral-900 max-w-[8rem] text-ellipsis overflow-hidden whitespace-nowrap{{ loop.last ? ' underline underline-offset-2 decoration-1' : '' }}">
                     {{- crumb.text | trans(crumb.translationParameters, translation_domain, locale) -}}
                 </a>
             {% else %}
-                <span class="ml-4 text-sm font-bold text-neutral-700 max-w-[8rem] text-ellipsis overflow-hidden whitespace-nowrap">
+                <span class="ml-4 text-base font-bold text-neutral-700 max-w-[8rem] text-ellipsis overflow-hidden whitespace-nowrap">
                     {{- crumb.text | trans(crumb.translationParameters, translation_domain, locale) -}}
                 </span>
             {% endif %}
