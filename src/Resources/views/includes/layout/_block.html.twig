@@ -68,8 +68,8 @@
 {% endblock %}
 
 {% block grid_block %}
-    <div class="w-full wwd-block-block wwd-block-block--grid border-neutral-200 p-4 border">
-        <h2 class="whatwedo-utility-heading-2 mb-4">{{ block.option('label') | trans }}</h2>
+    <div class="w-full wwd-block-block wwd-block-block--grid">
+        <h2 class="whatwedo-utility-heading-2 mt-3 mb-3">{{ block.option('label') | trans }}</h2>
         <div class="gap-4 sm:grid sm:grid-cols-{{ block.option('layout_options')['vertically'] }} sm:grid-rows-{{ block.option('layout_options')['horizontally'] }}" id="wwd-crud-block-{{ block.acronym }}">
             {% for subBlock in block.blocks(view, page) %}
                 {{ wwd_crud_render_block(subBlock, view, page, form ?? null) }}
@@ -81,12 +81,12 @@
 {% block tab_block %}
     {% set attr = block.option('attr')|default([])|filter((k,i) => k != 'class') %}
     <div
-        class="w-full wwd-block-block wwd-block-block--tab border-neutral-200 p-4 border gap-4 {{ block.option('attr')['class'] ?? '' }}"
+        class="w-full wwd-block-block wwd-block-block--tab gap-4 {{ block.option('attr')['class'] ?? '' }}"
         {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}
         id="wwd-crud-block-{{ block.acronym }}"
         {{ stimulus_controller('whatwedo/crud-bundle/tab') }}
     >
-        <h2 class="whatwedo-utility-heading-2 mb-4">{{ block.option('label') | trans }}</h2>
+        <h2 class="whatwedo-utility-heading-2 mt-3 mb-3">{{ block.option('label') | trans }}</h2>
         <div class="sm:hidden">
             <label for="tabs" class="sr-only">Select a tab</label>
             <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
