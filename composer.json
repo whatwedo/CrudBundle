@@ -31,7 +31,8 @@
         "doctrine/inflector": "^2.0",
         "symfony/maker-bundle": "^1.0.0",
         "twig/twig": "^3.4.3|^2.15.3",
-        "doctrine/orm": "^2.13.3"
+        "doctrine/orm": "^2.13.3",
+        "coduo/php-to-string": "^3.2"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "~5.3|^6.0",

@@ -212,7 +212,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
             $this->addFlash('error', 'whatwedo_crud.save_error');
         }
 
-        $this->definition->buildBreadcrumbs(null, Page::CREATE);
+        $this->definition->buildBreadcrumbs($entity, Page::CREATE);
 
         $template = $this->getTemplate('create.html.twig');
         if ($mode === PageMode::MODAL) {

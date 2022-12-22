@@ -1,4 +1,4 @@
-const defaultTheme = require("tailwindcss/defaultTheme");
+const defaultTheme = require('tailwindcss/defaultTheme')
 const colors = require('tailwindcss/colors')
 
 module.exports = {
@@ -23,12 +23,7 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                sans: [...defaultTheme.fontFamily.sans],
-            },
-            fontSize: {
-                sm: ['12px', '16px'],
-                base: ['14px', '20px'],
-                '2xl': ['20px', '28px'],
+                sans: ['Helvetica Neue', 'Helvetica', ...defaultTheme.fontFamily.sans],
             },
             colors: {
                 primary: colors.sky,

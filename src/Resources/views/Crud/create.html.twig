@@ -2,7 +2,7 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
-    {% include '@whatwedoCrud/includes/main/_site_title.html.twig' with {'title':title} only %}
+    {% include '@whatwedoCrud/includes/main/_site_title.html.twig' with {'title':title, 'view': view} only %}
     {{ form_start(form, { attr: { id: 'crud_main_form', class: 'whatwedo_crud-form whatwedo_crud-form--create flex-grow' } }) }}
 
     {% if form.vars.errors|length > 0 %}

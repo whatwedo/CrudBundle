@@ -1,38 +1,43 @@
+const defaultTheme = require('tailwindcss/defaultTheme')
 const colors = require('tailwindcss/colors')
 
 module.exports = {
     content: [
         './assets/**/*.js',
         './templates/**/*.{html,html.twig}',
-        './vendor/whatwedo/**/*.{html,html.twig,js,scss}',
+        './vendor/whatwedo/**/*.{html,html.twig,js}',
         './var/cache/twig/**/*.php',
         './src/Definition/*.php',
     ],
     safelist: [
         {
             pattern: /grid-(cols|rows)-\d/,
+            variants: ['2xl', 'xl', 'lg', 'md', 'sm'],
+        },
+        {
+            pattern: /col-span-\d+/,
             variants: ['lg', 'md', 'sm'],
         },
     ],
+    media: false,
     theme: {
         extend: {
+            fontFamily: {
+                sans: ['Helvetica Neue', 'Helvetica', ...defaultTheme.fontFamily.sans],
+            },
             colors: {
-                primary: {
-                    200: '#f1f8fe',
-                    300: '#b1d2f2',
-                    400: '#70a1d3',
-                    500: '#4682c3',
-                    600: '#35689d',
-                    700: '#25496e',
-                    800: '#001c5c',
-                },
+                primary: colors.sky,
                 neutral: colors.slate,
                 error: colors.red,
-                warning: colors.orange,
+                warning: colors.amber,
                 success: colors.green,
+            },
+            flexBasis: {
+                '3/6-gap': 'calc(50% - 0.5rem)', // this is an ugly hack to float blocks
             }
         },
     },
+    variants: {},
     plugins: [
         require('@tailwindcss/forms'),
     ],

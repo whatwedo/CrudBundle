@@ -179,16 +179,16 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     public function getTitle(mixed $entity = null, ?PageInterface $route = null): string
     {
-        $title = $this->translator->trans(static::getEntityTitle());
         $add = $this->translator->trans('whatwedo_crud.add');
         $delete = $this->translator->trans('whatwedo_crud.delete');
         $edit = $this->translator->trans('whatwedo_crud.edit');
 
         return match ($route) {
             Page::INDEX => static::getEntityTitlePlural(),
-            Page::DELETE => $entity . ' ' . $delete,
-            Page::CREATE => $title . ' ' . $add,
-            Page::EDIT => '"' . (string) $entity . '" ' . $edit,
+            Page::DELETE => $delete,
+            Page::CREATE => $add,
+            Page::EDIT => $edit,
+            Page::SHOW => static::getEntityTitle(),
             default => (string) $entity,
         };
     }
@@ -391,7 +391,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
             }
         }
 
-        if (in_array($route, [Page::INDEX, Page::EDIT, Page::SHOW], true)) {
+        if (in_array($route, [Page::INDEX, Page::EDIT, Page::SHOW, Page::CREATE], true)) {
             if (static::hasCapability(Page::INDEX)) {
                 $this->getBreadcrumbs()->addRouteItem(static::getEntityTitlePlural(), static::getRoute(Page::INDEX));
             } else {
@@ -416,6 +416,14 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                 ]);
             } else {
                 $this->getBreadcrumbs()->addItem($this->getTitle($entity, Page::EDIT));
+            }
+        }
+
+        if ($route === Page::CREATE) {
+            if (static::hasCapability(Page::CREATE)) {
+                $this->getBreadcrumbs()->addRouteItem($this->getTitle($entity, Page::CREATE), static::getRoute(Page::CREATE));
+            } else {
+                $this->getBreadcrumbs()->addItem($this->getTitle($entity, Page::CREATE));
             }
         }
     }
