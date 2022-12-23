@@ -1,5 +1,5 @@
 {% if view is defined and view.actions|length > 0 %}
-    <div class="hidden md:flex lg:ml-3 flex space-x-3 justify-end flex-nowrap items-stretch"><!-- ml-12 -->
+    <div class="hidden md:flex lg:ml-3 flex space-x-3 justify-end flex-nowrap items-stretch">
         {% for action in view.actions|slice(0, 2) %}
             {{ wwd_crud_render_action(action, view) }}
         {% endfor %}
