@@ -15,7 +15,7 @@
             >
                 <button
                     class="whatwedo-crud-button--action-neutral"
-                    {{ stimulus_action('whatwedo/core-bundle/dropdown', 'toggle') | stimulus_action('whatwedo/core-bundle/dropdown', 'click@window', 'hide') }}
+                    {{ stimulus_action('whatwedo/core-bundle/dropdown', 'toggle') }}
                 >
                     {{ bootstrap_icon('info-circle', {
                         class: 'inline mr-2 h-4 w-4'
@@ -41,7 +41,7 @@
     >
         <button
             class="whatwedo-crud-button--action-neutral"
-            {{ stimulus_action('whatwedo/core-bundle/dropdown', 'toggle') | stimulus_action('whatwedo/core-bundle/dropdown', 'click@window', 'hide') }}
+            {{ stimulus_action('whatwedo/core-bundle/dropdown', 'toggle') }}
         >
             {{ bootstrap_icon('info-circle', {
                 class: 'inline mr-2 h-4 w-4'
