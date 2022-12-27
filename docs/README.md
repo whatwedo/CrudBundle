@@ -208,7 +208,7 @@ In our example we want to create a user management system.
 
 Use your existing `User.php` entity or create a new one with `php bin/console make:entity`.
 
-Every CRUD managed entity needs to have a `__toString` method. Don't forget to create a migration or update your database according to the new entities. 
+Every CRUD managed entity should have a `__toString` method. Don't forget to create a migration or update your database according to the new entities. 
 The crud bundle itself will create two tables for you: `whatwedo_search_index` and `whatwedo_table_filter`. 
 
 ### Create a definition
@@ -216,6 +216,8 @@ The crud bundle itself will create two tables for you: `whatwedo_search_index` a
 In the definition file you explain and configure your entity.
 It contains all information to create your CRUD view.
 You can also generate a definition with our make command: `bin/console make:definition`
+
+More about Definitions in the [next chapter](view-configuration.md).
 
 ### try it
 That's all.
