@@ -7,18 +7,18 @@
     {% if not item.parent %}
         {# root element attributes #}
         {% set attributes = attributes|merge({
-            class: (attributes.class|default('')~' flex-1 space-y-0')|trim
+            class: (attributes.class|default('') ~ ' flex-1 space-y-0')|trim
         }) %}
         {% set htmlElement = 'nav' %}
     {% else %}
         {# sub nav attributes #}
         {% set classes = ' space-y-0.5' %}
         {% if not matcher.isAncestor(item, options.matchingDepth) %}
-            {% set classes = 'hidden '~classes %}
+            {% set classes = 'hidden ' ~ classes %}
         {% endif %}
 
         {% set attributes = attributes|merge({
-            class: (attributes.class|default('')~classes)|trim,
+            class: (attributes.class|default('') ~ classes)|trim,
             'data-whatwedo--crud-bundle--navigation-target': 'navigation',
         }) %}
     {% endif %}
