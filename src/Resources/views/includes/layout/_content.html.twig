@@ -64,7 +64,7 @@
 
         {% set createUrl = content.createUrl(view.data) %}
         {% if createUrl and (content.addVoterAttribute is null or is_granted(content.addVoterAttribute, view.data)) %}
-        <div {{ stimulus_controller('whatwedo/core-bundle/modal-form', { formUrl: createUrl }) }} class="float-end mb-3">
+        <div {{ stimulus_controller('whatwedo/core-bundle/modal-form', { formUrl: createUrl }) }} class="float-end ml-3 mb-3">
             <button type="button" class="whatwedo-crud-button--action" {{ stimulus_action('whatwedo/core-bundle/modal-form', 'openModal') }}>
                 {{ 'whatwedo_crud.relation.add'|trans }}
             </button>
