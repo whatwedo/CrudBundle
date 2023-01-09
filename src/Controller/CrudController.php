@@ -159,7 +159,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
             if ($form->isValid()) {
                 return $this->formSubmittedAndValid($entity, $mode, Page::EDIT);
             }
-            $this->addFlash('error', sprintf('Beim Speichern ist ein Fehler aufgetreten. Bitte überprüfe deine Eingaben.'));
+            $this->addFlash('error', 'whatwedo_crud.save_error');
         }
 
         $this->definition->buildBreadcrumbs($entity, Page::EDIT);
@@ -208,16 +208,15 @@ class CrudController extends AbstractController implements CrudDefinitionControl
             if ($form->isValid()) {
                 return $this->formSubmittedAndValid($entity, $mode, Page::CREATE);
             }
-            $this->addFlash('error', 'Beim Speichern ist ein Fehler aufgetreten. Bitte überprüfe deine Eingaben.');
+            $this->addFlash('error', 'whatwedo_crud.save_error');
         }
 
         $this->definition->buildBreadcrumbs(null, Page::CREATE);
 
         $template = $this->getTemplate('create.html.twig');
-        match ($mode) {
-            PageMode::NORMAL => $template = $this->getTemplate('create.html.twig'),
-            PageMode::MODAL => $template = $this->getTemplate('create_modal.html.twig'),
-        };
+        if ($mode === PageMode::MODAL) {
+            $template = $this->getTemplate('create_modal.html.twig');
+        }
 
         return $this->render(
             $template,
@@ -241,9 +240,9 @@ class CrudController extends AbstractController implements CrudDefinitionControl
             $this->dispatchEvent(CrudEvent::PRE_DELETE_PREFIX, $entity);
             $this->entityManager->flush();
             $this->dispatchEvent(CrudEvent::POST_DELETE_PREFIX, $entity);
-            $this->addFlash('success', 'Eintrag erfolgreich gelöscht.');
+            $this->addFlash('success', 'whatwedo_crud.delete_success');
         } catch (\Exception $e) {
-            $this->addFlash('error', sprintf('Eintrag konnte nicht gelöscht werden: ' . $e->getMessage()));
+            $this->addFlash('error', 'whatwedo_crud.delete_error');
             $this->container->get(LoggerInterface::class)->warning('Error while deleting: ' . $e->getMessage(), [
                 'entity' => get_class($entity),
                 'id' => $entity->getId(),
@@ -540,7 +539,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
             return new Response('', 200);
         }
 
-        $this->addFlash('success', sprintf('Erfolgreich gespeichert.'));
+        $this->addFlash('success', 'whatwedo_crud.save_success');
 
         return $this->getDefinition()->getRedirect(Page::CREATE, $entity);
     }

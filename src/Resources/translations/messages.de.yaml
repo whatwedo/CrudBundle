@@ -1,4 +1,5 @@
 whatwedo_crud:
+    dashboard: Dashboard
     add: Hinzufügen
     save: Speichern
     index: Übersicht
@@ -6,6 +7,11 @@ whatwedo_crud:
     delete: Löschen
     view: Ansehen
     show_all: Alle ansehen
+    save_success: Erfolgreich gespeichert.
+    save_error: Beim Speichern ist ein Fehler aufgetreten. Bitte überprüfe deine Eingaben.
+    delete_success: Eintrag erfolgreich gelöscht.
+    delete_error: Eintrag konnte nicht gelöscht werden.
+    search_placeholder: Suche ...
     relation:
         add: Hinzufügen
     actions:

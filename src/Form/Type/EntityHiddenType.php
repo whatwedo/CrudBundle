@@ -54,7 +54,7 @@ class EntityHiddenType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired(['class'])
-            ->setDefault('invalid_message', 'Das Objekt existiert nicht');
+            ->setDefault('invalid_message', 'entity_hidden.invalid_message');
     }
 
     public function getParent(): string

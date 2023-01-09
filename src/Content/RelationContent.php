@@ -356,7 +356,7 @@ class RelationContent extends AbstractContent
 
         if ($this->hasCapability(Page::EDIT)) {
             $actionColumnItems[Page::EDIT->toRoute()] = [
-                'label' => 'Bearbeiten',
+                'label' => 'whatwedo_crud.edit',
                 'icon' => 'pencil',
                 'route' => $this->getRoute(Page::EDIT),
                 'route_parameters' => fn ($row) => [
@@ -370,7 +370,7 @@ class RelationContent extends AbstractContent
             $showRoute = $this->getRoute(Page::SHOW);
 
             $actionColumnItems[Page::SHOW->toRoute()] = [
-                'label' => 'Ansehen',
+                'label' => 'whatwedo_crud.view',
                 'icon' => 'eye',
                 'route' => $showRoute,
                 'route_parameters' => fn ($row) => [
@@ -382,7 +382,7 @@ class RelationContent extends AbstractContent
 
         if ($this->hasCapability(Page::DELETE)) {
             $actionColumnItems[Page::DELETE->toRoute()] = [
-                'label' => 'Löschen',
+                'label' => 'whatwedo_crud.delete',
                 'icon' => 'trash',
                 'route' => $this->getRoute(Page::DELETE),
                 'route_parameters' => fn ($row) => [
