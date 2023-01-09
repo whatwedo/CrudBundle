@@ -77,6 +77,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
                 [
                     'view' => $this->getDefinition()->createView(Page::INDEX),
                     'table' => $table,
+                    'title' => $this->getDefinition()->getTitle(route: Page::INDEX),
                 ]
             )
         );
