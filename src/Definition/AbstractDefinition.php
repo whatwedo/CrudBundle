@@ -607,7 +607,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                     'label' => 'whatwedo_crud.save',
                     'icon' => 'check-lg',
                     'visibility' => [Page::EDIT],
-                    'priority' => 60,
+                    'priority' => 20,
                     'attr' => [
                         'form' => 'crud_main_form',
                     ],
@@ -620,7 +620,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
                     'label' => 'whatwedo_crud.add',
                     'icon' => 'check-lg',
                     'visibility' => [Page::CREATE],
-                    'priority' => 60,
+                    'priority' => 20,
                     'attr' => [
                         'form' => 'crud_main_form',
                     ],
