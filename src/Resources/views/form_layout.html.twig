@@ -8,7 +8,6 @@
     {% set widget_disabled_class = widget_disabled_class|default('border-dashed text-neutral-200 ...') %}
     {% set widget_errors_class = widget_errors_class|default('border-double border-red-500 bg-red-50 ...') %}
 #}
-
 {% block widget_attributes %}
     {% set widget_class = widget_class|default('block w-full shadow-sm whatwedo_core-input') %}
     {{ parent() }}
@@ -42,7 +41,7 @@
     {%- if errors|length > 0 -%}
         <ul>
             {%- for error in errors -%}
-                <li class="mb-3 mt-3 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">{{ error.message|trans }}</li>
+                <li class="mb-2 mt-2 text-red-700 py-3 relative">{{ error.message|trans }}</li>
             {%- endfor -%}
         </ul>
     {%- endif -%}
