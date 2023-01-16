@@ -63,7 +63,7 @@ class PersonDefinition extends AbstractDefinition
         $this->configureTable($table);
 
         $table->addColumn('id', null, [
-            Column::OPTION_PRIORITY => 200,
+            Column::OPT_PRIORITY => 200,
         ])
             ->addColumn('jobTitle');
     }

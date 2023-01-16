@@ -144,7 +144,7 @@ abstract class AbstractCrudTest extends WebTestCase
 
         $table = $tableFactory->create('index', $dataLoader, [
             'dataloader_options' => [
-                DoctrineDataLoader::OPTION_QUERY_BUILDER => $this->getDefinition()->getQueryBuilder(),
+                DoctrineDataLoader::OPT_QUERY_BUILDER => $this->getDefinition()->getQueryBuilder(),
             ],
         ]);
 
@@ -154,7 +154,7 @@ abstract class AbstractCrudTest extends WebTestCase
             $sortExtension = $table->getSortExtension();
 
             foreach ($table->getColumns() as $column) {
-                if ($column->getOption(Column::OPTION_SORTABLE)) {
+                if ($column->getOption(Column::OPT_SORTABLE)) {
                     $sortQueryData = $sortExtension->getOrderParameters($column, 'asc');
                     foreach ($testData as $testKey => $testItem) {
                         /** @var IndexData $indexData */

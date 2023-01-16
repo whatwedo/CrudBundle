@@ -59,7 +59,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
         $table = $tableFactory->create('index', $dataLoader, [
             'dataloader_options' => [
-                DoctrineDataLoader::OPTION_QUERY_BUILDER => $this->getDefinition()->getQueryBuilder(),
+                DoctrineDataLoader::OPT_QUERY_BUILDER => $this->getDefinition()->getQueryBuilder(),
             ],
         ]);
 
@@ -259,8 +259,8 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
         $table = $tableFactory
             ->create('index', DoctrineDataLoader::class, [
-                Table::OPTION_DATALOADER_OPTIONS => [
-                    DoctrineDataLoader::OPTION_QUERY_BUILDER => $this->getDefinition()->getQueryBuilder(),
+                Table::OPT_DATALOADER_OPTIONS => [
+                    DoctrineDataLoader::OPT_QUERY_BUILDER => $this->getDefinition()->getQueryBuilder(),
                 ],
             ]);
 
