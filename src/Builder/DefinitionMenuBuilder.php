@@ -39,6 +39,37 @@ use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 class DefinitionMenuBuilder
 {
+    /**
+     * Defines the symfony route.
+     * Accepts: <code>string</code>
+     */
+    public const OPT_ROUTE = 'route';
+
+    /**
+     * Defines the symfony route parameters.
+     * Accepts: <code>array</code>
+     */
+    public const OPT_ROUTE_PARAMETERS = 'routeParameters';
+
+    /**
+     * Defines the rendered label. You can use translation strings here.
+     * Accepts: <code>string</code>
+     */
+    public const OPT_LABEL = 'label';
+
+    /**
+     * Defines the custom attributes on the menu item.
+     * Accepts: <code>array</code>
+     */
+    public const OPT_ATTR = 'attributes';
+
+    /**
+     * Defines the icon of the menu item. We use bootstrap icons here. If the bootstrap class is <code>bi bi-arrow-90deg-up</code> you can use <code>arrow-90deg-up</code> here.
+     * This option has to be passed in the <code>OPT_ATTR</code> option.
+     * Accepts: <code>string</code>
+     */
+    public const OPT_ATTR_ICON = 'icon';
+
     protected Request $request;
 
     public function __construct(
@@ -60,8 +91,8 @@ class DefinitionMenuBuilder
                 $title = $definitionObject::getEntityTitlePlural();
             }
 
-            if (! isset($options['route'])) {
-                $options['route'] = $definitionObject::getRoute(Page::INDEX);
+            if (! isset($options[self::OPT_ROUTE])) {
+                $options[self::OPT_ROUTE] = $definitionObject::getRoute(Page::INDEX);
             }
 
             $child = $parent->addChild($title, $options);
@@ -74,9 +105,9 @@ class DefinitionMenuBuilder
                 }
 
                 if ($current
-                    && isset($options['routeParameters'])
-                    && $options['routeParameters']) {
-                    foreach ($options['routeParameters'] as $k => $v) {
+                    && isset($options[self::OPT_ROUTE_PARAMETERS])
+                    && $options[self::OPT_ROUTE_PARAMETERS]) {
+                    foreach ($options[self::OPT_ROUTE_PARAMETERS] as $k => $v) {
                         $current = $current && ($this->request->query->get($k) === $v);
                     }
                 }

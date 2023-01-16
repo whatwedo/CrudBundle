@@ -39,10 +39,10 @@ class MenuBuilder extends DefinitionMenuBuilder
     {
         $menu = $this->factory->createItem('');
         $menu->addChild('Dashboard', [
-            'label' => 'whatwedo_crud.dashboard',
-            'route' => 'whatwedo_crud_dashboard',
-            'attributes' => [
-                'icon' => 'house-door',
+            self::OPT_LABEL => 'whatwedo_crud.dashboard',
+            self::OPT_ROUTE => 'whatwedo_crud_dashboard',
+            self::OPT_ATTR => [
+                self::OPT_ATTR_ICON => 'house-door',
             ],
         ]);
         foreach ($this->definitionManager->getDefinitions() as $definition) {

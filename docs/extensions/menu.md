@@ -28,9 +28,9 @@ class MenuBuilder extends DefinitionMenuBuilder
     {
         $menu = $this->factory->createItem('');
         $menu->addChild('Dashboard', [
-            'route' => 'whatwedo_crud_dashboard',
-            'attributes' => [
-                'icon' => 'house-door',
+            self::OPT_ROUTE => 'whatwedo_crud_dashboard',
+            self::OPT_ATTR => [
+                self::OPT_ATTR_ICON => 'house-door',
             ],
         ]);
         foreach ($this->definitionManager->getDefinitions() as $definition) {
@@ -69,15 +69,15 @@ You may want to create a sub navigation item at menu item `Dashboard`. You can d
 ```php
 $menu = $this->factory->createItem('');
 $dashboardMenu = $menu->addChild('Dashboard', [
-    'route' => 'whatwedo_crud_dashboard',
-    'attributes' => [
-        'icon' => 'house-door',
+    self::OPT_ROUTE => 'whatwedo_crud_dashboard',
+    self::OPT_ATTR => [
+        self::OPT_ATTR_ICON => 'house-door',
     ],
 ]);
 $dashboardMenu->addChild('Statistics', [
-    'route' => 'statistics_route',
-    'attributes' => [
-        'icon' => 'graph-down',
+    self::OPT_ROUTE => 'statistics_route',
+    self::OPT_ATTR => [
+        self::OPT_ATTR_ICON => 'graph-down',
     ],
 ]);
 ```
@@ -97,7 +97,7 @@ For example, we want to make a navigation point which shows me all orders in ope
 
 ```php
 $this->addDefinition($doctorsMenu, OrderDefinition::class, [
-    'routeParameters' => [
+    self::OPT_ROUTE_PARAMETERS => [
         'index_filter_column[0][0]' => 'status',
         'index_filter_operator[0][0]' => 'equal',
         'index_filter_value[0][0]' => 'open',
@@ -118,3 +118,7 @@ public function createSubMenu(): ItemInterface
     }
 }
 ```
+
+## Options
+[php-doc-parser(whatwedo/CrudBundle:src/Builder/DefinitionMenuBuilder.php:public const OPT_)]
+
