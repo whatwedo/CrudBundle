@@ -41,7 +41,7 @@ styles:
 ## PHP Unit
 phpunit:
 	cd tests/App && yarn install && yarn dev
-	vendor/bin/simple-phpunit
+	vendor/bin/phpunit
 
 ## server start
 server:
