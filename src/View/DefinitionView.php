@@ -20,6 +20,7 @@ use whatwedo\CrudBundle\Block\BlockBlock;
 use whatwedo\CrudBundle\Block\DefinitionBlock;
 use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Content\AbstractContent;
+use whatwedo\CrudBundle\Content\Content;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Enum\PageInterface;
@@ -125,9 +126,9 @@ class DefinitionView
 
         if ($page) {
             $attribute = match ($page) {
-                Page::SHOW => 'show_voter_attribute',
-                Page::CREATE => 'create_voter_attribute',
-                Page::EDIT => 'edit_voter_attribute',
+                Page::SHOW => Block::OPT_SHOW_VOTER_ATTRIBUTE,
+                Page::CREATE => Block::OPT_CREATE_VOTER_ATTRIBUTE,
+                Page::EDIT => Block::OPT_EDIT_VOTER_ATTRIBUTE,
             };
 
             $blocks->filter(
@@ -243,7 +244,7 @@ class DefinitionView
             $this->handleBockBlock($block, $handleDefinitionBlock);
 
             foreach ($block->getContents($this, $this->getRoute()) as $content) {
-                if (! $content->hasOption('form_type')
+                if (! $content->hasOption(Content::OPT_FORM_TYPE)
                     || ! $content->isVisibleOnEdit()
                     || ! $content->isVisibleInEditForm()
                     || ! $this->authorizationChecker->isGranted($content->getEditVoterAttribute(), $this->data)) {
@@ -310,7 +311,7 @@ class DefinitionView
             $this->handleBockBlock($block, $handleDefinitionBlock);
 
             foreach ($block->getContents($this, $this->getRoute()) as $content) {
-                if (! $content->hasOption('form_type')
+                if (! $content->hasOption(Content::OPT_FORM_TYPE)
                     || ! $content->isVisibleOnCreate()
                     || ! $content->isVisibleInCreateForm()
                     || ! $this->authorizationChecker->isGranted($content->getCreateVoterAttribute(), $this->data)) {
@@ -356,13 +357,13 @@ class DefinitionView
     protected function isContentRequired(AbstractContent $content): bool
     {
         return $this->formRegistry->getTypeGuesser()
-            ->guessRequired($this->getDefinition()::getEntity(), $content->getOption('accessor_path'))
+            ->guessRequired($this->getDefinition()::getEntity(), $content->getOption(AbstractContent::OPT_ACCESSOR_PATH))
             ->getValue();
     }
 
     protected function getFormType(AbstractContent $content): ?string
     {
-        $formType = $content->getOption('form_type');
+        $formType = $content->getOption(Content::OPT_FORM_TYPE);
         if ($formType === EntityPreselectType::class) {
             if (EntityPreselectType::isValueProvided($this->requestStack->getCurrentRequest(), $content->getFormOptions())) {
                 $formType = EntityHiddenType::class;
@@ -371,7 +372,7 @@ class DefinitionView
             }
         }
 
-        $content->setOption('form_type', $formType);
+        $content->setOption(Content::OPT_FORM_TYPE, $formType);
 
         return $formType;
     }
