@@ -87,17 +87,8 @@
         {{ stimulus_controller('whatwedo/crud-bundle/tab') }}
     >
         <h2 class="whatwedo-utility-heading-3 px-4 py-3">{{ block.option('label') | trans }}</h2>
-        <div class="sm:hidden">
-            <label for="tabs" class="sr-only">Select a tab</label>
-            <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
-            <select {{ stimulus_action('whatwedo/crud-bundle/tab', 'changeTab') }} id="tabs" name="tabs" class="block w-full border-neutral-300 focus:border-primary-300 focus:ring-primary-500 mb-4">
-                {% for subBlock in block.blocks(view, page) %}
-                    <option value="{{ subBlock.acronym }}">{{ subBlock.option('label') | trans }}</option>
-                {% endfor %}
-            </select>
-        </div>
 
-        <div class="hidden sm:block">
+        <div class="block">
             <nav class="isolate z-0 flex divide-x divide-neutral-200">
                 {% for subBlock in block.blocks(view, page) %}
                     <a
