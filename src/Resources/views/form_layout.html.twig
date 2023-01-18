@@ -14,12 +14,12 @@
 {% endblock widget_attributes %}
 
 {%- block checkbox_widget -%}
-    {%- set widget_class = widget_class|default('mr-2 focus:ring-primary-500 h-4 w-4 text-primary-500 border-gray-300 rounded') -%}
+    {%- set widget_class = widget_class|default('mr-2 focus:ring-primary-500 h-4 w-4 text-primary-500 border-neutral-300 rounded') -%}
     {{- parent() -}}
 {%- endblock checkbox_widget -%}
 
 {%- block radio_widget -%}
-    {%- set widget_class = widget_class|default('mr-2 focus:ring-primary-500 h-4 w-4 text-primary-500 border-gray-300') -%}
+    {%- set widget_class = widget_class|default('mr-2 focus:ring-primary-500 h-4 w-4 text-primary-500 border-neutral-300') -%}
     {{- parent() -}}
 {%- endblock radio_widget -%}
 
@@ -41,7 +41,7 @@
     {%- if errors|length > 0 -%}
         <ul>
             {%- for error in errors -%}
-                <li class="mb-2 mt-2 text-red-700 py-3 relative">{{ error.message|trans }}</li>
+                <li class="mb-2 mt-2 whatwedo-utility-paragraph--error py-3 relative">{{ error.message|trans }}</li>
             {%- endfor -%}
         </ul>
     {%- endif -%}

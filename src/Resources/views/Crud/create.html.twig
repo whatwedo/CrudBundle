@@ -6,7 +6,7 @@
     {{ form_start(form, { attr: { id: 'crud_main_form', class: 'whatwedo_crud-form whatwedo_crud-form--create flex-grow' } }) }}
 
     {% if form.vars.errors|length > 0 %}
-        <div class="mb-3 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <div class="relative mb-3 px-4 py-3 whatwedo-utility-input whatwedo-utility-input--error" role="alert">
             {{ form_errors(form) }}
         </div>
     {% endif %}
