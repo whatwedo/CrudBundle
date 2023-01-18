@@ -18,6 +18,17 @@ export default class extends Controller {
         this.activeTab(event.currentTarget);
     }
 
+    resetContent() {
+        this.tabTargets.forEach(tab => {
+            tab.classList.remove('active');
+            tab.querySelector('[data-whatwedo--crud-bundle--tab-target]').classList.remove('bg-primary-500');
+        });
+        this.contentTargets.forEach(content => {
+            content.classList.remove('block');
+            content.classList.add('hidden');
+        });
+    }
+
     activeTab(element) {
         const tabId = element.dataset.tabId;
         const activeContent = this.element.querySelector(`[data-tab-content="${tabId}"]`);
