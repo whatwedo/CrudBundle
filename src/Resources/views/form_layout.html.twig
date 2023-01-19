@@ -10,6 +10,7 @@
 #}
 {% block widget_attributes %}
     {% set widget_class = widget_class|default('block w-full shadow-sm whatwedo_core-input') %}
+    {% set widget_errors_class = widget_errors_class|default('whatwedo-utility-input--error') %}
     {{ parent() }}
 {% endblock widget_attributes %}
 
