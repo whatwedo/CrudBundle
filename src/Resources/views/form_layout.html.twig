@@ -48,6 +48,16 @@
     {%- endif -%}
 {%- endblock form_errors -%}
 
+{%- block form_label -%}
+    {% set label_class = label_class|default('block text-neutral-800') %}
+    {{- parent() -}}
+{%- endblock form_label -%}
+
+{%- block form_help -%}
+    {% set help_class = help_class|default('mt-1 text-neutral-600') %}
+    {{- parent() -}}
+{%- endblock form_help -%}
+
 {%- block money_widget -%}
     <div class="space-x-4 hidden sm:flex">
         <div class="w-5/6 px-4 py-2">
