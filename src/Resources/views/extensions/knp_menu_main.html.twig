@@ -90,6 +90,9 @@
                         {% set classes = classes|replace({
                             'h-4': 'h-3'
                         }) %}
+                        {% if item.level == '3' %}
+                            {% set classes = classes ~ ' transform scale-50' %}
+                        {% endif %}
                         {% if matcher.isCurrent(item) or matcher.isAncestor(item, options.matchingDepth) %}
                             {{ bootstrap_icon('circle-fill', { 'class': classes }) }}
                         {% else %}

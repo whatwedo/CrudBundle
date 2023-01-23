@@ -18,12 +18,6 @@ export default class extends Controller {
         this.activeTab(event.currentTarget);
     }
 
-    changeTab(event) {
-        const activeContent = this.element.querySelector(`[data-tab-id="${event.target.value}"]`);
-        this.resetContent();
-        this.activeTab(activeContent);
-    }
-
     resetContent() {
         this.tabTargets.forEach(tab => {
             tab.classList.remove('active');

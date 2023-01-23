@@ -18,7 +18,6 @@ module.exports = {
             pattern: /col-span-\d+/,
             variants: ['lg', 'md', 'sm'],
         },
-        'border-red-700',
     ],
     media: false,
     theme: {
