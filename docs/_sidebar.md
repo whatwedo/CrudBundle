@@ -13,6 +13,7 @@
 ** - [Filters](cookbook/filters.md)
 ** - [Search](cookbook/search.md)
 ** - [Custom Styles](cookbook/custom_styles.md)
+** - [Custom Actions](cookbook/custom_actions.md)
 
 * Layout
 ** [Dashboard](extensions/dashboard.md)
