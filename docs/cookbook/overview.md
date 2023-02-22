@@ -19,3 +19,7 @@
     - [What can be used within the main style](cookbook/custom_styles.md#what-can-be-used-within-the-main-style)
     - [Naming conventions](cookbook/custom_styles.md#naming-conventions)
     - [There's no hook for what I want to style](cookbook/custom_styles.md#there39s-no-hook-for-what-i-want-to-style)
+
+- [Custom Actions](cookbook/custom_actions.md)
+    - [How to clone an entity](cookbook/custom_actions.md#cloning-entities)
+

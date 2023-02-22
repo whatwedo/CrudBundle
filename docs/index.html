@@ -10,14 +10,39 @@
 </head>
 <body>
 <div id="app"></div>
+
+<!-- Include Mermaid -->
+<script src="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+
 <script>
+    // Mermaid Config
+    var num = 0;
+    mermaid.initialize({ startOnLoad: false });
+
+    // Docsify Config
     window.$docsify = {
         name: 'whatwedoCrudBundle',
         repo: 'whatwedo/CrudBundle',
         loadSidebar: true,
         alias: {
             '/.*/_sidebar.md': '/_sidebar.md'
-        }
+        },
+
+        // Mermaid Config
+        markdown: {
+            renderer: {
+                code: function (code, lang) {
+                    if (lang === "mermaid") {
+                        return (
+                            '<div class="mermaid">' +
+                            mermaid.render("mermaid-svg-" + num++, code) +
+                            "</div>"
+                        );
+                    }
+                    return this.origin.code.apply(this, arguments);
+                },
+            },
+        },
     };
     window.whatwedoOptions = {
         githubBase: 'https://raw.githubusercontent.com/%repo%/1.0-dev/%file%',
