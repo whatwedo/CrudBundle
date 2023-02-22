@@ -18,6 +18,13 @@ As of now you still need to add the following to your composer.json and then run
 }
 ```
 
+The crud bundle is currently only translated in German. Be sure you have set the locale to `de` in your `config/packages/translation.yaml`
+or create your own translations. If you do, we recommend opening a Pull Request for us on [GitHub](https://github.com/whatwedo/CrudBundle/pulls) so we can add them to the bundle.
+```yaml
+framework:
+    default_locale: de
+```
+
 On a newly installed symfony project you can do all needed configurations with this command. If you are trying to implement
 the crud bundle in an existing project you can skip this step. Read the full guide and only use the steps needed for your
 project.
@@ -31,13 +38,6 @@ Add a new `form_theme` to your `config/packages/twig.yaml` like following:
 twig:
     form_themes:
         - '@whatwedoCrud/form_layout.html.twig'
-```
-
-The crud bundle is currently only translated in German. Be sure to have set the locale to `de` in your `config/packages/framework.yaml`
-or create your own translations. Push them to us, and we will add them to the bundle.
-```yaml
-framework:
-    default_locale: de
 ```
 
 You are now ready to create entities and definitions: 
@@ -205,6 +205,7 @@ To use it in german, set your applications `default_locale` to `de` as shown in 
 framework:
     default_locale: de
 ```
+(The config file can be found under `config/packages/translation.yaml`)
 
 ### Create an entity
 
