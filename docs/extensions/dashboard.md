@@ -73,4 +73,5 @@ The entry with the key `whatwedo_crud_dashboard` should no longer exist in the f
     </a>
 {% endblock %}
 ```
+
 That's all, when you call `/dashboard` your controller should now be used.

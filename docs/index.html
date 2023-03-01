@@ -9,52 +9,36 @@
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
 </head>
 <body>
-<div id="app"></div>
+    <div id="app"></div>
+    <script>
+        window.$docsify = {
+            name: 'whatwedoCrudBundle',
+            repo: 'whatwedo/CrudBundle',
+            loadSidebar: true,
+            alias: {
+                '/.*/_sidebar.md': '/_sidebar.md'
+            }
+        };
+        window.whatwedoOptions = {
+            githubBase: 'https://raw.githubusercontent.com/%repo%/1.0-dev/%file%',
+            fullPath: (repo, file) => {
+                return window.whatwedoOptions.githubBase.replace('%repo%', repo).replace('%file%', file);
+            }
+        };
+    </script>
+    <!-- Docsify v4 plugins -->
+    <script src="docsify-plugin-php-doc-parser.js"></script>
 
-<!-- Include Mermaid -->
-<script src="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <!-- Docsify v4 -->
+    <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
 
-<script>
-    // Mermaid Config
-    var num = 0;
-    mermaid.initialize({ startOnLoad: false });
-
-    // Docsify Config
-    window.$docsify = {
-        name: 'whatwedoCrudBundle',
-        repo: 'whatwedo/CrudBundle',
-        loadSidebar: true,
-        alias: {
-            '/.*/_sidebar.md': '/_sidebar.md'
-        },
-
-        // Mermaid Config
-        markdown: {
-            renderer: {
-                code: function (code, lang) {
-                    if (lang === "mermaid") {
-                        return (
-                            '<div class="mermaid">' +
-                            mermaid.render("mermaid-svg-" + num++, code) +
-                            "</div>"
-                        );
-                    }
-                    return this.origin.code.apply(this, arguments);
-                },
-            },
-        },
-    };
-    window.whatwedoOptions = {
-        githubBase: 'https://raw.githubusercontent.com/%repo%/1.0-dev/%file%',
-        fullPath: (repo, file) => {
-            return window.whatwedoOptions.githubBase.replace('%repo%', repo).replace('%file%', file);
-        }
-    };
-</script>
-<!-- Docsify v4 plugins -->
-<script src="docsify-plugin-php-doc-parser.js"></script>
-
-<!-- Docsify v4 -->
-<script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+    <!-- Prism Language Support (Code-Highlighting) -->
+    <script src="docsify_extensions/prism-php.min.js"></script>
+    <script src="docsify_extensions/prism-json.min.js"></script>
+    <script src="docsify_extensions/prism-scss.min.js"></script>
+    <script src="docsify_extensions/prism-sass.min.js"></script>
+    <script src="docsify_extensions/prism-yaml.min.js"></script>
+    <script src="docsify_extensions/prism-twig.min.js"></script>
+    <script src="docsify_extensions/prism-bash.min.js"></script>
 </body>
 </html>

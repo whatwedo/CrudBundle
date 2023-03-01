@@ -10,29 +10,36 @@ In the following example we are creating one block with three properties. Those 
 
 You can add as many blocks as you want.
 
-```
-/**
- * {@inheritdoc}
- */
-public function configureView(DefinitionBuilder $builder, $data)
+```php
+class ExampleDefinition extends AbstractDefinition
 {
-    $builder->addBlock('example', null, [
-        'label' => 'Example Block',
-    ])
-        ->addContent('firstname', null, [
-            'label' => 'Your Firstname',
-        ])
-        ->addContent('lastname', null, [
-            'label' => 'Your Lastname',
-        ])
-        ->addContent('company', null, [
-            'label' => 'Your Company',
-        ])
-        ->addContent('email', null, [
-            'label' => 'Your Company',
-            'formatter' => EmailFormatter::class,
-        ])
-    ;
+    // ...
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function configureView(DefinitionBuilder $builder, $data)
+    {
+        $builder
+            ->addBlock('example', null, [
+                'label' => 'Example Block',
+            ])
+            ->addContent('firstname', null, [
+                'label' => 'Your Firstname',
+            ])
+            ->addContent('lastname', null, [
+                'label' => 'Your Lastname',
+            ])
+            ->addContent('company', null, [
+                'label' => 'Your Company',
+            ])
+            ->addContent('email', null, [
+                'label' => 'Your Company',
+                'formatter' => EmailFormatter::class,
+            ])
+        ;
+    }
+    // ...
 }
 ```
 

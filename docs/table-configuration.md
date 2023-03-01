@@ -3,10 +3,9 @@
 For a basic table configuration refer to the [WhatwedoTableBundle Documentations](https://whatwedo.github.io/TableBundle/#/)
 
 ```php
-
 class LocationDefinition extends AbstractDefinition
 {
-....
+    // ...
 
     public function configureTable(Table $table)
     {
@@ -20,7 +19,7 @@ class LocationDefinition extends AbstractDefinition
             ->addColumn('zip', null, ['label' => 'ZIP']);
     }
 
-...
+    // ...
 }
 ```
 
@@ -37,6 +36,7 @@ explain how they are added automatically and how to customize them.
 #### Simple
 Filter all rooms included in a house with a specific color.  
 This filter would be applied on the `RoomDefinition`.
+
 ```php
 public function overrideTableConfiguration(Table $table)
 {
@@ -57,7 +57,8 @@ public function overrideTableConfiguration(Table $table)
 
 In this example we join a ManyToOne (Room -> House) and then a OneToMany (House -> Furniture) relation.  
 The goal is to filter all rooms contained in all houses which include a furniture with a specific status (StatusEnum).  
-This filter would be applied on the `RoomDefinition` as well.  
+This filter would be applied on the `RoomDefinition` as well.
+
 ```php
 public function overrideTableConfiguration(Table $table)
 {
@@ -73,8 +74,7 @@ public function overrideTableConfiguration(Table $table)
 ### Action Buttons
 The CrudBundle will add two Action Buttons to each row (show / edit). To add more use the same method `overrideTableConfiguration`.
 
-```
-...
+```php
 public function overrideTableConfiguration(Table $table)
 {
     parent::overrideTableConfiguration($table);
@@ -82,8 +82,8 @@ public function overrideTableConfiguration(Table $table)
         ->addActionItem('Label', 'icon', 'btn', 'route')
     ;
 }
-...
 ```
+
 Where:
 - `icon` = fa icon suffix (for "fa-clone" just write "clone")
 - `btn` = button collor (default = grey, success = green, warning = yellow, danger = red, primary = blue)

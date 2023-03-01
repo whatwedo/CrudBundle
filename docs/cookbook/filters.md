@@ -63,7 +63,8 @@ public function configureFilters(Table $table)
 ## How to predefine often used filters
 Sometimes you have filters or a set of filters that you use pretty often. Instead of always clicking them together in the UI, you can predefine them via code and make them available to all users:
 
-(For instance we often search for users with blonde hair, a height of at least 180cm and only persons that identify as women) 
+(For instance we often search for users with blonde hair, a height of at least 180cm and only persons that identify as women)
+
 ```php
 public function configureFilters(Table $table)
 {

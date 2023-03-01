@@ -2,7 +2,7 @@
 The CrudBundle allows you to easily export your data to CSV files. For doing so follow these steps:
 
 1: Enable the export route in your definition:
-```
+```php
     /**
      * {@inheritdoc}
      */
@@ -27,7 +27,7 @@ By default the table configuration will be exported.
 
 To define your custom export, just override the `configureExport` method. Create columns as you need them.
 
-```   
+```php
     public function configureExport(Table $table)
     {
         $this->configureTable($table);
@@ -43,7 +43,7 @@ To define your custom export, just override the `configureExport` method. Create
 
 ## Export Column options
 
-```   
+```php
     public function configureTable(Table $table): void
     {
         parent::configureTable($table);

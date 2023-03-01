@@ -18,7 +18,7 @@ Below the imports you can target our style hooks and adjust stylings accordingly
 
 Here's an example:
 
-```
+```scss
 @import "~@whatwedo/core-bundle/styles/_tailwind.scss";
 @import "~@whatwedo/table-bundle/styles/_tailwind.scss";
 
@@ -34,7 +34,7 @@ Since your main style is probably a SCSS file you can use SCSS functionalities a
 It's very easy to apply a Tailwind class to your target by using the `@apply` keyword.
 All the options set inside the `tailwind.config.js` config file you can use as in every Tailwind project.
 
-```
+```scss
 .whatwedo_core-navigation {
     @apply flex flex-col justify-center;
     @apply text-error-500
@@ -63,7 +63,7 @@ You can always just target a HTML element, but I highly suggest you to include a
 
 For example you want to adjust something within a navigation item:
 
-```
+```scss
 .whatwedo_core-navigation__item strong {
     font-weight: 900;
 } 
