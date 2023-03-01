@@ -4,22 +4,23 @@
 
 CHECK WHETHER THESE CONFIGS ARE STILL VALID (@tuxes3)
 
-```
+```yaml
 whatwedo_crud:
   templateDirectory: '@whatwedoCrud/Templates'
 ```
 
 The template path can also be changed individually for each definition class. 
 
-```
+```php
 class PostDefinition extends AbstractDefinition
 {
-...
+    // ...
     public function getTemplateDirectory(): string
     {
         return 'myTemplates';
     }
-
+    // ...
+}
 ```
 
 ## Layout Files
@@ -27,14 +28,14 @@ class PostDefinition extends AbstractDefinition
 The layout file defines how the crud will be rendered. The default layout file is `@whatwedoCrud/layout/adminlte_layout.html.twig` 
 and can be changed in the config `config/packages/whatwedo_crud.yaml`
 
-```
+```yaml
 whatwedo_crud:
   layout: 'crud/layout/my_layout.html.twig'
 ```
 
 Like in Symfony Forms, the layout file can be extended or overwritten. New blocks can be added or overwritten. 
 
-```
+```twig
 {% extends '@whatwedoCrud/layout/adminlte_layout.html.twig' %}
 
 {% block crud_show %}
@@ -64,10 +65,13 @@ The row block name will be dynamically created. `<block_prefix>` and `<render_mo
 
 The `block_prefix` can be set with the content options.
 
-```
+```php
 class PostDefinition extends AbstractDefinition
 {
-....
+    // ...
+
+    public function configureView(DefinitionBuilder $builder, $data)
+    {
         $builder
             ->getBlock('post')
             ->addContent(
@@ -79,7 +83,10 @@ class PostDefinition extends AbstractDefinition
                 ]
             )
         ;
+    }
 
+    // ...
+}
 ```
 
 By default the `block_prefix` is the snake case of the class name. 

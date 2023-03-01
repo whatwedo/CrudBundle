@@ -7,15 +7,17 @@ This extension requires the [mhujer/breadcrumbs-bundle](https://github.com/mhuje
 
 ## Installation
 
-1. follow the installation instructions on [mhujer/breadcrumbs-bundle GitHub Page](https://github.com/mhujer/BreadcrumbsBundle).
-2. configure the bundle:
+- 1. follow the installation instructions on [mhujer/breadcrumbs-bundle GitHub Page](https://github.com/mhujer/BreadcrumbsBundle).
+- 2. configure the bundle:
+
 ```yml
 whatwedo_crud:
     breadcrumbs:
         home_text: Dashboard
         home_route: my_project_dashboard_start
 ```
-3. clear the cache of your application
+
+- 3. clear the cache of your application
 
 ## Usage
 
@@ -47,6 +49,7 @@ class ProductContentDefinition extends AbstractDefinition
     }
 }
 ```
+
 Where possible, we inject the entity and the current route, but try not to rely on it.
 
 ### Use it outside of Definitions and CrudController

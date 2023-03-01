@@ -26,7 +26,7 @@ In this example, every time an administrator is adding a new entry into the user
 
 It is only triggered in the user history entity.
 
-```
+```php
 // src/Agency/UserBundle/EventListener/HistoryCreateEventListener.php
 
 namespace Agency\UserBundle\EventListener;
@@ -64,7 +64,7 @@ This example uses event listeners defined in the services.yaml file.
 You can also use Event Subscriber with the same result.
 See the official docs for more information: https://symfony.com/doc/current/event_dispatcher.html
 
-```
+```php
 # config/services.yml
 
 services:

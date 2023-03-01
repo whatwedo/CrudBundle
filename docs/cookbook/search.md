@@ -9,7 +9,7 @@ The search bundle is documented in the [SearchBundle](https://whatwedo.github.io
 
 Doctrine does not support `MATCH AGAINST` per default. You can enable it by adding the following lines to your `config/packages/doctrine.yaml`
 
-```
+```yaml
 doctrine:
     orm:
         dql:
@@ -19,7 +19,7 @@ doctrine:
 
 Next, update your database schema.
 
-```
+```sh
 php bin/console doctrine:schema:update --force
 ```
 
@@ -32,7 +32,7 @@ php bin/console doctrine:schema:update --force
 Use the ```#[Index]``` annotation in order to enable a field for indexing.
 
 
-```
+```php
 use Doctrine\ORM\Mapping as ORM;
 use whatwedo\SearchBundle\Annotation\Index;
 
@@ -52,11 +52,13 @@ class Post
     #[Index]
     private $description;
 
-// 
-...
+    // ...
+}
 ```
+
 After that you have to update your index
-```
+
+```sh
 php bin/console whatwedo:search:populate
 ```
 
@@ -66,7 +68,7 @@ The bundle comes already with a predefined Controller.
 
 Controller/SearchController.php
 
-```
+```php
 class SearchController extends AbstractController
 {
     use SearchTrait;
@@ -82,7 +84,7 @@ class SearchController extends AbstractController
 
 If you want to restrict results to certain entities use ```SearchOptions::OPTION_ENTITIES```
 
-```
+```php
 $searchParams = $this->getGlobalResults($request, $searchManager, [
     SearchOptions::OPTION_ENTITIES => [
         Post::class,
@@ -95,7 +97,8 @@ $searchParams = $this->getGlobalResults($request, $searchManager, [
 #### Templates
 
 Global search form is found here:  ```templates/base.html.twig```
-```
+
+```twig
 {% block search_box %}
     <div class="whatwedo_crud-sidedar flex-shrink-0 flex border-t border-neutral-200 p-4">
         <label for="search" class="sr-only">Search</label>
@@ -117,7 +120,7 @@ Global search form is found here:  ```templates/base.html.twig```
 
 To customize the search results create a file ```index.html.twig``` in ```templates/bundles/whatwedoSearchBundle```
 
-```
+```twig
 {% extends '@!whatwedoSearch/index.html.twig' %}
 
 {% block results %}
@@ -131,7 +134,7 @@ To customize the search results create a file ```index.html.twig``` in ```templa
 
 You can define indexing groups and restrict search within these. If not specified the standard group is ```default```
 
-```
+```php
 #[Index groups: ['default', 'posts']]
 private $title;
 
@@ -141,7 +144,7 @@ private $description;
 
 In the controller set which group(s) you want to include using ```SearchOptions::OPTION_GROUPS```
 
-```
+```php
 $searchParams = $this->getGlobalResults($request, $searchManager, [
     SearchOptions::OPTION_GROUPS => [
         'posts'
