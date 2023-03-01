@@ -46,6 +46,11 @@ bin/console make:entity
 bin/console make:definition
 ``` 
 
+Now you that have set up the CRUD-Bundle, please follow these instructions to finish the installation of the needed dependencies:
+- [SearchBundle](https://whatwedo.github.io/SearchBundle)
+
+---
+
 # Full Guide
 
 ## Requirements
@@ -195,7 +200,13 @@ Our default views extend your `templates/base.html.twig` template. To get the de
 ```
 If you create your own template without extending ours, be sure to use the same block names and stimulus controllers.
 
-Done! The whatwedoCrudBundle is fully installed. You should see your dashboard at: http://localhost:8000/dashboard. Now start using it!
+### Dependencies
+Now you that have set up the CRUD-Bundle, please follow these instructions to finish the installation of the needed dependencies:
+- [SearchBundle](https://whatwedo.github.io/SearchBundle)
+
+Done! 🎉
+
+The whatwedoCrudBundle is fully installed. You should see your dashboard at: http://localhost:8000/dashboard. Now start using it!
 
 ## Use Bundle
 
