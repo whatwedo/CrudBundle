@@ -2,8 +2,6 @@
 
 ## Layout Based Rendering
 
-CHECK WHETHER THESE CONFIGS ARE STILL VALID (@tuxes3)
-
 ```yaml
 whatwedo_crud:
   templateDirectory: '@whatwedoCrud/Templates'
