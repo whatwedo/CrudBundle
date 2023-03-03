@@ -20,15 +20,15 @@
         }
     ],
     "require": {
-        "php":                      ">=7.2",
+        "php":                      ">=8.0",
         "symfony/framework-bundle": "~4.0|~5.0",
         "symfony/http-kernel":      "~4.0|~5.0",
         "symfony/security-bundle":  "~4.0|~5.0",
         "symfony/serializer":       "~4.0|~5.0",
         "symfony/form":             "~4.0|~5.0",
         "symfony/twig-bundle":      "~4.0|~5.0",
-        "whatwedo/core-bundle":     "^0.4",
-        "whatwedo/table-bundle":    "^0.4",
+        "whatwedo/core-bundle":     "^0.5",
+        "whatwedo/table-bundle":    "^0.5",
         "phpspec/prophecy": "~1.0"
     },
     "require-dev": {
