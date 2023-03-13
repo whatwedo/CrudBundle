@@ -26,6 +26,8 @@ use whatwedo\CrudBundle\Content\AbstractContent;
 use whatwedo\CrudBundle\Controller\CrudController;
 use whatwedo\CrudBundle\Enum\Page;
 use whatwedo\CrudBundle\Enum\PageInterface;
+use whatwedo\CrudBundle\Enum\PageMode;
+use whatwedo\CrudBundle\Enum\PageModeInterface;
 use whatwedo\CrudBundle\Extension\BreadcrumbsExtension;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
 use whatwedo\CrudBundle\Extension\JsonSearchExtension;
@@ -528,6 +530,12 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         }
 
         return null;
+    }
+
+    public function getPageMode(): ?PageModeInterface
+    {
+        $page = PageMode::tryFrom($this->container->get(RequestStack::class)->getCurrentRequest()->get('mode', ''));
+        return $page ?? PageMode::NORMAL;
     }
 
     public function configureActions(mixed $data): void

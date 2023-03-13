@@ -12,7 +12,8 @@
     {% if view.definition.hasCapability(constant('whatwedo\\CrudBundle\\Enum\\Page::AJAXFORM')) %}
         {{ stimulus_controller('whatwedo/crud-bundle/ajax-form') }}
         data-ajax-url="{{ path(view.definition.getRoute(constant('whatwedo\\CrudBundle\\Enum\\Page::AJAXFORM')), {
-            'case' : 'createmodal'
+            'case' : 'createmodal',
+            'mode' : 'modal'
         }) }}"
     {% endif %}x
     class="whatwedo_crud-blocks whatwedo_crud-blocks--create h-full flex flex-wrap items-baseline"

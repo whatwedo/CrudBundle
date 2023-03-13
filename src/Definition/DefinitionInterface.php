@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
 use whatwedo\CrudBundle\Enum\PageInterface;
+use whatwedo\CrudBundle\Enum\PageModeInterface;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
 use whatwedo\CrudBundle\View\DefinitionView;
 use whatwedo\TableBundle\Table\Table;
@@ -146,6 +147,8 @@ interface DefinitionInterface
     public function jsonSearch(string $q): iterable;
 
     public function getPage(): ?PageInterface;
+
+    public function getPageMode(): ?PageModeInterface;
 
     public function getBatchActions(): array;
 
