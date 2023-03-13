@@ -36,7 +36,9 @@ use whatwedo\CrudBundle\Manager\BlockManager;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\View\DefinitionView;
 use whatwedo\SearchBundle\Repository\IndexRepository;
+use whatwedo\TableBundle\DataLoader\DoctrineDataLoader;
 use whatwedo\TableBundle\Extension\FilterExtension;
+use whatwedo\TableBundle\Factory\TableFactory;
 use whatwedo\TableBundle\Table\Table;
 use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
@@ -513,6 +515,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
             IndexRepository::class,
             RequestStack::class,
             LoggerInterface::class,
+            TableFactory::class,
         ];
     }
 
@@ -533,6 +536,43 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
     {
         $page = PageMode::tryFrom($this->container->get(RequestStack::class)->getCurrentRequest()->get('mode', ''));
         return $page ?? PageMode::NORMAL;
+    }
+
+    public function getSubTable(object $entity): ?Table
+    {
+        $subQueryBuilder = $this->getSubTableQueryBuilder($entity);
+        if ($subQueryBuilder === null) {
+            return null;
+        }
+
+        /** @var TableFactory $tableFactory */
+        $tableFactory = $this->container->get(TableFactory::class);
+        $table = $tableFactory->create('sub_table_' . $entity->getId(), DoctrineDataLoader::class, [
+            'dataloader_options' => [
+                DoctrineDataLoader::OPT_QUERY_BUILDER => $subQueryBuilder,
+            ],
+        ]);
+
+        /** @var DefinitionManager $definitionManager */
+        $definitionManager = $this->container->get(DefinitionManager::class);
+        $definition = $definitionManager->getDefinitionByClassName($this->getSubTableDefinition());
+
+        $table->setOption(Table::OPT_DEFINITION, $definition);
+        $table->setOption(Table::OPT_TITLE, $definition->getTitle(entity: $entity, route: Page::INDEX));
+        $definition->configureTableActions($table);
+        $definition->configureTable($table);
+
+        return $table;
+    }
+
+    public function getSubTableQueryBuilder(object $entity): ?QueryBuilder
+    {
+        return null;
+    }
+
+    public function getSubTableDefinition(): string
+    {
+        throw new \RuntimeException('You need to define the Definition for the SubTable!');
     }
 
     public function configureActions(mixed $data): void
