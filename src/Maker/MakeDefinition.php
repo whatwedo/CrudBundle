@@ -114,7 +114,7 @@ final class MakeDefinition extends AbstractMaker
         $inputConfig->setArgumentAsNonInteractive('entity-class');
     }
 
-    public function interact(InputInterface $input, ConsoleStyle $io, Command $command)
+    public function interact(InputInterface $input, ConsoleStyle $io, Command $command): void
     {
         if ($input->getArgument('entity-class') === null) {
             $argument = $command->getDefinition()->getArgument('entity-class');

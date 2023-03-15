@@ -29,6 +29,7 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -39,13 +40,13 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 
+#[AsCommand(
+    name: 'whatwedo:crud:setup',
+    description: 'Setup the CRUD bundle',
+)]
 class SetupCommand extends Command
 {
     protected const SETUP_SKELETON = '/vendor/whatwedo/crud-bundle/src/Resources/skeleton/setup';
-
-    protected static $defaultName = 'whatwedo:crud:setup';
-
-    protected static $defaultDescription = 'Setup the CRUD bundle';
 
     protected InputInterface $input;
 
@@ -66,7 +67,7 @@ class SetupCommand extends Command
         $this->defaultLocale = $containerBag->get('kernel.default_locale');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $output;
         $this->input = $input;
