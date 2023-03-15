@@ -83,7 +83,9 @@ class EntityAjaxType extends AbstractType
             'pre_submit_called' => false,
         ]);
         $resolver->setDefault('definition', null);
-        $resolver->setDefault('by_reference', false);
+        $resolver->setDefault('by_reference', function (Options $options, bool $byReference) {
+            return ! ($options['multiple'] === true);
+        });
         $resolver->setDefault('class', function (Options $options, ?string $className) {
             return $className ?: $options['definition']::getEntity();
         });
