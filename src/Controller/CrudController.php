@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Contracts\Service\Attribute\Required;
 use Twig\Environment;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 use whatwedo\CrudBundle\Enum\Page;
@@ -360,33 +361,25 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $this->definition = $definition;
     }
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setTwig(Environment $twig): void
     {
         $this->twig = $twig;
     }
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setDefinitionManager(DefinitionManager $definitionManager): void
     {
         $this->definitionManager = $definitionManager;
     }
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): void
     {
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setEntityManager(EntityManagerInterface $entityManager): void
     {
         $this->entityManager = $entityManager;

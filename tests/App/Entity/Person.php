@@ -8,36 +8,26 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-/**
- * @ORM\Table(name="person")
- * @ORM\Entity(repositoryClass="whatwedo\CrudBundle\Tests\App\Repository\PersonRepository")
- */
+#[ORM\Table(name: 'person')]
+#[ORM\Entity(repositoryClass: 'whatwedo\CrudBundle\Tests\App\Repository\PersonRepository')]
 class Person
 {
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     * @Assert\NotNull()
-     */
+    #[ORM\Column(type: 'string')]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
     private ?string $name = null;
 
-    /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     * @Assert\NotNull()
-     */
+    #[ORM\Column(type: 'string')]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
     private ?string $jobTitle = null;
 
-    /**
-     * @Assert\Callback(groups={"check-not-valid"})
-     */
+    #[Assert\Callback(groups: ['check-not-valid'])]
     public function validate(ExecutionContextInterface $context, $payload)
     {
         if ($this->name === 'not-valid') {

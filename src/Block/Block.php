@@ -12,6 +12,7 @@ use Symfony\Component\Form\FormRegistryInterface;
 use Symfony\Component\Form\Guess\TypeGuess;
 use Symfony\Component\Form\Util\StringUtil;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Service\Attribute\Required;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use whatwedo\CrudBundle\Collection\ContentCollection;
 use whatwedo\CrudBundle\Content\AbstractContent;
@@ -297,9 +298,7 @@ class Block implements ServiceSubscriberInterface
         return $this;
     }
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setContainer(ContainerInterface $container): void
     {
         $this->container = $container;
