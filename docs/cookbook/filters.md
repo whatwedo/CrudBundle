@@ -77,6 +77,7 @@ public function configureFilters(Table $table)
     // predefineFilter(acronym, label, operator, value)
 }
 ```
+It is now possible to open http://[domain].[tld]/[your-site-with-the-table]?[table-identifier]_filter_predefined=custom_query and the declared filters will be applied.
 
 ---
 
