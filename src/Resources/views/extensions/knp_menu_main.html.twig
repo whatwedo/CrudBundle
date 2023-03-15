@@ -53,7 +53,7 @@
         }) %}
 
         {# add attributes for link/button #}
-        {%- if item.uri is empty %}
+        {%- if item.hasChildren() %}
             {% set htmlElement = 'button' %}
             {% set attributes = attributes|merge({
                 'data-action': 'whatwedo--crud-bundle--navigation#toggle',
