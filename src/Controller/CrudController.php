@@ -70,7 +70,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $this->getDefinition()->configureTable($table);
         $this->getDefinition()->configureFilters($table);
         $this->getDefinition()->buildBreadcrumbs(null, Page::INDEX);
-        $table->setOption(Table::OPT_SUB_TABLE_LOADER, [$this->getDefinition(), 'getSubTable']);
+        $table->setOption(Table::OPT_SUB_TABLE_LOADER, [$this->getDefinition(), 'getSubTables']);
 
         return $this->render(
             $this->getTemplate('index.html.twig'),

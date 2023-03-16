@@ -540,41 +540,51 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         return $page ?? PageMode::NORMAL;
     }
 
-    public function getSubTable(object $entity): ?Table
+    public function getSubTables(object $entity): null|Table|array
     {
-        $subQueryBuilder = $this->getSubTableQueryBuilder($entity);
-        if ($subQueryBuilder === null) {
+        $subQueryBuilders = $this->getSubTableQueryBuilder($entity);
+        if ($subQueryBuilders === null) {
             return null;
         }
-
+        if (! is_array($subQueryBuilders)) {
+            $subQueryBuilders = [$subQueryBuilders];
+        }
+        $subTableDefinitions = $this->getSubTableDefinition($entity);
+        if (! is_array($subTableDefinitions)) {
+            $subTableDefinitions = [$subTableDefinitions];
+        }
+        if (count($subQueryBuilders) !== count($subTableDefinitions)) {
+            throw new \InvalidArgumentException('The number of sub table query builders must match the number of sub table definitions.');
+        }
         /** @var TableFactory $tableFactory */
         $tableFactory = $this->container->get(TableFactory::class);
-        $table = $tableFactory->create('sub_table_' . $entity->getId(), DoctrineDataLoader::class, [
-            'dataloader_options' => [
-                DoctrineDataLoader::OPT_QUERY_BUILDER => $subQueryBuilder,
-            ],
-        ]);
-
         /** @var DefinitionManager $definitionManager */
         $definitionManager = $this->container->get(DefinitionManager::class);
-        $definition = $definitionManager->getDefinitionByClassName($this->getSubTableDefinition());
-
-        $table->setOption(Table::OPT_DEFINITION, $definition);
-        $table->setOption(Table::OPT_TITLE, $definition->getTitle(entity: $entity, route: Page::INDEX));
-        $table->setOption(Table::OPT_THEME, '@whatwedoTable/tailwind_2_layout_sub_table.html.twig');
-        $table->removeExtension(SortExtension::class);
-        $table->removeExtension(PaginationExtension::class);
-        $definition->configureTable($table);
-
-        return $table;
+        $tables = [];
+        foreach ($subQueryBuilders as $i => $subQueryBuilder) {
+            $table = $tableFactory->create('sub_table_' . $entity->getId() . '_' . $i, DoctrineDataLoader::class, [
+                'dataloader_options' => [
+                    DoctrineDataLoader::OPT_QUERY_BUILDER => $subQueryBuilder,
+                ],
+            ]);
+            $definition = $definitionManager->getDefinitionByClassName($subTableDefinitions[$i]);
+            $table->setOption(Table::OPT_DEFINITION, $definition);
+            $table->setOption(Table::OPT_TITLE, $definition->getTitle(entity: $entity, route: Page::INDEX));
+            $table->setOption(Table::OPT_THEME, '@whatwedoTable/tailwind_2_layout_sub_table.html.twig');
+            $table->removeExtension(SortExtension::class);
+            $table->removeExtension(PaginationExtension::class);
+            $definition->configureTable($table);
+            $tables[] = $table;
+        }
+        return $tables;
     }
 
-    public function getSubTableQueryBuilder(object $entity): ?QueryBuilder
+    public function getSubTableQueryBuilder(object $entity): null|QueryBuilder|array
     {
         return null;
     }
 
-    public function getSubTableDefinition(): string
+    public function getSubTableDefinition(object $entity): string|array
     {
         throw new \RuntimeException('You need to define the Definition for the SubTable!');
     }

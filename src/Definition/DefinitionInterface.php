@@ -154,9 +154,9 @@ interface DefinitionInterface
 
     public function getFormOptions(PageInterface $page, object $data): array;
 
-    public function getSubTable(object $entity): ?Table;
+    public function getSubTables(object $entity): null|Table|array;
 
-    public function getSubTableQueryBuilder(object $entity): ?QueryBuilder;
+    public function getSubTableQueryBuilder(object $entity): null|QueryBuilder|array;
 
-    public function getSubTableDefinition(): string;
+    public function getSubTableDefinition(object $entity): string|array;
 }
