@@ -21,13 +21,13 @@ doctrine:
                 mappings:
                     App:
                         is_bundle: false
-                        type: annotation
+                        type: attribute
                         dir: '%kernel.project_dir%/Entity'
                         prefix: 'whatwedo\CrudBundle\Tests\App\Entity'
                         alias: App
 
                     tree:
-                        type: annotation # or attribute
+                        type: attribute # or attribute
                         alias: Gedmo
                         prefix: Gedmo\Tree\Entity
                         dir: "%kernel.project_dir%/../../vendor/gedmo/doctrine-extensions/src/Tree/Entity"

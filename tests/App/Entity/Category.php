@@ -8,10 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 
 #[Gedmo\Tree(type: 'nested')]
-#[ORM\Entity(repositoryClass: NestedTreeRepository::class)]
 #[ORM\Entity(repositoryClass: 'Gedmo\Tree\Entity\Repository\NestedTreeRepository')]
 class Category
 {
@@ -28,7 +26,6 @@ class Category
      */
     #[Gedmo\TreeLeft]
     #[ORM\Column(name: 'lft', type: Types::INTEGER)]
-    #[ORM\Column(name: 'lft', type: 'integer')]
     private $lft;
 
     /**
@@ -36,7 +33,6 @@ class Category
      */
     #[Gedmo\TreeLevel]
     #[ORM\Column(name: 'lvl', type: Types::INTEGER)]
-    #[ORM\Column(name: 'lvl', type: 'integer')]
     private $lvl;
 
     /**
@@ -44,7 +40,6 @@ class Category
      */
     #[Gedmo\TreeRight]
     #[ORM\Column(name: 'rgt', type: Types::INTEGER)]
-    #[ORM\Column(name: 'rgt', type: 'integer')]
     private $rgt;
 
     /**
@@ -52,8 +47,6 @@ class Category
      */
     #[Gedmo\TreeRoot]
     #[ORM\ManyToOne(targetEntity: self::class)]
-    #[ORM\JoinColumn(name: 'tree_root', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    #[ORM\ManyToOne(targetEntity: 'Category')]
     #[ORM\JoinColumn(name: 'tree_root', referencedColumnName: 'id', onDelete: 'CASCADE')]
     private $root;
 
@@ -63,18 +56,12 @@ class Category
     #[Gedmo\TreeParent]
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
     #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    #[ORM\ManyToOne(targetEntity: 'Category', inversedBy: 'children')]
-    #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     private $parent;
 
     /**
      * @var Collection<int, self>
      */
-    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent')]
-    #[ORM\OrderBy([
-        'lft' => 'ASC',
-    ])]
-    #[ORM\OneToMany(targetEntity: 'Category', mappedBy: 'parent')]
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
     #[ORM\OrderBy([
         'lft' => 'ASC',
     ])]
