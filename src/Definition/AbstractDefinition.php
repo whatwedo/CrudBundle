@@ -38,7 +38,6 @@ use whatwedo\CrudBundle\View\DefinitionView;
 use whatwedo\SearchBundle\Repository\IndexRepository;
 use whatwedo\TableBundle\DataLoader\DoctrineDataLoader;
 use whatwedo\TableBundle\Extension\FilterExtension;
-use whatwedo\TableBundle\Extension\PaginationExtension;
 use whatwedo\TableBundle\Extension\SortExtension;
 use whatwedo\TableBundle\Factory\TableFactory;
 use whatwedo\TableBundle\Table\Table;
@@ -572,7 +571,8 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
             $table->setOption(Table::OPT_TITLE, $definition->getTitle(entity: $entity, route: Page::INDEX));
             $table->setOption(Table::OPT_THEME, '@whatwedoTable/tailwind_2_layout_sub_table.html.twig');
             $table->removeExtension(SortExtension::class);
-            $table->removeExtension(PaginationExtension::class);
+            $table->getPaginationExtension()->setLimit(0);
+
             $definition->configureTable($table);
             $tables[] = $table;
         }
