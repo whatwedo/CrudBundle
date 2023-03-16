@@ -6,9 +6,7 @@ need to mark which definition to bind in the Route annotations as following:
 
 
 ```php
-/**
- * @Route("/feature/xxx", name="whatwedo_feature_xxx",defaults={ "_resource"=XXXDefinition::class })
- */
+#[Route('/feature/xxx', name: 'whatwedo_feature_xxx', defaults: ['_resource' => XXXDefinition::class])]
 public function xxxAction(Request $request): Response
 {
     // ...

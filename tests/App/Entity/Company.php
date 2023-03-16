@@ -11,60 +11,46 @@ use Symfony\Component\Validator\Constraints as Assert;
 use whatwedo\CrudBundle\Tests\App\Enum\Status;
 use whatwedo\SearchBundle\Annotation\Index;
 
-/**
- * @ORM\Table(name="company")
- * @ORM\Entity(repositoryClass="whatwedo\CrudBundle\Tests\App\Repository\CompanyRepository")
- */
+#[ORM\Table(name: 'company')]
+#[ORM\Entity(repositoryClass: 'whatwedo\CrudBundle\Tests\App\Repository\CompanyRepository')]
 class Company
 {
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank
-     * @Assert\NotNull()
-     */
     #[Index]
+    #[ORM\Column(type: 'string')]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
     private ?string $name = null;
 
-    /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank
-     * @Assert\NotNull()
-     */
     #[Index]
+    #[ORM\Column(type: 'string')]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
     private ?string $city = null;
 
-    /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank
-     * @Assert\NotNull()
-     */
     #[Index]
+    #[ORM\Column(type: 'string')]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
     private ?string $country = null;
 
-    /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank
-     * @Assert\NotNull()
-     */
     #[Index]
+    #[ORM\Column(type: 'string')]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
     private ?string $taxIdentificationNumber = null;
 
     /**
      * @var Collection|array<Contact> One Member has Many Departments
-     * @ORM\OneToMany (targetEntity="Contact", mappedBy="company")
      */
+    #[ORM\OneToMany(targetEntity: 'Contact', mappedBy: 'company')]
     private $contacts;
 
-    /**
-     * @ORM\Column(type="string", enumType=Status::class)
-     */
+    #[ORM\Column(type: 'string', enumType: Status::class)]
     private Status $status;
 
     public function __construct()

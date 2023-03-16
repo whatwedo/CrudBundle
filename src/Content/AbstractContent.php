@@ -11,6 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Contracts\Service\Attribute\Required;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use whatwedo\CrudBundle\Block\Block;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
@@ -242,9 +243,7 @@ abstract class AbstractContent implements ServiceSubscriberInterface
         return $this->options[self::OPT_BLOCK_PREFIX];
     }
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setContainer(ContainerInterface $container): void
     {
         $this->container = $container;
