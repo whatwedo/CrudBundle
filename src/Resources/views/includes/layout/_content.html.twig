@@ -5,7 +5,12 @@
     {% set isHiddenType = content.options['form_type'] in ['whatwedo\\CrudBundle\\Form\\Type\\EntityHiddenType', 'Symfony\\Component\\Form\\Extension\\Core\\Type\\HiddenType'] %}
     {% set isFormCase = form is defined %}
     {% set contentAcronym = view.definition.formAccessorPrefix ~ content.acronym %}
-    <div id="wwd-crud-block-{{ block.acronym }}-content-{{ contentAcronym }}" class="{% if (not isHiddenType and isFormCase) or not isFormCase %}px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4{% endif %} {{ content.getOption('attr')['class'] is defined ? content.getOption('attr')['class'] : '' }}">
+    {% set attr = content.option('attr')|default([])|filter((k,i) => k != 'class') %}
+    <div
+        id="wwd-crud-block-{{ block.acronym }}-content-{{ contentAcronym }}"
+        class="{% if (not isHiddenType and isFormCase) or not isFormCase %}px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4{% endif %} {{ content.option('attr')['class'] ?? '' }}"
+        {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}
+    >
         <dt class="whatwedo-utility-bold text-neutral-500" id="wwd-crud-block-{{ block.acronym }}-content-{{ contentAcronym }}-label">
             {{ content.option('label')|trans }}
             {% if content.option('help') is not empty %}
@@ -45,8 +50,11 @@
     {% if form is defined and not content.option('show_table_in_form') %}
         {{ block('content') }}
     {% else %}
-        {% if view.route == constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW') %}
-            <div class="inline-block w-full"
+        {% set isOnShow = view.route == constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW') %}
+        {% set attr = content.option('attr')|default([])|filter((k,i) => k != 'class') %}
+        {% if isOnShow %}
+            <div class="inline-block w-full {{ content.option('attr')['class'] ?? '' }}"
+            {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}
             {% set reloadUrl = content.reloadUrl(view.data) %}
             {% if reloadUrl %}
             {{ stimulus_controller('whatwedo/core-bundle/reload-content', { url: reloadUrl }) }}
@@ -66,7 +74,8 @@
         {% if createUrl and (content.addVoterAttribute is null or is_granted(content.addVoterAttribute, view.data)) %}
 
         <div
-            class="ml-3 mb-3"
+            class="ml-3 mb-3 {% if not isOnShow %}{{ content.option('attr')['class'] ?? '' }}{% endif %}"
+            {% if not isOnShow %}{{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}{% endif %}
             {{ stimulus_controller('whatwedo/core-bundle/modal-form', { formUrl: createUrl }) }}
         >
             <button
@@ -132,9 +141,9 @@
     {# @var content \whatwedo\CrudBundle\Content\RelationContent #}
     {# @var block \whatwedo\CrudBundle\Block\Block #}
     {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
-
+    {% set attr = content.option('attr')|default([])|filter((k,i) => k != 'class') %}
     {% with content.option('parameters') %}
-        <div class="bg-white">
+        <div class="bg-white {{ content.option('attr')['class'] ?? '' }}" {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
             {% include content.option('template') %}
         </div>
     {% endwith %}

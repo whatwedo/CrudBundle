@@ -2,11 +2,9 @@
     {# @var block \whatwedo\CrudBundle\Block\Block #}
     {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
     {# @var content string #}
-
-    {% set attr = {
-        class: (block.option('size') == constant('whatwedo\\CrudBundle\\Enum\\BlockSize::LARGE') ? 'basis-full sm:mb-0 max-w-full' : 'basis-full sm:basis-3/6-gap'),
-    }|merge(block.option('attr')|default([])) %}
-    <div id="wwd-crud-block-{{ block.acronym }}" {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
+    {% set attr = block.option('attr')|default([])|filter((k,i) => k != 'class') %}
+    {% set block_class = (block.option('size') == constant('whatwedo\\CrudBundle\\Enum\\BlockSize::LARGE') ? 'basis-full sm:mb-0 max-w-full' : 'basis-full sm:basis-3/6-gap') %}
+    <div id="wwd-crud-block-{{ block.acronym }}" class="{{ block_class }} {{ block.option('attr')['class'] ?? '' }}" {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
         <div class="bg-white shadow" {{ stimulus_controller('whatwedo/crud-bundle/block', {'collapsible': block.option('collapsible')}) }}>
             {% if block.option('label') or block.option('description') %}
                 <div class="px-4 py-3" {{ stimulus_target('whatwedo/crud-bundle/block', 'title') }}>
@@ -38,10 +36,9 @@
 
 
 {% block block_block %}
-    {% set attr = {
-        class: (block.option('size') == constant('whatwedo\\CrudBundle\\Enum\\BlockSize::LARGE') ? '' : 'sm:w-3/6') ~ ' w-full wwd-block-block mb-4',
-    }|merge(block.option('attr')|default([])) %}
-    <div id="wwd-crud-block-{{ block.acronym }}" {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
+    {% set attr = block.option('attr')|default([])|filter((k,i) => k != 'class') %}
+    {% set block_block_class = (block.option('size') == constant('whatwedo\\CrudBundle\\Enum\\BlockSize::LARGE') ? '' : 'sm:w-3/6') ~ ' w-full wwd-block-block mb-4' %}
+    <div id="wwd-crud-block-{{ block.acronym }}" class="{{ block_block_class }} {{ block.option('attr')['class'] ?? '' }}" {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
         <div class="bg-white shadow" {{ stimulus_controller('whatwedo/crud-bundle/block', {'collapsible': block.option('collapsible')}) }}>
         {% if block.option('label') or block.option('description') %}
             <div class="wwd-crud-block-header px-4 pt-4 sm:px-6" {{ stimulus_target('whatwedo/crud-bundle/block', 'title') }}>
@@ -68,7 +65,8 @@
 {% endblock %}
 
 {% block grid_block %}
-    <div class="w-full wwd-block-block wwd-block-block--grid">
+    {% set attr = block.option('attr')|default([])|filter((k,i) => k != 'class') %}
+    <div class="w-full wwd-block-block wwd-block-block--grid {{ block.option('attr')['class'] ?? '' }}" {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
         <h2 class="whatwedo-utility-heading-3 mt-3 mb-3">{{ block.option('label') | trans }}</h2>
         <div class="gap-4 sm:grid sm:grid-cols-{{ block.option('layout_options')['vertically'] }} sm:grid-rows-{{ block.option('layout_options')['horizontally'] }}" id="wwd-crud-block-{{ block.acronym }}">
             {% for subBlock in block.blocks(view, page) %}
