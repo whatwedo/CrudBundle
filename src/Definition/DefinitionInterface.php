@@ -132,7 +132,7 @@ interface DefinitionInterface
     /**
      * configure Actions.
      */
-    public function configureActions(object $data): void;
+    public function configureActions(mixed $data): void;
 
     public function getRedirect(PageInterface $routeFrom, ?object $entity = null): Response;
 

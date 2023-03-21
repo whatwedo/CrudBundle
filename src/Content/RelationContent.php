@@ -350,6 +350,8 @@ class RelationContent extends AbstractContent
         $table->removeExtension(SearchExtension::class);
         $table->setOption(Table::OPT_DEFINITION, $targetDefinition);
         $targetDefinition->configureTable($table);
+        $targetDefinition->configureTableActions($table);
+        $targetDefinition->configureActions(null);
         $table->setOption('title', null); // no h1 for relation content
 
         $actionColumnItems = [];
