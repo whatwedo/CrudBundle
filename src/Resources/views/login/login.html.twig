@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <main class="flex justify-center items-center min-h-full">
+        <div class="w-full bg-white border-2 border-blue px-8 pt-6 pb-8 m-4 max-w-lg w-full">
+            {{ block('logo') }}
+
+            <h1 class="my-8 whatwedo-utility-heading-1">{{ 'login.title' | trans }}</h1>
+
+            <form class="flex flex-col" action="{% block login_path %}{{ path('app_login') }}{% endblock %}" method="post">
+                <div class="mb-6">
+                    <label class="block whatwedo-utility-bold" for="username">{{ 'login.username' | trans }}</label>
+                    <div class="mt-1">
+                        <input class="block w-full p-2 whatwedo-utility-input {{ error ? 'whatwedo-utility-input--error' : '' }}" id="username" name="_username" type="text">
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block whatwedo-utility-bold" for="password">{{ 'login.password' | trans }}</label>
+                    <div class="mt-1">
+                        <input class="block w-full p-2 whatwedo-utility-input {{ error ? 'whatwedo-utility-input--error' : '' }}" id="password" name="_password" type="password">
+                    </div>
+                </div>
+
+                {% if error %}
+                    <div class="whatwedo-utility-paragraph--error mb-6">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}
+
+                <div class="flex items-center justify-between">
+                    <button class="whatwedo-crud-button--action !block text-center w-full" type="submit">
+                        {{ 'login.submit' | trans }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+{% endblock %}
