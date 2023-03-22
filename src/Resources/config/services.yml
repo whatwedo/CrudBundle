@@ -1,10 +1,13 @@
 parameters:
     whatwedo_crud.menu_builder.class: 'whatwedo\CrudBundle\Menu\MenuBuilder'
+    env(HTML5_VALIDATION): "false"
 
 services:
     _defaults:
         autowire: true
         autoconfigure: true
+        bind:
+            $html5Validation: '%env(bool:HTML5_VALIDATION)%'
 
     whatwedo\CrudBundle\:
         resource: '../../*'

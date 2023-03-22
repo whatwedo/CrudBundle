@@ -34,3 +34,9 @@ wwd:
         type:
             public: Öffentlich
             private: Privat
+
+login:
+    title: Login
+    username: Benutzername
+    password: Passwort
+    submit: Login
