@@ -4,7 +4,7 @@ In this example we will clone an entity with its relations.
 That way you should get a good understanding of how you can implement custom actions.
 
 Inside your `Definition` you can override the `configureActions()`-method like this:
-```PHP
+```php
 public function configureActions(mixed $data): void {
     parent::configureActions($data);
 
@@ -29,7 +29,7 @@ Speaking in terms of methods in a class, the click of the button will evoke the 
 
 ## Cloning Entities
 In order to clone our entities, we override the `createEntity()`-method in our Definition like so:
-```PHP
+```php
 public function createEntity(Request $request): mixed {
     if ($request->query->has('clone')
         && ($cloneTractor = $this->getRepository()->find($request->query->getInt('clone')))) {
@@ -65,7 +65,7 @@ For the sake of this example, we want to have only one brand-instance per brand.
 But in order to have a fully assembled tractor in the end, we do want an engine for each of them.
 
 That means we are going to override the `__clone()`-method in the Engine-Entity as follows:
-```PHP
+```php
 public function __clone(): void {
     $this->id = null;
     $this->created_at = new DateTime();

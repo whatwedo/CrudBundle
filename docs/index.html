@@ -17,6 +17,9 @@
             loadSidebar: true,
             alias: {
                 '/.*/_sidebar.md': '/_sidebar.md'
+            },
+            mermaidConfig: {
+                querySelector: ".mermaid"
             }
         };
         window.whatwedoOptions = {
@@ -40,5 +43,14 @@
     <script src="docsify_extensions/prism-yaml.min.js"></script>
     <script src="docsify_extensions/prism-twig.min.js"></script>
     <script src="docsify_extensions/prism-bash.min.js"></script>
+
+    <!-- Mermaid Support -->
+    <!-- Source: https://github.com/Leward/mermaid-docsify -->
+    <script type="module">
+        import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+        mermaid.initialize({ startOnLoad: true });
+        window.mermaid = mermaid;
+    </script>
+    <script src="docsify_extensions/docsify-mermaid_v2.0.0.js"></script>
 </body>
 </html>
