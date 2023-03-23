@@ -68,7 +68,7 @@
     {% set attr = block.option('attr')|default([])|filter((k,i) => k != 'class') %}
     <div class="w-full wwd-block-block wwd-block-block--grid {{ block.option('attr')['class'] ?? '' }}" {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
         <h2 class="whatwedo-utility-heading-3 mt-3 mb-3">{{ block.option('label') | trans }}</h2>
-        <div class="gap-4 sm:grid sm:grid-cols-{{ block.option('layout_options')['vertically'] }} sm:grid-rows-{{ block.option('layout_options')['horizontally'] }}" id="wwd-crud-block-{{ block.acronym }}">
+        <div class="gap-4 md:grid md:grid-cols-{{ block.option('layout_options')['vertically'] }} md:grid-rows-{{ block.option('layout_options')['horizontally'] }}" id="wwd-crud-block-{{ block.acronym }}">
             {% for subBlock in block.blocks(view, page) %}
                 {{ wwd_crud_render_block(subBlock, view, page, form ?? null) }}
             {% endfor %}
