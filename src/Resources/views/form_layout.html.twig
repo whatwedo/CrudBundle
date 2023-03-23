@@ -27,7 +27,7 @@
 {% block attributes %}
     {% if type is defined %}
         {%  if type is same as('datetime-local') or type is same as('date') or type is same as('time') %}
-            {{ stimulus_controller('whatwedo/core-bundle/datetime', {lang: 'de-DE'}) }}
+            {{ stimulus_controller('whatwedo/core-bundle/datetime', {lang: app.request.locale}) }}
         {% endif %}
     {% endif %}
 
