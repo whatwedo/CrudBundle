@@ -50,7 +50,7 @@ class CrudLoader extends Loader
                             $route->setPath($route->getPath() . '{id}/reload/{block}/{field?}');
                             $route->setRequirement('id', '\d+');
                             $route->setRequirement('block', '\w+');
-                            $route->setRequirement('field', '\w+');
+                            $route->setRequirement('field', '(\w|\.)+');
                             break;
                         case Page::CREATE:
                             $route->setPath($route->getPath() . 'create');
