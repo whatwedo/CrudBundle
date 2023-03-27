@@ -1,4 +1,49 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Dashboard{% endblock %}
+
+{% block topbar %}
+{% endblock %}
+
 {% block main %}
+    <div class="-m-4">
+
+        <div class="bg-neutral-900 text-neutral-200 p-4 md:p-8 !py-24">
+            <h1 class="whatwedo-utility-heading-1 text-neutral-300 mb-1">Dashboard</h1>
+            <h2 class="whatwedo-utility-heading-2 text-neutral-300 mb-0">Grüezi 👋</h2>
+        </div>
+
+        <div class="m-4 md:m-8 !-mt-12 grid grid-cols-1 gap-4 overflow-hidden sm:grid-cols-2 lg:grid-cols-4">
+            <a href="#" class="flex flex-col bg-neutral-300 p-8">
+                <p class="text-3xl font-semibold text-neutral-800">3</p>
+                <h4 class="text-base font-normal mt-2">Firmen im System</h4>
+            </a>
+
+            <a href="#" class="flex flex-col bg-neutral-300 p-8">
+                <p class="text-3xl font-semibold text-neutral-800">8</p>
+                <h4 class="text-base font-normal mt-2">Personen im System</h4>
+            </a>
+
+            <a href="#" class="flex flex-col bg-neutral-300 p-8">
+                <p class="text-3xl font-semibold text-neutral-800">2</p>
+                <h4 class="text-base font-normal mt-2">Artzbesuche heute</h4>
+            </a>
+
+            <a href="#" class="flex flex-col bg-neutral-300 p-8">
+                <p class="text-3xl font-semibold text-neutral-800">60%</p>
+                <h4 class="text-base font-normal mt-2">Auslastung</h4>
+            </a>
+        </div>
+
+        <div class="m-4 md:m-8 p-4 bg-white">
+            <h1 class="whatwedo-utility-heading-1 mb-4">Hello DashboardController! ✅</h1>
+
+            <p class="whatwedo-utility-paragraph mb-2">This friendly message is coming from:</p>
+            <ul class="whatwedo-utility-paragraph">
+                <li>Your controller at <code><a href="{{ '/var/www/src/Controller/DashboardController.php'|file_link(0) }}">src/Controller/DashboardController.php</a></code></li>
+                <li>Your template at <code><a href="{{ '/var/www/templates/dashboard/index.html.twig'|file_link(0) }}">templates/dashboard/index.html.twig</a></code></li>
+            </ul>
+        </div>
+
+    </div>
 {% endblock %}
