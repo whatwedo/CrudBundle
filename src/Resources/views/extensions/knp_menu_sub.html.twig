@@ -12,9 +12,9 @@
 
             {# add title #}
             {% if item.name and not item.parent %}
-                {% set classes = 'bg-white text-neutral-900 hover:bg-neutral-100 active:bg-neutral-200 group w-full flex items-center px-3 py-2.5 text-base font-bold cursor-pointer transition-colors' %}
+                {% set classes = 'bg-white text-neutral-900 hover:bg-neutral-100 active:bg-neutral-200 group w-full flex items-center px-3 py-2.5 text-base font-semibold cursor-pointer transition-colors' %}
 
-                {% if matcher.isCurrent(item) or matcher.isAncestor(item, options.matchingDepth) %}
+                {% if matcher.isCurrent(item) %}
                     {% set classes = classes|replace({'bg-white': 'bg-neutral-200'}) %}
                 {% endif %}
 
@@ -63,11 +63,7 @@
         {% import _self as knp_menu %}
 
         {# classes for link/button item #}
-        {% set classes = 'bg-white text-neutral-900 hover:bg-neutral-100 active:bg-neutral-200 group w-full flex items-center px-3 py-2.5 text-base font-bold transition-colors' %}
-
-        {% if matcher.isCurrent(item) or matcher.isAncestor(item, options.matchingDepth) %}
-            {% set classes = classes|replace({'bg-white': 'bg-neutral-200'}) %}
-        {% endif %}
+        {% set classes = 'bg-white text-neutral-900 hover:bg-neutral-100 active:bg-neutral-200 group w-full flex items-center px-3 py-2.5 text-base font-semibold transition-colors' %}
 
         {% if matcher.isCurrent(item) %}
             {% set classes = classes|replace({'bg-white': 'bg-neutral-200'}) %}
