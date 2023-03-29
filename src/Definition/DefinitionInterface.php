@@ -153,4 +153,10 @@ interface DefinitionInterface
     public function getBatchActions(): array;
 
     public function getFormOptions(PageInterface $page, object $data): array;
+
+    public function getSubTables(object $entity): null|Table|array;
+
+    public function getSubTableQueryBuilder(object $entity): null|QueryBuilder|array;
+
+    public function getSubTableDefinition(object $entity): string|array;
 }

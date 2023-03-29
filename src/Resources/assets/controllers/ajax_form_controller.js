@@ -1,7 +1,6 @@
 import { Controller } from '@hotwired/stimulus';
 import 'regenerator-runtime/runtime'
 
-let form = null;
 let ajaxUrl = null;
 
 export default class extends Controller {
@@ -9,7 +8,6 @@ export default class extends Controller {
     static targets = ['ajax'];
 
     connect() {
-        form     = this.element.closest('form');
         ajaxUrl  = this.element.getAttribute('data-ajax-url');
         this.ajaxTargets.forEach(target => {
             let found = false;
@@ -29,6 +27,7 @@ export default class extends Controller {
     }
 
     submitAjax() {
+        const form = this.element.closest('form');
         fetch(ajaxUrl, {
             method: form.method,
             body: new FormData(form),
@@ -43,7 +42,7 @@ export default class extends Controller {
     }
 
     initFormElement(formElement) {
-        formElement.onchange = this.submitAjax;
+        formElement.onchange = this.submitAjax.bind(this);
     }
 
 }

@@ -36,7 +36,10 @@ use whatwedo\CrudBundle\Manager\BlockManager;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\View\DefinitionView;
 use whatwedo\SearchBundle\Repository\IndexRepository;
+use whatwedo\TableBundle\DataLoader\DoctrineDataLoader;
 use whatwedo\TableBundle\Extension\FilterExtension;
+use whatwedo\TableBundle\Extension\SortExtension;
+use whatwedo\TableBundle\Factory\TableFactory;
 use whatwedo\TableBundle\Table\Table;
 use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
@@ -513,6 +516,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
             IndexRepository::class,
             RequestStack::class,
             LoggerInterface::class,
+            TableFactory::class,
         ];
     }
 
@@ -533,6 +537,56 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
     {
         $page = PageMode::tryFrom($this->container->get(RequestStack::class)->getCurrentRequest()->get('mode', ''));
         return $page ?? PageMode::NORMAL;
+    }
+
+    public function getSubTables(object $entity): null|Table|array
+    {
+        $subQueryBuilders = $this->getSubTableQueryBuilder($entity);
+        if ($subQueryBuilders === null) {
+            return null;
+        }
+        if (! is_array($subQueryBuilders)) {
+            $subQueryBuilders = [$subQueryBuilders];
+        }
+        $subTableDefinitions = $this->getSubTableDefinition($entity);
+        if (! is_array($subTableDefinitions)) {
+            $subTableDefinitions = [$subTableDefinitions];
+        }
+        if (count($subQueryBuilders) !== count($subTableDefinitions)) {
+            throw new \InvalidArgumentException('The number of sub table query builders must match the number of sub table definitions.');
+        }
+        /** @var TableFactory $tableFactory */
+        $tableFactory = $this->container->get(TableFactory::class);
+        /** @var DefinitionManager $definitionManager */
+        $definitionManager = $this->container->get(DefinitionManager::class);
+        $tables = [];
+        foreach ($subQueryBuilders as $i => $subQueryBuilder) {
+            $table = $tableFactory->create('sub_table_' . $entity->getId() . '_' . $i, DoctrineDataLoader::class, [
+                'dataloader_options' => [
+                    DoctrineDataLoader::OPT_QUERY_BUILDER => $subQueryBuilder,
+                ],
+            ]);
+            $definition = $definitionManager->getDefinitionByClassName($subTableDefinitions[$i]);
+            $table->setOption(Table::OPT_DEFINITION, $definition);
+            $table->setOption(Table::OPT_TITLE, $definition->getTitle(entity: $entity, route: Page::INDEX));
+            $table->setOption(Table::OPT_THEME, '@whatwedoTable/tailwind_2_layout_sub_table.html.twig');
+            $table->removeExtension(SortExtension::class);
+            $table->getPaginationExtension()->setLimit(0);
+
+            $definition->configureTable($table);
+            $tables[] = $table;
+        }
+        return $tables;
+    }
+
+    public function getSubTableQueryBuilder(object $entity): null|QueryBuilder|array
+    {
+        return null;
+    }
+
+    public function getSubTableDefinition(object $entity): string|array
+    {
+        throw new \RuntimeException('You need to define the Definition for the SubTable!');
     }
 
     public function configureActions(mixed $data): void
