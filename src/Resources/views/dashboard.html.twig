@@ -10,43 +10,43 @@
 
         <div class="bg-neutral-900 text-neutral-200 p-4 md:p-8 !py-24">
             <h2 class="whatwedo-utility-heading-2 text-neutral-400 mb-1">Dashboard</h2>
-            <h1 class="whatwedo-utility-heading-1 text-neutral-100 mb-0">Grüezi 👋</h1>
+            <h1 class="whatwedo-utility-heading-1 text-neutral-100 mb-0">Hello 👋</h1>
         </div>
 
         <div class="m-4 md:m-8 !-mt-12 grid grid-cols-1 gap-4 overflow-hidden sm:grid-cols-2 lg:grid-cols-4">
             <div class="flex flex-col bg-neutral-300 p-8 pb-20 drop-shadow">
-                <h4 class="text-base font-normal mb-2">Firmen im System</h4>
-                <p class="text-3xl font-semibold text-neutral-800">3</p>
+                <h4 class="text-base font-normal mb-2">CARD 1</h4>
+                <p class="text-3xl font-semibold text-neutral-800">xx</p>
 
                 <a href="#" class="absolute inset-x-0 bottom-0 px-8 py-4 bg-neutral-100/60 hover:bg-neutral-100/80 transition-colors">
-                    <span class="font-semibold text-sm text-black">Details anzeigen</span>
+                    <span class="font-semibold text-sm text-black">Details</span>
                 </a>
             </div>
 
             <div class="flex flex-col bg-neutral-300 p-8 pb-20 drop-shadow">
-                <h4 class="text-base font-normal mb-2">Personen im System</h4>
-                <p class="text-3xl font-semibold text-neutral-800">8</p>
+                <h4 class="text-base font-normal mb-2">CARD 2</h4>
+                <p class="text-3xl font-semibold text-neutral-800">xx</p>
 
                 <a href="#" class="absolute inset-x-0 bottom-0 px-8 py-4 bg-neutral-100/60 hover:bg-neutral-100/80 transition-colors">
-                    <span class="font-semibold text-sm text-black">Details anzeigen</span>
+                    <span class="font-semibold text-sm text-black">Details</span>
                 </a>
             </div>
 
             <div class="flex flex-col bg-neutral-300 p-8 pb-20 drop-shadow">
-                <h4 class="text-base font-normal mb-2">Artzbesuche heute</h4>
-                <p class="text-3xl font-semibold text-neutral-800">2</p>
+                <h4 class="text-base font-normal mb-2">CARD 3</h4>
+                <p class="text-3xl font-semibold text-neutral-800">xx</p>
 
                 <a href="#" class="absolute inset-x-0 bottom-0 px-8 py-4 bg-neutral-100/60 hover:bg-neutral-100/80 transition-colors">
-                    <span class="font-semibold text-sm text-black">Details anzeigen</span>
+                    <span class="font-semibold text-sm text-black">Details</span>
                 </a>
             </div>
 
             <div class="flex flex-col bg-neutral-300 p-8 pb-20 drop-shadow">
                 <div class="flex justify-between">
                     <div>
-                        <h4 class="text-base font-normal mb-2">Auslastung</h4>
-                        <p class="text-3xl font-semibold text-neutral-800">60%</p>
-                        <span class="text-sm font-medium text-neutral-500 mt-1">3% mehr zu gestern</span>
+                        <h4 class="text-base font-normal mb-2">CARD 4</h4>
+                        <p class="text-3xl font-semibold text-neutral-800">xx%</p>
+                        <span class="text-sm font-medium text-neutral-500 mt-1">x% more</span>
                     </div>
 
                     {{ bootstrap_icon('bar-chart-fill', {
@@ -56,19 +56,26 @@
                 </div>
 
                 <a href="#" class="absolute inset-x-0 bottom-0 px-8 py-4 bg-neutral-100/60 hover:bg-neutral-100/80 transition-colors">
-                    <span class="font-semibold text-sm text-black">Details anzeigen</span>
+                    <span class="font-semibold text-sm text-black">Details</span>
                 </a>
             </div>
         </div>
 
-        <div class="m-4 md:m-8 p-4 bg-white">
-            <h1 class="whatwedo-utility-heading-1 mb-4">Hello DashboardController! ✅</h1>
+        <div class="m-4 md:m-8 p-4 bg-white drop-shadow-sm">
+            <h1 class="whatwedo-utility-heading-1 mb-2">whatwedoCrudBundle</h1>
 
-            <p class="whatwedo-utility-paragraph mb-2">This friendly message is coming from:</p>
-            <ul class="whatwedo-utility-paragraph">
-                <li>Your controller at <code><a href="{{ '/var/www/src/Controller/DashboardController.php'|file_link(0) }}">src/Controller/DashboardController.php</a></code></li>
-                <li>Your template at <code><a href="{{ '/var/www/templates/dashboard/index.html.twig'|file_link(0) }}">templates/dashboard/index.html.twig</a></code></li>
+            <p class="whatwedo-utility-paragraph mb-2">This bundle helps to automatically create CRUD environments for entities.</p>
+            <p class="whatwedo-utility-paragraph mb-2">Features include:</p>
+
+            <ul class="whatwedo-utility-paragraph list-inside list-disc mb-4">
+                <li>Relations of entites</li>
+                <li>Multiple types of fields</li>
+                <li>Automatic form generation</li>
+                <li>Formatters to help display the entity properties</li>
             </ul>
+
+            <h3 class="whatwedo-utility-heading-3 mb-1">Documentation</h3>
+            <p class="whatwedo-utility-paragraph"><a href="https://whatwedo.github.io/CrudBundle/#/">https://whatwedo.github.io/CrudBundle/#/</a></p>
         </div>
 
     </div>
