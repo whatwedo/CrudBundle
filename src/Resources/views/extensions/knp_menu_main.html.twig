@@ -32,7 +32,6 @@
     {% endif %}
 {% endblock %}
 
-
 {% block item %}
     {% if item.displayed %}
         {% import _self as knp_menu %}
@@ -96,7 +95,7 @@
                         {% if matcher.isCurrent(item) or matcher.isAncestor(item, options.matchingDepth) %}
                             {{ bootstrap_icon('circle-fill', { 'class': classes }) }}
                         {% else %}
-                            {{ bootstrap_icon('circle', { 'class': classes }) }} {# record-circle-fill #}
+                            {{ bootstrap_icon('circle', { 'class': classes }) }}
                         {% endif %}
                     {% endif %}
 
