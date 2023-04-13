@@ -23,23 +23,27 @@
 
         {# Off-canvas menu for mobile #}
         <div class="relative z-40 md:hidden" role="dialog" aria-modal="true">
-            <div class="fixed inset-0 bg-neutral-600 bg-opacity-75 transition-opacity ease-linear duration-300 pointer-events-none opacity-0" {{ stimulus_target('whatwedo/crud-bundle/offcanvas', 'backdrop') }}></div>{# opacity-0 pointer-events-none #}
+            <div class="fixed inset-0 bg-neutral-600 bg-opacity-75 transition-opacity ease-linear duration-300 pointer-events-none opacity-0" {{ stimulus_target('whatwedo/crud-bundle/offcanvas', 'backdrop') }}></div>
 
             <div class="fixed inset-0 flex z-40 pointer-events-none">
                 <div
                     class="whatwedo_crud-sidebar relative flex-1 flex flex-col max-w-xs w-full bg-white transition ease-in-out duration-300 transform -translate-x-full pointer-events-auto"
                     {{ stimulus_target('whatwedo/crud-bundle/offcanvas', 'content') }}
                 >
-                    <div class="absolute top-0 right-0 -mr-12 pt-2 ease-in-out duration-300 opacity-0 pointer-events-none" {{ stimulus_target('whatwedo/crud-bundle/offcanvas', 'closeButton') }}>
+                    <div class="absolute top-0 right-0 -mr-14 pt-4 ease-in-out duration-300 opacity-0 pointer-events-none" {{ stimulus_target('whatwedo/crud-bundle/offcanvas', 'closeButton') }}>
                         <button
                             type="button"
-                            class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                            class="ml-1 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
                             {{ stimulus_action('whatwedo/crud-bundle/offcanvas', 'hideContent') }}
                         >
                             <span class="sr-only">Close sidebar</span>
                             <!-- Heroicon name: outline/x -->
-                            <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 39.632 39.632">
+                                <g id="Group_521" data-name="Group 521" transform="translate(-315.368 -18.561)">
+                                    <path id="Path_80" data-name="Path 80" d="M19.816,0A19.816,19.816,0,1,1,0,19.816,19.816,19.816,0,0,1,19.816,0Z" transform="translate(315.368 18.561)" fill="#0f172a"/>
+                                    <line id="Line_60" data-name="Line 60" x2="12.8" y2="12.047" transform="translate(328.784 32.234)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2"/>
+                                    <line id="Line_61" data-name="Line 61" y1="12.285" x2="12.8" transform="translate(328.784 32.234)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2"/>
+                                </g>
                             </svg>
                         </button>
                     </div>
@@ -54,17 +58,17 @@
                         </div>
 
                         {% block navigation %}
-                            <div class="whatwedo_crud-navigation mt-5 flex-grow flex flex-col">
+                            <div class="whatwedo_crud-navigation mt-12 md:mt-8 flex-grow flex flex-col">
                                 {{ knp_menu_render('main', { 'template': '@whatwedoCrud/extensions/knp_menu_main.html.twig' }) }}
                             </div>
                         {% endblock %}
                     </div>
 
-                    {% block sidebar_service %}
-                        {% block sidebar_nav %}
-                            {{ knp_menu_render('sub', { 'template': '@whatwedoCrud/extensions/knp_menu_sub.html.twig' }) }}
-                        {% endblock %}
+                    {% block sidebar_subnavigation %}
+                        {{ knp_menu_render('sub', { 'template': '@whatwedoCrud/extensions/knp_menu_sub.html.twig' }) }}
+                    {% endblock %}
 
+                    {% block sidebar_service %}
                         {% block search_box %}
                             <div class="whatwedo_crud-sidedar flex-shrink-0 flex border-t border-neutral-200 p-4">
                                 <label for="search" class="sr-only">Search</label>
@@ -82,11 +86,6 @@
                                 </div>
                             </div>
                         {% endblock %}
-
-                        {% block sidebar_footer %}
-                            {% include "@whatwedoCrud/includes/sidebar/_footer.html.twig" %}
-                        {% endblock %}
-
                     {% endblock %}
                 </div>
 
@@ -102,27 +101,43 @@
                     </div>
                     {{ block('navigation') }}
                 </div>
+                {{ block('sidebar_subnavigation') }}
                 {{ block('sidebar_service') }}
+
+                {% block sidebar_profile %}
+                    {% include "@whatwedoCrud/includes/sidebar/_profile.html.twig" %}
+                {% endblock %}
             </div>
         </div>
 
         <div class="md:pl-64 flex flex-col flex-1 min-h-screen">
-            <div class="fixed top-0 z-10 md:hidden p-3 bg-neutral-100">
-                <button {{ stimulus_action('whatwedo/crud-bundle/offcanvas', 'showContent') }} type="button" class="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-neutral-500 hover:text-neutral-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500">
-                    <span class="sr-only">Open sidebar</span>
-                    <!-- Heroicon name: outline/menu -->
-                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                </button>
-            </div>
-
             <main
                 class="whatwedo_crud-wrapper flex flex-col flex-1"
                 {{ stimulus_controller('whatwedo/table-bundle/filter') | stimulus_controller('whatwedo/table-bundle/table') }}
             >
+                <div class="whatwedo_crud-topbar_mobile bg-white px-4 flex md:hidden justify-between items-center">
+                    {{ block('logo') }}
+
+                    {{ block('sidebar_profile') }}
+                </div>
+
                 {% block topbar %}
                     <nav class="whatwedo_crud-topbar whatwedo-utility-topbar">
+                        {% block hamburger %}
+                            <button {{ stimulus_action('whatwedo/crud-bundle/offcanvas', 'showContent') }} type="button" class="inline-flex md:hidden items-center justify-center rounded-md text-neutral-500 hover:text-neutral-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500">
+                                <span class="sr-only">Open sidebar</span>
+                                <!-- Heroicon name: outline/menu -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 39.632 39.632">
+                                    <g id="Group_520" data-name="Group 520" transform="translate(-18.184 -67.5)">
+                                        <path id="Path_66" data-name="Path 66" d="M19.816,0A19.816,19.816,0,1,1,0,19.816,19.816,19.816,0,0,1,19.816,0Z" transform="translate(18.184 67.5)" fill="#0f172a"/>
+                                        <line id="Line_57" data-name="Line 57" x2="19" transform="translate(28.5 82.316)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2"/>
+                                        <line id="Line_58" data-name="Line 58" x2="15" transform="translate(28.5 87.316)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2"/>
+                                        <line id="Line_59" data-name="Line 59" x2="19" transform="translate(28.5 92.316)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2"/>
+                                    </g>
+                                </svg>
+                            </button>
+                        {% endblock %}
+
                         {% block breadcrumbs %}
                             {% include "@whatwedoCrud/includes/topbar/_breadcrumbs.html.twig" %}
                         {% endblock %}
