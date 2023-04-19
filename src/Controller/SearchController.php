@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use whatwedo\SearchBundle\Manager\SearchManager;
-use whatwedo\SearchBundle\Trait\SearchTrait;
+use whatwedo\SearchBundle\Traits\SearchTrait;
 
 class SearchController extends AbstractController
 {

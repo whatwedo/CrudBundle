@@ -30,9 +30,11 @@ declare(strict_types=1);
 namespace whatwedo\CrudBundle\Form\Type;
 
 use Doctrine\ORM\EntityManagerInterface;
+use InvalidArgumentException;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CrudBundle\Form\DataTransformer\EntityToIdTransformer;
 
@@ -53,8 +55,20 @@ class EntityHiddenType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
+        $resolver->setDefault('definition', null);
+        $resolver->setDefault('class', null);
         $resolver->setRequired(['class'])
             ->setDefault('invalid_message', 'entity_hidden.invalid_message');
+        $resolver->setDefault('class', function (Options $options, ?string $className) {
+            if ($className) {
+                return $className;
+            }
+            if ($options['definition']) {
+                return $options['definition']::getEntity();
+            }
+
+            throw new InvalidArgumentException('Missing option "class" or "definition"');
+        });
     }
 
     public function getParent(): string

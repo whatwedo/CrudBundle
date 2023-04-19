@@ -272,6 +272,10 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
     public function getJsonSearchUrl(string $entityClass): string
     {
         $clazz = new \ReflectionClass($entityClass);
+        if ($clazz->isInterface()) {
+            $metadata = $this->container->get(EntityManagerInterface::class)->getClassMetadata($entityClass);
+            $clazz = new \ReflectionClass($metadata->name);
+        }
         try {
             $instance = $clazz->newInstance();
         } catch (\Throwable $e) {
