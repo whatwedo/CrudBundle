@@ -30,7 +30,6 @@ declare(strict_types=1);
 namespace whatwedo\CrudBundle\Form\Type;
 
 use Doctrine\ORM\EntityManagerInterface;
-use InvalidArgumentException;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -64,10 +63,16 @@ class EntityHiddenType extends AbstractType
                 return $className;
             }
             if ($options['definition']) {
-                return $options['definition']::getEntity();
+                $className = $options['definition']::getEntity();
+                $reflection = new \ReflectionClass($className);
+                if ($reflection->isInterface()) {
+                    $metadata = $this->em->getClassMetadata($className);
+                    $className = $metadata->name;
+                }
+                return $className;
             }
 
-            throw new InvalidArgumentException('Missing option "class" or "definition"');
+            throw new \InvalidArgumentException('Missing option "class" or "definition"');
         });
     }
 

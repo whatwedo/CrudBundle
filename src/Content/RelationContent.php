@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace whatwedo\CrudBundle\Content;
 
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -233,7 +234,15 @@ class RelationContent extends AbstractContent
         $resolver->setAllowedTypes(self::OPT_SHOW_TABLE_IN_FORM, 'boolean');
 
         $resolver->setDefault(self::OPT_DEFINITION, fn (Options $options) => $this->getTargetDefinition($options['accessor_path'])::class);
-        $resolver->setDefault(self::OPT_CLASS, fn (Options $options) => $this->getTargetDefinition($options['accessor_path'])::getEntity());
+        $resolver->setDefault(self::OPT_CLASS, function (Options $options) {
+            $className = $this->getTargetDefinition($options['accessor_path'])::getEntity();
+            $reflection = new \ReflectionClass($className);
+            if ($reflection->isInterface()) {
+                $metadata = $this->container->get(EntityManagerInterface::class)->getClassMetadata($className);
+                $className = $metadata->name;
+            }
+            return $className;
+        });
         $resolver->setDefault(self::OPT_RELOAD_URL, function (mixed $entity) {
             if ($this->getDefinition()::hasCapability(Page::RELOAD)) {
                 return $this->urlGenerator->generate(
@@ -434,6 +443,13 @@ class RelationContent extends AbstractContent
     public function isTable(): bool
     {
         return true;
+    }
+
+    public static function getSubscribedServices(): array
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            EntityManagerInterface::class,
+        ]);
     }
 
     protected function hasCapability(?PageInterface $capability): bool

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Block;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -310,6 +311,7 @@ class Block implements ServiceSubscriberInterface
             FormRegistryInterface::class,
             ContentManager::class,
             Security::class,
+            EntityManagerInterface::class,
         ];
     }
 
@@ -334,9 +336,15 @@ class Block implements ServiceSubscriberInterface
 
     private function getType(string $acronym, array $options): string
     {
+        $entityClass = $this->definition::getEntity();
+        $reflection = new \ReflectionClass($entityClass);
+        if ($reflection->isInterface()) {
+            $metadata = $this->container->get(EntityManagerInterface::class)->getClassMetadata($entityClass);
+            $entityClass = $metadata->name;
+        }
         /** @var TypeGuess $typeGuess */
         $typeGuess = $this->container->get(FormRegistryInterface::class)->getTypeGuesser()->guessType(
-            $this->definition::getEntity(),
+            $entityClass,
             $options[AbstractContent::OPT_ACCESSOR_PATH] ?? $acronym
         );
 
