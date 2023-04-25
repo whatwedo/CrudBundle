@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace whatwedo\CrudBundle\Enum;
+namespace whatwedo\CrudBundle\Enums;
 
 enum PageMode: string implements PageModeInterface
 {

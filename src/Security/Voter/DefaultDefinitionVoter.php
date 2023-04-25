@@ -33,7 +33,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\TraceableVoter;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
-use whatwedo\CrudBundle\Enum\PageInterface;
+use whatwedo\CrudBundle\Enums\PageInterface;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 class DefaultDefinitionVoter implements VoterInterface

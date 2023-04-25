@@ -12,17 +12,17 @@
     {% endif %}
 
     <div
-        {% if view.definition.hasCapability(constant('whatwedo\\CrudBundle\\Enum\\Page::AJAXFORM')) %}
+        {% if view.definition.hasCapability(constant('whatwedo\\CrudBundle\\Enums\\Page::AJAXFORM')) %}
             {{ stimulus_controller('whatwedo/crud-bundle/ajax-form') }}
-            data-ajax-url="{{ path(view.definition.getRoute(constant('whatwedo\\CrudBundle\\Enum\\Page::AJAXFORM')), {
+            data-ajax-url="{{ path(view.definition.getRoute(constant('whatwedo\\CrudBundle\\Enums\\Page::AJAXFORM')), {
                 'case' : 'create'
             }) }}"
         {% endif %}
         class="whatwedo_crud-blocks whatwedo_crud-blocks--create flex flex-wrap gap-4 items-baseline"
     >
-        {% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\Page::CREATE')) %}
+        {% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enums\\Page::CREATE')) %}
             {% block block_definition_single_block %}
-                {{ wwd_crud_render_block(block, view, constant('whatwedo\\CrudBundle\\Enum\\Page::CREATE'), form) }}
+                {{ wwd_crud_render_block(block, view, constant('whatwedo\\CrudBundle\\Enums\\Page::CREATE'), form) }}
             {% endblock %}
         {% endfor %}
     </div>

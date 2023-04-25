@@ -10,8 +10,8 @@ use Twig\Environment;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
-use whatwedo\CrudBundle\Enum\Page;
-use whatwedo\CrudBundle\Enum\PageInterface;
+use whatwedo\CrudBundle\Enums\Page;
+use whatwedo\CrudBundle\Enums\PageInterface;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 class CrudExtension extends AbstractExtension

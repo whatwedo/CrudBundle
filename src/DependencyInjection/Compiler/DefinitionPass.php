@@ -7,9 +7,9 @@ namespace whatwedo\CrudBundle\DependencyInjection\Compiler;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
+use whatwedo\CrudBundle\ConfigResource\DefinitionResource;
 use whatwedo\CrudBundle\Extension\ExtensionInterface;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
-use whatwedo\CrudBundle\Resource\DefinitionResource;
 
 class DefinitionPass implements CompilerPassInterface
 {

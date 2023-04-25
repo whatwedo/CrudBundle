@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Traits;
 
-use whatwedo\CrudBundle\Enum\Page;
+use whatwedo\CrudBundle\Enums\Page;
 
 trait VoterAttributeTrait
 {

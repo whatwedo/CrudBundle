@@ -34,7 +34,7 @@ use Knp\Menu\ItemInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use whatwedo\CrudBundle\Enum\Page;
+use whatwedo\CrudBundle\Enums\Page;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 class DefinitionMenuBuilder

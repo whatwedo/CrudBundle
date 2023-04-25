@@ -7,7 +7,7 @@ namespace whatwedo\CrudBundle\Routing;
 use Symfony\Component\Config\Loader\Loader;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
-use whatwedo\CrudBundle\Enum\Page;
+use whatwedo\CrudBundle\Enums\Page;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 class CrudLoader extends Loader

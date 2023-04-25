@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use whatwedo\CoreBundle\Action\Action;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
-use whatwedo\CrudBundle\Enum\Page;
+use whatwedo\CrudBundle\Enums\Page;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 class CrudDataCollector extends AbstractDataCollector

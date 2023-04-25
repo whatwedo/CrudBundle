@@ -6,8 +6,8 @@ namespace whatwedo\CrudBundle\Tests\App\Definition;
 
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
 use whatwedo\CrudBundle\Definition\AbstractDefinition;
-use whatwedo\CrudBundle\Enum\Page;
-use whatwedo\CrudBundle\Enum\PageInterface;
+use whatwedo\CrudBundle\Enums\Page;
+use whatwedo\CrudBundle\Enums\PageInterface;
 use whatwedo\CrudBundle\Tests\App\Entity\Person;
 use whatwedo\TableBundle\Table\Column;
 use whatwedo\TableBundle\Table\Table;

@@ -6,7 +6,7 @@ namespace whatwedo\CrudBundle\Formatter;
 
 use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CoreBundle\Formatter\DefaultFormatter;
-use whatwedo\CrudBundle\Enum\Page;
+use whatwedo\CrudBundle\Enums\Page;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 
 class CrudDefaultFormatter extends DefaultFormatter

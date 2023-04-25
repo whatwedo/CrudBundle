@@ -4,9 +4,9 @@
 {% block main %}
     {% include '@whatwedoCrud/includes/main/_site_title.html.twig' with {'title':title, 'view': view} only %}
     <div class="whatwedo_crud-blocks whatwedo_crud-blocks--show flex flex-wrap gap-4 items-baseline">
-        {% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW')) %}
+        {% for block in view.blocks(constant('whatwedo\\CrudBundle\\Enums\\Page::SHOW')) %}
             {% block block_definition_single_block %}
-                {{ wwd_crud_render_block(block, view, constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW')) }}
+                {{ wwd_crud_render_block(block, view, constant('whatwedo\\CrudBundle\\Enums\\Page::SHOW')) }}
             {% endblock %}
         {% endfor %}
     </div>

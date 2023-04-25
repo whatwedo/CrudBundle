@@ -8,8 +8,8 @@ use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Collection\ContentCollection;
-use whatwedo\CrudBundle\Enum\Page;
-use whatwedo\CrudBundle\Enum\PageInterface;
+use whatwedo\CrudBundle\Enums\Page;
+use whatwedo\CrudBundle\Enums\PageInterface;
 use whatwedo\CrudBundle\Manager\BlockManager;
 use whatwedo\CrudBundle\View\DefinitionView;
 

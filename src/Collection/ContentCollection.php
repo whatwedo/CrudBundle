@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace whatwedo\CrudBundle\Collection;
 
 use whatwedo\CrudBundle\Content\AbstractContent;
-use whatwedo\CrudBundle\Enum\PageInterface;
+use whatwedo\CrudBundle\Enums\PageInterface;
 
 class ContentCollection extends ArrayCollection
 {

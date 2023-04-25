@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace whatwedo\CrudBundle\Collection;
 
 use whatwedo\CrudBundle\Block\Block;
-use whatwedo\CrudBundle\Enum\PageInterface;
+use whatwedo\CrudBundle\Enums\PageInterface;
 
 class BlockCollection extends ArrayCollection
 {

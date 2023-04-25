@@ -50,7 +50,7 @@
     {% if form is defined and not content.option('show_table_in_form') %}
         {{ block('content') }}
     {% else %}
-        {% set isOnShow = view.route == constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW') %}
+        {% set isOnShow = view.route == constant('whatwedo\\CrudBundle\\Enums\\Page::SHOW') %}
         {% set attr = content.option('attr')|default([])|filter((k,i) => k != 'class') %}
         {% if isOnShow %}
             <div class="inline-block w-full {{ content.option('attr')['class'] ?? '' }}"
@@ -127,7 +127,7 @@
         </div>
 
         {% endif %}
-        {% if view.route == constant('whatwedo\\CrudBundle\\Enum\\Page::SHOW') %}
+        {% if view.route == constant('whatwedo\\CrudBundle\\Enums\\Page::SHOW') %}
             </div>
         {% endif %}
     {% endif %}

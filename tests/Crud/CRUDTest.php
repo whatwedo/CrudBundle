@@ -31,7 +31,7 @@ declare(strict_types=1);
 namespace whatwedo\CrudBundle\Tests\Crud;
 
 use Doctrine\ORM\EntityManagerInterface;
-use whatwedo\CrudBundle\Enum\Page;
+use whatwedo\CrudBundle\Enums\Page;
 use whatwedo\CrudBundle\Test\Data\CreateData;
 use whatwedo\CrudBundle\Tests\App\Definition\CompanyDefinition;
 use whatwedo\CrudBundle\Tests\App\Entity\Company;
