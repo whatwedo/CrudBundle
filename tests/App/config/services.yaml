@@ -15,6 +15,10 @@ services:
     whatwedo\CrudBundle\Tests\App\Factory\:
         resource: '../Factory'
 
+    whatwedo\CrudBundle\Tests\App\Manager\:
+        resource: '../Manager'
+        public: true
+
 
     gedmo.listener.tree:
         class: Gedmo\Tree\TreeListener

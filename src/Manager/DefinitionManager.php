@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace whatwedo\CrudBundle\Manager;
 
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
+use whatwedo\CrudBundle\DependencyInjection\Compiler\RemoveUnwantedAutoWiredServicesPass;
 
 class DefinitionManager
 {
@@ -16,6 +17,9 @@ class DefinitionManager
     public function __construct(iterable $definitions)
     {
         foreach ($definitions as $definition) {
+            if (RemoveUnwantedAutoWiredServicesPass::hasIgnoreAutowireAttribute($definition::class)) {
+                continue;
+            }
             $this->definitions[$definition::getAlias()] = $definition;
         }
     }
