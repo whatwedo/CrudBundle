@@ -11,7 +11,7 @@
                 <div class="mb-6">
                     <label class="block whatwedo-utility-bold" for="username">{{ 'login.username' | trans }}</label>
                     <div class="mt-1">
-                        <input class="block w-full p-2 whatwedo-utility-input {{ error ? 'whatwedo-utility-input--error' : '' }}" id="username" name="_username" type="text">
+                        <input value="{{ last_username|default('') }}" class="block w-full p-2 whatwedo-utility-input {{ error ? 'whatwedo-utility-input--error' : '' }}" id="username" name="_username" type="text">
                     </div>
                 </div>
 
@@ -31,6 +31,9 @@
                         {{ 'login.submit' | trans }}
                     </button>
                 </div>
+                <input type="hidden" name="_csrf_token"
+                       value="{{ csrf_token(csrf_token_name|default('authenticate')) }}"
+                >
             </form>
         </div>
     </main>
