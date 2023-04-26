@@ -1,5 +1,6 @@
 whatwedo_crud:
     dashboard: Dashboard
+    hello: Hallo
     add: Hinzufügen
     save: Speichern
     index: Übersicht

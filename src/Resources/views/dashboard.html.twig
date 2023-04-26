@@ -1,17 +1,15 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}Dashboard {{ parent() }}{% endblock %}
 
 {% block topbar %}
 {% endblock %}
 
 {% block main %}
     <div class="-m-4">
-
         <div class="bg-neutral-900 text-neutral-200 p-4 md:hidden">
             <button {{ stimulus_action('whatwedo/crud-bundle/offcanvas', 'showContent') }} type="button" class="inline-flex items-center justify-center rounded-md text-neutral-500 hover:text-neutral-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500">
                 <span class="sr-only">Open sidebar</span>
-                <!-- Heroicon name: outline/menu -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 39.632 39.632">
                     <g id="Group_520" data-name="Group 520" transform="translate(-18.184 -67.5)">
                         <path id="Path_66" data-name="Path 66" d="M19.816,0A19.816,19.816,0,1,1,0,19.816,19.816,19.816,0,0,1,19.816,0Z" transform="translate(18.184 67.5)" class="fill-white" />
@@ -24,73 +22,21 @@
         </div>
 
         <div class="bg-neutral-900 text-neutral-200 p-4 md:p-8 !pb-24 !pt-16">
-            <h2 class="whatwedo-utility-heading-2 text-neutral-400 mb-1">Dashboard</h2>
-            <h1 class="whatwedo-utility-heading-1 text-neutral-100 mb-0">Hello 👋</h1>
+            <h2 class="whatwedo-utility-heading-2 text-neutral-400 mb-1">{{ 'whatwedo_crud.dashboard' | trans }}</h2>
+            <h1 class="whatwedo-utility-heading-1 text-neutral-100 mb-0">{{ 'whatwedo_crud.hello' | trans }} {{ (username|default(''))|capitalize }} 👋</h1>
         </div>
 
         <div class="m-4 md:m-8 !-mt-12 grid grid-cols-1 gap-4 overflow-hidden sm:grid-cols-2 lg:grid-cols-4">
-            <div class="flex flex-col bg-neutral-300 p-8 pb-20 drop-shadow">
-                <h4 class="text-base font-normal mb-2">CARD 1</h4>
-                <p class="text-3xl font-semibold text-neutral-800">xx</p>
-
-                <a href="#" class="absolute inset-x-0 bottom-0 px-8 py-4 bg-neutral-100/60 hover:bg-neutral-100/80 transition-colors">
-                    <span class="font-semibold text-base text-black">Details</span>
-                </a>
-            </div>
-
-            <div class="flex flex-col bg-neutral-300 p-8 pb-20 drop-shadow">
-                <h4 class="text-base font-normal mb-2">CARD 2</h4>
-                <p class="text-3xl font-semibold text-neutral-800">xx</p>
-
-                <a href="#" class="absolute inset-x-0 bottom-0 px-8 py-4 bg-neutral-100/60 hover:bg-neutral-100/80 transition-colors">
-                    <span class="font-semibold text-base text-black">Details</span>
-                </a>
-            </div>
-
-            <div class="flex flex-col bg-neutral-300 p-8 pb-20 drop-shadow">
-                <h4 class="text-base font-normal mb-2">CARD 3</h4>
-                <p class="text-3xl font-semibold text-neutral-800">xx</p>
-
-                <a href="#" class="absolute inset-x-0 bottom-0 px-8 py-4 bg-neutral-100/60 hover:bg-neutral-100/80 transition-colors">
-                    <span class="font-semibold text-base text-black">Details</span>
-                </a>
-            </div>
-
-            <div class="flex flex-col bg-neutral-300 p-8 pb-20 drop-shadow">
-                <div class="flex justify-between">
-                    <div>
-                        <h4 class="text-base font-normal mb-2">CARD 4</h4>
-                        <p class="text-3xl font-semibold text-neutral-800">xx%</p>
-                        <span class="text-sm font-medium text-neutral-500 mt-1">x% more</span>
-                    </div>
-
-                    {{ bootstrap_icon('bar-chart-fill', {
-                        width: '20px',
-                        height: '20px',
-                    }) }}
-                </div>
-
-                <a href="#" class="absolute inset-x-0 bottom-0 px-8 py-4 bg-neutral-100/60 hover:bg-neutral-100/80 transition-colors">
-                    <span class="font-semibold text-base text-black">Details</span>
-                </a>
-            </div>
+            {% for card in cards|default([]) %}
+                {{ include('@whatwedoCrud/dashboard/cards.html.twig', card) }}
+            {% endfor %}
         </div>
 
         <div class="m-4 md:m-8 p-4 bg-white drop-shadow-sm">
-            <h1 class="whatwedo-utility-heading-1 mb-2">whatwedoCrudBundle</h1>
-
-            <p class="whatwedo-utility-paragraph mb-2">This bundle helps to automatically create CRUD environments for entities.</p>
-            <p class="whatwedo-utility-paragraph mb-2">Features include:</p>
-
-            <ul class="whatwedo-utility-paragraph list-inside list-disc mb-4">
-                <li>Relations of entites</li>
-                <li>Multiple types of fields</li>
-                <li>Automatic form generation</li>
-                <li>Formatters to help display the entity properties</li>
-            </ul>
-
-            <h3 class="whatwedo-utility-heading-3 mb-1">Documentation</h3>
-            <p class="whatwedo-utility-paragraph"><a href="https://whatwedo.github.io/CrudBundle/#/">https://whatwedo.github.io/CrudBundle/#/</a></p>
+            <p class="whatwedo-utility-paragraph mb-0">
+                {% block dashboard_paragraph %}
+                {% endblock %}
+            </p>
         </div>
 
     </div>

@@ -536,7 +536,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
         $this->addFlash('success', 'whatwedo_crud.save_success');
 
-        return $this->getDefinition()->getRedirect(Page::CREATE, $entity);
+        return $this->getDefinition()->getRedirect($page, $entity);
     }
 
     private function redirectToDefinitionObject(DefinitionInterface $definition, PageInterface $page, array $parameters = [], int $status = 302): RedirectResponse

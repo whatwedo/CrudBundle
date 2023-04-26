@@ -1,0 +1,28 @@
+<div class="flex flex-col bg-neutral-300 p-8 pb-20 lg:pb-12 drop-shadow">
+    {% if card.icon is defined %}
+    <div class="flex justify-between">
+        <div>
+            {% endif %}
+
+            <h4 class="text-base font-normal mb-2">{{ card.title }}</h4>
+            <p class="text-3xl font-semibold text-neutral-800">{{ card.value }}</p>
+            {% if card.meta is defined %}
+                <span class="text-sm font-medium text-neutral-500 mt-1">{{ card.meta }}</span>
+            {% endif %}
+
+            {% if card.icon is defined %}
+        </div>
+        {{ bootstrap_icon(card.icon, {
+            width: '1.2rem',
+            height: '1.2rem',
+        }) }}
+    </div>
+    {% endif %}
+
+    {% if card.link is defined %}
+        <a href="{{ path(card.link) }}" class="absolute inset-x-0 bottom-0 px-8 py-4 bg-neutral-100/60 hover:bg-neutral-100/80 transition-colors">
+            <span class="font-semibold text-base text-black">{{ 'wwd.dashboard.to_overview'|trans }}</span>
+        </a>
+    {% endif %}
+
+</div>
