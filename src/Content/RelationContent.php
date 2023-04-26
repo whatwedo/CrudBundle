@@ -365,6 +365,7 @@ class RelationContent extends AbstractContent
 
         $actionColumnItems = [];
 
+        $currentURI = $this->getRequest()->getRequestUri();
         if ($this->hasCapability(Page::EDIT)) {
             $actionColumnItems[Page::EDIT->toRoute()] = [
                 'label' => 'whatwedo_crud.edit',
@@ -372,6 +373,7 @@ class RelationContent extends AbstractContent
                 'route' => $this->getRoute(Page::EDIT),
                 'route_parameters' => fn ($row) => [
                     'id' => $row->getId(),
+                    'referer' => $currentURI,
                 ],
                 'voter_attribute' => Page::EDIT,
             ];
@@ -398,6 +400,7 @@ class RelationContent extends AbstractContent
                 'route' => $this->getRoute(Page::DELETE),
                 'route_parameters' => fn ($row) => [
                     'id' => $row->getId(),
+                    'referer' => $currentURI,
                 ],
                 'voter_attribute' => Page::DELETE,
             ];

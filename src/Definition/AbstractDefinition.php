@@ -347,6 +347,10 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     public function getRedirect(PageInterface $routeFrom, ?object $entity = null): Response
     {
+        $current = $this->container->get(RequestStack::class)->getCurrentRequest();
+        if ($current?->query->get('referer')) {
+            return new RedirectResponse($current->query->get('referer'));
+        }
         return match ($routeFrom) {
             Page::CREATE, Page::EDIT => new RedirectResponse(
                 $this->container->get(RouterInterface::class)->generate(static::getRoute(Page::SHOW), [
