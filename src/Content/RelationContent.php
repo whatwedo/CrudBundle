@@ -28,6 +28,7 @@ use whatwedo\CrudBundle\Enums\PageMode;
 use whatwedo\CrudBundle\Form\Type\EntityAjaxType;
 use whatwedo\CrudBundle\Form\Type\EntityHiddenType;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
+use whatwedo\TableBundle\DataLoader\ArrayDataLoader;
 use whatwedo\TableBundle\DataLoader\DoctrineDataLoader;
 use whatwedo\TableBundle\Extension\FilterExtension;
 use whatwedo\TableBundle\Extension\SearchExtension;
@@ -205,10 +206,13 @@ class RelationContent extends AbstractContent
         $resolver->setDefaults([
             self::OPT_TABLE_OPTIONS => [],
             self::OPT_FORM_TYPE => EntityAjaxType::class,
-            self::OPT_FORM_OPTIONS => fn (Options $options) => [
-                self::OPT_FORM_OPTIONS_DEFINITTION => $this->getTargetDefinition($options[self::OPT_ACCESSOR_PATH])::class,
-                self::OPT_FORM_OPTIONS_MULTIPLE => true,
-            ],
+            self::OPT_FORM_OPTIONS => function (Options $options) {
+                $definition = $this->getTargetDefinition($options[self::OPT_ACCESSOR_PATH]);
+                return [
+                    self::OPT_FORM_OPTIONS_DEFINITTION => $definition === null ? null : $definition::class,
+                    self::OPT_FORM_OPTIONS_MULTIPLE => true,
+                ];
+            },
             self::OPT_AJAX_FORM_TRIGGER => false,
             self::OPT_QUERY_BUILDER_CONFIGURATION => null,
             self::OPT_TABLE_CONFIGURATION => null,
@@ -233,9 +237,19 @@ class RelationContent extends AbstractContent
         $resolver->setAllowedTypes(self::OPT_ADD_VOTER_ATTRIBUTE, ['string', 'null', 'object']);
         $resolver->setAllowedTypes(self::OPT_SHOW_TABLE_IN_FORM, 'boolean');
 
-        $resolver->setDefault(self::OPT_DEFINITION, fn (Options $options) => $this->getTargetDefinition($options['accessor_path'])::class);
+        $resolver->setDefault(self::OPT_DEFINITION, function (Options $options) {
+            $definition = $this->getTargetDefinition($options['accessor_path']);
+            if ($definition === null) {
+                return null;
+            }
+            return $definition::class;
+        });
         $resolver->setDefault(self::OPT_CLASS, function (Options $options) {
-            $className = $this->getTargetDefinition($options['accessor_path'])::getEntity();
+            $definition = $this->getTargetDefinition($options['accessor_path']);
+            if ($definition === null) {
+                return null;
+            }
+            $className = $definition::getEntity();
             $reflection = new \ReflectionClass($className);
             if ($reflection->isInterface()) {
                 $metadata = $this->container->get(EntityManagerInterface::class)->getClassMetadata($className);
@@ -258,6 +272,9 @@ class RelationContent extends AbstractContent
             return null;
         });
         $resolver->setDefault(self::OPT_CREATE_URL, function (mixed $entity) {
+            if (! $this->getOption(self::OPT_DEFINITION)) {
+                return null;
+            }
             if ($this->getOption(self::OPT_DEFINITION)::hasCapability(Page::CREATE)) {
                 return $this->urlGenerator->generate(
                     $this->getOption(self::OPT_DEFINITION)::getRoute(Page::CREATE),
@@ -314,100 +331,10 @@ class RelationContent extends AbstractContent
 
     public function getTable(mixed $entity): Table
     {
-        $options = $this->options[self::OPT_TABLE_OPTIONS];
-
-        /*
-         * $row = Lesson
-         */
-        $reverseMapping = $this->getReverseMapping($entity);
-        $targetDefinition = $this->definitionManager->getDefinitionByClassName($this->getOption(self::OPT_DEFINITION));
-
-        $queryBuilder = $targetDefinition->getQueryBuilder();
-
-        $rootAlias = $targetDefinition::getQueryAlias();
-        foreach ($reverseMapping as $field => $value) {
-            /*
-             * person.studentModuleOccasions => person_studentModuleOccasions
-             * person_studentModuleOccasions.occasion => person_studentModuleOccasions_occasion
-             * person_studentModuleOccasions_occasion.lessons => person_studentModuleOccasions_occasion_lessons
-             */
-            $newAlias = $rootAlias . '_' . $field;
-
-            $queryBuilder->leftJoin($rootAlias . '.' . $field, $newAlias);
-
-            if ($value instanceof Collection) {
-                $queryBuilder->andWhere($newAlias . ' IN (:' . $newAlias . ')');
-            } else {
-                $queryBuilder->andWhere($newAlias . ' = :' . $newAlias);
-            }
-
-            $queryBuilder->setParameter($newAlias, $value);
-
-            $queryBuilder->addSelect($newAlias);
-
-            $rootAlias = $newAlias;
-        }
-
-        $options['dataloader_options']['query_builder'] = $queryBuilder;
-
-        if (is_callable($this->options[self::OPT_QUERY_BUILDER_CONFIGURATION])) {
-            $this->options[self::OPT_QUERY_BUILDER_CONFIGURATION]($queryBuilder, $targetDefinition);
-        }
-
-        $table = $this->tableFactory->create($this->acronym, DoctrineDataLoader::class, $options);
-        $table->removeExtension(FilterExtension::class);
-        $table->removeExtension(SearchExtension::class);
-        $table->setOption(Table::OPT_DEFINITION, $targetDefinition);
-        $targetDefinition->configureTable($table);
-        $targetDefinition->configureTableActions($table);
-        $targetDefinition->configureActions(null);
-        $table->setOption('title', null); // no h1 for relation content
-
-        $actionColumnItems = [];
-
-        $currentURI = $this->getRequest()->getRequestUri();
-        if ($this->hasCapability(Page::EDIT)) {
-            $actionColumnItems[Page::EDIT->toRoute()] = [
-                'label' => 'whatwedo_crud.edit',
-                'icon' => 'pencil',
-                'route' => $this->getRoute(Page::EDIT),
-                'route_parameters' => fn ($row) => [
-                    'id' => $row->getId(),
-                    'referer' => $currentURI,
-                ],
-                'voter_attribute' => Page::EDIT,
-            ];
-        }
-
-        if ($this->hasCapability(Page::SHOW)) {
-            $showRoute = $this->getRoute(Page::SHOW);
-
-            $actionColumnItems[Page::SHOW->toRoute()] = [
-                'label' => 'whatwedo_crud.view',
-                'icon' => 'eye',
-                'route' => $showRoute,
-                'route_parameters' => fn ($row) => [
-                    'id' => $row->getId(),
-                ],
-                'voter_attribute' => Page::SHOW,
-            ];
-        }
-
-        if ($this->hasCapability(Page::DELETE)) {
-            $actionColumnItems[Page::DELETE->toRoute()] = [
-                'label' => 'whatwedo_crud.delete',
-                'icon' => 'trash',
-                'route' => $this->getRoute(Page::DELETE),
-                'route_parameters' => fn ($row) => [
-                    'id' => $row->getId(),
-                    'referer' => $currentURI,
-                ],
-                'voter_attribute' => Page::DELETE,
-            ];
-        }
-
-        foreach ($actionColumnItems as $key => $value) {
-            $table->addAction($key, $value, Page::DELETE->toRoute() === $key ? PostAction::class : Action::class);
+        if ($this->getOption(self::OPT_CALLABLE)) {
+            $table = $this->getTableFromOptCallable($entity);
+        } else {
+            $table = $this->getStandardTable($entity);
         }
 
         if (is_callable($this->options[self::OPT_TABLE_CONFIGURATION])) {
@@ -455,6 +382,97 @@ class RelationContent extends AbstractContent
         ]);
     }
 
+    protected function getTableFromOptCallable(mixed $entity): Table
+    {
+        return $this->tableFactory->create($this->acronym, ArrayDataLoader::class, [
+            Table::OPT_DATALOADER_OPTIONS => [
+                ArrayDataLoader::OPT_DATA => $this->getOption(self::OPT_CALLABLE)($entity),
+            ],
+        ]);
+    }
+
+    protected function getStandardTable(mixed $entity): Table
+    {
+        $options = $this->options[self::OPT_TABLE_OPTIONS];
+        $reverseMapping = $this->getReverseMapping($entity);
+        $targetDefinition = $this->definitionManager->getDefinitionByClassName($this->getOption(self::OPT_DEFINITION));
+        $queryBuilder = $targetDefinition->getQueryBuilder();
+        $rootAlias = $targetDefinition::getQueryAlias();
+        foreach ($reverseMapping as $field => $value) {
+            /*
+             * person.studentModuleOccasions => person_studentModuleOccasions
+             * person_studentModuleOccasions.occasion => person_studentModuleOccasions_occasion
+             * person_studentModuleOccasions_occasion.lessons => person_studentModuleOccasions_occasion_lessons
+             */
+            $newAlias = $rootAlias . '_' . $field;
+            $queryBuilder->leftJoin($rootAlias . '.' . $field, $newAlias);
+            if ($value instanceof Collection) {
+                $queryBuilder->andWhere($newAlias . ' IN (:' . $newAlias . ')');
+            } else {
+                $queryBuilder->andWhere($newAlias . ' = :' . $newAlias);
+            }
+            $queryBuilder->setParameter($newAlias, $value);
+            $queryBuilder->addSelect($newAlias);
+            $rootAlias = $newAlias;
+        }
+
+        $options['dataloader_options']['query_builder'] = $queryBuilder;
+        if (is_callable($this->options[self::OPT_QUERY_BUILDER_CONFIGURATION])) {
+            $this->options[self::OPT_QUERY_BUILDER_CONFIGURATION]($queryBuilder, $targetDefinition);
+        }
+        $table = $this->tableFactory->create($this->acronym, DoctrineDataLoader::class, $options);
+        $table->removeExtension(FilterExtension::class);
+        $table->removeExtension(SearchExtension::class);
+        $table->setOption(Table::OPT_DEFINITION, $targetDefinition);
+        $targetDefinition->configureTable($table);
+        $targetDefinition->configureTableActions($table);
+        $targetDefinition->configureActions(null);
+        $table->setOption('title', null); // no h1 for relation content
+        $actionColumnItems = [];
+        $currentURI = $this->getRequest()->getRequestUri();
+        if ($this->hasCapability(Page::EDIT)) {
+            $actionColumnItems[Page::EDIT->toRoute()] = [
+                'label' => 'whatwedo_crud.edit',
+                'icon' => 'pencil',
+                'route' => $this->getRoute(Page::EDIT),
+                'route_parameters' => fn ($row) => [
+                    'id' => $row->getId(),
+                    'referer' => $currentURI,
+                ],
+                'voter_attribute' => Page::EDIT,
+            ];
+        }
+        if ($this->hasCapability(Page::SHOW)) {
+            $showRoute = $this->getRoute(Page::SHOW);
+
+            $actionColumnItems[Page::SHOW->toRoute()] = [
+                'label' => 'whatwedo_crud.view',
+                'icon' => 'eye',
+                'route' => $showRoute,
+                'route_parameters' => fn ($row) => [
+                    'id' => $row->getId(),
+                ],
+                'voter_attribute' => Page::SHOW,
+            ];
+        }
+        if ($this->hasCapability(Page::DELETE)) {
+            $actionColumnItems[Page::DELETE->toRoute()] = [
+                'label' => 'whatwedo_crud.delete',
+                'icon' => 'trash',
+                'route' => $this->getRoute(Page::DELETE),
+                'route_parameters' => fn ($row) => [
+                    'id' => $row->getId(),
+                    'referer' => $currentURI,
+                ],
+                'voter_attribute' => Page::DELETE,
+            ];
+        }
+        foreach ($actionColumnItems as $key => $value) {
+            $table->addAction($key, $value, Page::DELETE->toRoute() === $key ? PostAction::class : Action::class);
+        }
+        return $table;
+    }
+
     protected function hasCapability(?PageInterface $capability): bool
     {
         return call_user_func([$this->getOption(self::OPT_DEFINITION), 'hasCapability'], $capability);
@@ -465,7 +483,7 @@ class RelationContent extends AbstractContent
         return call_user_func([$this->options[self::OPT_DEFINITION], 'getRoute'], $suffix);
     }
 
-    private function getTargetDefinition(?string $accessorPath = null): DefinitionInterface
+    private function getTargetDefinition(?string $accessorPath = null): ?DefinitionInterface
     {
         $metadataFactory = $this->getMetadataFactory();
 
@@ -488,8 +506,17 @@ class RelationContent extends AbstractContent
          *
          * => PersonDefinition
          */
-        $target = array_reduce($associations, fn (string $className, string $association) => $metadataFactory->getMetadataFor($className)->getAssociationTargetClass($association), $this->definition::getEntity());
+        $target = array_reduce($associations, static function (string $className, string $association) use ($metadataFactory) {
+            try {
+                return $metadataFactory->getMetadataFor($className)->getAssociationTargetClass($association);
+            } catch (\Exception $e) {
+                return null;
+            }
+        }, $this->definition::getEntity());
 
+        if ($target === null) {
+            return null;
+        }
         return $this->definitionManager->getDefinitionByEntity($target);
     }
 
