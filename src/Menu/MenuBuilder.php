@@ -32,6 +32,7 @@ namespace whatwedo\CrudBundle\Menu;
 use Knp\Menu\ItemInterface;
 use whatwedo\CrudBundle\Builder\DefinitionMenuBuilder;
 use whatwedo\CrudBundle\Definition\FilterDefinition;
+use whatwedo\CrudBundle\Enums\Page;
 
 class MenuBuilder extends DefinitionMenuBuilder
 {
@@ -48,6 +49,9 @@ class MenuBuilder extends DefinitionMenuBuilder
         foreach ($this->definitionManager->getDefinitions() as $definition) {
             $class = get_class($definition);
             if ($class === FilterDefinition::class) {
+                continue;
+            }
+            if (! $definition::hasCapability(Page::INDEX)) {
                 continue;
             }
             $this->addDefinition($menu, $class);
