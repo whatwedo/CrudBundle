@@ -1,0 +1,11 @@
+{% macro renderStimulusController(controllers) %}
+    {% set value = null %}
+    {% for controllerName, controllerParameters in controllers %}
+        {% if value is null %}
+            {% set value = stimulus_controller(controllerName, controllerParameters) %}
+        {% else %}
+            {% set value = value | stimulus_controller(controllerName, controllerParameters) %}
+        {% endif %}
+    {% endfor %}
+    {{ value|raw }}
+{% endmacro %}

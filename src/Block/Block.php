@@ -125,6 +125,15 @@ class Block implements ServiceSubscriberInterface
      */
     public const OPT_COLLAPSED = 'collapsed';
 
+    /**
+     * Defines the stimulus controllers for the block.
+     * Use the key as controller name and the value as the controller parameters
+     * Eg.: <code>['controller_name' => ['param1' => 'value1']]</code>
+     * Defaults to <code>[]</code>
+     * Accepts: <code>array</code>.
+     */
+    public const OPT_STIMULUS_CONTROLLERS = 'stimulus_controllers';
+
     protected ContainerInterface $container;
 
     protected ?Block $parentBlock = null;
@@ -169,6 +178,7 @@ class Block implements ServiceSubscriberInterface
             self::OPT_CUSTOM_OPTIONS => [],
             self::OPT_COLLAPSIBLE => false,
             self::OPT_COLLAPSED => false,
+            self::OPT_STIMULUS_CONTROLLERS => [],
         ]);
 
         $resolver->setAllowedTypes(self::OPT_VISIBILITY, 'array');
@@ -183,6 +193,7 @@ class Block implements ServiceSubscriberInterface
         $resolver->setAllowedTypes(self::OPT_BLOCK_PREFIX, 'string');
         $resolver->setAllowedTypes(self::OPT_COLLAPSIBLE, 'bool');
         $resolver->setAllowedTypes(self::OPT_COLLAPSED, 'bool');
+        $resolver->setAllowedTypes(self::OPT_STIMULUS_CONTROLLERS, 'array');
     }
 
     public function setOption(string $name, mixed $value): static
@@ -322,6 +333,15 @@ class Block implements ServiceSubscriberInterface
         }
 
         return $this->parentBlock;
+    }
+
+    public function getStimulusControllers(): array
+    {
+        $controllers = $this->getOption(self::OPT_STIMULUS_CONTROLLERS);
+        $controllers['whatwedo/crud-bundle/block'] = [
+            'collapsible' => $this->getOption(self::OPT_COLLAPSIBLE),
+        ];
+        return $controllers;
     }
 
     protected function getSecurity(): Security

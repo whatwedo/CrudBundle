@@ -1,11 +1,12 @@
 {% block block %}
+    {% import '@whatwedoCrud/includes/layout/_layout_macros.html.twig' as _macro %}
     {# @var block \whatwedo\CrudBundle\Block\Block #}
     {# @var view \whatwedo\CrudBundle\View\DefinitionView #}
     {# @var content string #}
     {% set attr = block.option('attr')|default([])|filter((k,i) => k != 'class') %}
     {% set block_class = (block.option('size') == constant('whatwedo\\CrudBundle\\Enums\\BlockSize::LARGE') ? 'basis-full sm:mb-0 max-w-full' : 'basis-full sm:basis-3/6-gap') %}
     <div id="wwd-crud-block-{{ block.acronym }}" class="{{ block_class }} {{ block.option('attr')['class'] ?? '' }}" {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
-        <div class="bg-white shadow" {{ stimulus_controller('whatwedo/crud-bundle/block', {'collapsible': block.option('collapsible')}) }}>
+        <div class="bg-white shadow" {{ _macro.renderStimulusController(block.stimulusControllers) }}>
             {% if block.option('label') or block.option('description') %}
                 <div class="px-4 py-3" {{ stimulus_target('whatwedo/crud-bundle/block', 'title') }}>
                     {% if block.option('label') %}
@@ -36,10 +37,11 @@
 
 
 {% block block_block %}
+    {% import '@whatwedoCrud/includes/layout/_layout_macros.html.twig' as _macro %}
     {% set attr = block.option('attr')|default([])|filter((k,i) => k != 'class') %}
     {% set block_block_class = (block.option('size') == constant('whatwedo\\CrudBundle\\Enums\\BlockSize::LARGE') ? '' : 'sm:w-3/6') ~ ' w-full wwd-block-block mb-4' %}
     <div id="wwd-crud-block-{{ block.acronym }}" class="{{ block_block_class }} {{ block.option('attr')['class'] ?? '' }}" {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}>
-        <div class="bg-white shadow" {{ stimulus_controller('whatwedo/crud-bundle/block', {'collapsible': block.option('collapsible')}) }}>
+        <div class="bg-white shadow" {{ _macro.renderStimulusController(block.stimulusControllers) }}>
         {% if block.option('label') or block.option('description') %}
             <div class="wwd-crud-block-header px-4 pt-4 sm:px-6" {{ stimulus_target('whatwedo/crud-bundle/block', 'title') }}>
                 {% if block.option('label') %}
