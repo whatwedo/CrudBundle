@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace whatwedo\CrudBundle\View;
 
 use Doctrine\Common\Annotations\Reader;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -14,6 +13,7 @@ use Symfony\Component\Form\FormRegistryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Security;
 use whatwedo\CoreBundle\Action\Action;
 use whatwedo\CrudBundle\Block\Block;
 use whatwedo\CrudBundle\Block\BlockBlock;

@@ -13,6 +13,7 @@ services:
         resource: '../../*'
         exclude:
             - '../../Normalizer/'
+            - '../../Test/'
 
 
     whatwedo\CrudBundle\Builder\DefinitionBuilder:
