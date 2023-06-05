@@ -3,18 +3,15 @@
 
 # whatwedoCrudBundle
 
-This bundle helps to automatically create CRUD environments for entities.
+This bundle is part of the [araise.dev](https://araise.dev) framework.
 
-Features include:
-
-- Relations of entites
-- Multiple types of fields
-- Automatic form generation
-- Formatters to help display the entity properties
 
 ## Documentation
 
-https://whatwedo.github.io/CrudBundle/#/
+[whatwedo.github.io/CrudBundle](https://whatwedo.github.io/CrudBundle/#/)
+
+## Screenshots
+<img src="https://uploads.whatwedo.io/github/whatwedo/CrudBundle/crud-calendar.png" width="45%"></img> <img src="https://uploads.whatwedo.io/github/whatwedo/CrudBundle/crud-dashboard.png" width="45%"></img> <img src="https://uploads.whatwedo.io/github/whatwedo/CrudBundle/crud-popup-create.png" width="45%"></img> <img src="https://uploads.whatwedo.io/github/whatwedo/CrudBundle/crud-table-subtable.png" width="45%"></img>
 
 ## License
 
