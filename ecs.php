@@ -46,6 +46,4 @@ return static function (ECSConfig $containerConfigurator): void {
             __DIR__ . '/tests/App/config/bundles.php',
         ],
     ]);
-
-    $containerConfigurator->parallel();
 };
