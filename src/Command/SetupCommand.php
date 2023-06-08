@@ -97,8 +97,8 @@ class SetupCommand extends Command
             $this->runCommand('yarn add @tailwindcss/forms');
             $this->newLine();
         }
-        if ($this->confirm('Do you want to add tailwindcss, postcss-loader, sass-loader, sass and autoprefixer to your dev dependencies? [YES/no] ', true)) {
-            $this->runCommand('yarn add tailwindcss postcss-loader sass-loader sass autoprefixer --dev');
+        if ($this->confirm('Do you want to add tailwindcss, postcss-loader, sass-loader, sass, autoprefixer and @babel/plugin-proposal-class-properties to your dev dependencies? [YES/no] ', true)) {
+            $this->runCommand('yarn add tailwindcss postcss-loader sass-loader sass autoprefixer @babel/plugin-proposal-class-properties --dev');
             $this->newLine();
         }
     }
