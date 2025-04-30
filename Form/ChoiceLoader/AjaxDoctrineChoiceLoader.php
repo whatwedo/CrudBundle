@@ -5,6 +5,7 @@ namespace whatwedo\CrudBundle\Form\ChoiceLoader;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
+use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
 use Symfony\Component\Form\FormEvent;
 
 class AjaxDoctrineChoiceLoader implements ChoiceLoaderInterface
@@ -34,17 +35,17 @@ class AjaxDoctrineChoiceLoader implements ChoiceLoaderInterface
         }
     }
 
-    public function loadChoiceList($value = null)
+    public function loadChoiceList($value = null): ChoiceListInterface
     {
         return new ArrayChoiceList($this->selected, $value);
     }
 
-    public function loadChoicesForValues(array $values, $value = null)
+    public function loadChoicesForValues(array $values, $value = null): array
     {
         return $this->doctrineChoiceLoader->loadChoicesForValues($values, $value);
     }
 
-    public function loadValuesForChoices(array $choices, $value = null)
+    public function loadValuesForChoices(array $choices, $value = null): array
     {
         return $this->doctrineChoiceLoader->loadValuesForChoices($choices, $value);
     }

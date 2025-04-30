@@ -44,6 +44,7 @@ use Symfony\Component\Security\Http\AccessMap;
 use Symfony\Component\Security\Http\AccessMapInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
+use Symfony\Contracts\Service\Attribute\Required;
 use Twig\Environment;
 use whatwedo\CrudBundle\Collection\BlockCollection;
 use whatwedo\CrudBundle\Content\Content;
@@ -159,20 +160,18 @@ class DefinitionView implements DefinitionViewInterface
         $this->formRegistry = $formRegistry;
     }
 
-    /**
-     * @required
-     */
-    public function setDefinitionManager(DefinitionManager $definitionManager)
+    #[Required]
+    public function setDefinitionManager(DefinitionManager $definitionManager): void
     {
         $this->definitionManager = $definitionManager;
     }
 
-    public function setDefinition(DefinitionInterface $definition)
+    public function setDefinition(DefinitionInterface $definition): void
     {
         $this->definition = $definition;
     }
 
-    public function setData($data)
+    public function setData($data): void
     {
         $this->data = $data;
     }
@@ -180,32 +179,32 @@ class DefinitionView implements DefinitionViewInterface
     /**
      * @return object
      */
-    public function getData()
+    public function getData(): object
     {
         return $this->data;
     }
 
-    public function setBlocks(BlockCollection $blocks)
+    public function setBlocks(BlockCollection $blocks): void
     {
         $this->blocks = $blocks;
     }
 
-    public function getBlocks()
+    public function getBlocks(): BlockCollection
     {
         return $this->blocks;
     }
 
-    public function setTemplates(array $templates)
+    public function setTemplates(array $templates): void
     {
         $this->templates = $templates;
     }
 
-    public function setTemplateParameters(array $templateParameters)
+    public function setTemplateParameters(array $templateParameters): void
     {
         $this->templateParameters = $templateParameters;
     }
 
-    public function renderShow($additionalParameters = [])
+    public function renderShow($additionalParameters = []): string
     {
         return $this->templating->render(
             $this->getTemplatePath($this->templates['show']),
@@ -225,7 +224,7 @@ class DefinitionView implements DefinitionViewInterface
      *
      * @return string html
      */
-    public function linkIt($value, Content $content)
+    public function linkIt($value, Content $content): string
     {
         $entity = $content->getContents($this->data);
         $def = $this->definitionManager->getDefinitionFor($entity);
@@ -258,7 +257,7 @@ class DefinitionView implements DefinitionViewInterface
         return $value;
     }
 
-    public function renderEdit($additionalParameters = [])
+    public function renderEdit($additionalParameters = []): string
     {
         return $this->templating->render(
             $this->getTemplatePath($this->templates['edit']),
@@ -273,7 +272,7 @@ class DefinitionView implements DefinitionViewInterface
         );
     }
 
-    public function renderCreate($additionalParameters = [])
+    public function renderCreate($additionalParameters = []): string
     {
         return $this->templating->render(
             $this->getTemplatePath($this->templates['create']),
@@ -294,7 +293,7 @@ class DefinitionView implements DefinitionViewInterface
      *
      * @return string
      */
-    public function getPath($route, $params = [])
+    public function getPath($route, array $params = []): string
     {
         if ($this->definition->hasCapability($route)) {
             switch ($route) {
@@ -344,7 +343,7 @@ class DefinitionView implements DefinitionViewInterface
     /**
      * @return FormInterface|null
      */
-    public function getEditForm()
+    public function getEditForm(): ?FormInterface
     {
         if ($this->form instanceof FormInterface) {
             return $this->form;
@@ -382,7 +381,7 @@ class DefinitionView implements DefinitionViewInterface
     /**
      * @return FormInterface|null
      */
-    public function getCreateForm()
+    public function getCreateForm(): ?FormInterface
     {
         if ($this->form instanceof FormInterface) {
             return $this->form;
@@ -421,7 +420,7 @@ class DefinitionView implements DefinitionViewInterface
      *
      * @return string
      */
-    public function getAjaxListen($onlylisten = false)
+    public function getAjaxListen(bool $onlylisten = false): string
     {
         $data = $this->definition->addAjaxOnChangeListener();
         if ($onlylisten) {
@@ -448,7 +447,7 @@ class DefinitionView implements DefinitionViewInterface
      *
      * @return bool
      */
-    public function hasCapability($route)
+    public function hasCapability($route): bool
     {
         return $this->definition->hasCapability($route);
     }
@@ -456,7 +455,7 @@ class DefinitionView implements DefinitionViewInterface
     /**
      * @return DefinitionInterface
      */
-    public function getDefinition()
+    public function getDefinition(): DefinitionInterface
     {
         return $this->definition;
     }
@@ -467,7 +466,7 @@ class DefinitionView implements DefinitionViewInterface
      *
      * @return \Symfony\Component\Form\Guess\Guess|\Symfony\Component\Form\Guess\TypeGuess|null
      */
-    public function guessType($class, $property)
+    public function guessType($class, $property): \Symfony\Component\Form\Guess\Guess|\Symfony\Component\Form\Guess\TypeGuess|null
     {
         return $this->formRegistry->getTypeGuesser()->guessType($class, $property);
     }
@@ -487,7 +486,7 @@ class DefinitionView implements DefinitionViewInterface
      *
      * @return bool
      */
-    protected function isContentRequired($content)
+    protected function isContentRequired(EditableContentInterface $content): bool
     {
         $reflectionObject = $this->getReflectionObject();
         if (null !== $reflectionObject) {
@@ -513,7 +512,7 @@ class DefinitionView implements DefinitionViewInterface
      *
      * @return string
      */
-    protected function getFormType(EditableContentInterface $content)
+    protected function getFormType(Content|RelationContent $content): ?string
     {
         $formType = $content->getFormType();
         if (EntityPreselectType::class === $formType) {
@@ -531,7 +530,7 @@ class DefinitionView implements DefinitionViewInterface
     /**
      * @return \ReflectionObject
      */
-    protected function getReflectionObject()
+    protected function getReflectionObject(): \ReflectionObject
     {
         if (null === $this->reflectionObject && $this->data) {
             $this->reflectionObject = new \ReflectionObject($this->data);

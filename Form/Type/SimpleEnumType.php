@@ -35,7 +35,7 @@ use whatwedo\CoreBundle\Enum\AbstractSimpleEnum;
 
 class SimpleEnumType extends AbstractType
 {
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('choices', function (Options $options) {
             /** @var AbstractSimpleEnum|string $enumClass */
@@ -63,7 +63,7 @@ class SimpleEnumType extends AbstractType
         $resolver->setAllowedTypes('class', ['string']);
     }
 
-    public function getParent()
+    public function getParent(): string
     {
         return ChoiceType::class;
     }

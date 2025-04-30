@@ -43,13 +43,13 @@ class EntityHiddenType extends AbstractType
         $this->em = $em;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $transformer = new EntityToIdTransformer($this->em, $options['class']);
         $builder->addModelTransformer($transformer);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired(['class'])
             ->setDefault('invalid_message', 'Das Objekt existiert nicht');
@@ -58,7 +58,7 @@ class EntityHiddenType extends AbstractType
     /**
      * @return string
      */
-    public function getParent()
+    public function getParent(): string
     {
         return HiddenType::class;
     }

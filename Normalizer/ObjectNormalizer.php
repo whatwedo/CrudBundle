@@ -54,7 +54,7 @@ class ObjectNormalizer extends BaseObjectNormalizer
     /**
      * @return array
      */
-    public function getCustomCallbacks()
+    public function getCustomCallbacks(): array
     {
         return $this->customCallbacks;
     }
@@ -64,7 +64,7 @@ class ObjectNormalizer extends BaseObjectNormalizer
      *
      * @return self
      */
-    public function setCustomCallbacks($customCallbacks)
+    public function setCustomCallbacks($customCallbacks): static
     {
         $this->customCallbacks = $customCallbacks;
 
@@ -76,7 +76,7 @@ class ObjectNormalizer extends BaseObjectNormalizer
      * @param bool $attributesAsString
      * @return array
      */
-    protected function getAllowedAttributes($classOrObject, array $context, $attributesAsString = false)
+    protected function getAllowedAttributes($classOrObject, array $context, $attributesAsString = false): array
     {
         return $this->definition->getExportAttributes();
     }
@@ -88,7 +88,7 @@ class ObjectNormalizer extends BaseObjectNormalizer
      * @param string      $attribute
      * @param string|null $format
      */
-    protected function getAttributeValue($object, $attribute, $format = null, array $context = [])
+    protected function getAttributeValue($object, $attribute, $format = null, array $context = []): mixed
     {
         $attrValue = $this->propertyAccessor->getValue($object, $attribute);
         if (isset($this->customCallbacks[$attribute])) {

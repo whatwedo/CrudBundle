@@ -35,7 +35,7 @@ abstract class EntityPreselectType extends AbstractType
     /**
      * @return bool
      */
-    public static function isValueProvided(Request $request, array $options)
+    public static function isValueProvided(Request $request, array $options): bool
     {
         preg_match('/[^\\\\]+$/', $options['class'], $matches);
         $query = strtolower($matches[0]);

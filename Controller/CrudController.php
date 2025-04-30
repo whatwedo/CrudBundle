@@ -27,6 +27,7 @@
 
 namespace whatwedo\CrudBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Psr\Log\LoggerInterface;
@@ -97,9 +98,14 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     protected $tableFactory;
 
     /**
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
+
+    /**
      * CrudController constructor.
      */
-    public function __construct(Environment $templating, LoggerInterface $logger, EventDispatcherInterface $eventDispatcher, RouterInterface $router, DefinitionManager $definitionManager, TableFactory $tableFactory)
+    public function __construct(Environment $templating, LoggerInterface $logger, EventDispatcherInterface $eventDispatcher, RouterInterface $router, DefinitionManager $definitionManager, TableFactory $tableFactory, EntityManagerInterface $entityManager)
     {
         $this->eventDispatcher = $eventDispatcher;
         $this->router = $router;
@@ -107,6 +113,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $this->logger = $logger;
         $this->definitionManager = $definitionManager;
         $this->tableFactory = $tableFactory;
+        $this->entityManager = $entityManager;
     }
 
     public function configureDefinition(DefinitionInterface $definition)
@@ -117,7 +124,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     /**
      * @return Response
      */
-    public function indexAction(Request $request)
+    public function indexAction(Request $request): Response
     {
         $this->denyAccessUnlessGrantedCrud(RouteEnum::INDEX, $this->getDefinition());
 
@@ -146,7 +153,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     /**
      * @return Response
      */
-    public function showAction(Request $request)
+    public function showAction(Request $request): Response
     {
         $entity = $this->getEntityOr404($request);
         $this->denyAccessUnlessGrantedCrud(RouteEnum::SHOW, $entity);
@@ -170,7 +177,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     /**
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-    public function editAction(Request $request)
+    public function editAction(Request $request): RedirectResponse|Response
     {
         $entity = $this->getEntityOr404($request);
         $this->denyAccessUnlessGrantedCrud(RouteEnum::EDIT, $entity);
@@ -184,7 +191,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
                 $this->dispatchEvent(CrudEvent::PRE_EDIT_PREFIX, $entity);
-                $this->getDoctrine()->getManager()->flush();
+                $this->entityManager->flush();
                 $this->dispatchEvent(CrudEvent::POST_EDIT_PREFIX, $entity);
 
                 $this->addFlash('success', sprintf('Erfolgreich gespeichert.'));
@@ -211,7 +218,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     /**
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request): RedirectResponse|Response
     {
         $this->denyAccessUnlessGrantedCrud(RouteEnum::CREATE, $this->getDefinition());
 
@@ -234,7 +241,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
                         if ($queryParameter
                             && $request->query->has($queryParameter)) {
-                            $value = $this->getDoctrine()
+                            $value = $this->entityManager
                                 ->getRepository(call_user_func([$content->getPreselectDefinition(), 'getEntity']))
                                 ->find($request->query->getInt($queryParameter));
 
@@ -266,7 +273,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
                 $this->dispatchEvent(CrudEvent::POST_VALIDATE_PREFIX, $entity);
                 $this->dispatchEvent(CrudEvent::PRE_CREATE_PREFIX, $entity);
 
-                $objectManager = $this->getDoctrine()->getManager();
+                $objectManager = $this->entityManager;
                 $objectManager->persist($entity);
                 $objectManager->flush();
 
@@ -290,15 +297,15 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     /**
      * @return Response
      */
-    public function deleteAction(Request $request)
+    public function deleteAction(Request $request): Response
     {
         $entity = $this->getEntityOr404($request);
         $this->denyAccessUnlessGrantedCrud(RouteEnum::DELETE, $entity);
 
         try {
-            $this->getDoctrine()->getManager()->remove($entity);
+            $this->entityManager->remove($entity);
             $this->dispatchEvent(CrudEvent::PRE_DELETE_PREFIX, $entity);
-            $this->getDoctrine()->getManager()->flush($entity);
+            $this->entityManager->flush($entity);
             $this->dispatchEvent(CrudEvent::POST_DELETE_PREFIX, $entity);
             $this->addFlash('success', 'Eintrag erfolgreich gelöscht.');
         } catch (\Exception $e) {
@@ -315,7 +322,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     /**
      * @return Response
      */
-    public function exportAction(Request $request)
+    public function exportAction(Request $request): Response
     {
         $this->denyAccessUnlessGrantedCrud(RouteEnum::EXPORT, $this->getDefinition());
 
@@ -355,7 +362,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     /**
      * @return Response
      */
-    public function ajaxAction(Request $request)
+    public function ajaxAction(Request $request): Response
     {
         $this->denyAccessUnlessGrantedCrud(RouteEnum::AJAX, $this->getDefinition());
 
@@ -375,7 +382,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      * @param string $file file name
      * @return string
      */
-    public function getView($file)
+    public function getView($file): string
     {
         if ($this->templating->getLoader()->exists($this->getDefinition()->getTemplateDirectory() . '/' . $file)) {
             return $this->getDefinition()->getTemplateDirectory() . '/' . $file;
@@ -384,7 +391,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         return '@whatwedoCrud/Crud/' . $file;
     }
 
-    public function getActionColumnItems($row)
+    public function getActionColumnItems($row): array
     {
         $targetDefinition = $this->definitionManager->getDefinitionFor($row);
 
@@ -415,7 +422,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         return $actionColumnItems;
     }
 
-    public function getShowRoute($row)
+    public function getShowRoute($row): string
     {
         $targetDefinition = $this->definitionManager->getDefinitionFor($row);
 
@@ -426,7 +433,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      * @param $event
      * @param $entity
      */
-    public function dispatchEvent($event, $entity)
+    public function dispatchEvent($event, $entity): void
     {
         $this->eventDispatcher->dispatch(
             new CrudEvent($entity),
@@ -442,7 +449,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     /**
      * @return DefinitionInterface
      */
-    protected function getDefinition()
+    protected function getDefinition(): AbstractDefinition|DefinitionInterface
     {
         return $this->definition;
     }
@@ -472,7 +479,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      *
      * @param DoctrineTable $table
      */
-    protected function configureTable($table)
+    protected function configureTable(DoctrineTable $table): void
     {
         $this->getDefinition()->configureTable($table);
 
@@ -502,7 +509,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      * @return object
      * @throws NotFoundHttpException
      */
-    protected function getEntityOr404(Request $request)
+    protected function getEntityOr404(Request $request): object
     {
         try {
             return $this->getDefinition()->getQueryBuilder()
@@ -522,14 +529,14 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      * @return array
      * @throws \whatwedo\TableBundle\Exception\DataLoaderNotAvailableException
      */
-    protected function getExportEntities(Request $request)
+    protected function getExportEntities(Request $request): array
     {
         $export = $request->query->get('export') ?: [];
         if (isset($export['definition']) && isset($export['acronym']) && isset($export['class']) && isset($export['id'])
             && ($definition = $this->definitionManager->getDefinitionFromClass($export['definition']))
             && ($content = $definition->getContent($export['acronym']))
             && $content instanceof RelationContent
-            && ($repository = $this->getDoctrine()->getRepository($export['class']))
+            && ($repository = $this->entityManager->getRepository($export['class']))
             && ($row = $repository->find($export['id']))
         ) {
             $table = $content->getTable($export['acronym'], $row);
@@ -549,7 +556,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         return $table->getResults();
     }
 
-    protected function getIdentifierColumn()
+    protected function getIdentifierColumn(): string
     {
         return sprintf(
             '%s.%s',
@@ -572,7 +579,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      * @param $attributes
      * @param null $subject
      */
-    protected function denyAccessUnlessGrantedCrud($attributes, $subject = null, string $message = 'Access Denied.')
+    protected function denyAccessUnlessGrantedCrud($attributes, $subject = null, string $message = 'Access Denied.'): void
     {
         if (!$this->getUser()) {
             return;

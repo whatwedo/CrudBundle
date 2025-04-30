@@ -45,7 +45,7 @@ class CrudLoader extends Loader
         $this->definitionManager = $definitionManager;
     }
 
-    public function load($resource, $type = null)
+    public function load($resource, $type = null): RouteCollection
     {
         $routes = new RouteCollection();
         $definition = $this->definitionManager->getDefinitionFromClass($resource) ?: $this->definitionManager->getDefinition($resource);
@@ -102,7 +102,7 @@ class CrudLoader extends Loader
         return $routes;
     }
 
-    public function supports($resource, $type = null)
+    public function supports($resource, $type = null): bool
     {
         return 'crud' === $type;
     }

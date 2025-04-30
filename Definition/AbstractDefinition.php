@@ -34,6 +34,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\Service\Attribute\Required;
 use whatwedo\CrudBundle\Builder\DefinitionBuilder;
 use whatwedo\CrudBundle\Content\AbstractContent;
 use whatwedo\CrudBundle\Controller\CrudController;
@@ -181,8 +182,8 @@ abstract class AbstractDefinition implements DefinitionInterface
      * set the doctrine registry
      *
      * @param Registry $registry
-     * @required
      */
+    #[Required]
     public function setDoctrine(\Doctrine\Persistence\ManagerRegistry $registry): void
     {
         $this->doctrine = $registry;
@@ -193,9 +194,7 @@ abstract class AbstractDefinition implements DefinitionInterface
         return $this->blockManager;
     }
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setBlockManager(BlockManager $blockManager): void
     {
         $this->blockManager = $blockManager;
@@ -214,14 +213,12 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @return Breadcrumbs
      */
-    public function getBreadcrumbs()
+    public function getBreadcrumbs(): Breadcrumbs
     {
         return $this->getExtension(BreadcrumbsExtension::class)->getBreadcrumbs();
     }
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setRequestStack(RequestStack $requestStack): self
     {
         $this->requestStack = $requestStack;
@@ -234,9 +231,7 @@ abstract class AbstractDefinition implements DefinitionInterface
         return $this->definitionManager;
     }
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setDefinitionManager(DefinitionManager $definitionManager): self
     {
         $this->definitionManager = $definitionManager;
@@ -248,9 +243,7 @@ abstract class AbstractDefinition implements DefinitionInterface
         return '@whatwedoCrud/Crud';
     }
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setDefinitionView(DefinitionViewInterface $definitionView)
     {
         $this->definitionView = $definitionView;
