@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\View;
 
-use Doctrine\Common\Annotations\Reader;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormRegistryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 use whatwedo\CoreBundle\Action\Action;
 use whatwedo\CrudBundle\Block\Block;
 use whatwedo\CrudBundle\Block\BlockBlock;
@@ -43,12 +42,11 @@ class DefinitionView
 
     public function __construct(
         protected DefinitionManager $definitionManager,
-        protected FormRegistryInterface $formRegistry,
+        protected EntityManagerInterface $entityManager,
         protected FormFactoryInterface $formFactory,
         protected RouterInterface $router,
         protected RequestStack $requestStack,
         protected AuthorizationCheckerInterface $authorizationChecker,
-        protected Reader $annotationReader,
         protected Security $security,
     ) {
     }
@@ -356,9 +354,19 @@ class DefinitionView
 
     protected function isContentRequired(AbstractContent $content): bool
     {
-        return $this->formRegistry->getTypeGuesser()
-            ->guessRequired($this->getDefinition()::getEntity(), $content->getOption(AbstractContent::OPT_ACCESSOR_PATH))
-            ->getValue();
+        $entityClass = $this->getDefinition()::getEntity();
+        $fieldName = $content->getOption(AbstractContent::OPT_ACCESSOR_PATH);
+
+        try {
+            $metadata = $this->entityManager->getClassMetadata($entityClass);
+            if ($metadata->hasField($fieldName)) {
+                $mapping = $metadata->getFieldMapping($fieldName);
+                return !($mapping['nullable'] ?? false);
+            }
+        } catch (\Exception) {
+        }
+
+        return false;
     }
 
     protected function getFormType(AbstractContent $content): ?string

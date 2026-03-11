@@ -6,13 +6,10 @@ namespace whatwedo\CrudBundle\Block;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
-use Symfony\Component\Form\FormRegistryInterface;
-use Symfony\Component\Form\Guess\TypeGuess;
 use Symfony\Component\Form\Util\StringUtil;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Service\Attribute\Required;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use whatwedo\CrudBundle\Collection\ContentCollection;
@@ -319,7 +316,6 @@ class Block implements ServiceSubscriberInterface
     public static function getSubscribedServices(): array
     {
         return [
-            FormRegistryInterface::class,
             ContentManager::class,
             Security::class,
             EntityManagerInterface::class,
@@ -356,25 +352,27 @@ class Block implements ServiceSubscriberInterface
 
     private function getType(string $acronym, array $options): string
     {
-        $entityClass = $this->definition::getEntity();
-        $reflection = new \ReflectionClass($entityClass);
-        if ($reflection->isInterface()) {
-            $metadata = $this->container->get(EntityManagerInterface::class)->getClassMetadata($entityClass);
-            $entityClass = $metadata->name;
-        }
-        /** @var TypeGuess $typeGuess */
-        $typeGuess = $this->container->get(FormRegistryInterface::class)->getTypeGuesser()->guessType(
-            $entityClass,
-            $options[AbstractContent::OPT_ACCESSOR_PATH] ?? $acronym
-        );
-
-        if ($typeGuess->getType() === EntityType::class
-            && $typeGuess->getOptions()['multiple'] === true) {
-            return RelationContent::class;
-        }
-
         if (isset($options[EnumContent::OPT_CLASS]) && enum_exists($options[EnumContent::OPT_CLASS])) {
             return EnumContent::class;
+        }
+
+        $entityClass = $this->definition::getEntity();
+        $em = $this->container->get(EntityManagerInterface::class);
+
+        $reflection = new \ReflectionClass($entityClass);
+        if ($reflection->isInterface()) {
+            $metadata = $em->getClassMetadata($entityClass);
+            $entityClass = $metadata->name;
+        }
+
+        $fieldName = $options[AbstractContent::OPT_ACCESSOR_PATH] ?? $acronym;
+
+        try {
+            $metadata = $em->getClassMetadata($entityClass);
+            if ($metadata->hasAssociation($fieldName) && $metadata->isCollectionValuedAssociation($fieldName)) {
+                return RelationContent::class;
+            }
+        } catch (\Exception) {
         }
 
         return Content::class;
