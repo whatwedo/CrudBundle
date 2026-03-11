@@ -54,7 +54,7 @@ class CrudLoader extends Loader
         return $routes;
     }
 
-    private function addDefinitionRoutes(RouteCollection $routes, string $definition, mixed $resource, bool $usePathPrefix = true): void
+    private function addDefinitionRoutes(RouteCollection $routes, object|string $definition, mixed $resource, bool $usePathPrefix = true): void
     {
         foreach ($definition::getCapabilities() as $capability) {
             if ($capability instanceof Page) {
