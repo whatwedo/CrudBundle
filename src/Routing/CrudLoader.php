@@ -101,7 +101,7 @@ class CrudLoader extends Loader
     /**
      * @return bool
      */
-    public function supports(mixed $resource, mixed $type = null)
+    public function supports(mixed $resource, ?string $type = null): bool
     {
         return $type === 'whatwedo_crud';
     }
