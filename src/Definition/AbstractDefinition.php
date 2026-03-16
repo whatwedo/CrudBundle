@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Definition;
 
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\Proxy;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ObjectRepository;
 use Psr\Container\ContainerInterface;
@@ -474,10 +474,10 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
     public static function supports(mixed $entity): bool
     {
         if (is_object($entity)) {
-            $entity = ClassUtils::getClass($entity);
+            $entity = $entity instanceof Proxy ? get_parent_class($entity) : get_class($entity);
         }
 
-        return is_a(ClassUtils::getRealClass($entity), static::getEntity(), true);
+        return is_a($entity, static::getEntity(), true);
     }
 
     public static function getRoutePathPrefix(): string
