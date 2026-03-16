@@ -114,6 +114,8 @@ interface DefinitionInterface
      */
     public function getTemplateDirectory(): string;
 
+    public function getTemplateParameters(PageInterface $route, array $parameters = [], mixed $entity = null): array;
+
     /**
      * returns all layouts to be consumed.
      */
