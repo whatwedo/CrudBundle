@@ -144,8 +144,12 @@ class DefinitionView
      *
      * @return string
      */
-    public function getPath(PageInterface $route, $params = [])
+    public function getPath(PageInterface|string $route, $params = [])
     {
+        if (is_string($route)) {
+            $route = Page::from($route);
+        }
+
         if ($this->definition->hasCapability($route)) {
             switch ($route) {
                 case Page::SHOW:
@@ -325,8 +329,12 @@ class DefinitionView
         return $this->form;
     }
 
-    public function hasCapability(PageInterface $route): bool
+    public function hasCapability(PageInterface|string $route): bool
     {
+        if (is_string($route)) {
+            $route = Page::from($route);
+        }
+
         return $this->definition->hasCapability($route);
     }
 
