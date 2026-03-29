@@ -36,7 +36,7 @@ class BlockPass implements CompilerPassInterface
     /**
      * this will initialize all Definitions
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (!$container->has('whatwedo\CrudBundle\Manager\BlockManager')) {
             return;

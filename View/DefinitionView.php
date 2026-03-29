@@ -27,7 +27,6 @@
 
 namespace whatwedo\CrudBundle\View;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\Mapping\Column;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -120,11 +119,6 @@ class DefinitionView implements DefinitionViewInterface
     protected $templateParameters;
 
     /**
-     * @var AnnotationReader
-     */
-    protected $annotationReader;
-
-    /**
      * @var \ReflectionObject
      */
     protected $reflectionObject;
@@ -154,7 +148,6 @@ class DefinitionView implements DefinitionViewInterface
         $this->router = $router;
         $this->accessMap = $accessMap;
         $this->authorizationChecker = $authorizationChecker;
-        $this->annotationReader = new AnnotationReader();
         $this->request = $requestStack->getCurrentRequest();
         $this->formRegistry = $formRegistry;
     }
@@ -493,14 +486,18 @@ class DefinitionView implements DefinitionViewInterface
         if (null !== $reflectionObject) {
             foreach ($reflectionObject->getProperties() as $property) {
                 if ($property->getName() === $content->getAcronym()) {
-                    $notNullAnnotation = $this->annotationReader->getPropertyAnnotation($property, NotNull::class);
-                    $notBlankAnnotation = $this->annotationReader->getPropertyAnnotation($property, NotBlank::class);
-                    $columnAnnotation = $this->annotationReader->getPropertyAnnotation($property, Column::class);
-                    if (null !== $columnAnnotation && ('boolean' === $columnAnnotation->type || 'bool' === $columnAnnotation->type)) {
-                        return false;
+                    $columnAttributes = $property->getAttributes(Column::class);
+                    if (!empty($columnAttributes)) {
+                        $columnInstance = $columnAttributes[0]->newInstance();
+                        if ('boolean' === $columnInstance->type || 'bool' === $columnInstance->type) {
+                            return false;
+                        }
                     }
 
-                    return null !== $notNullAnnotation || null !== $notBlankAnnotation;
+                    $hasNotNull = !empty($property->getAttributes(NotNull::class));
+                    $hasNotBlank = !empty($property->getAttributes(NotBlank::class));
+
+                    return $hasNotNull || $hasNotBlank;
                 }
             }
         }

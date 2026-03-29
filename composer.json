@@ -20,15 +20,15 @@
         }
     ],
     "require": {
-        "php":                      ">=7.2",
-        "symfony/framework-bundle": "~4.0|~5.0",
-        "symfony/http-kernel":      "~4.0|~5.0",
-        "symfony/security-bundle":  "~4.0|~5.0",
-        "symfony/serializer":       "~4.0|~5.0",
-        "symfony/form":             "~4.0|~5.0",
-        "symfony/twig-bundle":      "~4.0|~5.0",
-        "whatwedo/core-bundle":     "^0.4",
-        "whatwedo/table-bundle":    "^0.4",
+        "php":                      ">=8.1",
+        "symfony/framework-bundle": "~4.0|~5.0|^7.0",
+        "symfony/http-kernel":      "~4.0|~5.0|^7.0",
+        "symfony/security-bundle":  "~4.0|~5.0|^7.0",
+        "symfony/serializer":       "~4.0|~5.0|^7.0",
+        "symfony/form":             "~4.0|~5.0|^7.0",
+        "symfony/twig-bundle":      "~4.0|~5.0|^7.0",
+        "whatwedo/core-bundle":     "^0.4|^1.0",
+        "whatwedo/table-bundle":    "^0.4|^1.0",
         "phpspec/prophecy": "~1.0"
     },
     "require-dev": {
