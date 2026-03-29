@@ -72,23 +72,17 @@ class ObjectNormalizer extends BaseObjectNormalizer
     }
 
     /**
-     * @param object|string $classOrObject
-     * @param bool $attributesAsString
-     * @return array
+     * @return array|bool
      */
-    protected function getAllowedAttributes($classOrObject, array $context, $attributesAsString = false)
+    protected function getAllowedAttributes(string|object $classOrObject, array $context, bool $attributesAsString = false): array|bool
     {
         return $this->definition->getExportAttributes();
     }
 
     /**
      * Gets the attribute value.
-     *
-     * @param object      $object
-     * @param string      $attribute
-     * @param string|null $format
      */
-    protected function getAttributeValue($object, $attribute, $format = null, array $context = [])
+    protected function getAttributeValue(object $object, string $attribute, ?string $format = null, array $context = []): mixed
     {
         $attrValue = $this->propertyAccessor->getValue($object, $attribute);
         if (isset($this->customCallbacks[$attribute])) {

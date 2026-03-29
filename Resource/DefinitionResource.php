@@ -42,7 +42,7 @@ class DefinitionResource implements ResourceInterface, SelfCheckingResourceInter
         $this->definitionClass = $definitionClass;
     }
 
-    public function isFresh($timestamp)
+    public function isFresh(int $timestamp): bool
     {
         try {
             $reflectionClass = new \ReflectionClass($this->definitionClass);
@@ -58,7 +58,7 @@ class DefinitionResource implements ResourceInterface, SelfCheckingResourceInter
         return false;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return call_user_func([$this->definitionClass, 'getAlias']);
     }
