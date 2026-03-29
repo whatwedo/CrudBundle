@@ -11,7 +11,7 @@ use whatwedo\CrudBundle\DependencyInjection\Compiler\DefinitionPass;
 
 class whatwedoCrudBundle extends Bundle
 {
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new DefinitionPass());
         $container->addCompilerPass(new ContentPass());
