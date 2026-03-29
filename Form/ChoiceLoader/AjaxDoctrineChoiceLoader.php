@@ -34,17 +34,17 @@ class AjaxDoctrineChoiceLoader implements ChoiceLoaderInterface
         }
     }
 
-    public function loadChoiceList($value = null)
+    public function loadChoiceList(?callable $value = null): \Symfony\Component\Form\ChoiceList\ChoiceListInterface
     {
         return new ArrayChoiceList($this->selected, $value);
     }
 
-    public function loadChoicesForValues(array $values, $value = null)
+    public function loadChoicesForValues(array $values, ?callable $value = null): array
     {
         return $this->doctrineChoiceLoader->loadChoicesForValues($values, $value);
     }
 
-    public function loadValuesForChoices(array $choices, $value = null)
+    public function loadValuesForChoices(array $choices, ?callable $value = null): array
     {
         return $this->doctrineChoiceLoader->loadValuesForChoices($choices, $value);
     }

@@ -48,27 +48,27 @@ class EntityToIdTransformer implements DataTransformerInterface
      * @param $entity
      * @return null
      */
-    public function transform($entity)
+    public function transform(mixed $value): mixed
     {
-        if (null === $entity) {
+        if (null === $value) {
             return null;
         }
-        $entityClass = get_class($entity);
+        $entityClass = get_class($value);
         $idField = $this->em->getClassMetadata($entityClass)->getSingleIdentifierFieldName();
         $accessor = PropertyAccess::createPropertyAccessor();
-        return $accessor->getValue($entity, $idField);
+        return $accessor->getValue($value, $idField);
     }
 
     /**
      * @param $id
      * @return object|null
      */
-    public function reverseTransform($id)
+    public function reverseTransform(mixed $value): mixed
     {
-        if (!$id) {
+        if (!$value) {
             return null;
         }
-        $entity = $this->em->getRepository($this->class)->find($id);
+        $entity = $this->em->getRepository($this->class)->find($value);
         if (null === $entity) {
             throw new TransformationFailedException();
         }
