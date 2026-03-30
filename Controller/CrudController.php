@@ -29,6 +29,7 @@ namespace whatwedo\CrudBundle\Controller;
 
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -97,9 +98,14 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     protected $tableFactory;
 
     /**
+     * @var ManagerRegistry
+     */
+    protected ManagerRegistry $doctrine;
+
+    /**
      * CrudController constructor.
      */
-    public function __construct(Environment $templating, LoggerInterface $logger, EventDispatcherInterface $eventDispatcher, RouterInterface $router, DefinitionManager $definitionManager, TableFactory $tableFactory)
+    public function __construct(Environment $templating, LoggerInterface $logger, EventDispatcherInterface $eventDispatcher, RouterInterface $router, DefinitionManager $definitionManager, TableFactory $tableFactory, ManagerRegistry $doctrine)
     {
         $this->eventDispatcher = $eventDispatcher;
         $this->router = $router;
@@ -107,6 +113,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $this->logger = $logger;
         $this->definitionManager = $definitionManager;
         $this->tableFactory = $tableFactory;
+        $this->doctrine = $doctrine;
     }
 
     public function configureDefinition(DefinitionInterface $definition)
@@ -184,7 +191,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
                 $this->dispatchEvent(CrudEvent::PRE_EDIT_PREFIX, $entity);
-                $this->getDoctrine()->getManager()->flush();
+                $this->doctrine->getManager()->flush();
                 $this->dispatchEvent(CrudEvent::POST_EDIT_PREFIX, $entity);
 
                 $this->addFlash('success', sprintf('Erfolgreich gespeichert.'));
@@ -234,7 +241,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
 
                         if ($queryParameter
                             && $request->query->has($queryParameter)) {
-                            $value = $this->getDoctrine()
+                            $value = $this->doctrine
                                 ->getRepository(call_user_func([$content->getPreselectDefinition(), 'getEntity']))
                                 ->find($request->query->getInt($queryParameter));
 
@@ -266,7 +273,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
                 $this->dispatchEvent(CrudEvent::POST_VALIDATE_PREFIX, $entity);
                 $this->dispatchEvent(CrudEvent::PRE_CREATE_PREFIX, $entity);
 
-                $objectManager = $this->getDoctrine()->getManager();
+                $objectManager = $this->doctrine->getManager();
                 $objectManager->persist($entity);
                 $objectManager->flush();
 
@@ -296,9 +303,9 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $this->denyAccessUnlessGrantedCrud(RouteEnum::DELETE, $entity);
 
         try {
-            $this->getDoctrine()->getManager()->remove($entity);
+            $this->doctrine->getManager()->remove($entity);
             $this->dispatchEvent(CrudEvent::PRE_DELETE_PREFIX, $entity);
-            $this->getDoctrine()->getManager()->flush($entity);
+            $this->doctrine->getManager()->flush($entity);
             $this->dispatchEvent(CrudEvent::POST_DELETE_PREFIX, $entity);
             $this->addFlash('success', 'Eintrag erfolgreich gelöscht.');
         } catch (\Exception $e) {
@@ -529,7 +536,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
             && ($definition = $this->definitionManager->getDefinitionFromClass($export['definition']))
             && ($content = $definition->getContent($export['acronym']))
             && $content instanceof RelationContent
-            && ($repository = $this->getDoctrine()->getRepository($export['class']))
+            && ($repository = $this->doctrine->getRepository($export['class']))
             && ($row = $repository->find($export['id']))
         ) {
             $table = $content->getTable($export['acronym'], $row);
