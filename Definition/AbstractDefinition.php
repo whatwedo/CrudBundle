@@ -44,6 +44,7 @@ use whatwedo\CrudBundle\Manager\BlockManager;
 use whatwedo\CrudBundle\Manager\DefinitionManager;
 use whatwedo\CrudBundle\View\DefinitionViewInterface;
 use whatwedo\TableBundle\Extension\FilterExtension;
+use Symfony\Contracts\Service\Attribute\Required;
 use whatwedo\TableBundle\Table\DoctrineTable;
 use whatwedo\TableBundle\Table\Table;
 use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
@@ -183,6 +184,7 @@ abstract class AbstractDefinition implements DefinitionInterface
      * @param Registry $registry
      * @required
      */
+    #[Required]
     public function setDoctrine(\Doctrine\Persistence\ManagerRegistry $registry): void
     {
         $this->doctrine = $registry;
@@ -196,6 +198,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @required
      */
+    #[Required]
     public function setBlockManager(BlockManager $blockManager): void
     {
         $this->blockManager = $blockManager;
@@ -222,6 +225,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @required
      */
+    #[Required]
     public function setRequestStack(RequestStack $requestStack): self
     {
         $this->requestStack = $requestStack;
@@ -237,6 +241,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @required
      */
+    #[Required]
     public function setDefinitionManager(DefinitionManager $definitionManager): self
     {
         $this->definitionManager = $definitionManager;
@@ -251,6 +256,7 @@ abstract class AbstractDefinition implements DefinitionInterface
     /**
      * @required
      */
+    #[Required]
     public function setDefinitionView(DefinitionViewInterface $definitionView)
     {
         $this->definitionView = $definitionView;

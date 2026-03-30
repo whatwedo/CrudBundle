@@ -39,6 +39,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Contracts\Service\Attribute\Required;
 use Symfony\Component\Security\Http\AccessMap;
 use Symfony\Component\Security\Http\AccessMapInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -155,6 +156,7 @@ class DefinitionView implements DefinitionViewInterface
     /**
      * @required
      */
+    #[Required]
     public function setDefinitionManager(DefinitionManager $definitionManager)
     {
         $this->definitionManager = $definitionManager;

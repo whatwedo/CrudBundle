@@ -29,6 +29,7 @@ namespace whatwedo\CrudBundle\Block;
 
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Service\Attribute\Required;
 use whatwedo\CrudBundle\Content\Content;
 use whatwedo\CrudBundle\Content\ContentInterface;
 use whatwedo\CrudBundle\Content\RelationContent;
@@ -192,6 +193,7 @@ class Block
     /**
      * @required
      */
+    #[Required]
     public function setContentManager(ContentManager $contentManager): void
     {
         $this->contentManager = $contentManager;
