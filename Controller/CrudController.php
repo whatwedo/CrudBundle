@@ -531,7 +531,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      */
     protected function getExportEntities(Request $request)
     {
-        $export = $request->query->get('export') ?: [];
+        $export = $request->query->all('export') ?: [];
         if (isset($export['definition']) && isset($export['acronym']) && isset($export['class']) && isset($export['id'])
             && ($definition = $this->definitionManager->getDefinitionFromClass($export['definition']))
             && ($content = $definition->getContent($export['acronym']))
