@@ -367,7 +367,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         $this->denyAccessUnlessGrantedCrud(RouteEnum::AJAX, $this->getDefinition());
 
         $data = [];
-        foreach ($request->request->get('data') as $pair) {
+        foreach ($request->request->all('data') as $pair) {
             $data[$pair['key']] = $pair['value'];
         }
         $obj = $this->definition->ajaxOnDataChanged($data);
