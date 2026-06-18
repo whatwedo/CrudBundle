@@ -52,7 +52,7 @@ class whatwedoCrudExtension extends Extension
         $container->setParameter('whatwedo_crud.config.template_directory', $config['templateDirectory']);
         $container->setParameter('whatwedo_crud.config.layout', $config['layout']);
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
     }
 }

@@ -60,7 +60,7 @@ class CrudRenderExtension extends AbstractExtension
         $view = $definition->createView($route, $data);
         $block = $view->getBlocks($route)->filter(static fn (Block $block) => $block->getAcronym() === $optionBlock)->first();
         if ($block === false) {
-            throw new BlockNotFoundException('Block "' . $optionBlock . '" does not exist in definition "' . get_class($definition) . '".');
+            throw new BlockNotFoundException('Block "'.$optionBlock.'" does not exist in definition "'.get_class($definition).'".');
         }
         $block->setOptions(array_merge($block->getOptions(), $definitionBlock->getOption(DefinitionBlock::OPT_OVERRIDE)));
         if ($definitionBlock->getOption(DefinitionBlock::OPT_CONFIGURE)) {
@@ -71,7 +71,7 @@ class CrudRenderExtension extends AbstractExtension
             Page::CREATE => 'create.html.twig',
             default => 'show.html.twig',
         };
-        $template = $this->twig->load($definition->getTemplateDirectory() . $templateFile);
+        $template = $this->twig->load($definition->getTemplateDirectory().$templateFile);
 
         return $template->renderBlock('block_definition_single_block', [
             'view' => $view,

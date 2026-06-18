@@ -139,7 +139,7 @@ final class MakeDefinition extends AbstractMaker
 
         $entityDoctrineMetaData = $this->doctrineHelper->getMetadata($entityClassDetails->getFullName());
         $definitionClassDetails = $generator->createClassNameDetails(
-            $entityClassDetails->getRelativeNameWithoutSuffix() . 'Definition',
+            $entityClassDetails->getRelativeNameWithoutSuffix().'Definition',
             'Definition\\',
             'Definition'
         );
@@ -223,7 +223,7 @@ final class MakeDefinition extends AbstractMaker
                 continue;
             }
             $question = new ChoiceQuestion(
-                'Formatter for Field "' . $fieldName . '" type:' . $mapping['type'] . ' (default none)?',
+                'Formatter for Field "'.$fieldName.'" type:'.$mapping['type'].' (default none)?',
                 $formatters,
                 0
             );
@@ -250,7 +250,7 @@ final class MakeDefinition extends AbstractMaker
         string $entityVarSingular,
         array $fieldFormatters
     ): void {
-        $templatePath = $this->rootPath . '/vendor/whatwedo/crud-bundle/src/Resources/skeleton/definition/Definition.tpl.php';
+        $templatePath = $this->rootPath.'/vendor/whatwedo/crud-bundle/src/Resources/skeleton/definition/Definition.tpl.php';
         $fieldNames = $entityDetails->fieldNames;
         foreach ($entityDetails->getIdentifierFieldNames() as $idField) {
             unset($fieldNames[$idField]);
@@ -277,11 +277,11 @@ final class MakeDefinition extends AbstractMaker
         }
 
         $data = '';
-        $data .= sprintf('wwd.app_entity_%s.title: %s', StringUtil::fqcnToBlockPrefix($entityClassDetails->getFullName()), $entityClassDetails->getShortName()) . PHP_EOL;
-        $data .= sprintf('wwd.app_entity_%s.title_plural: %s', StringUtil::fqcnToBlockPrefix($entityClassDetails->getFullName()), $entityClassDetails->getShortName()) . PHP_EOL;
-        $data .= sprintf('wwd.app_entity_%s.block.base: %s', StringUtil::fqcnToBlockPrefix($entityClassDetails->getFullName()), 'Base' . PHP_EOL);
+        $data .= sprintf('wwd.app_entity_%s.title: %s', StringUtil::fqcnToBlockPrefix($entityClassDetails->getFullName()), $entityClassDetails->getShortName()).PHP_EOL;
+        $data .= sprintf('wwd.app_entity_%s.title_plural: %s', StringUtil::fqcnToBlockPrefix($entityClassDetails->getFullName()), $entityClassDetails->getShortName()).PHP_EOL;
+        $data .= sprintf('wwd.app_entity_%s.block.base: %s', StringUtil::fqcnToBlockPrefix($entityClassDetails->getFullName()), 'Base'.PHP_EOL);
         foreach ($fieldNames as $fieldName) {
-            $data .= sprintf('wwd.app_entity_%s.property.%s: %s', StringUtil::fqcnToBlockPrefix($entityClassDetails->getFullName()), $fieldName, $fieldName) . PHP_EOL;
+            $data .= sprintf('wwd.app_entity_%s.property.%s: %s', StringUtil::fqcnToBlockPrefix($entityClassDetails->getFullName()), $fieldName, $fieldName).PHP_EOL;
         }
 
         file_put_contents(

@@ -154,7 +154,7 @@ class DefinitionView
                 case Page::EDIT:
                 case Page::DELETE:
                     if (! $this->data) {
-                        return 'javascript:alert(\'can\\\'t generate route "' . $route->toRoute() . '" without data\')';
+                        return 'javascript:alert(\'can\\\'t generate route "'.$route->toRoute().'" without data\')';
                     }
 
                     return $this->router->generate(
@@ -186,11 +186,11 @@ class DefinitionView
                     );
 
                 default:
-                    return 'javascript:alert(\'can\\\'t generate route "' . $route . '".\')';
+                    return 'javascript:alert(\'can\\\'t generate route "'.$route.'".\')';
             }
         }
 
-        return 'javascript:alert(\'Definition does not have the capability "' . $route . '".\')';
+        return 'javascript:alert(\'Definition does not have the capability "'.$route.'".\')';
     }
 
     public function getEditForm(?FormBuilderInterface $builder = null, ?string $blockName = null, ?callable $blockConfigure = null): FormInterface
@@ -344,11 +344,11 @@ class DefinitionView
             'required' => $this->isContentRequired($content),
         ];
         if (! empty($this->definition->getFormAccessorPrefix())) {
-            $formOptions['property_path'] = str_replace('_', '.', $this->definition->getFormAccessorPrefix() . $content->getAcronym());
+            $formOptions['property_path'] = str_replace('_', '.', $this->definition->getFormAccessorPrefix().$content->getAcronym());
         }
 
         $builder->add(
-            $this->definition->getFormAccessorPrefix() . $content->getAcronym(),
+            $this->definition->getFormAccessorPrefix().$content->getAcronym(),
             $formType,
             $content->getFormOptions($formOptions)
         );

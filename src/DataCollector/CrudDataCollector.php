@@ -19,7 +19,7 @@ class CrudDataCollector extends AbstractDataCollector
     ) {
     }
 
-    public function collect(Request $request, Response $response, \Throwable $exception = null): void
+    public function collect(Request $request, Response $response, ?\Throwable $exception = null): void
     {
         $definitionClass = null;
         $definition = null;
@@ -104,7 +104,7 @@ class CrudDataCollector extends AbstractDataCollector
      */
     protected function getPageName(DefinitionInterface $definitionInstance, string $route): string
     {
-        $pageValue = str_replace($definitionInstance::getRoutePathPrefix() . '_', '', $route);
+        $pageValue = str_replace($definitionInstance::getRoutePathPrefix().'_', '', $route);
 
         try {
             $page = Page::tryFrom($pageValue);

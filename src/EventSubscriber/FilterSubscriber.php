@@ -48,7 +48,7 @@ class FilterSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            CrudEvent::CREATE_SHOW_PREFIX . '.' . FilterDefinition::getAlias() => [
+            CrudEvent::CREATE_SHOW_PREFIX.'.'.FilterDefinition::getAlias() => [
                 ['createShow', 10],
             ],
         ];

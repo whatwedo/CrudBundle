@@ -105,29 +105,29 @@ class SetupCommand extends Command
 
     protected function setupRouting(): void
     {
-        if ($this->filesystem->exists($this->projectRoot . '/config/routes/whatwedo_crud.yaml')
+        if ($this->filesystem->exists($this->projectRoot.'/config/routes/whatwedo_crud.yaml')
             && ! $this->confirm('Do you want to override the existing routing? (whatwedo_crud.yaml) [NO/yes] ')) {
             return;
         }
 
         $prefix = $this->ask('What is the prefix for the CRUD routes? [default: ""] ');
-        $content = file_get_contents($this->projectRoot . self::SETUP_SKELETON . '/whatwedo_crud.yaml');
+        $content = file_get_contents($this->projectRoot.self::SETUP_SKELETON.'/whatwedo_crud.yaml');
         $content = str_replace('%%prefix%%', $prefix, $content);
-        file_put_contents($this->projectRoot . '/config/routes/whatwedo_crud.yaml', $content);
+        file_put_contents($this->projectRoot.'/config/routes/whatwedo_crud.yaml', $content);
         $this->output->writeln('created "config/routes/whatwedo_crud.yaml"');
         $this->newLine();
     }
 
     protected function setupTailwind(): void
     {
-        if ($this->filesystem->exists($this->projectRoot . '/tailwind.config.js')
+        if ($this->filesystem->exists($this->projectRoot.'/tailwind.config.js')
             && ! $this->confirm('Do you want to override the existing tailwind.config.js? [NO/yes] ')) {
             return;
         }
 
         $this->filesystem->copy(
-            $this->projectRoot . self::SETUP_SKELETON . '/tailwind.config.js',
-            $this->projectRoot . '/tailwind.config.js',
+            $this->projectRoot.self::SETUP_SKELETON.'/tailwind.config.js',
+            $this->projectRoot.'/tailwind.config.js',
             true
         );
         $this->output->writeln('created "tailwind.config.js"');
@@ -136,14 +136,14 @@ class SetupCommand extends Command
 
     protected function setupTailwindFrontend(): void
     {
-        if ($this->filesystem->exists($this->projectRoot . '/tailwind_frontend.config.js')
+        if ($this->filesystem->exists($this->projectRoot.'/tailwind_frontend.config.js')
             && ! $this->confirm('Do you want to override the existing tailwind_frontend.config.js? [NO/yes] ')) {
             return;
         }
 
         $this->filesystem->copy(
-            $this->projectRoot . self::SETUP_SKELETON . '/tailwind_frontend.config.js',
-            $this->projectRoot . '/tailwind_frontend.config.js',
+            $this->projectRoot.self::SETUP_SKELETON.'/tailwind_frontend.config.js',
+            $this->projectRoot.'/tailwind_frontend.config.js',
             true
         );
         $this->output->writeln('created "tailwind_frontend.config.js"');
@@ -152,14 +152,14 @@ class SetupCommand extends Command
 
     protected function setupPostcss(): void
     {
-        if ($this->filesystem->exists($this->projectRoot . '/postcss.config.js')
+        if ($this->filesystem->exists($this->projectRoot.'/postcss.config.js')
             && ! $this->confirm('Do you want to override the existing postcss.config.js? [NO/yes] ')) {
             return;
         }
 
         $this->filesystem->copy(
-            $this->projectRoot . self::SETUP_SKELETON . '/postcss.config.js',
-            $this->projectRoot . '/postcss.config.js',
+            $this->projectRoot.self::SETUP_SKELETON.'/postcss.config.js',
+            $this->projectRoot.'/postcss.config.js',
             true
         );
         $this->output->writeln('created "postcss.config.js"');
@@ -168,14 +168,14 @@ class SetupCommand extends Command
 
     protected function setupFrontendPostcss(): void
     {
-        if ($this->filesystem->exists($this->projectRoot . '/postcss_frontend.config.js')
+        if ($this->filesystem->exists($this->projectRoot.'/postcss_frontend.config.js')
             && ! $this->confirm('Do you want to override the existing postcss_frontend.config.js? [NO/yes] ')) {
             return;
         }
 
         $this->filesystem->copy(
-            $this->projectRoot . self::SETUP_SKELETON . '/postcss_frontend.config.js',
-            $this->projectRoot . '/postcss_frontend.config.js',
+            $this->projectRoot.self::SETUP_SKELETON.'/postcss_frontend.config.js',
+            $this->projectRoot.'/postcss_frontend.config.js',
             true
         );
         $this->output->writeln('created "postcss_frontend.config.js"');
@@ -184,14 +184,14 @@ class SetupCommand extends Command
 
     protected function setupBaseTemplate(): void
     {
-        if ($this->filesystem->exists($this->projectRoot . '/templates/base.html.twig')
+        if ($this->filesystem->exists($this->projectRoot.'/templates/base.html.twig')
             && ! $this->confirm('Do you want to override the existing base.html.twig? [YES/no] ', true)) {
             return;
         }
 
         $this->filesystem->copy(
-            $this->projectRoot . self::SETUP_SKELETON . '/base.html.twig',
-            $this->projectRoot . '/templates/base.html.twig',
+            $this->projectRoot.self::SETUP_SKELETON.'/base.html.twig',
+            $this->projectRoot.'/templates/base.html.twig',
             true
         );
         $this->output->writeln('created "templates/base.html.twig"');
@@ -200,14 +200,14 @@ class SetupCommand extends Command
 
     protected function setupWebpackConfig(): void
     {
-        if ($this->filesystem->exists($this->projectRoot . '/webpack.config.js')
+        if ($this->filesystem->exists($this->projectRoot.'/webpack.config.js')
             && ! $this->confirm('Do you want to override the existing webpack.config.js? [YES/no] ', true)) {
             return;
         }
 
         $this->filesystem->copy(
-            $this->projectRoot . self::SETUP_SKELETON . '/webpack.config.js',
-            $this->projectRoot . '/webpack.config.js',
+            $this->projectRoot.self::SETUP_SKELETON.'/webpack.config.js',
+            $this->projectRoot.'/webpack.config.js',
             true
         );
         $this->output->writeln('created "webpack.config.js"');
@@ -216,34 +216,34 @@ class SetupCommand extends Command
 
     protected function setupAppJsScss(): void
     {
-        if ($this->filesystem->exists($this->projectRoot . '/assets/admin.js')
+        if ($this->filesystem->exists($this->projectRoot.'/assets/admin.js')
             && ! $this->confirm('Do you want to override the existing assets/admin.js? [YES/no] ', true)) {
             return;
         }
 
         $this->filesystem->copy(
-            $this->projectRoot . self::SETUP_SKELETON . '/admin.js',
-            $this->projectRoot . '/assets/admin.js',
+            $this->projectRoot.self::SETUP_SKELETON.'/admin.js',
+            $this->projectRoot.'/assets/admin.js',
             true
         );
         $this->output->writeln('created "assets/admin.js"');
         $this->newLine();
 
-        if ($this->filesystem->exists($this->projectRoot . '/assets/styles/app.css')
+        if ($this->filesystem->exists($this->projectRoot.'/assets/styles/app.css')
             && $this->confirm('Do you want to delete the not used assets/styles/app.css? [YES/no] ', true)) {
-            $this->filesystem->remove($this->projectRoot . '/assets/styles/app.css');
+            $this->filesystem->remove($this->projectRoot.'/assets/styles/app.css');
             $this->output->writeln('deleted "assets/styles/app.css"');
             $this->newLine();
         }
 
-        if ($this->filesystem->exists($this->projectRoot . '/assets/styles/admin.scss')
+        if ($this->filesystem->exists($this->projectRoot.'/assets/styles/admin.scss')
             && ! $this->confirm('Do you want to override the existing assets/styles/admin.scss? [YES/no] ', true)) {
             return;
         }
 
         $this->filesystem->copy(
-            $this->projectRoot . self::SETUP_SKELETON . '/admin.scss',
-            $this->projectRoot . '/assets/styles/admin.scss',
+            $this->projectRoot.self::SETUP_SKELETON.'/admin.scss',
+            $this->projectRoot.'/assets/styles/admin.scss',
             true
         );
         $this->output->writeln('created "assets/styles/admin.scss"');
@@ -252,37 +252,37 @@ class SetupCommand extends Command
 
     protected function setupFrontendJsScss(): void
     {
-        if ($this->filesystem->exists($this->projectRoot . '/assets/frontend.js')
+        if ($this->filesystem->exists($this->projectRoot.'/assets/frontend.js')
             && ! $this->confirm('Do you want to override the existing assets/frontend.js? [YES/no] ', true)) {
             return;
         }
 
         $this->filesystem->copy(
-            $this->projectRoot . self::SETUP_SKELETON . '/frontend.js',
-            $this->projectRoot . '/assets/frontend.js',
+            $this->projectRoot.self::SETUP_SKELETON.'/frontend.js',
+            $this->projectRoot.'/assets/frontend.js',
             true
         );
         $this->output->writeln('created "assets/frontend.js"');
         $this->filesystem->copy(
-            $this->projectRoot . self::SETUP_SKELETON . '/bootstrap_frontend.js',
-            $this->projectRoot . '/assets/bootstrap_frontend.js',
+            $this->projectRoot.self::SETUP_SKELETON.'/bootstrap_frontend.js',
+            $this->projectRoot.'/assets/bootstrap_frontend.js',
             true
         );
         $this->output->writeln('created "assets/bootstrap_frontend.js"');
-        if (! $this->filesystem->exists($this->projectRoot . '/assets/controllers_frontend')) {
-            $this->filesystem->mkdir($this->projectRoot . '/assets/controllers_frontend');
+        if (! $this->filesystem->exists($this->projectRoot.'/assets/controllers_frontend')) {
+            $this->filesystem->mkdir($this->projectRoot.'/assets/controllers_frontend');
             $this->output->writeln('created "assets/controllers_frontend"');
         }
         $this->newLine();
 
-        if ($this->filesystem->exists($this->projectRoot . '/assets/styles/frontend.scss')
+        if ($this->filesystem->exists($this->projectRoot.'/assets/styles/frontend.scss')
             && ! $this->confirm('Do you want to override the existing assets/styles/frontend.scss? [YES/no] ', true)) {
             return;
         }
 
         $this->filesystem->copy(
-            $this->projectRoot . self::SETUP_SKELETON . '/frontend.scss',
-            $this->projectRoot . '/assets/styles/frontend.scss',
+            $this->projectRoot.self::SETUP_SKELETON.'/frontend.scss',
+            $this->projectRoot.'/assets/styles/frontend.scss',
             true
         );
         $this->output->writeln('created "assets/styles/frontend.scss"');
@@ -291,14 +291,14 @@ class SetupCommand extends Command
 
     protected function setupWebpackEncore(): void
     {
-        if ($this->filesystem->exists($this->projectRoot . '/config/packages/webpack_encore.yaml')
+        if ($this->filesystem->exists($this->projectRoot.'/config/packages/webpack_encore.yaml')
             && ! $this->confirm('Do you want to override the existing webpack_encore.yaml? [YES/no] ', true)) {
             return;
         }
 
         $this->filesystem->copy(
-            $this->projectRoot . self::SETUP_SKELETON . '/webpack_encore.yaml',
-            $this->projectRoot . '/config/packages/webpack_encore.yaml',
+            $this->projectRoot.self::SETUP_SKELETON.'/webpack_encore.yaml',
+            $this->projectRoot.'/config/packages/webpack_encore.yaml',
             true
         );
         $this->output->writeln('created "config/packages/webpack_encore.yaml"');
