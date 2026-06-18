@@ -1,3 +1,6 @@
+includes:
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+
 parameters:
     level: 1
     paths:
@@ -6,3 +9,5 @@ parameters:
     excludePaths:
         analyse:
             - src/Resources/skeleton/definition
+    bootstrapFiles:
+            - vendor/autoload.php
