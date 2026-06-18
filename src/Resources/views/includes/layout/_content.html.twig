@@ -37,7 +37,8 @@
                     </div>
                 {% endif %}
             {% else %}
-                {{ wwd_crud_render_content_value(content) }}
+                {% set contentValue = wwd_crud_render_content_value(content) %}
+                {{ wwd_is_html_safe(content) ? contentValue|raw : contentValue }}
             {% endif %}
         </dd>
     </div>

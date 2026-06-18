@@ -404,12 +404,12 @@ class RelationContent extends AbstractContent
              * person_studentModuleOccasions.occasion => person_studentModuleOccasions_occasion
              * person_studentModuleOccasions_occasion.lessons => person_studentModuleOccasions_occasion_lessons
              */
-            $newAlias = $rootAlias . '_' . $field;
-            $queryBuilder->leftJoin($rootAlias . '.' . $field, $newAlias);
+            $newAlias = $rootAlias.'_'.$field;
+            $queryBuilder->leftJoin($rootAlias.'.'.$field, $newAlias);
             if ($value instanceof Collection) {
-                $queryBuilder->andWhere($newAlias . ' IN (:' . $newAlias . ')');
+                $queryBuilder->andWhere($newAlias.' IN (:'.$newAlias.')');
             } else {
-                $queryBuilder->andWhere($newAlias . ' = :' . $newAlias);
+                $queryBuilder->andWhere($newAlias.' = :'.$newAlias);
             }
             $queryBuilder->setParameter($newAlias, $value);
             $queryBuilder->addSelect($newAlias);

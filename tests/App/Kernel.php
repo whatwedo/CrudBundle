@@ -18,11 +18,11 @@ class Kernel extends BaseKernel
 
     public function getCacheDir(): string
     {
-        return $this->getProjectDir() . '/../../var/cache/' . $this->environment;
+        return $this->getProjectDir().'/../../var/cache/'.$this->environment;
     }
 
     public function getProjectDir(): string
     {
-        return \dirname(__DIR__) . '/App';
+        return \dirname(__DIR__).'/App';
     }
 }

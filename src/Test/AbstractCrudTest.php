@@ -165,7 +165,7 @@ abstract class AbstractCrudTest extends WebTestCase
                                 $sortQueryData
                             )
                         );
-                        $sortTestData[$column->getIdentifier() . '-asc'] = [$indexData];
+                        $sortTestData[$column->getIdentifier().'-asc'] = [$indexData];
                     }
                 }
             }
@@ -410,9 +410,9 @@ abstract class AbstractCrudTest extends WebTestCase
     {
         foreach ($formData as $field => $value) {
             if ($value instanceof Upload) {
-                $form['form[' . $field . '][' . $value->getField() . ']']->upload($value->getPath());
+                $form['form['.$field.']['.$value->getField().']']->upload($value->getPath());
             } else {
-                $form['form[' . $field . ']'] = $value;
+                $form['form['.$field.']'] = $value;
             }
         }
     }

@@ -76,12 +76,12 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     public static function getEntityTitle(): string
     {
-        return 'wwd.' . static::getEntityAlias() . '.title';
+        return 'wwd.'.static::getEntityAlias().'.title';
     }
 
     public static function getEntityTitlePlural(): string
     {
-        return 'wwd.' . static::getEntityAlias() . '.title_plural';
+        return 'wwd.'.static::getEntityAlias().'.title_plural';
     }
 
     public function createEntity(Request $request): mixed
@@ -267,7 +267,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         return $this->builder ?? throw new \RuntimeException('Please call DefinitionInterface::createView before accessing the builder');
     }
 
-    public function createView(PageInterface $route, object $data = null): DefinitionView
+    public function createView(PageInterface $route, ?object $data = null): DefinitionView
     {
         $this->builder = $this->getDefinitionBuilder($data);
 
@@ -284,7 +284,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         try {
             $instance = $clazz->newInstance();
         } catch (\Throwable $e) {
-            throw new \RuntimeException('Could not automatically detect relation definition for class ' . $entityClass . '. Please override getJsonSearchUrl() in ' . static::class . ' or make the Entity Constructor argument less.', previous: $e);
+            throw new \RuntimeException('Could not automatically detect relation definition for class '.$entityClass.'. Please override getJsonSearchUrl() in '.static::class.' or make the Entity Constructor argument less.', previous: $e);
         }
         /** @var DefinitionInterface $definition */
         $definition = $this
@@ -297,7 +297,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
             ;
         }
         $this->container->get(LoggerInterface::class)
-            ->warning('you need to enable Page::JSONSEARCH Capability on the "' . get_class($definition) . '" definition to allow ajax filtering.')
+            ->warning('you need to enable Page::JSONSEARCH Capability on the "'.get_class($definition).'" definition to allow ajax filtering.')
         ;
 
         return '';
@@ -492,7 +492,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
 
     public static function getRoute(PageInterface $route): string
     {
-        return static::getRoutePrefix() . '_' . $route->toRoute();
+        return static::getRoutePrefix().'_'.$route->toRoute();
     }
 
     #[Required]
@@ -574,7 +574,7 @@ abstract class AbstractDefinition implements DefinitionInterface, ServiceSubscri
         $definitionManager = $this->container->get(DefinitionManager::class);
         $tables = [];
         foreach ($subQueryBuilders as $i => $subQueryBuilder) {
-            $table = $tableFactory->create('sub_table_' . $entity->getId() . '_' . $i, DoctrineDataLoader::class, [
+            $table = $tableFactory->create('sub_table_'.$entity->getId().'_'.$i, DoctrineDataLoader::class, [
                 'dataloader_options' => [
                     DoctrineDataLoader::OPT_QUERY_BUILDER => $subQueryBuilder,
                 ],

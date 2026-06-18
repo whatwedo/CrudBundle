@@ -246,7 +246,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
             $this->addFlash('success', 'whatwedo_crud.delete_success');
         } catch (\Exception $e) {
             $this->addFlash('error', 'whatwedo_crud.delete_error');
-            $this->container->get(LoggerInterface::class)->warning('Error while deleting: ' . $e->getMessage(), [
+            $this->container->get(LoggerInterface::class)->warning('Error while deleting: '.$e->getMessage(), [
                 'entity' => get_class($entity),
                 'id' => $entity->getId(),
             ]);
@@ -282,7 +282,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
         );
 
         $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        $response->headers->set('Content-Disposition', 'attachment; filename="' . $this->definition->getExportFilename() . '"');
+        $response->headers->set('Content-Disposition', 'attachment; filename="'.$this->definition->getExportFilename().'"');
 
         return $response;
     }
@@ -397,7 +397,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     protected function dispatchEvent(string $event, mixed $entity): void
     {
         $this->eventDispatcher->dispatch(new CrudEvent($entity), $event);
-        $this->eventDispatcher->dispatch(new CrudEvent($entity), $event . '.' . $this->getDefinition()::getAlias());
+        $this->eventDispatcher->dispatch(new CrudEvent($entity), $event.'.'.$this->getDefinition()::getAlias());
     }
 
     protected function preselectEntities(Request $request, DefinitionView $view, object $entity): void
@@ -434,11 +434,11 @@ class CrudController extends AbstractController implements CrudDefinitionControl
      */
     protected function getTemplate(string $filename): string
     {
-        if ($this->twig->getLoader()->exists($this->getDefinition()->getTemplateDirectory() . '/' . $filename)) {
-            return $this->getDefinition()->getTemplateDirectory() . '/' . $filename;
+        if ($this->twig->getLoader()->exists($this->getDefinition()->getTemplateDirectory().'/'.$filename)) {
+            return $this->getDefinition()->getTemplateDirectory().'/'.$filename;
         }
 
-        return '@whatwedoCrud/Crud/' . $filename;
+        return '@whatwedoCrud/Crud/'.$filename;
     }
 
     protected function getDefinition(): DefinitionInterface
@@ -455,7 +455,7 @@ class CrudController extends AbstractController implements CrudDefinitionControl
     {
         try {
             return $this->getDefinition()->getQueryBuilder()
-                ->andWhere($this->getIdentifierColumn() . ' = :id')
+                ->andWhere($this->getIdentifierColumn().' = :id')
                 ->setParameter('id', $request->attributes->getInt('id'))
                 ->getQuery()
                 ->getSingleResult();

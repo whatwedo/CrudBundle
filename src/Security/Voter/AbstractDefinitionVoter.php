@@ -73,7 +73,7 @@ abstract class AbstractDefinitionVoter extends Voter
         $definitionName = static::getDefinitionClassName();
         $definition = $this->definitionManager->getDefinitionByClassName(static::getDefinitionClassName());
         if ($definition === null) {
-            throw new DefinitionNotFoundException('Definition ' . $definitionName . ' not found');
+            throw new DefinitionNotFoundException('Definition '.$definitionName.' not found');
         }
 
         return $definition;
