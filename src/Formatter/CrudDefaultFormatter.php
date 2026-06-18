@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace whatwedo\CrudBundle\Formatter;
 
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
 use whatwedo\CoreBundle\Formatter\DefaultFormatter;
 use whatwedo\CrudBundle\Enums\Page;
@@ -28,7 +29,7 @@ class CrudDefaultFormatter extends DefaultFormatter
                         $this->router->generate($definition::getRoute(Page::SHOW), [
                             'id' => $value->getId(),
                         ]),
-                        (string) $value
+                        $this->escapeHTML((string) $value),
                     );
                 }
             } catch (\InvalidArgumentException $e) {
@@ -37,5 +38,11 @@ class CrudDefaultFormatter extends DefaultFormatter
         }
 
         return parent::getHtml($value);
+    }
+
+    protected function configureOptions(OptionsResolver $resolver): void
+    {
+        parent::configureOptions($resolver);
+        $resolver->setDefault(self::OPT_HTML_SAFE, true);
     }
 }

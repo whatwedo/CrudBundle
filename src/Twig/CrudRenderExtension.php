@@ -31,19 +31,20 @@ class CrudRenderExtension extends AbstractExtension
 
     public function getFunctions(): array
     {
-        $options = [
+        $options = $noSafeOptions = [
             'needs_context' => true,
             'is_safe' => ['html'],
             'is_safe_callback' => true,
             'blockName' => 'blockName',
         ];
+        $noSafeOptions['is_safe'] = [];
 
         return [
             new TwigFunction('wwd_crud_render_block', fn ($context, Block $block, DefinitionView $view, PageInterface $page, ?FormView $form = null) => $this->renderBlock($context, $block, $view, $page, $form), $options),
             new TwigFunction('wwd_definition_block_render', fn ($context, DefinitionBlock $definitionBlock) => $this->renderDefinitionBlock($context, $definitionBlock), $options),
             new TwigFunction('wwd_crud_render_content', fn ($context, $content, Block $block, DefinitionView $view, ?FormView $form = null) => $this->renderContent($context, $content, $block, $view, $form), $options),
             new TwigFunction('wwd_crud_render_action', fn ($context, Action $action, DefinitionView $view, ?FormView $form = null) => $this->renderAction($context, $action, $view), $options),
-            new TwigFunction('wwd_crud_render_content_value', fn ($context, AbstractContent $content) => $this->renderContentValue($context, $content), $options),
+            new TwigFunction('wwd_crud_render_content_value', fn ($context, AbstractContent $content) => $this->renderContentValue($context, $content), $noSafeOptions),
         ];
     }
 
