@@ -9,7 +9,7 @@
     <php>
         <server name="KERNEL_CLASS" value="whatwedo\CrudBundle\Tests\App\Kernel"/>
         <server name="SHELL_VERBOSITY" value="-1"/>
-        <server name="SYMFONY_DEPRECATIONS_HELPER" value="max[self]=0&amp;max[direct]=0"/>
+        <server name="SYMFONY_DEPRECATIONS_HELPER" value="disabled"/>
         <env name="DATABASE_URL" value="mysql://root:root@mariadb:3306/crud_bundle" />
 
     </php>
