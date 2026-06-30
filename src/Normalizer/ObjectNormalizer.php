@@ -32,6 +32,7 @@ namespace whatwedo\CrudBundle\Normalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer as BaseObjectNormalizer;
 use whatwedo\CrudBundle\Definition\DefinitionInterface;
 
+// @phpstan-ignore class.extendsFinalByPhpDoc
 class ObjectNormalizer extends BaseObjectNormalizer
 {
     /**
